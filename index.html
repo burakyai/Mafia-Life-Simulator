@@ -285,7 +285,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.10.31-0000';
+const APPV='2026.10.31-0010';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -800,7 +800,7 @@ $('mcard').addEventListener('click',e=>{
   if(!S.alive){Q.length=0;$('modal').classList.remove('on');return}
   showEv();
   if(!Q.length&&ev.back){openSheet(ev.back);scrollLog()}
-  if(!Q.length&&YR>0)setTimeout(stepYr,250);
+  if(!Q.length&&YR>0)setTimeout(stepYr,250);else if(!Q.length&&YSTART!==null)setTimeout(finishYear,50);
 });
 function afterChange(ny){S.money=Math.round(S.money);S.peak=Math.max(S.peak,S.money);checkDeath(ny);if(S.alive){try{wkEnsure();wkCheck()}catch(e){}}if(S.alive)checkAch();save();render()}
 
@@ -909,7 +909,7 @@ function adultYear(ny){
   if(ny&&S.age===18&&!S.jail)log('Reşit oldun. Artık hapis cezaları gerçek.','dim');
   if(!S.jail&&!S.abroad&&S.heat>=55&&ch((S.heat-45)/180)){const r=raid();if(r)return queue(r);return}
   if(S.later&&S.later.length){const due=S.later.filter(x=>x.q<=QS());if(due.length){S.later=S.later.filter(x=>x.q>QS());const d=due[0];S.later.push(...due.slice(1).map(x=>({...x,q:QS()+1})));const ev=LATER[d.id]&&LATER[d.id](d);if(ev){queue(ev);return}}}
-  if(ch(.72)){
+  if(ch(S.yearStep&&S.age>=14?.35:.72)){
     const pool=EVENTS.filter(e=>e.c()&&e!==S._lastEv);let tot=pool.reduce((s,e)=>s+e.w,0),r=Math.random()*tot;
     for(const e of pool){r-=e.w;if(r<=0){S._lastEv=null;const ev=e.e();if(ev)queue(ev);break}}
   }else if(false)log(pick(['Sakin bir yıl geçti.','Mahallede çay içip dedikodu dinledin.','Eski dostlarla rakı masasına oturdun.','Yeni bir araba kiraladın, bir ay sonra geri verdin.','Sokaklar bu yıl sessizdi.']),'dim');
@@ -3585,9 +3585,10 @@ window.addEventListener('resize',layout);
 function scrollLog(){layout();const l=$('log');requestAnimationFrame(()=>l.scrollTop=l.scrollHeight)}
 let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2200)}
 
-let YR=0;
-function stepYr(){let g=0;while(YR>0&&S&&S.alive&&!Q.length&&g<5){YR--;g++;ageUp()}}
-function advance(){if(!S||!S.alive)return;if(Q.length){showEv();return}if(!S.yearStep||S.age<14){ageUp();return}YR=4-(S.q||0);stepYr()}
+let YR=0,YSTART=null;
+function finishYear(){if(YSTART===null||YR>0||Q.length||!S)return;if($('mg').classList.contains('on')){setTimeout(finishYear,400);return}const ents=S.log.splice(YSTART);if(ents.length){const ln=[],cnt={};ents.forEach(e=>e.lines.forEach(l=>{const key=l.t.replace(/[\d.,₺]+/g,'#');if(cnt[key]!==undefined){cnt[key]++;ln[cnt['_i'+key]].n=cnt[key];return}cnt[key]=1;cnt['_i'+key]=ln.length;ln.push({...l})}));ln.forEach(l=>{if(l.n>1)l.t+=` <small style="opacity:.6">(×${l.n})</small>`;delete l.n});S.log.push({age:ents[ents.length-1].age,lines:ln})}YSTART=null;save();render();scrollLog()}
+function stepYr(){if($('mg').classList.contains('on')){setTimeout(stepYr,400);return}let g=0;while(YR>0&&S&&S.alive&&!Q.length&&!$('mg').classList.contains('on')&&g<5){YR--;g++;ageUp()}if(YR===0)finishYear();else if(!Q.length)setTimeout(stepYr,400)}
+function advance(){if(!S||!S.alive)return;if(Q.length){showEv();return}if(!S.yearStep||S.age<14){ageUp();return}YR=4-(S.q||0);YSTART=S.log.length;stepYr()}
 $('nAge').onclick=advance;
 $('nIs').onclick=()=>{backTo=null;S&&S.alive&&goSheet('is')};
 $('nMulk').onclick=()=>{backTo=null;vTab='ozet';S&&S.alive&&goSheet('varlik')};
