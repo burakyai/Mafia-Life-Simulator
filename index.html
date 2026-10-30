@@ -248,6 +248,20 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 
 .toast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);background:#000e;border:1px solid var(--gold2);color:var(--ink);padding:10px 16px;border-radius:999px;font-size:14px;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%;text-align:center}
 .toast.on{opacity:1}
+
+/* ============ PC görünümü ============ */
+@media (min-width:1220px){
+  body{background:radial-gradient(ellipse at 30% 0%,#2a1712 0%,#0b0807 60%)}
+  #hdr,#ftr,#log{left:calc(50% - 600px)!important;right:auto!important;width:520px;margin:0!important}
+  .ov{background:transparent!important;pointer-events:none}
+  .ov.on{display:flex!important;top:0!important;bottom:0!important;left:calc(50% - 70px)!important;right:auto!important;width:670px;align-items:stretch;justify-content:stretch;pointer-events:auto}
+  .ov .sheet{max-width:none!important;max-height:none!important;height:100%;border-radius:0;border-top:0;border-left:1px solid #c9a24a55;box-shadow:-12px 0 30px #0009;animation:none}
+  .ov .sheet .tiles{grid-template-columns:repeat(3,1fr)}
+  .modal .mc,.modal>div{max-width:560px}
+  #pcHint{display:block!important}
+  .ov .sheet #shB{padding-bottom:34px}
+}
+#pcHint{display:none;position:fixed;left:calc(50% - 70px);width:670px;bottom:0;padding:6px 0;background:#0b0807;border-top:1px solid #c9a24a33;text-align:center;font-size:11px;color:#8a7d6a;z-index:25;pointer-events:none}
 </style>
 </head>
 <body>
@@ -274,6 +288,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
  </div>
 </div>
 
+<div id="pcHint">Boşluk: İlerle · 1–5: Menüler · Esc: Geri · Olaylarda 1–9: Seçim</div>
 <div class="ov" id="ov"><div class="sheet"><div class="sh-h"><button class="x" id="shBack" aria-label="Hayat sayfasına dön" style="display:none;margin-right:10px">‹</button><h2 id="shT" style="flex:1"></h2><button class="x" id="shX" aria-label="Kapat">×</button></div><div class="sh-b" id="shB"></div></div></div>
 <div class="modal" id="modal"><div class="card" id="mcard"></div></div>
 <div class="modal" id="mg" style="z-index:36"><div class="card" id="mgc"></div></div>
@@ -285,7 +300,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.10.31-0010';
+const APPV='2026.10.31-0025';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -3590,6 +3605,19 @@ function finishYear(){if(YSTART===null||YR>0||Q.length||!S)return;if($('mg').cla
 function stepYr(){if($('mg').classList.contains('on')){setTimeout(stepYr,400);return}let g=0;while(YR>0&&S&&S.alive&&!Q.length&&!$('mg').classList.contains('on')&&g<5){YR--;g++;ageUp()}if(YR===0)finishYear();else if(!Q.length)setTimeout(stepYr,400)}
 function advance(){if(!S||!S.alive)return;if(Q.length){showEv();return}if(!S.yearStep||S.age<14){ageUp();return}YR=4-(S.q||0);YSTART=S.log.length;stepYr()}
 $('nAge').onclick=advance;
+/* ============ PC: kalıcı yan panel ve klavye kısayolları ============ */
+const isPC=()=>window.matchMedia('(min-width:1220px)').matches;
+const _closeSheet=closeSheet;
+closeSheet=function(){_closeSheet();if(isPC()&&S&&S.alive&&!$('title').classList.contains('on'))setTimeout(()=>{if(!curSheet&&S&&S.alive&&!$('title').classList.contains('on'))openSheet('hayat')},0)};
+window.addEventListener('resize',()=>{if(isPC()&&!curSheet&&S&&S.alive&&!$('title').classList.contains('on'))openSheet('hayat')});
+document.addEventListener('keydown',e=>{if(!S||!S.alive)return;const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA')return;
+  if($('modal').classList.contains('on')){const n=parseInt(e.key,10);if(n>=1&&n<=9){const bs=[...document.querySelectorAll('#mcard .ch')];const b=bs[n-1];if(b&&!b.disabled){e.preventDefault();b.click()}}return}
+  if($('mg').classList.contains('on')||$('title').classList.contains('on')||$('create').classList.contains('on'))return;
+  if(e.key===' '||e.key==='Enter'){e.preventDefault();advance()}
+  else if(e.key==='Escape'){if($('shBack').style.display!=='none')$('shBack').click();else if(!isPC())closeSheet();else openSheet('hayat')}
+  else if(e.key==='1')$('nIs').click();else if(e.key==='2')$('nMulk').click();else if(e.key==='3')$('nGard').click();else if(e.key==='4')$('nBen').click();else if(e.key==='5')goSheet('ayar');
+  else if(e.key==='Backspace'||e.key==='z'&&(e.ctrlKey||e.metaKey)){e.preventDefault();$('nUndo').click()}});
+
 $('nIs').onclick=()=>{backTo=null;S&&S.alive&&goSheet('is')};
 $('nMulk').onclick=()=>{backTo=null;vTab='ozet';S&&S.alive&&goSheet('varlik')};
 $('nGard').onclick=()=>{backTo=null;S&&S.alive&&goSheet('gard')};
