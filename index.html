@@ -284,7 +284,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
-const APPV='2026.10.30-1735';
+const APPV='2026.10.30-1750';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -308,10 +308,10 @@ const FAMILIES=[
 ];
 const BERBER=500, BOYA=800;
 const WARD={
-  hair:[{id:'kisa',n:'Kısa'},{id:'geriye',n:'Geriye taralı'},{id:'yan',n:'Yandan ayrık'},{id:'kivircik',n:'Kıvırcık'},{id:'uzun',n:'Uzun'},{id:'atkuyrugu',n:'At kuyruğu'},{id:'kel',n:'Kazıtılmış'},{id:'firca',n:'Fırça kesim'},{id:'jole',n:'Islak jöleli'},{id:'undercut',n:'Undercut'},{id:'pompadour',n:'Pompadur'},{id:'peaky',n:'Yanları kazınmış'},{id:'asker',n:'Asker tıraşı'},{id:'percem',n:'Yan perçem'},{id:'topuz',n:'Topuz'},{id:'dalgali',n:'Uzun dalgalı'}],
-  beard:[{id:'yok',n:'Sinekkaydı'},{id:'kirli',n:'Kirli sakal'},{id:'biyik',n:'Pala bıyık'},{id:'keci',n:'Keçi sakalı'},{id:'tam',n:'Gür sakal'},{id:'boxed',n:'Çerçeve sakal'},{id:'cene',n:'Çene hattı'},{id:'ince',n:'İnce bıyık'}],
+  hair:[{id:'italyan',n:'İtalyan kesim'},{id:'klasik',n:'Klasik yan ayrık'},{id:'skinfade',n:'Skin fade'},{id:'quiff',n:'Kısa quiff'},{id:'ivy',n:'Ivy League'},{id:'sezar',n:'Sezar kesim'},{id:'kisa',n:'Kısa'},{id:'geriye',n:'Geriye taralı'},{id:'yan',n:'Yandan ayrık'},{id:'kivircik',n:'Kıvırcık'},{id:'firca',n:'Fırça kesim'},{id:'jole',n:'Islak jöleli'},{id:'undercut',n:'Undercut'},{id:'pompadour',n:'Pompadur'},{id:'peaky',n:'Yanları kazınmış'},{id:'percem',n:'Yan perçem'},{id:'asker',n:'Asker tıraşı'},{id:'kel',n:'Kazıtılmış'}],
+  beard:[{id:'yok',n:'Sinekkaydı'},{id:'kirli',n:'Kirli sakal'},{id:'kisasakal',n:'Kısa sık sakal'},{id:'biyik',n:'Pala bıyık'},{id:'palakalin',n:'Kalın şeritli bıyık'},{id:'keci',n:'Keçi sakalı'},{id:'balbo',n:'Balbo'},{id:'vandyke',n:'Van Dyke'},{id:'favori',n:'Favori ve bıyık'},{id:'tam',n:'Gür sakal'},{id:'garibaldi',n:'Garibaldi'},{id:'boxed',n:'Çerçeve sakal'},{id:'cene',n:'Çene hattı'},{id:'ince',n:'İnce bıyık'}],
   outfit:[{id:'tisort',n:'Tişört',p:0,k:0},{id:'esofman',n:'Eşofman',p:0,k:1},{id:'hawaii',n:'Desenli gömlek',p:3500,k:3},{id:'gomlek',n:'Beyaz gömlek, açık yaka',p:2500,k:3},{id:'deri',n:'Deri ceket',p:4000,k:4},{id:'polo',n:'Polo yaka ve blazer',p:7000,k:5},{id:'balikci',n:'Balıkçı yaka ve ceket',p:9000,k:6},{id:'takim',n:'Takım elbise',p:15000,k:8,rank:2},{id:'yelek',n:'Üç parça yelekli',p:30000,k:10,rank:2},{id:'trenckot',n:'Deri trençkot',p:50000,k:11,rank:2},{id:'cizgili',n:'Çizgili takım',p:45000,k:12,rank:3},{id:'kadife',n:'Kadife takım',p:65000,k:12,rank:3},{id:'palto',n:'Uzun palto ve kaşkol',p:85000,k:14,rank:3},{id:'beyaz',n:'Beyaz takım',p:120000,k:16,rank:4},{id:'smokin',n:'Smokin',p:300000,k:22,rank:5}],
-  acc:[{id:'gozluk',n:'Güneş gözlüğü',p:1200,k:2},{id:'zincir',n:'Altın zincir',p:6000,k:3},{id:'kupe',n:'Pırlanta küpe',p:9000,k:2},{id:'puro',n:'Küba purosu',p:2500,k:3,rank:2},{id:'fotr',n:'Fötr şapka',p:10000,k:5,rank:3},{id:'yara',n:'Yara izi',p:-1,k:3},{id:'boyun',n:'Boyun dövmesi',p:15000,k:3},{id:'gozyasi',n:'Göz yaşı dövmesi',p:8000,k:2,rank:2},{id:'kaskesik',n:'Kaş kesiği',p:1500,k:1},{id:'altindis',n:'Altın diş',p:25000,k:3},{id:'kasket',n:'Kasket',p:3000,k:4},{id:'kartal',n:'Çift başlı kartal kolye',p:12000,k:4},{id:'bayrak',n:'Türk bayrağı kolye',p:7000,k:3}]
+  acc:[{id:'gozluk',n:'Güneş gözlüğü',p:1200,k:2},{id:'zincir',n:'Altın zincir',p:6000,k:3},{id:'kupe',n:'Pırlanta küpe',p:9000,k:2},{id:'puro',n:'Küba purosu',p:2500,k:3,rank:2},{id:'fotr',n:'Fötr şapka',p:10000,k:5,rank:3},{id:'yara',n:'Yara izi',p:-1,k:3},{id:'boyun',n:'Boyunda gül ve yazı dövmesi',p:15000,k:3},{id:'boyun2',n:'Tribal boyun dövmesi',p:30000,k:5,rank:2},{id:'boyun3',n:'Boynu saran kartal dövmesi',p:45000,k:6,rank:3},{id:'kasust',n:'Kaş üstü yazı dövmesi',p:6000,k:2},{id:'yildiz',n:'Göz kenarında yıldız',p:5000,k:2},{id:'elmacikgul',n:'Elmacıkta gül dövmesi',p:7000,k:2},{id:'cizgi3',n:'Yanakta tribal çizgiler',p:6000,k:2},{id:'alinyazi',n:'Alında yazı dövmesi',p:12000,k:3,rank:2},{id:'gozyasi',n:'Göz yaşı dövmesi',p:8000,k:2,rank:2},{id:'kaskesik',n:'Kaş kesiği',p:1500,k:1},{id:'altindis',n:'Altın diş',p:25000,k:3},{id:'kasket',n:'Kasket',p:3000,k:4},{id:'kartal',n:'Çift başlı kartal kolye',p:12000,k:4},{id:'bayrak',n:'Türk bayrağı kolye',p:7000,k:3}]
 };
 const PROPS=[
   {id:'kebap',n:'Kebapçı',ic:'🍢',p:60000,inc:9000,la:2},
@@ -512,6 +512,12 @@ function hair2(h,c){
     case 'dalgali': return `<path d="M36.6 33 Q34.4 13.6 47 10.2 Q60 8.6 63 17 Q65.6 23 63.4 33 Q62 25 58 21.6 Q54 23.8 50 20.6 Q46 23.8 42 21.6 Q38 25 36.6 33Z" fill="${c}"/>`+ln('M42 21.6 Q41 16 45 12.4 M50 20.6 Q51 15.4 55 12.6 M58 21.6 Q60.6 18 60.4 15');
     case 'peaky': return `<path d="M37.2 30 Q37 23.4 38.2 20.4 L40 22 Q39.4 25.6 39.4 30Z M62.8 30 Q63 23.4 61.8 20.4 L60 22 Q60.6 25.6 60.6 30Z" fill="${c}" opacity=".3"/><path d="M38.4 22 Q37.4 11.6 50 10.6 Q62.6 11.6 61.6 22 Q56 19 50 19.4 Q44 19 38.4 22Z" fill="${c}"/>`+ln('M45.6 19.2 Q44.4 15 46 11.2');
     case 'firca': return `<path d="M37.2 29 Q35.6 15.6 41 11.6 Q45 9 50 9.2 Q55 9 59 11.6 Q64.4 15.6 62.8 29 Q61.8 22 59 20.2 Q55 18.4 50 19.4 Q45 18.4 41 20.2 Q38.2 22 37.2 29Z" fill="${c}"/>`+ln('M41 19.6 L41.6 13.2 M44.4 18.8 L45 11 M48 18.8 L48.2 9.8 M51.6 18.8 L51.6 9.8 M55.2 18.8 L55 11 M58.6 19.6 L58.4 13.2',.65,l);
+    case 'italyan': return `<path d="M37.4 30 Q37 25 38.4 21.6 L40.2 23.2 Q39.2 26.6 39.4 30Z M62.6 30 Q63 25 61.6 21.6 L59.8 23.2 Q60.8 26.6 60.6 30Z" fill="${c}" opacity=".55"/><path d="M38.4 24 Q36.6 12 45.6 8.8 Q53.6 7 60 10 Q64.8 13.4 62.2 24 Q60 19.4 56 18.2 Q50 16.8 44 18.2 Q40.4 19.4 38.4 24Z" fill="${c}"/>`+ln('M41 21 Q42.4 14 47 10.6 M45 18.6 Q47.6 12.6 52.6 10 M50.6 17.6 Q53.6 12.6 58.4 11.6 M55.6 18.2 Q58.6 15.2 61.4 15.6')+ln('M43 13.6 Q47 9.8 52.4 9.4 Q56.6 9.6 59.4 12',.8,l);
+    case 'klasik': return `<path d="M37.3 29 Q35.8 14 44 10.6 Q52 8.6 59 11 Q64.6 14 62.7 29 Q61.6 21.4 57.6 19.4 Q51 18.4 45.6 19.6 L44.4 13.6 Q40.2 17.6 38.8 22.6 Q37.8 26 37.3 29Z" fill="${c}"/><path d="M44.4 13.4 L45.6 19.8" stroke="${shade(c,70)}" stroke-width=".7" opacity=".8"/>`+ln('M46.6 18.8 Q50 13 58.4 13.4 M47 15.4 Q52 11 58 11.6 M42.6 15.4 Q40.4 18.6 39.6 23')+ln('M48 12 Q53 9.6 58 10.6',.7,l);
+    case 'skinfade': return `<path d="M37.4 30 Q37 22 39.4 19.6 L40.4 21.6 Q39.2 25 39.2 30Z M62.6 30 Q63 22 60.6 19.6 L59.6 21.6 Q60.8 25 60.8 30Z" fill="${c}" opacity=".22"/><path d="M39.4 21.4 Q38.4 11 50 9.6 Q61.6 11 60.6 21.4 Q56 18.4 50 18.6 Q44 18.4 39.4 21.4Z" fill="${c}"/>`+ln('M42 17.6 l1-3.4 M45 17 l.8-4.4 M48 16.8 l.6-5 M51.4 16.8 l.2-5 M54.6 17 l-.2-4.6 M57.6 17.6 l-.6-3.8',.65)+ln('M43 12.6 Q50 10 57 12.6',.7,l);
+    case 'quiff': return `<path d="M37.4 29 Q37 24 38.4 21 L40 22.6 Q39.2 26 39.4 29Z M62.6 29 Q63 24 61.6 21 L60 22.6 Q60.8 26 60.6 29Z" fill="${c}" opacity=".55"/><path d="M38.6 23 Q37.2 13 43 10.4 Q48.6 7.4 54.6 5.6 Q60.4 5.4 61.8 10.6 Q63.6 15.6 61.6 23 Q59.6 19.6 56 18.6 Q50 17.4 44 18.6 Q40.4 19.6 38.6 23Z" fill="${c}"/>`+ln('M42.6 18.4 Q44 11.6 50.4 7.6 M47 18 Q49.6 11 56 6.8 M52.4 17.8 Q56 12 60.4 9.6')+ln('M46 9.6 Q51 6.4 57 6.2',.8,l);
+    case 'ivy': return `<path d="M37.6 27.6 Q36.6 15.6 43 12.4 Q50 10.6 57 12.4 Q63.4 15.6 62.4 27.6 Q61.4 22 58.6 20.2 Q53 19.4 48 20.4 L46.6 16.6 Q42 18.8 39.6 22.4 Q38.2 24.6 37.6 27.6Z" fill="${c}"/>`+ln('M48 20 Q51 15.4 58 15.4 M44 18 Q46 14 49 12.6')+ln('M45 13.2 Q50 11.4 55.6 12.6',.6,l);
+    case 'sezar': return `<path d="M37.6 27 Q36.8 14.4 50 12.8 Q63.2 14.4 62.4 27 Q62 23.4 61 22.2 L39 22.2 Q38 23.4 37.6 27Z" fill="${c}"/>`+ln('M40 22.2 l.4-2 M42.6 22.2 l.3-2.2 M45.2 22.2 l.2-2.4 M47.8 22.2 l.1-2.4 M50.4 22.2 l0-2.4 M53 22.2 l-.1-2.4 M55.6 22.2 l-.2-2.4 M58.2 22.2 l-.3-2.2 M60.6 22.2 l-.4-2')+ln('M42 15.6 Q50 13 58 15.6',.7,l);
     case 'kel': return `<ellipse cx="46" cy="16" rx="4.6" ry="2" fill="#fff" opacity=".2"/>`;
   }return ''
 }
@@ -526,6 +532,12 @@ function beard2(b,c){
     case 'cene': return `<path d="M37.8 33 Q38 41.6 41.4 45.8 L46 49.8 Q50 51.9 54 49.8 L58.6 45.8 Q62 41.6 62.2 33" stroke="${c}" stroke-width="1.6" fill="none"/>`;
     case 'kirli': return `<path d="${full}" fill="${c}" opacity=".33"/><path d="M45.6 41.6 Q50 40 54.4 41.6" stroke="${c}" stroke-opacity=".4" stroke-width="1.2" fill="none"/>`;
     case 'boxed': return `<path d="${full}" fill="${c}" stroke="${OL2}" stroke-width=".55"/>`+mus+`<path d="M40 38 l.6 2 M42.6 43.4 l.6 1.8 M57.4 43.4 l-.6 1.8 M60 38 l-.6 2 M48 49 l.2 1.4 M52 49 l-.2 1.4" stroke="${d}" stroke-width=".55"/>`;
+    case 'kisasakal': return `<path d="${full}" fill="${c}" opacity=".78" stroke="${OL2}" stroke-width=".4"/>`+mus+`<path d="M40.6 38 l.4 1.2 M43 43.6 l.4 1.2 M57 43.6 l-.4 1.2 M59.4 38 l-.4 1.2 M50 49 l0 1.2" stroke="${d}" stroke-width=".45"/>`;
+    case 'palakalin': return `<path d="M43.6 43 Q44 38.8 50 39.2 Q56 38.8 56.4 43 Q55.2 43.6 54.2 41.8 Q50 40.8 45.8 41.8 Q44.8 43.6 43.6 43Z" fill="${c}" stroke="${OL2}" stroke-width=".5"/><path d="M46 40.6 l.6 1 M48 40.2 l.4 1.2 M52 40.2 l-.4 1.2 M54 40.6 l-.6 1" stroke="${d}" stroke-width=".4"/>`;
+    case 'balbo': return mus+`<path d="M44.4 44 Q44.8 49.8 50 51.8 Q55.2 49.8 55.6 44 Q53.2 45.6 50 45.4 Q46.8 45.6 44.4 44Z" fill="${c}" stroke="${OL2}" stroke-width=".45"/><path d="M48.8 43.6 Q50 44.6 51.2 43.6 L50 45.2Z" fill="${c}"/>`;
+    case 'vandyke': return `<path d="M44.6 41.4 Q47 39.6 50 40.4 Q53 39.6 55.4 41.4 Q56.6 40.6 57 39.4 Q56.2 42.6 54 41.9 Q50 41.4 46 41.9 Q43.8 42.6 43 39.4 Q43.4 40.6 44.6 41.4Z" fill="${c}" stroke="${OL2}" stroke-width=".45"/><path d="M47.2 44.6 Q47.4 49.4 50 54 Q52.6 49.4 52.8 44.6 Q50 45.8 47.2 44.6Z" fill="${c}" stroke="${OL2}" stroke-width=".45"/>`;
+    case 'favori': return `<path d="M37.7 29 L37.9 39.6 Q39.4 44.6 43.2 45 Q45 43 45.6 41.6 Q47.6 39.8 50 40.4 Q52.4 39.8 54.4 41.6 Q55 43 56.8 45 Q60.6 44.6 62.1 39.6 L62.3 29 Q61 36.6 58 40.4 Q55 39.2 50 39.4 Q45 39.2 42 40.4 Q39 36.6 37.7 29Z" fill="${c}" stroke="${OL2}" stroke-width=".5"/>`;
+    case 'garibaldi': return `<path d="M36.9 30.6 Q36.6 44 41.4 49.6 Q46 55.8 50 56.2 Q54 55.8 58.6 49.6 Q63.4 44 63.1 30.6 Q60.6 41 56.2 42.6 Q53 40.6 50 40.6 Q47 40.6 43.8 42.6 Q39.4 41 36.9 30.6Z" fill="${c}" stroke="${OL2}" stroke-width=".55"/>`+mus+`<path d="M39.4 37 l.7 2.2 M41 44.4 l.9 2 M45 50 l.6 2 M50 51.6 l0 2 M55 50 l-.6 2 M59 44.4 l-.9 2 M60.6 37 l-.7 2.2" stroke="${d}" stroke-width=".55"/>`;
     case 'tam': return `<path d="M37.3 31.6 Q37.4 42.4 41 47 L46 52.6 Q50 55.2 54 52.6 L59 47 Q62.6 42.4 62.7 31.6 Q60.6 41 56.2 42.6 Q53 40.6 50 40.6 Q47 40.6 43.8 42.6 Q39.4 41 37.3 31.6Z" fill="${c}" stroke="${OL2}" stroke-width=".55"/>`+mus+`<path d="M39.6 37 l.7 2.2 M41.6 44 l.8 2 M45.6 49 l.5 1.8 M54.4 49 l-.5 1.8 M58.4 44 l-.8 2 M60.4 37 l-.7 2.2" stroke="${d}" stroke-width=".55"/><path d="M47 45 Q50 46.4 53 45" stroke="${d}" stroke-width=".5" fill="none"/>`;
   }return ''
 }
@@ -570,11 +582,21 @@ function acc2(a){
     case 'fotr': return `<ellipse cx="50" cy="20.6" rx="20" ry="3.8" fill="#1c1c20" stroke="${OL2}" stroke-width=".5"/><path d="M38.6 20.6 Q38.4 6.4 50 6.2 Q61.6 6.4 61.4 20.6Z" fill="#26262c" stroke="${OL2}" stroke-width=".5"/><rect x="38.7" y="15.6" width="22.6" height="3.2" fill="#7c1f1f"/><path d="M46 7.6 Q50 10.4 54 7.6" stroke="#141417" stroke-width=".9" fill="none"/>`;
     case 'yara': return `<path d="M57.6 28 L59.8 38.4" stroke="#a9554c" stroke-width="1.1" stroke-linecap="round"/><path d="M57.4 31 L59.6 30.4 M58.2 34.2 L60.4 33.6" stroke="#a9554c" stroke-width=".7"/>`;
     case 'boyun': return `<g fill="#1f2b3d" opacity=".75"><path d="M52.6 47.6 q1.6-2.4 3.2 0 q-1.6 .9-1.6 3 q-.8-1.6-1.6-3Z"/></g><path d="M54.2 50.6 v3.2" stroke="#1f2b3d" stroke-width=".6" opacity=".75"/>`;
+    case 'kasust': return `<path d="M53.2 25.6 q.5-.9 1-.1 t1 0 t1 0 t1 0 t1 0 M53.8 26.4 h4.4" stroke="#1f2b3d" stroke-width=".42" fill="none" opacity=".85"/>`;
+    case 'yildiz': return `<path d="M61.4 29.6 l.42 1 1.08.08 -.82.7 .26 1.06 -.94-.58 -.94.58 .26-1.06 -.82-.7 1.08-.08Z" fill="#1f2b3d" opacity=".85"/>`;
+    case 'elmacikgul': return `<g opacity=".85"><circle cx="59.6" cy="37" r="1.15" fill="none" stroke="#7a1f2b" stroke-width=".45"/><path d="M59.6 36.3 q.6.2.4.8 q-.6.4-.9-.2" stroke="#7a1f2b" stroke-width=".35" fill="none"/><path d="M58.6 37.8 q-.9.5-1.4.2 M60.6 37.8 q.9.5 1.4.2" stroke="#2f5a3a" stroke-width=".4" fill="none"/></g>`;
+    case 'cizgi3': return `<path d="M39.6 33.6 l1.6 1.2 M39.4 35 l1.6 1.2 M39.2 36.4 l1.6 1.2" stroke="#1f2b3d" stroke-width=".5" stroke-linecap="round" opacity=".85"/>`;
+    case 'alinyazi': return `<text x="50" y="24.4" text-anchor="middle" font-size="2.3" font-family="Georgia,serif" font-style="italic" fill="#1f2b3d" opacity=".8" letter-spacing=".15">Sadakat</text>`;
     case 'gozyasi': return `<path d="M43.6 35 q.8 1.1 0 2 q-.8-.9 0-2Z" fill="#1f2b3d"/>`;
     case 'kaskesik': return `<path d="M56.4 26.4 L55.8 29" stroke="var(--sk)" stroke-width=".9"/>`;
     case 'altindis': return `<rect x="51.4" y="42.3" width="1.4" height="1.1" rx=".25" fill="#e3b33c"/>`;
   }return ''
 }
+function neckTat(a){let t='';const ink='#1f2b3d';
+  if(a.includes('boyun2'))t+=`<g stroke="${ink}" fill="none" stroke-linecap="round" opacity=".85"><path d="M44 56.6 Q45.6 52.6 44.4 48.4 Q46.6 51 46.8 54 Q47.4 51.6 46.6 49.4 Q48.6 52 48.4 55.6" stroke-width=".75"/><path d="M56 56.6 Q54.4 52.6 55.6 48.4 Q53.4 51 53.2 54 Q52.6 51.6 53.4 49.4 Q51.4 52 51.6 55.6" stroke-width=".75"/><path d="M48.8 57.4 Q50 54.2 51.2 57.4 M50 54.2 L50 52.6" stroke-width=".6"/><path d="M45 50.6 l.9.5 M55 50.6 l-.9.5 M45.4 53.4 l.9.3 M54.6 53.4 l-.9.3" stroke-width=".35"/></g>`;
+  if(a.includes('boyun3'))t+=`<g stroke="${ink}" stroke-linecap="round" opacity=".88"><path d="M50 52.6 Q46.6 50.4 43.6 51.2 Q45.2 52 44.4 53.2 Q46 53.2 46.2 54.6 Q48 53.8 50 55.2 Q52 53.8 53.8 54.6 Q54 53.2 55.6 53.2 Q54.8 52 56.4 51.2 Q53.4 50.4 50 52.6Z" fill="${ink}" fill-opacity=".22" stroke-width=".5"/><path d="M45 51.8 l1.4.8 M45.4 53 l1.4.4 M46.6 54 l1.2.2 M55 51.8 l-1.4.8 M54.6 53 l-1.4.4 M53.4 54 l-1.2.2" stroke-width=".35"/><path d="M50 52.6 L49 51.4 Q50 50.6 51 51.4Z" fill="${ink}" stroke-width=".35"/><path d="M48.6 55.4 L50 57.6 L51.4 55.4 M49.4 55.8 L50 56.8 L50.6 55.8" stroke-width=".45" fill="none"/></g>`;
+  if(a.includes('boyun'))t+=`<g opacity=".88"><circle cx="53.6" cy="51.4" r="1.6" fill="#7a1f2b"/><path d="M53.6 50.4 q1 .3 .7 1.2 q-.9.6-1.4-.3 q.2-.8 1.1-.6" stroke="#3a0d14" stroke-width=".35" fill="none"/><path d="M52.2 52.4 q-1.4.8-2.2.2 M54.8 52.6 q1 1 1.4 1.8" stroke="#2f5a3a" stroke-width=".55" fill="none"/><path d="M45 55 q1-.8 2 0 t2 0 t2 0" stroke="${ink}" stroke-width=".4" fill="none"/></g>`;
+  return t}
 function avatarSVG2(L,age,opts){
   const skin=SKINS[L.skin],sd=shade(skin,-20),sdd=shade(skin,-40),id='b'+(++uid);
   let hc=HCOL[L.hairColor];
@@ -587,6 +609,7 @@ function avatarSVG2(L,age,opts){
   s+=G(hair2Back(L.hair,hc));
   // boyun
   s+=G(`<path d="M44.2 44 L43.8 56.4 Q50 59.6 56.2 56.4 L55.8 44Z" fill="${skin}"/>`)+`<path d="M44.1 47 Q50 54 55.9 47 L56 51.4 Q50 56 44 51.4Z" fill="${sd}"/><path d="M53.4 52 L54.4 57" stroke="${sd}" stroke-width=".8"/>`;
+  if(accs.some(a=>a==='boyun'||a==='boyun2'||a==='boyun3'))s+=`<defs><clipPath id="${id}nk"><path d="M44.3 44 L43.9 56.3 Q50 59.4 56.1 56.3 L55.7 44Z"/></clipPath></defs><g clip-path="url(#${id}nk)">${neckTat(accs)}</g>`;
   s+=G(body2(o,(L.oc||{})[o]));
   ['zincir','kartal','bayrak'].forEach(a=>{if(accs.includes(a))s+=acc2(a)});
   // kulaklar
@@ -615,7 +638,7 @@ function avatarSVG2(L,age,opts){
   if(age>=50)s+=`<path d="M43 23.4 Q47 22.6 50 23.4 Q53 22.6 57 23.4 M41 34.4 L42 35.2 M59 34.4 L58 35.2" stroke="${sdd}" stroke-width=".55" fill="none" opacity=".7"/>`;
   s+=G(hair2(L.hair,hc));
   if(age>=40&&age<58&&!['kel','asker'].includes(L.hair)&&!['gri','beyaz'].includes(L.hairColor))s+=`<path d="M37.8 30 Q37.4 25 38.6 21.6 M62.2 30 Q62.6 25 61.4 21.6" stroke="#c4c4c4" stroke-width="1.4" opacity=".6" fill="none" stroke-linecap="round"/>`;
-  ['boyun','gozyasi','kaskesik','altindis','kupe','yara','gozluk','puro','fotr','kasket'].forEach(a=>{if(accs.includes(a))s+=acc2(a)});
+  ['gozyasi','kasust','yildiz','elmacikgul','cizgi3','alinyazi','kaskesik','altindis','kupe','yara','gozluk','puro','fotr','kasket'].forEach(a=>{if(accs.includes(a))s+=acc2(a)});
   {const jw=opts.jw||[];if(adult&&!opts.jail&&jw.length&&jw.some(j=>['saat','yuzuk','pirlanta','yakut'].includes(j))){
     if(jw.includes('saat'))s+=`<rect x="13.6" y="100" width="9" height="3" rx=".8" fill="#c9a24a" stroke="${OL2}" stroke-width=".4"/><circle cx="18.1" cy="101.5" r="1.8" fill="#e8e1cc" stroke="#9c7a2e" stroke-width=".5"/>`;
     if(jw.some(j=>['yuzuk','pirlanta','yakut'].includes(j)))s+=`<circle cx="80.4" cy="104.6" r="1.4" fill="${jw.includes('yakut')?'#b0182a':jw.includes('pirlanta')?'#eef5ff':'#d6a634'}" stroke="#a3801f" stroke-width=".4"/>`}}
@@ -1148,7 +1171,7 @@ function ensure(){
   ensureOrg();
   if(!S.accts)S.accts=[];
   if(!S.econ)S.econ={ph:'yuksek',left:R(3,6)};if(!S.cpi)S.cpi=1;if(!S.infl)S.infl=.32;if(!S.fx)S.fx={usd:42.5,eur:49.3};if(!S.fxh)S.fxh={usd:[S.fx.usd],eur:[S.fx.eur]};if(!S.fxw)S.fxw={usd:0,eur:0};if(!S.council)S.council={rel:{},chair:false,rules:[],chairEnd:0};applyCPI();
-  if(S.club===undefined)S.club=null;if(S.co===undefined)S.co=null;if(S.label===undefined)S.label=null;if(S.gal===undefined)S.gal=null;if(S.black===undefined)S.black=0;if(!S.watches)S.watches=[];if(S.goldKg===undefined)S.goldKg=0;if(!S.goldUsd)S.goldUsd=124000;if(S.jewels.some(j=>j.id==='kulce')){const n=S.jewels.filter(j=>j.id==='kulce').length;S.jewels=S.jewels.filter(j=>j.id!=='kulce');S.goldKg+=n;S.goldCost=(S.goldCost||0)+n*GKG()}if(!S.orders)S.orders={};if(!S.origin)S.origin='istanbul';if(!S.famBg)S.famBg='orta';
+  if(S.club===undefined)S.club=null;if(S.co===undefined)S.co=null;if(S.label===undefined)S.label=null;if(S.gal===undefined)S.gal=null;if(S.black===undefined)S.black=0;if(!S.watches)S.watches=[];if(S.gender!=='k'&&['uzun','atkuyrugu','topuz','dalgali'].includes(S.look.hair))S.look.hair='italyan';if(S.goldKg===undefined)S.goldKg=0;if(!S.goldUsd)S.goldUsd=124000;if(S.jewels.some(j=>j.id==='kulce')){const n=S.jewels.filter(j=>j.id==='kulce').length;S.jewels=S.jewels.filter(j=>j.id!=='kulce');S.goldKg+=n;S.goldCost=(S.goldCost||0)+n*GKG()}if(!S.orders)S.orders={};if(!S.origin)S.origin='istanbul';if(!S.famBg)S.famBg='orta';
   ensureBosses();if(!S.artists)S.artists=[];if(!S.sm)S.sm={f:0,ver:false};if(!S.offs)S.offs={};if(S.abroad===undefined)S.abroad=null;
   migrateCars();
   if(!S.lux)S.lux=[];if(!S.papers)S.papers=[];if(S.fame===undefined)S.fame=0;if(!S.ach)S.ach={};
