@@ -2,6 +2,8 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <title>Mafia Life Simulator</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -281,6 +283,9 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <div class="toast" id="toast"></div>
 
 <script>
+/* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
+const APPV='2026.10.30-1655';
+(function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
 const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
@@ -3190,6 +3195,7 @@ function openSheet(k){
   }
   if(EXTRA[k]){const r=EXTRA[k]();T=r[0];h=r[1]}
   if(k==='ayar')h=('<div class="sec">Oyun</div>').replace('<div class="sec">Oyun</div>',`<div class="sec">Ekran</div><p class="note">Alt menü ekranın altında kalıyorsa yukarı al. Bu ayar sadece bu cihazda geçerli.</p><div class="row" style="justify-content:space-between"><span class="tx"><b>Alt menü boşluğu</b><span>${BOTMAN===null?'Otomatik · '+BOT+' px':BOT+' px'}</span></span><span style="display:flex;gap:6px"><button class="x" data-x="bot:-" aria-label="Aşağı">−</button><button class="x" data-x="bot:+" aria-label="Yukarı">+</button><button class="tab" data-x="bot:auto">Oto</button></span></div>`+'<div class="sec">Çizim stili</div><div class="grid">'+AVSTYLES.map(([k,n])=>`<button class="it ${AVST===k?'on':''}" data-x="avst:${k}"><div class="av">${avatarSVG(S.look,Math.max(S.age,18),{st:k,jw:(S.jewels||[]).map(j=>j.id)})}</div><b>${n}</b></button>`).join('')+'</div>'+'<div class="sec">Oyun menüsü</div>'+row('data-x="menu:"','🏠','Ana menü','Kayıt yuvaları, tema, yeni oyun','›',false)+'<div class="sec">Mini oyunlar</div>'+row('data-x="mgtog:"','🎮','Mini oyunlar',S.mgOff?'Kapalı · Her şey otomatik zarla':'Açık · Kasa, kovalamaca, dövüş',S.mgOff?'Aç':'Kapat',false)+'<div class="sec">Premium</div>'+(S.premium?row('data-x="selfed:"','✏️','Kendini düzenle','Sağlık, saygı, karizma, ün… (profil fotoğrafına dokunarak da açılır)','›',false):'')+row('data-x="prem:"','👑','Dayı Paketi',S.premium?'Açık · Her zor anda avantajlı premium seçenekler':'Kapalı · Dokun ve aç',S.premium?'Kapat':'Aç',false)+saveSection()+'<div class="sec">Oyun</div>');
+  if(k==='ayar')h+=`<p class="note" style="text-align:center;margin-top:18px">Mafia Life Simulator · Sürüm ${APPV}</p>`;
   if(k==='ayar'){const a=h.indexOf('<div class="sec">Ekran</div>'),b=h.indexOf('<div class="sec">Oyun menüsü</div>');if(a>=0&&b>a){const disp=h.slice(a,b);h=h.slice(0,a)+h.slice(b);h=h.replace('<div class="sec">Oyun</div>',disp+'<div class="sec">Oyun</div>')}}
   if(k==='ayar')h=h.replace('<div class="sec">Oyun</div>','<div class="sec">Oyun</div>'+row('data-new="1"','↺','Yeni hayat başlat','Bu karakter silinir','',false));
   $('shBack').style.display=(backTo&&k!=='hayat')?'':'none';
@@ -3271,7 +3277,7 @@ function render(){
   $('hav').innerHTML=avatarSVG(S.look,S.age,{jail:S.jail>0,mood:S.happy,jw:S.jewels.map(j=>j.id)});
   $('hname').textContent=`${S.first} ${S.last}`;
   $('hsub').innerHTML=`${S.age} yaş${S.age>=14?' · '+SEASONS[S.q||0]:''} · <b>${RANKS[rk].n}</b>${S.org?' · '+S.org.name:S.family?' · '+S.family.replace(' Ailesi',''):''}`;
-  $('hmoney').textContent=fmtS(S.money);{const hb=$('hblack');if(hb){hb.style.display=S.black>0?'block':'none';hb.textContent='🖤 '+fmtS(S.black||0)}}
+  $('hmoney').textContent=fmtS(S.money);{const hb=$('hblack');if(hb){hb.style.display='block';hb.textContent='🖤 '+fmtS(S.black||0)}}
   $('advSub').textContent=S.age<14?'1 YIL':'3 AY';$('nUndo').disabled=!UNDO.length;
   const bn=$('banner');
   if(S.jail){bn.className='banner on';bn.textContent=`Cezaevindesin · ${fmtJ(S.jail)} kaldı`}
@@ -3396,7 +3402,7 @@ ${txt?`<text x="100" y="236" text-anchor="middle" font-family="Georgia,'Times Ne
 function showTitle(){$('title').classList.add('on');drawTitle()}
 function hideTitle(){$('title').classList.remove('on')}
 function drawTitle(){const P=PENDING;const cont=P&&(P.alive||(P.kids&&P.kids.length));
-  let h=`<img src="${LOGO}" alt="Mafia Life Simulator" style="display:block;width:min(240px,64vw);aspect-ratio:1;margin:4px auto 0;filter:drop-shadow(0 8px 24px #000c)"><p class="tag" style="margin-top:12px">Sokaktan tahta bir ömür</p>`;
+  let h=`<img src="${LOGO}" alt="Mafia Life Simulator" style="display:block;width:min(240px,64vw);aspect-ratio:1;margin:4px auto 0;filter:drop-shadow(0 8px 24px #000c)"><p class="tag" style="margin-top:12px">Sokaktan tahta bir ömür</p><p class="note" style="text-align:center;margin:-8px 0 8px;font-size:11px">Sürüm ${APPV}</p>`;
   if(cont)h+=`<button class="btn" id="tCont">Devam et · ${P.first} ${P.last}, ${P.age} yaş</button>`;
   h+='<div class="sec" style="margin-top:22px">Kayıt yuvaları</div><p class="note">Her yuvada ayrı bir oyun. Oynadığın yuva otomatik kaydedilir.</p>';
   ['slot1','slot2','slot3'].forEach((k,i)=>{const sl=SLOTS[k];h+=`<div class="slot"><button class="row" data-ts="${k}"><span class="ic">${sl?'💾':'➕'}</span><span class="tx"><b>${sl?sl.name:'Boş yuva '+(i+1)}</b><span>${sl?`${sl.age} yaş · ${sl.rank} · ${ago(sl.at)}${sl.alive?'':' · vefat etti'}`:'Yeni oyun başlat'}</span></span><span class="rt">${sl?'Yükle':'Yeni oyun'}</span></button>${sl?`<button class="tab" data-td="${k}">Sil</button>`:''}</div>`});
