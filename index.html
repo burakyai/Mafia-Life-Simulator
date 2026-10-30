@@ -284,7 +284,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
-const APPV='2026.10.30-1655';
+const APPV='2026.10.30-1735';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -349,7 +349,6 @@ const JEWELS=[
   {id:'bilezik',n:'Burma bilezik',ic:'📿',p:15000,k:1},
   {id:'yuzuk',n:'Altın mühür yüzük',ic:'💍',p:30000,k:2},
   {id:'saat',n:'İsviçre kol saati',ic:'⌚',p:90000,k:3},
-  {id:'kulce',n:'1 kg altın külçe',ic:'🥇',p:250000,k:0,inv:true},
   {id:'pirlanta',n:'Tek taş pırlanta',ic:'💎',p:600000,k:4},
   {id:'yakut',n:'Osmanlı yakut yüzük',ic:'🔴',p:2000000,k:7,rank:4}
 ];
@@ -726,7 +725,7 @@ function load(){try{const t=localStorage.getItem(KEY);return t?JSON.parse(t):nul
 function fixHac(){if(!S)return;['look','owned'].forEach(k=>{const a=S[k]&&S[k].acc;if(a){const i=a.indexOf('hac');if(i>=0)a[i]='kartal'}})}
 function karizma(){if(S&&((S.look&&S.look.acc.includes('hac'))||(S.owned&&S.owned.acc.includes('hac'))))fixHac();let k=(WARD.outfit.find(o=>o.id===S.look.outfit)||{k:0}).k;S.look.acc.forEach(a=>{const it=WARD.acc.find(x=>x.id===a);if(it)k+=it.k});
   {const cc=S.car&&Array.isArray(S.cars)&&S.cars.find(x=>x.uid===S.car);if(cc&&CM(cc.mid))k+=CM(cc.mid).k}
-  S.jewels.forEach(j=>k+=JEWELS.find(x=>x.id===j.id).k);
+  S.jewels.forEach(j=>{const x=JEWELS.find(y=>y.id===j.id);if(x)k+=x.k});{const ws=(S.watches||[]).map(o=>WATCHES.find(w=>w.id===o.id)).filter(Boolean).sort((a,b)=>b.k-a.k);if(ws.length)k+=ws[0].k+Math.min(4,ws.length-1)}
   (S.lux||[]).forEach(id=>{const l=LUX.find(x=>x.id===id);if(l)k+=l.k});if(S.origin==='istanbul')k+=1;k+=Math.round((S.fame||0)/10);k+=(S.kb||0)+Math.round(((S.guz===undefined?50:S.guz)-50)/10);
   if(S.age<16)k=0;return k}
 function has(id){return S.staff.some(x=>x.id===id)}
@@ -818,7 +817,7 @@ function ageUp(){
   }
   quarterSystems(f);
   payExpenses(f);
-  if(!kid){orgQuarter(f);eduQuarter();polQuarter();fxQuarter();acctQuarter();bossQuarter();relQuarter();abroadQuarter();artistsQuarter();smQuarter();clubQuarter();coQuarter();labelQuarter();galQuarter();semtQuarter();routesQuarter();blackQuarter()}
+  if(!kid){orgQuarter(f);eduQuarter();polQuarter();fxQuarter();acctQuarter();bossQuarter();relQuarter();abroadQuarter();artistsQuarter();smQuarter();clubQuarter();coQuarter();labelQuarter();galQuarter();semtQuarter();routesQuarter();blackQuarter();goldQuarter()}
   if(newYear){if(hasL('yat'))add('happy',3);if(hasL('kangal'))add('happy',1)}
   if(newYear&&!kid){econYear();councilYear()}
   if(newYear){carYear();yearSystems();if(!kid)taxTime()}
@@ -1149,7 +1148,7 @@ function ensure(){
   ensureOrg();
   if(!S.accts)S.accts=[];
   if(!S.econ)S.econ={ph:'yuksek',left:R(3,6)};if(!S.cpi)S.cpi=1;if(!S.infl)S.infl=.32;if(!S.fx)S.fx={usd:42.5,eur:49.3};if(!S.fxh)S.fxh={usd:[S.fx.usd],eur:[S.fx.eur]};if(!S.fxw)S.fxw={usd:0,eur:0};if(!S.council)S.council={rel:{},chair:false,rules:[],chairEnd:0};applyCPI();
-  if(S.club===undefined)S.club=null;if(S.co===undefined)S.co=null;if(S.label===undefined)S.label=null;if(S.gal===undefined)S.gal=null;if(S.black===undefined)S.black=0;if(!S.orders)S.orders={};if(!S.origin)S.origin='istanbul';if(!S.famBg)S.famBg='orta';
+  if(S.club===undefined)S.club=null;if(S.co===undefined)S.co=null;if(S.label===undefined)S.label=null;if(S.gal===undefined)S.gal=null;if(S.black===undefined)S.black=0;if(!S.watches)S.watches=[];if(S.goldKg===undefined)S.goldKg=0;if(!S.goldUsd)S.goldUsd=124000;if(S.jewels.some(j=>j.id==='kulce')){const n=S.jewels.filter(j=>j.id==='kulce').length;S.jewels=S.jewels.filter(j=>j.id!=='kulce');S.goldKg+=n;S.goldCost=(S.goldCost||0)+n*GKG()}if(!S.orders)S.orders={};if(!S.origin)S.origin='istanbul';if(!S.famBg)S.famBg='orta';
   ensureBosses();if(!S.artists)S.artists=[];if(!S.sm)S.sm={f:0,ver:false};if(!S.offs)S.offs={};if(S.abroad===undefined)S.abroad=null;
   migrateCars();
   if(!S.lux)S.lux=[];if(!S.papers)S.papers=[];if(S.fame===undefined)S.fame=0;if(!S.ach)S.ach={};
@@ -1171,7 +1170,7 @@ const hval=o=>Math.round(HT(o.t).p*S.hidx*o.q);
 const portVal=()=>Object.keys(S.stocks).reduce((s,id)=>s+S.stocks[id].sh*S.px[id].p,0);
 function netWorth(){
   let n=S.money+S.bank.dep+portVal()+acctTotal();
-  S.jewels.forEach(j=>n+=j.val);S.cars.forEach(c=>n+=c.val||0);
+  S.jewels.forEach(j=>n+=j.val);(S.watches||[]).forEach(o=>n+=Math.round(o.usd*(S.fx?S.fx.usd:42.5)));n+=(S.goldKg||0)*GKG();S.cars.forEach(c=>n+=c.val||0);
   S.houses.forEach(o=>n+=hval(o));S.props.forEach(p=>n+=PROPS.find(x=>x.id===p).p*.7);
   n+=fxVal();if(S.offs&&S.offs.offAmt)n+=S.offs.offAmt;
   if(S.club)n+=LEAGUES[S.club.lv].price*.8+S.club.cash;if(S.co)S.co.projects.forEach(p=>n+=p.paid*1.1);if(S.label)n+=S.label.cash+lblRev()*8;if(S.gal)n+=S.gal.stock.reduce((t,c)=>t+galVal(c),0);n+=S.black||0;
@@ -1203,7 +1202,7 @@ function quarterSystems(f){
 function stockR(st,n,f){return st.d*f-st.v*st.v*f/2+st.v*Math.sqrt(f)*n}
 function yearSystems(){
   S.hidx=+(S.hidx*(1+(S.infl||.3)+R(-8,6)/100)).toFixed(3);
-  S.jewels.forEach(j=>{const d=JEWELS.find(x=>x.id===j.id);j.val=Math.max(Math.round(d.p*.4),Math.round(j.val*(1+R(d.inv?-10:-5,d.inv?18:8)/100)))});
+  watchYear();S.jewels.forEach(j=>{const d=JEWELS.find(x=>x.id===j.id);if(!d)return;j.val=Math.max(Math.round(d.p*.4),Math.round(j.val*(1+R(d.inv?-10:-5,d.inv?18:8)/100)))});
   const b=S.bank;
   if(b.loan){const L=b.loan;
     fund(L.pay);if(S.money>=L.pay){S.money-=L.pay;L.left--;b.score=Math.min(1900,b.score+40);log(`Kredi taksiti ödendi: ${fmt(L.pay)}. ${L.left?L.left+' taksit kaldı.':'Kredin bitti.'}`,L.left?'dim':'good');if(!L.left)b.loan=null}
@@ -1483,7 +1482,7 @@ function inherit(id){
     owned:{outfit:[...new Set(['tisort','esofman',...P.owned.outfit])],acc:P.owned.acc.filter(a=>a!=='yara')},
     money:Math.max(0,cash),health:R(80,100),happy:clamp(R(40,60)),respect:Math.round(P.respect*.35*crewBonus),heat:Math.round(P.heat*.3),
     family:(k.age>=16&&P.family&&!P.snitch)?P.family:null,boss:false,jail:0,jailYears:0,
-    props:[...P.props],cars:P.cars.map(c=>({...c})),car:P.car,jewels:P.jewels.map(j=>({...j})),staff:[...P.staff],friends:[],houses:P.houses.map(h=>({...h})),home:P.home,
+    props:[...P.props],cars:P.cars.map(c=>({...c})),car:P.car,jewels:P.jewels.map(j=>({...j})),watches:(P.watches||[]).map(o=>({...o})),goldKg:P.goldKg||0,goldCost:P.goldCost||0,goldUsd:P.goldUsd,staff:[...P.staff],friends:[],houses:P.houses.map(h=>({...h})),home:P.home,
     school:true,snitch:false,lastRank:0,hurtCause:null,cause:null,peak:0,
     hidx:P.hidx,px:P.px,stocks:P.stocks,bank:{dep:0,score:1200,loan:null,card:null},state:{rec:false,trust:0},
     org:P.org?{...P.org,members:P.org.members.filter(m=>m.relId!==undefined||true)}:null,rivals:P.rivals,exFamily:P.exFamily,
@@ -2714,6 +2713,49 @@ EV(2,()=>okE()&&S.age>=22,()=>{const n=`${pick(['Bakkal','Kasap','Berber','Kuyum
   {t:'Bir yıl süre ver',sub:'Sonra faiziyle öder',fn:()=>{later('borc',4,{n,m});log(`${n}'e bir yıl süre verdin.`,'good')}},
   {t:'Borcu sil',sub:'Halk seni sever',fn:()=>{S.fame=clamp((S.fame||0)+4);add('happy',6);log(`${n}'in borcunu sildin. Mahalle seni konuşuyor.`,'good')}}]}});
 LATER.borc=d=>({title:'Borç ödendi',text:`${d.n} sözünü tuttu, borcunu faiziyle getirdi ve elini öptü.`,choices:[{t:'Al',sub:fmt(Math.round(d.m*1.4)),fn:()=>{S.money+=Math.round(d.m*1.4);gainResp(3);log('Mahallede adın "sözünün eri" diye anılıyor.','good')}}]});
+/* ============ Lüks saatler ve kilo ile altın ============ */
+const WATCHES=[
+  ['rx_sub','Rolex','Submariner Date',14500,3,'spor'],['rx_gmt','Rolex','GMT-Master II "Pepsi"',23000,4,'spor'],['rx_dj','Rolex','Datejust 41',11500,3,'klasik'],
+  ['rx_day','Rolex','Cosmograph Daytona',36000,5,'spor'],['rx_ym','Rolex','Yacht-Master 42 Altın',32000,5,'spor'],['rx_dd','Rolex','Day-Date 40 "Başkan"',46000,6,'altin'],['rx_ddi','Rolex','Day-Date Pırlanta Taşlı',95000,8,'altin'],
+  ['pp_cal','Patek Philippe','Calatrava',36000,5,'klasik'],['pp_aq','Patek Philippe','Aquanaut',72000,6,'spor'],['pp_nau','Patek Philippe','Nautilus 5711',135000,8,'spor'],['pp_pc','Patek Philippe','Perpetual Chronograph',210000,9,'komp'],['pp_gm','Patek Philippe','Grandmaster Chime',2800000,14,'komp',5],
+  ['ap_ro','Audemars Piguet','Royal Oak 15510',62000,6,'spor'],['ap_off','Audemars Piguet','Royal Oak Offshore',42000,5,'spor'],['ap_pc','Audemars Piguet','Royal Oak Perpetual Calendar',175000,8,'komp'],['ap_tb','Audemars Piguet','Royal Oak Tourbillon',320000,10,'komp',4],
+  ['rm_011','Richard Mille','RM 011 Felipe Massa',260000,10,'spor'],['rm_35','Richard Mille','RM 35-02 Rafael Nadal',360000,11,'spor',4],['rm_56','Richard Mille','RM 56 Safir',2200000,14,'komp',5],
+  ['vc_ov','Vacheron Constantin','Overseas',42000,5,'spor'],['hb_bb','Hublot','Big Bang Unico',21000,4,'spor'],['om_sp','Omega','Speedmaster Moonwatch',7600,2,'spor'],['ca_san','Cartier','Santos de Cartier',8200,2,'klasik']
+].map(([id,b,m,usd,k,tip,rank])=>({id,b,m,n:`${b} ${m}`,usd,k,tip,rank}));
+const WBR=['Rolex','Patek Philippe','Audemars Piguet','Richard Mille','Diğer'];
+let wBr='Rolex';
+const WP=w=>Math.round(w.usd*(S.fx?S.fx.usd:42.5)/1000)*1000;
+const GKG=()=>Math.round((S.goldUsd||124000)*(S.fx?S.fx.usd:42.5));
+function watchYear(){(S.watches||[]).forEach(o=>{const w=WATCHES.find(x=>x.id===o.id);if(!w)return;const r=w.tip==='spor'&&['Rolex','Patek Philippe','Audemars Piguet','Richard Mille'].includes(w.b)?R(-3,14):w.tip==='komp'?R(-2,10):R(-8,5);o.usd=Math.max(Math.round(w.usd*.5),Math.round(o.usd*(1+r/100)))})}
+function goldQuarter(){S.goldUsd=Math.round((S.goldUsd||124000)*(1+R(-5,7)/100));S.goldH=S.goldH||[];S.goldH.push(GKG());if(S.goldH.length>16)S.goldH.shift()}
+ACT.wbr=b=>{wBr=b;openSheet('varlik')};
+ACT.wbuy=id=>{const w=WATCHES.find(x=>x.id===id);if(!w)return;const p=WP(w);closeSheet();
+  queue({back:'varlik',title:`⌚ ${w.n}`,text:`${w.b} · Karizma +${w.k}. Fiyat ${fmt(p)} ($${w.usd.toLocaleString('tr-TR')}). ${w.tip==='spor'||w.tip==='komp'?'Bu model yıllar içinde değer kazanabilir.':'Klasik model; değeri yavaş düşer.'}`,
+    prem:{t:'Dayının saatçisi',sub:`Bekleme listesi yok · %20 indirim · ${fmt(Math.round(p*.8))}`,fn:()=>wAdd(w,Math.round(p*.8))},
+    choices:[{t:'Satın al',sub:fmt(p),dis:!canPay(p),fn:()=>wAdd(w,p)},
+      {t:'Gri piyasadan al',sub:`${fmt(Math.round(p*.85))} · %15 ucuz ama %10 sahte çıkma riski`,dis:!canPay(Math.round(p*.85)),fn:()=>{const c=Math.round(p*.85);if(ch(.1)){pay(c);log(`Aldığın ${w.n} sahte çıktı! ${fmt(c)} çöpe gitti.`,'bad')}else wAdd(w,c)}},
+      {t:'Vazgeç',fn:()=>{}}]})};
+function wAdd(w,c){if(!pay(c))return;S.watches=S.watches||[];S.watches.push({id:w.id,usd:w.usd,buy:c});add('happy',R(3,8));log(`⌚ ${w.n} artık bileğinde.`,'gold');if(w.usd>=200000)news(`${S.first} ${S.last}'in bileğindeki ${w.b} konuşuluyor`,1)}
+ACT.wmy=i=>{const o=S.watches[+i];if(!o)return;const w=WATCHES.find(x=>x.id===o.id);const v=Math.round(o.usd*S.fx.usd);closeSheet();
+  queue({back:'varlik',title:`⌚ ${w.n}`,text:`Bugünkü değeri ${fmt(v)} · Aldığın fiyat ${fmt(o.buy)} · ${v>=o.buy?'Kâr':'Zarar'} ${fmt(Math.abs(v-o.buy))}`,choices:[{t:'Sat',sub:fmt(Math.round(v*.92)),fn:()=>{S.money+=Math.round(v*.92);S.watches.splice(+i,1);log(`${w.n} saatini ${fmt(Math.round(v*.92))}'ye sattın.`,'dim')}},{t:'Vazgeç',fn:()=>{}}]})};
+function goldModal(mode){closeSheet();const pk=GKG();const own=S.goldKg||0;const max=mode==='al'?Math.floor(availCash()/pk*1000)/1000:own;
+  queue({back:'varlik',title:mode==='al'?'🥇 Altın al':'🥇 Altın sat',text:`Bugünkü fiyat: kilosu ${fmt(pk)} (gramı ${fmt(Math.round(pk/1000))}). ${mode==='al'?`Paran en fazla ${max.toLocaleString('tr-TR')} kg'a yetiyor.`:`Kasanda ${own.toLocaleString('tr-TR')} kg altın var.`}${mode==='sat'?' Satışta %1 kuyumcu makası kesilir.':' Alışta %1 kuyumcu makası eklenir.'}`+`<input id="nmBox" inputmode="decimal" autocomplete="off" placeholder="Kaç kilo? Örn. 2,5" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:12px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gold2);background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box">`,
+    choices:[{t:mode==='al'?'✍️ Yazdığım kadar al':'✍️ Yazdığım kadar sat',sub:'Kilo olarak, ondalık olabilir (0,25 = 250 gram)',fn:()=>goldDo(mode,parseFloat(String((document.getElementById('nmBox')||{}).value||window._nm||'').replace(',','.')))},
+      ...(mode==='al'?[1,5,10].filter(k=>k<=max).map(k=>({t:`${k} kg`,sub:fmt(Math.round(k*pk*1.01)),fn:()=>goldDo('al',k)})):[...(own>0?[{t:`Hepsini sat (${own.toLocaleString('tr-TR')} kg)`,sub:fmt(Math.round(own*pk*.99)),fn:()=>goldDo('sat',own)}]:[])]),
+      {t:'Vazgeç',fn:()=>{}}]})}
+function availCash(){return S.money+((S.bank&&S.bank.dep)||0)}
+function goldDo(mode,kg){if(!kg||isNaN(kg)||kg<=0){toast('Geçerli bir kilo yaz');return}kg=Math.round(kg*1000)/1000;const pk=GKG();
+  if(mode==='al'){const c=Math.round(kg*pk*1.01);if(!canPay(c)){toast('Paran yetmiyor');return}pay(c);S.goldKg=Math.round(((S.goldKg||0)+kg)*1000)/1000;S.goldCost=(S.goldCost||0)+c;log(`🥇 ${kg.toLocaleString('tr-TR')} kg altın aldın: ${fmt(c)}. Kasanda ${S.goldKg.toLocaleString('tr-TR')} kg.`,'gold');if(kg>=10)news(`Kapalıçarşı'da ${kg} kiloluk altın alımı konuşuluyor`,1)}
+  else{const own=S.goldKg||0;if(kg>own)kg=own;if(kg<=0)return;const v=Math.round(kg*pk*.99);const cs=Math.round((S.goldCost||0)*kg/own);S.goldCost=Math.max(0,(S.goldCost||0)-cs);S.goldKg=Math.round((own-kg)*1000)/1000;S.money+=v;log(`🥇 ${kg.toLocaleString('tr-TR')} kg altın sattın: ${fmt(v)} (${v>=cs?'kâr':'zarar'} ${fmt(Math.abs(v-cs))}).`,v>=cs?'good':'bad')}}
+ACT.gold=m=>goldModal(m);
+function kuyumcuHTML(){let h='';const pk=GKG();const own=S.goldKg||0;const hst=S.goldH||[pk];const ch0=hst.length>1?(pk/hst[hst.length-2]-1)*100:0;
+  h+=`<div class="card" style="padding:12px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:30px">🥇</span><span style="flex:1"><b>Külçe altın · kilosu ${fmtS(pk)}</b><div class="note" style="margin:2px 0 0">Gramı ${fmt(Math.round(pk/1000))} · <span style="color:${ch0>=0?'var(--good)':'var(--blood)'}">${ch0>=0?'▲':'▼'} %${Math.abs(ch0).toFixed(1)}</span> bu çeyrek</div></span>${spark(hst.length>1?hst:[pk,pk],ch0>=0)}</div>${own?`<div class="note" style="margin:8px 0 0">Kasanda <b>${own.toLocaleString('tr-TR')} kg</b> · Değeri ${fmtS(own*pk)} · ${own*pk>=(S.goldCost||0)?'Kâr':'Zarar'} ${fmtS(Math.abs(own*pk-(S.goldCost||0)))}</div>`:''}</div>`;
+  h+=row('data-x="gold:al"','➕','Altın al','Kilosunu kendin yaz','',S.age<16||!!S.jail);
+  if(own)h+=row('data-x="gold:sat"','➖','Altın sat',`${own.toLocaleString('tr-TR')} kg kasanda`,'',!!S.jail);
+  const ws=S.watches||[];if(ws.length){h+='<div class="sec">Saat koleksiyonun</div>';ws.forEach((o,i)=>{const w=WATCHES.find(x=>x.id===o.id);const v=Math.round(o.usd*S.fx.usd);h+=row(`data-x="wmy:${i}"`,'⌚',w.n,`Değeri ${fmtS(v)} <span style="color:${v>=o.buy?'var(--good)':'var(--blood)'}">(${v>=o.buy?'+':''}${fmtS(v-o.buy)})</span>`,'›',false)})}
+  h+='<div class="sec">Saat butiği</div><div class="tabs">'+WBR.map(b=>`<button class="tab ${wBr===b?'on':''}" data-x="wbr:${b}">${b}</button>`).join('')+'</div>';
+  WATCHES.filter(w=>wBr==='Diğer'?!WBR.slice(0,4).includes(w.b):w.b===wBr).forEach(w=>{const lock=w.rank&&rank()<w.rank;const p=WP(w);h+=row(`data-x="wbuy:${w.id}"`,'⌚',w.m,lock?`${RANKS[w.rank].n} rütbesi gerekir`:`${w.b} · Karizma +${w.k}${w.tip==='spor'||w.tip==='komp'?' · Değer kazanır':''}`,lock?'🔒':fmtS(p),lock||S.age<16||!canPay(p)||!!S.jail)});
+  return h}
 /* ============ Kara para kasası ============ */
 const DLIM=()=>Math.round(5e6*Math.max(1,S.cpi||1));
 function dirty(m){m=Math.round(m||0);if(m<=0)return;const lim=DLIM();if(m<=lim){S.money+=m;return}S.money+=lim;const b=m-lim;S.black=(S.black||0)+b;log(`🖤 ${fmt(lim)} cüzdana, ${fmt(b)} kara para kasasına girdi. Harcamak için aklaman lazım.`,'dim')}
@@ -3107,10 +3149,11 @@ function openSheet(k){
       h+=row('data-go="galeri"','🚘','Araba galerisine git','İlanlar ve sıfır sipariş','›',S.jail||S.age<18);
     }
     if(vTab==='mucevher'){
-      h+='<p class="note">Mücevherler karizmanı artırır. Değerleri her yıl iner ya da çıkar. Altın külçe en oynak yatırımdır.</p>';
+      h+='<p class="note">Altını kilo kilo al-sat, fiyatı her çeyrek oynar. Rolex, Patek Philippe, Audemars Piguet ve Richard Mille saatler karizma verir; spor modeller yıllar içinde değer kazanır.</p>';
       if(S.age<16)h+='<p class="note">Kuyumcu 16 yaşından küçüklere satış yapmıyor.</p>';
       if(S.jewels.length){h+='<div class="sec">Kasandakiler</div>';S.jewels.forEach((o,i)=>{const j=JEWELS.find(x=>x.id===o.id);const d=o.val-o.buy;h+=row(`data-jm="${i}"`,j.ic,j.n,`Değeri ${fmtS(o.val)} <span style="color:${d>=0?'var(--good)':'var(--blood)'}">(${d>=0?'+':''}${fmtS(d)})</span>`,'›',false)})}
-      h+='<div class="sec">Kuyumcu vitrini</div>';
+      h+='<div class="sec">Altın</div>'+kuyumcuHTML();
+      h+='<div class="sec">Mücevher vitrini</div>';
       JEWELS.forEach(j=>{const lock=j.rank&&rank()<j.rank;h+=row(`data-jb="${j.id}"`,j.ic,j.n,lock?`${RANKS[j.rank].n} rütbesi gerekir`:(j.inv?'Yatırım · Karizma vermez':'Karizma +'+j.k),lock?'🔒':fmtS(j.p),lock||S.age<16||!canPay(j.p)||S.jail)});
     }
   }
@@ -3147,7 +3190,7 @@ function openSheet(k){
   }
   if(k==='gard'){
     T='Gardırop';
-    h+=`<div class="wprev"><div class="av" style="width:96px;height:96px">${avatarSVG(S.look,S.age,{jail:S.jail>0,mood:S.happy,jw:S.jewels.map(j=>j.id)})}</div><div><p class="note" style="margin:0">Karizma: <b style="color:var(--gold)">${karizma()}</b></p><p class="note" style="margin:4px 0 0">Karizma kazandığın saygıyı artırır, işlerde riski düşürür.</p></div></div>`;
+    h+=`<div class="wprev"><div class="av" style="width:96px;height:96px">${avatarSVG(S.look,S.age,{jail:S.jail>0,mood:S.happy,jw:[...S.jewels.map(j=>j.id),...((S.watches||[]).length?['saat']:[])]})}</div><div><p class="note" style="margin:0">Karizma: <b style="color:var(--gold)">${karizma()}</b></p><p class="note" style="margin:4px 0 0">Karizma kazandığın saygıyı artırır, işlerde riski düşürür.</p></div></div>`;
     if(S.jail)h+='<p class="note">Cezaevinde mahkûm kıyafeti giyiyorsun. Gardırop tahliyede açılır.</p>';
     else{
       const tabs=[['outfit','Kıyafet'],['renk','Renk'],['acc','Aksesuar'],['hair','Saç'],['hairColor','Saç rengi'],...(S.gender==='k'?[]:[['beard','Sakal']])];
@@ -3274,7 +3317,7 @@ function showDead(){const cause=S.cause;
 /* ============ Ana ekran ============ */
 function render(){
   if(!S)return;const rk=rank();
-  $('hav').innerHTML=avatarSVG(S.look,S.age,{jail:S.jail>0,mood:S.happy,jw:S.jewels.map(j=>j.id)});
+  $('hav').innerHTML=avatarSVG(S.look,S.age,{jail:S.jail>0,mood:S.happy,jw:[...S.jewels.map(j=>j.id),...((S.watches||[]).length?['saat']:[])]});
   $('hname').textContent=`${S.first} ${S.last}`;
   $('hsub').innerHTML=`${S.age} yaş${S.age>=14?' · '+SEASONS[S.q||0]:''} · <b>${RANKS[rk].n}</b>${S.org?' · '+S.org.name:S.family?' · '+S.family.replace(' Ailesi',''):''}`;
   $('hmoney').textContent=fmtS(S.money);{const hb=$('hblack');if(hb){hb.style.display='block';hb.textContent='🖤 '+fmtS(S.black||0)}}
