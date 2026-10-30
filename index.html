@@ -285,7 +285,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.10.30-2350';
+const APPV='2026.10.31-0000';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1050,7 +1050,7 @@ function joinFamily(){
 function done(){afterChange();scrollLog();if($('ov').classList.contains('on')&&curSheet)openSheet(curSheet)}
 
 /* ============ Varlıklar ============ */
-let vTab='mulk';
+let vTab='ozet';
 function buyProp(id){const p=PROPS.find(x=>x.id===id);if(!pay(p.p))return;S.props.push(id);log(`${p.n} satın aldın.`,'good');if(p.happy)add('happy',10);done()}
 function propMenu(id){const p=PROPS.find(x=>x.id===id);const v=Math.round(p.p*.7);closeSheet();
   queue({back:'varlik',title:p.n,text:p.inc?`Yıllık ${fmt(p.inc)} gelir getiriyor ve her yıl polis dikkatini ${p.la} puan azaltıyor.`:'Huzurlu bir yuva. Her yıl mutluluğunu artırıyor.',choices:[
@@ -3186,6 +3186,44 @@ EV(1,()=>okE()&&S.age>=30&&S.respect>=40,()=>{const n=`${pick(NICK)} ${pick(NAME
   {t:'Affet',sub:'Mutluluk +',fn:()=>{add('happy',5);log('Kin tutmak yorar. Bıraktın.','good')}}]}});
 
 
+
+/* ============ Varlıklarım özeti ============ */
+function assetsHTML(){let h='';const cpi=Math.max(1,S.cpi||1);const sec=(ic,n,v)=>`<div class="sec">${ic} ${n}${v!==undefined?` · ${fmtS(v)}`:''}</div>`;
+  // Para
+  const dep=(S.bank&&S.bank.dep)||0,fx=typeof acctTotal==='function'?acctTotal():0,pv=portVal(),wm=(S.wm&&S.wm.pool)||0,gk=(S.goldKg||0)*GKG();
+  h+=sec('💵','Param',S.money+(S.black||0)+dep+fx+pv+wm+gk);
+  h+=row('data-x="nop:"','👛','Cüzdan (temiz para)','Harcayabileceğin para',fmtS(S.money),false);
+  h+=row('data-go="kara"','🖤','Kara para kasası',S.black?'Aklanmayı bekliyor':'Boş',fmtS(S.black||0),false);
+  h+=row('data-go="banka"','🏦','Banka mevduatı',`Kredi notu ${S.bank.score}`,fmtS(dep),false);
+  if(fx)h+=row('data-go="doviz"','💱','Döviz hesapları','Dolar ve euro',fmtS(fx),false);
+  h+=row('data-go="borsa"','📈','Borsa portföyü',pv?`${Object.keys(S.stocks||{}).length} hisse`:'Hisse yok',fmtS(pv),false);
+  if(has('portfoy')||wm)h+=row('data-go="varlikyon"','💼','Varlık yönetimi',S.wm?WMR[S.wm.risk][0]+' portföy':'',fmtS(wm),false);
+  if(S.goldKg)h+=row('data-vt="mucevher"','🥇','Külçe altın',`${S.goldKg.toLocaleString('tr-TR')} kg`,fmtS(gk),false);
+  // Garaj
+  const cv=S.cars.reduce((x,c)=>x+(c.val||0),0);h+=sec('🚗','Garajım',cv);
+  if(S.cars.length){S.cars.slice(0,4).forEach(o=>{const m=CM(o.mid);h+=`<button class="row" data-x="mycar:${o.uid}">${carSVG(m.c,o.hex)}<span class="tx"><b>${m.n}${S.car===o.uid?' · 🔑':''}</b><span>${o.y} · ${o.col}${(S.loans||[]).some(l=>l.uid===o.uid)?' · Kredili':''}</span></span><span class="rt">${fmtS(o.val)}</span></button>`});if(S.cars.length>4)h+=row('data-vt="araba"','🅿️',`Bütün garaj (${S.cars.length} araç)`,'','›',false)}
+  else h+=row('data-go="galeri"','🚘','Garajın boş','Araba galerisine git','›',S.age<18);
+  // Evler
+  const hv=S.houses.reduce((x,o)=>x+hval(o),0);h+=sec('🏠','Evlerim',hv);
+  if(S.houses.length)S.houses.forEach(o=>{const t=HT(o.t);h+=row(`data-x="house:${o.uid}"`,t.ic,t.n,S.home===o.uid?'Burada oturuyorsun':o.ten?'Kirada · '+fmtS(o.ten.rent)+'/yıl':'Boş',fmtS(hval(o)),false)});
+  else h+=row('data-go="emlak"','🏘','Henüz evin yok','Emlakçıya git','›',S.age<18);
+  // Mücevher & saat
+  const jv=S.jewels.reduce((x,j)=>x+j.val,0)+(S.watches||[]).reduce((x,o)=>x+Math.round(o.usd*(S.fx?S.fx.usd:42.5)),0);
+  if(jv)h+=sec('💎','Mücevher ve saatlerim',jv)+row('data-vt="mucevher"','⌚',`${(S.watches||[]).length} saat · ${S.jewels.length} mücevher`,'Kuyumcuda gör','›',false);
+  // İşletmeler & şirketler
+  const biz=[];S.props.forEach(id=>{const pp=PROPS.find(x=>x.id===id);if(pp)biz.push([`data-pm="${id}"`,pp.ic,pp.n,`Yıllık ${fmtS(pp.inc)}`,Math.round(pp.p*.7)])});
+  (S.firms||[]).forEach(f=>biz.push([`data-x="firm:${f.id}"`,SEC(f.sec).ic,f.name,f.pub?`Borsada ${f.pub.tk} · %${Math.round(f.own*100)}`:'Kapasite '+f.lvl+'/5',Math.round(firmVal(f)*f.own)]));
+  if(S.club)biz.push(['data-go="kulup"','⚽',S.club.name,LEAGUES[S.club.lv].n,Math.round(LEAGUES[S.club.lv].price*.8+S.club.cash)]);
+  if(S.label)biz.push(['data-go="muzik"','💿',S.label.name,`${S.label.roster.length} sanatçı`,S.label.cash]);
+  if(S.gal)biz.push(['data-go="ogaleri"','🏪',GTIER[S.gal.tier].n,`${S.gal.stock.length} araç stokta`,S.gal.stock.reduce((x,c)=>x+galVal(c),0)]);
+  if(S.co)biz.push(['data-go="insaat"','🏗','İnşaat şirketi',`${S.co.projects.length} proje`,S.co.projects.reduce((x,p)=>x+p.paid,0)]);
+  if(biz.length){h+=sec('🏭','İşletme ve şirketlerim',biz.reduce((x,b)=>x+b[4],0));biz.forEach(([a,ic,n,d,v])=>h+=row(a,ic,n,d,fmtS(v),false))}
+  // Lüks
+  if((S.lux||[]).length){const lv=S.lux.reduce((x,id)=>x+Math.round(LUX.find(l=>l.id===id).p*.6),0);h+=sec('🛥','Lüks oyuncaklarım',lv);S.lux.forEach(id=>{const l=LUX.find(x=>x.id===id);h+=row('data-go="luks"',l.ic,l.n,l.d,fmtS(l.p*.6),false)})}
+  // Borçlar
+  const debts=[];if(S.bank.loan)debts.push(['data-go="banka"','🏦','İhtiyaç kredisi',`${S.bank.loan.left} taksit`,S.bank.loan.pay*S.bank.loan.left]);if(S.bank.card&&S.bank.card.debt)debts.push(['data-go="banka"','💳','Kredi kartı borcu','',S.bank.card.debt]);(S.loans||[]).forEach(L=>debts.push(['data-go="banka"','🚗',L.n+' kredisi',`Aylık ${fmtS(L.mo)} · ${L.left} ay`,L.mo*L.left]));if(S.taxDebt>0)debts.push(['data-go="vergi"','🧾','Vergi borcu','',S.taxDebt]);
+  if(debts.length){h+=sec('💳','Borçlarım',debts.reduce((x,d)=>x+d[4],0));debts.forEach(([a,ic,n,d,v])=>h+=row(a,ic,n,d,'−'+fmtS(v),false))}
+  return h}
 /* ============ Hayat menüsü: kategoriler ============ */
 function hubTiles(){return [
       ['insan','👥','İnsanlar',`${S.friends.length} dost · ${S.kids.length} çocuk`,true],
@@ -3322,9 +3360,10 @@ function openSheet(k){
   if(k==='varlik'){
     T='Varlıklar';
     const jv=S.jewels.reduce((s,j)=>s+j.val,0);
-    h+=`<p class="note">Net servet: <b style="color:var(--gold)">${fmt(netWorth())}</b></p><p class="note">Mülk geliri: <b style="color:var(--good)">${fmtS(propIncome())}/yıl</b> · Araba: <b>${S.cars.length}</b> · Mücevher değeri: <b style="color:var(--gold)">${fmtS(jv)}</b></p>`;
-    h+='<div class="tabs">'+[['mulk','İşletmeler'],['ev','Evler'],['araba','Arabalar'],['mucevher','Mücevherler']].map(([id,n])=>`<button class="tab ${vTab===id?'on':''}" data-vt="${id}">${n}</button>`).join('')+'</div>';
+    h+=`<div class="card" style="padding:12px;margin-bottom:10px"><small style="color:var(--muted);letter-spacing:.1em">NET SERVET</small><div style="font-size:24px;font-weight:800;color:var(--gold)">${fmt(netWorth())}</div></div>`;
+    h+='<div class="tabs">'+[['ozet','Varlıklarım'],['araba','Garaj'],['ev','Evlerim'],['mulk','İşletmeler'],['mucevher','Kuyumcu']].map(([id,n])=>`<button class="tab ${vTab===id?'on':''}" data-vt="${id}">${n}</button>`).join('')+'</div>';
     if(S.jail)h+='<p class="note">Cezaevindeyken alışveriş yapamazsın. Mülklerin adamların tarafından işletiliyor.</p>';
+    if(vTab==='ozet')h+=assetsHTML();
     if(vTab==='mulk'){
       h+='<p class="note">Her işletme kara paranı aklar ve polis dikkatini her yıl azaltır.</p>';
       if(S.age<18)h+='<p class="note">Mülk almak için 18 yaşını beklemelisin.</p>';
@@ -3551,7 +3590,7 @@ function stepYr(){let g=0;while(YR>0&&S&&S.alive&&!Q.length&&g<5){YR--;g++;ageUp
 function advance(){if(!S||!S.alive)return;if(Q.length){showEv();return}if(!S.yearStep||S.age<14){ageUp();return}YR=4-(S.q||0);stepYr()}
 $('nAge').onclick=advance;
 $('nIs').onclick=()=>{backTo=null;S&&S.alive&&goSheet('is')};
-$('nMulk').onclick=()=>{backTo=null;S&&S.alive&&goSheet('varlik')};
+$('nMulk').onclick=()=>{backTo=null;vTab='ozet';S&&S.alive&&goSheet('varlik')};
 $('nGard').onclick=()=>{backTo=null;S&&S.alive&&goSheet('gard')};
 $('nBen').onclick=()=>{backTo='hayat';S&&S.alive&&goSheet('hayat')};
 $('hblack').onclick=e=>{e.stopPropagation();if(!S)return;backTo=null;goSheet('kara')};
