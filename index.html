@@ -284,7 +284,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
-const APPV='2026.10.30-2225';
+const APPV='2026.10.30-2230';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1401,9 +1401,13 @@ const EXTRA={
     h+='<div class="sec">Teşkilat</div>'+row('data-x="mit:quit"','🚶','Teşkilattan ayrıl','Devlet koruması biter','',false);
     return['İstihbarat binası',h]}
 };
-function amountModal(title,text,max,fn,back){
-  const opts=[10000,100000,1000000,10000000].filter(a=>a<max);
-  queue({back,title,text,choices:[...opts.map(a=>({t:fmt(a),fn:()=>fn(a)})),{t:`Tümü (${fmt(max)})`,fn:()=>fn(max)},{t:'Vazgeç',fn:()=>{}}]})}
+function amtRead(max){const raw=String((document.getElementById('nmBox')||{}).value||window._nm||'').trim().toLocaleLowerCase('tr-TR');if(!raw)return 0;
+  if(/^(hepsi|tümü|tamamı|hepsini|tamami|tumu)$/.test(raw))return max;
+  const pm=raw.match(/^%\s*([\d.,]+)$|^([\d.,]+)\s*%$/);if(pm){const v=parseFloat((pm[1]||pm[2]).replace(',','.'));return Math.round(max*Math.min(100,Math.max(0,v))/100)}
+  return parseAmt(raw)}
+function amountModal(title,text,max,fn,back){max=Math.max(0,Math.floor(max));window._nm='';
+  queue({back,title,text:`${text}<br>Mevcut: <b>${fmt(max)}</b>. Tutar ya da oran yaz: <i>250 milyon</i>, <i>1,5 milyar</i>, <i>%30</i> ya da <i>hepsi</i>.`+`<input id="nmBox" inputmode="text" autocomplete="off" placeholder="Örn. %50 ya da 100 milyon" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:12px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gold2);background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box">`,
+    choices:[{t:'✍️ Onayla',fn:()=>{const a=Math.min(max,amtRead(max));if(a<=0){toast('Geçerli bir tutar ya da oran yaz');return}fn(a)}},{t:'Vazgeç',fn:()=>{}}]})}
 const ACT={
   buyhouse:id=>{const t=HT(id);const pr=Math.round(t.p*S.hidx);if(!pay(pr))return;const o={uid:'h'+Date.now()+R(0,999),t:id,q:R(92,108)/100,ten:null};S.houses.push(o);if(!S.home)S.home=o.uid;log(`${t.n} satın aldın.${S.home===o.uid?' Hemen taşındın.':''}`,'good');done()},
   house:uid=>{const o=S.houses.find(x=>x.uid===uid);if(!o)return;const t=HT(o.t);const v=Math.round(hval(o)*.95);closeSheet();
@@ -2814,8 +2818,8 @@ ACT.firm=id=>{const f=firmOf(id);if(!f)return;closeSheet();const sc=SEC(f.sec);c
   queue({back:'sirket',title:`${sc.ic} ${f.name}`,text:`${sc.n} · Kapasite ${f.lvl}/5 · Kasa ${fmt(f.cash)} · Son çeyrek ${f.lastP>=0?'kâr':'zarar'} ${fmt(Math.abs(f.lastP))}<br>Şirket değeri ${fmt(v)}${f.pub?` · Borsada <b>${f.pub.tk}</b> · Hisse ₺${f.pub.price.toLocaleString('tr-TR')} · Payın %${Math.round(f.own*100)}`:''}<br>CEO: ${f.ceo?f.ceo.name+' (%'+f.ceo.yet+')':'yok'} · CMO: ${f.cmo?f.cmo.name+' (%'+f.cmo.yet+')':'yok'} · CFO: ${f.cfo?f.cfo.name+' (%'+f.cfo.yet+')':'yok'}`,
     choices:[{t:'👔 Yöneticiler',sub:'CEO, CMO, CFO ata ya da düzenle',fn:()=>setTimeout(()=>execMenu(f.id),40)},
       ...(f.lvl<5?[{t:'🏗 Kapasiteyi büyüt',sub:`${fmt(up)} · Ciro ×${((f.lvl+1)/f.lvl).toFixed(2)}`,dis:!canPay(up),fn:()=>{pay(up);f.lvl++;log(`${f.name} kapasitesi ${f.lvl}/5 oldu.`,'good')}}]:[]),
-      {t:'💸 Temettü çek',sub:'Kasadaki kârın yarısı · vergilendirilir',dis:f.cash<=0,fn:()=>{const a=Math.round(f.cash*.5*f.own);f.cash-=Math.round(f.cash*.5);S.money+=a;S.taxInc=(S.taxInc||0)+a;log(`${f.name}'dan ${fmt(a)} temettü aldın.`,'good')}},
-      {t:'➕ Sermaye koy',sub:'İstediğin tutarı yaz',dis:S.money<=0,fn:()=>setTimeout(()=>capModal(f.id),40)},
+      {t:'💸 Para çek (temettü)',sub:`Kasada ${fmtS(f.cash)} · istediğin tutar ya da oran`,dis:f.cash<=0,fn:()=>setTimeout(()=>amountModal(`💸 ${f.name}'dan para çek`,`Temettü olarak sana geçer ve vergilendirilir.${f.own<1?` Halka açık olduğu için çektiğin tutarın %${Math.round(f.own*100)}'i sana, kalanı diğer ortaklara gider.`:''}`,f.cash,a=>{f.cash-=a;const m=Math.round(a*f.own);S.money+=m;S.taxInc=(S.taxInc||0)+m;log(`${f.name}'dan ${fmt(m)} temettü aldın.`,'good')},'sirket'),40)},
+      {t:'➕ Sermaye koy',sub:'İstediğin tutar ya da oran',dis:S.money<=0,fn:()=>setTimeout(()=>amountModal(`➕ ${f.name}'a sermaye`,'Cüzdanından şirket kasasına geçer.',S.money,a=>{S.money-=a;f.cash+=a;log(`${f.name}'a ${fmt(a)} sermaye koydun.`,'good')},'sirket'),40)},
       {t:'🖤 Kara parayı ciroya kat',sub:'%12 kayıp · Ciroya göre risk',dis:(S.black||0)<1e6,fn:()=>{const a=Math.min(S.black,Math.round(SEC(f.sec).rev*f.lvl*Math.max(1,S.cpi)*1.5));const rk=clamp(a/(SEC(f.sec).rev*f.lvl*Math.max(1,S.cpi)*6),.03,.5);S.black-=a;if(ch(rk)){add('heat',18);log(`Vergi müfettişi ${f.name}'ın şişirilmiş cirosunu buldu! ${fmt(a)} gitti.`,'bad')}else{f.cash+=Math.round(a*.88);add('heat',-6);log(`${fmt(a)} kara para ${f.name} cirosu olarak aklandı.`,'good')}}},
       ...(!f.pub&&f.lvl>=3?[{t:'📈 Halka arz et (borsaya aç)',sub:`%25 payı sat · ~${fmt(Math.round(v*.25))}`,fn:()=>{const tk=f.name.replace(/[^A-Za-zÇĞİÖŞÜçğıöşü]/g,'').toUpperCase().slice(0,5)||'FIRMA';const lots=1e6;f.pub={tk,lots,price:+(v/lots).toFixed(2)};f.pub.h=[f.pub.price];f.own=.75;const a=Math.round(v*.25);S.money+=a;gainResp(8);S.fame=clamp((S.fame||0)+5);log(`🔔 ${f.name} ${tk} koduyla borsada! Halka arzdan ${fmt(a)} geldi.`,'gold');news(`${f.name} gong çaldı: ${tk} borsada`,2)}}]:[]),
       ...(f.pub&&f.own<1?[{t:'📈 Hisse geri al (%10)',sub:fmt(Math.round(f.pub.price*f.pub.lots*.1*1.03)),dis:!canPay(Math.round(f.pub.price*f.pub.lots*.1*1.03))||f.own>.9,fn:()=>{const a=Math.round(f.pub.price*f.pub.lots*.1*1.03);pay(a);f.own=Math.round((f.own+.1)*100)/100;log(`${f.pub.tk}: %10 hisse geri aldın. Payın %${Math.round(f.own*100)}.`,'good')}}]:[]),
