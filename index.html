@@ -284,7 +284,8 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
-const APPV='2026.10.30-2230';
+try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+const APPV='2026.10.30-2240';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
