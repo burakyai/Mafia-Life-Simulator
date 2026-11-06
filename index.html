@@ -300,7 +300,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.10.31-0040';
+const APPV='2026.11.06-2300';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -403,14 +403,6 @@ const HELP={
 
 /* ============ Avatar ============ */
 function shade(hex,amt){const n=parseInt(hex.slice(1),16);let r=(n>>16)+amt,g=(n>>8&255)+amt,b=(n&255)+amt;r=clamp(r,0,255);g=clamp(g,0,255);b=clamp(b,0,255);return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)}
-const SH='M6 110 Q8 86 33 80 Q50 87 67 80 Q92 86 94 110Z';
-function suit(j,sh,lap,extra){
-  return `<path d="${SH}" fill="${j}"/>
-  <path d="M41 80.5 L50 108 L59 80.5 Q50 86 41 80.5Z" fill="${sh}"/>
-  <path d="M41 80.5 L50 108 L36 95 L42 88Z" fill="${lap}"/>
-  <path d="M59 80.5 L50 108 L64 95 L58 88Z" fill="${lap}"/>${extra||''}`;
-}
-const TIE=c=>`<path d="M48 82.5 L52 82.5 L51.2 86 L48.8 86Z" fill="${shade(c,-20)}"/><path d="M48.7 86 L51.3 86 L52.3 99 L50 103 L47.7 99Z" fill="${c}"/>`;
 const OCOL={
   tisort:[['Gri','#6c737f'],['Siyah','#1c1c20'],['Beyaz','#e4e4e4'],['Lacivert','#23305a'],['Kırmızı','#8f1f24'],['Haki','#5b5a3c'],['Bordo','#5a1c27']],
   esofman:[['Lacivert','#24356a'],['Siyah','#1a1a1d'],['Kırmızı','#9b1f24'],['Bordo','#5c1a26'],['Beyaz','#e6e6e6'],['Yeşil','#1f5a3a'],['Gri','#6b6f76'],['Sarı','#c99a16'],['Turkuaz','#1d6f7a'],['Mor','#4a2a6a']],
@@ -420,86 +412,6 @@ const OCOL={
 const OKIND={gomlek:'gomlek',tisort:'tisort',esofman:'esofman',hawaii:'hawaii',polo:'suit',balikci:'suit',deri:'suit',takim:'suit',cizgili:'suit',yelek:'suit',kadife:'suit',trenckot:'suit',palto:'suit',beyaz:'suit',smokin:'suit'};
 const ODEF={tisort:'#6c737f',esofman:'#24356a',hawaii:'#9b2a24',polo:'#1c2a45',balikci:'#4a3426',deri:'#2c211c',takim:'#353840',cizgili:'#1c2a45',yelek:'#4a4d55',kadife:'#5a1c27',trenckot:'#151518',palto:'#353840',beyaz:'#ece7dc',smokin:'#121215',gomlek:'#f2f0ea'};
 const lightC=c=>{const n=parseInt(c.slice(1),16);return((n>>16)*.3+(n>>8&255)*.59+(n&255)*.11)>150};
-function body(o,col){col=col||ODEF[o]||'#6c737f';const lap=shade(col,lightC(col)?-18:-12);
-  switch(o){
-    case 'esofman':{const st=lightC(col)?'#1b1b1e':'#eee';return `<path d="${SH}" fill="${col}"/><path d="M40 80 Q50 90 60 80" fill="none" stroke="${shade(col,-20)}" stroke-width="3"/><path d="M50 88 V110" stroke="#c8c8c8" stroke-width="1.4"/><path d="M22 85 L13 110 M26 84 L17 110 M78 85 L87 110 M74 84 L83 110" stroke="${st}" stroke-width="2"/>`}
-    case 'deri': return suit(col,'#e8e3d8',lap)+`<path d="M44 96 h3 M44 100 h3" stroke="#8a7a6a" stroke-width="1"/>`;
-    case 'takim': return suit(col,'#f3f1ec',lap,TIE(lightC(col)?'#1c1c20':'#6b1b22'));
-    case 'cizgili': {const id='pin'+(++uid);return `<defs><pattern id="${id}" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="${col}"/><path d="M1 0V4" stroke="${shade(col,lightC(col)?-40:45)}" stroke-width=".5"/></pattern></defs>`+suit(`url(#${id})`,'#cfe0f2',lap,TIE('#9b1c1c'));}
-    case 'beyaz': return suit(col,'#17171a',lap)+`<path d="M41 80.5 L50 108 L59 80.5" fill="none" stroke="${shade(col,-30)}" stroke-width=".8"/>`;
-    case 'smokin': return suit(col,'#f6f4ef',shade(col,lightC(col)?-25:25))+`<path d="M44 82 L50 85 L44 88Z M56 82 L50 85 L56 88Z" fill="#0c0c0e"/><circle cx="50" cy="85" r="1.3" fill="#0c0c0e"/><circle cx="50" cy="94" r=".9" fill="#222"/><circle cx="50" cy="99" r=".9" fill="#222"/>`;
-    case 'polo': return suit(col,'#e9e3d5',lap)+`<path d="M42.5 80.5 L46.5 87 L49.5 82Z M57.5 80.5 L53.5 87 L50.5 82Z" fill="#f4efe4" stroke="#cfc8b8" stroke-width=".4"/>`;
-    case 'balikci': return suit(col,'#1c1c20',lap)+`<path d="M42.2 69 L41.8 82 Q50 86.5 58.2 82 L57.8 69 Q50 72.5 42.2 69Z" fill="#1c1c20"/><path d="M42.5 74 Q50 77 57.5 74 M42.4 78 Q50 81 57.6 78" stroke="#2c2c31" stroke-width=".8" fill="none"/>`;
-    case 'hawaii': {const id='hw'+(++uid);return `<defs><pattern id="${id}" width="9" height="9" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="${col}"/><circle cx="2.5" cy="2.5" r="1.6" fill="#f2e6c8" opacity=".85"/><circle cx="7" cy="6.5" r="1.2" fill="#e9b949" opacity=".8"/><path d="M5 1 q1 2 3 2" stroke="#2f6b3a" stroke-width=".7" fill="none"/></pattern></defs><path d="${SH}" fill="url(#${id})"/><path d="M41.5 80 L50 95 L58.5 80 Q50 85 41.5 80Z" fill="#ece6d8"/><path d="M41.5 80 L47 89 L44 79.5Z M58.5 80 L53 89 L56 79.5Z" fill="${shade(col,-10)}"/>`}
-    case 'yelek': return suit(col,'#f3f1ec',lap,`<path d="M44.6 87.5 L50 98 L55.4 87.5 L56.6 108 L43.4 108Z" fill="${shade(col,-8)}"/><circle cx="50" cy="101" r=".8" fill="#c9b27a"/><circle cx="50" cy="105" r=".8" fill="#c9b27a"/>`+TIE('#3a1a1a').replace('L52.3 99 L50 103 L47.7 99Z','L51.8 94 L50 97 L48.2 94Z'));
-    case 'kadife': return suit(col,'#141416',shade(col,-20))+`<path d="M14 92 Q22 88 30 92 M70 92 Q78 88 86 92" stroke="#fff" stroke-opacity=".12" stroke-width="1.4" fill="none"/><path d="M41 80.5 L50 92 L59 80.5" fill="none" stroke="#2a2a2e" stroke-width="1"/>`;
-    case 'trenckot': return `<path d="M3 110 Q5 85 31 79 Q50 86 69 79 Q95 85 97 110Z" fill="${col}"/><path d="M41 80.5 L50 108 L59 80.5 Q50 86 41 80.5Z" fill="#1c1c20"/><path d="M41 80.5 L50 108 L32 98 L37 86Z M59 80.5 L50 108 L68 98 L63 86Z" fill="${shade(col,14)}"/><path d="M22 88 Q20 98 22 110 M78 88 Q80 98 78 110" stroke="#fff" stroke-opacity=".08" stroke-width="2" fill="none"/>`;
-    case 'palto': return `<path d="M3 110 Q5 84 31 78 Q50 86 69 78 Q95 84 97 110Z" fill="${col}"/><path d="M41 80.5 L50 108 L59 80.5 Q50 86 41 80.5Z" fill="#f3f1ec"/>`+TIE('#5a1c27')+`<path d="M41 80.5 L50 108 L33 99 L38 86Z M59 80.5 L50 108 L67 99 L62 86Z" fill="${lap}"/><path d="M42.5 81 L44.5 110 L40 110 L39.5 90Z M57.5 81 L55.5 110 L60 110 L60.5 90Z" fill="#ece7dc"/><path d="M42.5 84 L41 88 M57.5 84 L59 88" stroke="#c9c2b2" stroke-width=".5"/>`;
-    case 'gomlek': return `<path d="${SH}" fill="${col}"/><path d="M41.5 79.6 L50 94 L58.5 79.6" fill="none" stroke="${shade(col,-22)}" stroke-width="1"/><path d="M41.5 79.6 L45.5 90 L39 86.5 L38.5 80.5Z M58.5 79.6 L54.5 90 L61 86.5 L61.5 80.5Z" fill="${shade(col,-6)}" stroke="${shade(col,-20)}" stroke-width=".5"/><path d="M50 94 V110" stroke="${shade(col,-16)}" stroke-width=".7"/><circle cx="51.2" cy="99" r=".7" fill="${shade(col,-28)}" stroke="none"/><circle cx="51.2" cy="105" r=".7" fill="${shade(col,-28)}" stroke="none"/><path d="M16 92 Q24 90 30 95 M84 92 Q76 90 70 95" stroke="${shade(col,-14)}" stroke-width="1" fill="none"/>`;
-    case 'mahkum': return `<path d="${SH}" fill="#7f837d"/><path d="M41 80 L50 92 L59 80" fill="none" stroke="#5f635d" stroke-width="2.5"/><rect x="58" y="93" width="16" height="7" rx="1" fill="#e9e6dc"/><text x="66" y="98.6" font-size="5" text-anchor="middle" font-family="monospace" fill="#222">1907</text>`;
-    default: return `<path d="${SH}" fill="${col}"/><path d="M41 80.5 Q50 89 59 80.5" fill="none" stroke="${shade(col,-18)}" stroke-width="2.4"/>`;
-  }
-}
-function hairBack(h,c){
-  if(h==='topuz')return `<circle cx="50" cy="15.5" r="6.5" fill="${c}"/><path d="M45 18 Q50 21 55 18" stroke="#000" stroke-opacity=".25" stroke-width="1" fill="none"/>`;
-  if(h==='dalgali')return `<path d="M29 42 Q26 56 29 66 Q27 74 31 82 L41 80 L41 60 Q36 50 34 42Z M71 42 Q74 56 71 66 Q73 74 69 82 L59 80 L59 60 Q64 50 66 42Z" fill="${c}"/>`;
-  if(h==='uzun')return `<path d="M29 44 Q25 72 30 86 L70 86 Q75 72 71 44 Q70 22 50 21 Q30 22 29 44Z" fill="${c}"/>`;
-  if(h==='atkuyrugu')return `<path d="M66 36 Q83 44 76 70 Q72 56 65 49Z" fill="${c}"/><rect x="66" y="40" width="5" height="4" rx="1" fill="#2a2a2a" transform="rotate(30 68 42)"/>`;
-  return '';
-}
-function hairFront(h,c){
-  const sheen=`<path d="M40 26 Q50 22.5 60 26" stroke="#fff" stroke-opacity=".22" stroke-width="1.5" fill="none"/>`;
-  switch(h){
-    case 'kisa': return `<path d="M31 47 Q29 22 50 22 Q71 22 69 47 Q67 33 50 31 Q33 33 31 47Z" fill="${c}"/>`;
-    case 'geriye': return `<path d="M31 45 Q30 19 50 19 Q70 19 69 45 Q66 30 50 28 Q34 30 31 45Z" fill="${c}"/>`+sheen;
-    case 'yan': return `<path d="M31 48 Q28 19 52 20 Q73 21 69 48 Q67 33 61 30 Q48 37 36 33 Q32 39 31 48Z" fill="${c}"/><path d="M44 21 Q41 26 40 31" stroke="${shade(c,-25)}" stroke-width="1" fill="none"/>`;
-    case 'kivircik': {let s=`<path d="M31 47 Q30 25 50 25 Q70 25 69 47 Q67 35 50 33 Q33 35 31 47Z" fill="${c}"/>`;
-      for(let a=190;a<=350;a+=20){const r=a*Math.PI/180;s+=`<circle cx="${(50+21*Math.cos(r)).toFixed(1)}" cy="${(42+19*Math.sin(r)).toFixed(1)}" r="6.4" fill="${c}"/>`}
-      s+=`<circle cx="50" cy="22" r="7" fill="${c}"/>`;return s;}
-    case 'uzun': return `<path d="M31 52 Q27 20 50 21 Q73 20 69 52 Q66 34 56 30 Q50 34 44 30 Q34 34 31 52Z" fill="${c}"/>`;
-    case 'atkuyrugu': return `<path d="M31 45 Q30 20 50 20 Q70 20 69 45 Q66 30 50 28 Q34 30 31 45Z" fill="${c}"/>`+sheen;
-    case 'jole': return `<path d="M31 44 Q30 17 50 17 Q70 17 69 44 Q67 28.5 50 26 Q33 28.5 31 44Z" fill="${c}"/><path d="M37 23.5 Q50 19.5 63 23.5 M35 28 Q50 23 65 28 M41 20 Q50 18 59 20" stroke="#fff" stroke-opacity=".22" stroke-width="1" fill="none"/>`;
-    case 'undercut': return `<path d="M31 47 Q30.5 34 33.5 28 L35 45Z M69 47 Q69.5 34 66.5 28 L65 45Z" fill="${c}" opacity=".45"/><path d="M33.5 31 Q32 13 52 12.5 Q69 13.5 66.5 31 Q61 23.5 50 23.5 Q39 23.5 33.5 31Z" fill="${c}"/><path d="M40 17 Q52 13.5 62 18" stroke="#fff" stroke-opacity=".2" stroke-width="1.2" fill="none"/>`;
-    case 'pompadour': return `<path d="M31.5 45 Q29.5 24 39 16.5 Q50 8 63 12.5 Q71.5 18 68.5 45 Q66.5 30 57 27 Q46 25 38.5 30 Q33 35 31.5 45Z" fill="${c}"/><path d="M41 15.5 Q52 10.5 62 14.5 M38 21 Q50 15 64 20" stroke="#fff" stroke-opacity=".22" stroke-width="1.1" fill="none"/>`;
-    case 'asker': return `<path d="M31.5 45 Q31 20.5 50 20.5 Q69 20.5 68.5 45 Q66.5 30 50 28 Q33.5 30 31.5 45Z" fill="${c}" opacity=".6"/>`;
-    case 'topuz': return `<path d="M31 45 Q30 19 50 19 Q70 19 69 45 Q66 30 50 28 Q34 30 31 45Z" fill="${c}"/><path d="M38 24 Q50 20 62 24" stroke="#fff" stroke-opacity=".2" stroke-width="1.2" fill="none"/>`;
-    case 'dalgali': return `<path d="M30.5 50 Q28 18 50 18 Q72 18 69.5 50 Q67 33 58 28.5 Q50 26 42 28.5 Q33 33 30.5 50Z" fill="${c}"/><path d="M36 26 Q41 22 46 25 Q51 21 56 24.5 Q61 21.5 65 26" stroke="#fff" stroke-opacity=".2" stroke-width="1.1" fill="none"/>`;
-    case 'peaky': return `<path d="M31 47 Q30.5 33 33.5 29 L35 45Z M69 47 Q69.5 33 66.5 29 L65 45Z" fill="${c}" opacity=".28"/><path d="M33.5 33 Q33 18.5 50 18.5 Q67 18.5 66.5 33 Q60 27.5 50 27.5 Q40 27.5 33.5 33Z" fill="${c}"/><path d="M44 19 Q40 23 39 28" stroke="${shade(c,-25)}" stroke-width="1" fill="none"/>`;
-    case 'percem': return `<path d="M31 47 Q29 21 50 21 Q71 21 69 47 Q67 33 50 31 Q33 33 31 47Z" fill="${c}"/><path d="M35 29 Q47 24 60 30 Q52 32 46 39 Q43 33 35 29Z" fill="${c}"/>`;
-    case 'firca': return `<path d="M30.8 45 Q29.6 27 35 21.5 Q42 15.8 50 16.4 Q58 15.8 65 21.5 Q70.4 27 69.2 45 Q67.6 32 62 28 Q58 25.4 54 27 Q50 25 46 27 Q42 25.4 38 28 Q32.4 32 30.8 45Z" fill="${c}"/><path d="M38 21 L39 25 M42 18.6 L43 23.6 M46.5 17.4 L47 22.6 M51 17.2 L51 22.4 M55.5 17.8 L55 23 M60 19.6 L59 24.4 M63.6 22.4 L62.4 26" stroke="#fff" stroke-opacity=".1" stroke-width=".7"/>`;
-    case 'kel': return `<ellipse cx="44" cy="30" rx="6" ry="2.6" fill="#fff" opacity=".17"/>`;
-  }
-  return '';
-}
-function beard(b,c){
-  const mus=`<path d="M44 60 Q50 57.4 56 60 Q50 59.2 44 60Z" fill="${c}" stroke="${c}" stroke-width="1.6" stroke-linejoin="round"/>`;
-  switch(b){
-    case 'boxed': return `<path d="M32 49.5 Q32 59.5 37 63.4 L44.8 69.6 Q50 72.2 55.2 69.6 L63 63.4 Q68 59.5 68 49.5 Q66 60 59 62.6 Q55 59.6 50 59.6 Q45 59.6 41 62.6 Q34 60 32 49.5Z" fill="${c}" opacity=".9"/>`+mus;
-    case 'cene': return `<path d="M32 47 Q32.5 59 37 63 L44.6 69.6 Q50 72.2 55.4 69.6 L63 63 Q67.5 59 68 47" stroke="${c}" stroke-width="2.6" fill="none"/><path d="M47 66 Q50 67.5 53 66" stroke="${c}" stroke-width="1.6" fill="none"/>`;
-    case 'ince': return `<path d="M44.2 60.3 Q50 58.2 55.8 60.3" stroke="${c}" stroke-width="1.2" fill="none" stroke-linecap="round"/>`;
-    case 'kirli': return `<path d="M32 51 Q32.5 58 36.8 62.6 L44.6 69.7 Q50 72.6 55.4 69.7 L63.2 62.6 Q67.5 58 68 51 Q66 61.5 58 63.8 Q50 60.6 42 63.8 Q34 61.5 32 51Z" fill="${c}" opacity=".42"/><path d="M44 59.8 Q50 58 56 59.8" stroke="${c}" stroke-opacity=".35" stroke-width="2" fill="none"/>`;
-    case 'biyik': return `<path d="M41.3 62.2 Q42.6 58.1 50 58.3 Q57.4 58.1 58.7 62.2 Q57.5 62.6 56.3 60.8 Q50 59.3 43.7 60.8 Q42.5 62.6 41.3 62.2Z" fill="${c}"/>`;
-    case 'keci': return mus+`<path d="M45.5 65.4 Q46 70 50 72.6 Q54 70 54.5 65.4 Q50 67.2 45.5 65.4Z" fill="${c}"/><path d="M44 61 Q44 64 45.5 65 M56 61 Q56 64 54.5 65" stroke="${c}" stroke-width="1.4" fill="none"/>`;
-    case 'tam': return `<path d="M31.3 48.5 Q31.3 58 36.5 63.2 L44.5 71.2 Q50 74.8 55.5 71.2 L63.5 63.2 Q68.7 58 68.7 48.5 Q66 61 59 63.4 Q55 59.6 50 59.6 Q45 59.6 41 63.4 Q34 61 31.3 48.5Z" fill="${c}"/><path d="M60 63 Q64 58 67.5 52 Q68 60 63.5 63.2 L55.5 71.2 Q58 67 60 63Z" fill="#000" opacity=".25"/>`+mus;
-  }
-  return '';
-}
-function acc(a,sk){
-  switch(a){
-    case 'boyun': return `<g fill="#1f2b3d" opacity=".78"><path d="M53.2 69.5 q2.2-3.2 4.4 0 q-2.2 1.2-2.2 4.2 q-1.1-2.2-2.2-4.2Z"/><path d="M55.4 74 v4.5" stroke="#1f2b3d" stroke-width=".8"/><path d="M54 77 l1.4-1.2 l1.4 1.2" stroke="#1f2b3d" stroke-width=".6" fill="none"/></g>`;
-    case 'gozyasi': return `<path d="M40.6 52.6 q1 1.4 0 2.5 q-1-1.1 0-2.5Z" fill="#1f2b3d"/>`;
-    case 'kaskesik': return `<path d="M58.3 40.6 L57.4 45" stroke="${sk||'#c88f62'}" stroke-width="1.2"/>`;
-    case 'altindis': return `<rect x="52.2" y="61.3" width="1.9" height="1.5" rx=".3" fill="#e3b33c"/>`;
-    case 'gozluk': return `<g fill="#0d0d10"><rect x="35.5" y="43.5" width="12.5" height="8.5" rx="3.2"/><rect x="52" y="43.5" width="12.5" height="8.5" rx="3.2"/></g><path d="M48 46.5 L52 46.5 M35.5 46 L31.5 45 M64.5 46 L68.5 45" stroke="#0d0d10" stroke-width="1.4"/><path d="M38 45.5 L41 45.5 M54.5 45.5 L57.5 45.5" stroke="#fff" stroke-opacity=".35" stroke-width="1"/>`;
-    case 'zincir': return `<path d="M39 80 Q50 93 61 80" stroke="#d9ad3a" stroke-width="2.2" fill="none" stroke-dasharray="2.2 .9"/><circle cx="50" cy="88.5" r="2.4" fill="#e9bf4a" stroke="#a3801f" stroke-width=".6"/>`;
-    case 'hac': return `<path d="M41.5 79.5 Q44 88 50 92 Q56 88 58.5 79.5" stroke="#d9ad3a" stroke-width=".9" fill="none"/><path d="M50 92 V101 M47 95 H53" stroke="#e3b33c" stroke-width="1.6" stroke-linecap="round"/><path d="M50 92 V101" stroke="#a3801f" stroke-width=".4"/>`;
-    case 'kupe': return `<circle cx="31" cy="56.5" r="1.7" fill="#eef5ff" stroke="#b9c8de" stroke-width=".6"/>`;
-    case 'puro': return `<g transform="rotate(14 54 62)"><rect x="53" y="60.6" width="14" height="3.2" rx="1.2" fill="#6b4226"/><rect x="56" y="60.6" width="2" height="3.2" fill="#b8892c"/><circle cx="67.2" cy="62.2" r="1.5" fill="#ff7a2e"/></g><path d="M70 58 q2 -3 0 -6 q-2 -3 1 -6" stroke="#cfcfcf" stroke-opacity=".35" stroke-width="1.2" fill="none"/>`;
-    case 'yara': return `<path d="M61 39 L64.5 53" stroke="#a9554c" stroke-width="1.5" stroke-linecap="round"/><path d="M60.6 43 L64 42.2 M61.6 47 L65 46.2" stroke="#a9554c" stroke-width="1"/>`;
-    case 'fotr': return `<ellipse cx="50" cy="28.5" rx="30" ry="5.6" fill="#1c1c20"/><path d="M33.5 28.5 Q33 9 50 9 Q67 9 66.5 28.5Z" fill="#26262c"/><rect x="33.6" y="22" width="32.8" height="4.4" fill="#7c1f1f"/><path d="M45 11 Q50 15 55 11" stroke="#141417" stroke-width="1.2" fill="none"/>`;
-  }
-  return '';
-}
 /* ============ Yeni çizim: gerçek oranlı bel üstü ============ */
 const OL2='#2b1f19';
 function hair2Back(h,c){
@@ -663,100 +575,9 @@ function avatarSVG2(L,age,opts){
   return s+'</svg>';
 }
 
-let AVST=(()=>{try{return localStorage.getItem('mafya-stil3')||'yeni'}catch(e){return 'yeni'}})();
-const AVSTYLES=[['yeni','Yeni çizim'],['anim','Animasyon'],['gercek','Gerçekçi gölgeli'],['cizgi','Çizgi roman'],['noir','Film noir'],['sevimli','Sevimli (BitLife)']];
-function avatarSVG(L,age=30,opts={}){
-  if((opts.st||AVST)==='yeni')return avatarSVG2(L,age,opts);
-  const ST=opts.st||AVST,ink=ST==='cizgi'||ST==='noir',cute=ST==='sevimli',anim=ST==='anim',OL='#3b2a22';
-  const G=x=>ink?`<g stroke="#120f0f" stroke-width="${ST==='noir'?1.5:1.7}" stroke-linejoin="round">${x}</g>`:anim?`<g stroke="${OL}" stroke-width=".95" stroke-linejoin="round">${x}</g>`:cute?`<g stroke="#00000055" stroke-width=".8" stroke-linejoin="round">${x}</g>`:x;
-  const skin=SKINS[L.skin],sd=shade(skin,-26),sdd=shade(skin,-48),hl=shade(skin,22),id='a'+(++uid);
-  let hc=HCOL[L.hairColor];
-  if(age>=58&&!['gri','beyaz'].includes(L.hairColor))hc=age>=72?HCOL.beyaz:HCOL.gri;
-  const adult=age>=16, o=opts.jail?'mahkum':L.outfit, accs=adult&&!opts.jail?L.acc:(opts.jail&&L.acc.includes('yara')?['yara']:[]);
-  const sad=opts.mood!==undefined&&opts.mood<30;
-  const JAW='M30.6 41 Q30.4 22.6 50 22.6 Q69.6 22.6 69.4 41 L69.6 51.5 Q69.4 58.6 65.6 63.2 L57.6 69.6 Q50 72.8 42.4 69.6 L34.4 63.2 Q30.6 58.6 30.4 51.5Z';
-  let s=`<svg viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
-    <linearGradient id="${id}f" x1="0" y1="0" x2="1" y2=".35">${ink||cute||anim?`<stop offset="0" stop-color="${skin}"/>`:cute?`<stop offset="0" stop-color="${skin}"/>`:`<stop offset="0" stop-color="${hl}"/><stop offset=".42" stop-color="${skin}"/><stop offset="1" stop-color="${sd}"/>`}</linearGradient>
-    <filter id="${id}n" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="linear" slope="1.35" intercept="-.08"/><feFuncG type="linear" slope="1.35" intercept="-.08"/><feFuncB type="linear" slope="1.35" intercept="-.08"/></feComponentTransfer><feComponentTransfer><feFuncR type="table" tableValues="0.04 0.2 0.62 1"/><feFuncG type="table" tableValues="0.035 0.16 0.52 0.93"/><feFuncB type="table" tableValues="0.03 0.12 0.38 0.78"/></feComponentTransfer></filter>
-    <linearGradient id="${id}b" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".10"/><stop offset=".45" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
-    <linearGradient id="${id}h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>
-  </defs>`+(ST==='noir'?`<g filter="url(#${id}n)">`:'');
-  s+=G(hairBack(L.hair,hc));
-  // boyun: kalın, güçlü
-  s+=G(`<path d="M40 60 L39.4 81 Q50 87.5 60.6 81 L60 60Z" fill="${sd}"/>`)+`<path d="M40 65 Q50 77 60 65 L60.2 72.5 Q50 80 39.8 72.5Z" fill="${sdd}" opacity=".6"/><path d="M46 74 L47 82 M54 74 L53 82" stroke="${sdd}" stroke-opacity=".35" stroke-width=".8"/>`;
-  s+=`${G(body(o,(L.oc||{})[o]))}`+(cute?'':`<path d="M6 110 Q8 86 33 80 Q50 87 67 80 Q92 86 94 110Z" fill="url(#${id}b)"/>`);
-  if(!cute)s+=`<path d="M22 92 Q26 98 25 110 M78 92 Q74 98 75 110" stroke="#000" stroke-opacity=".22" stroke-width="1.2" fill="none"/>`;
-  if(accs.includes('zincir'))s+=acc('zincir');
-  ['kartal','bayrak'].forEach(a=>{if(accs.includes(a))s+=acc2(a).replace(/<path d="M44 55/,'<path d="M41.5 79.5')});
-  // kulaklar
-  s+=G(`<path d="M31 44 Q25.5 43 26 50 Q26.5 56.5 32 56.5Z" fill="${cute||anim?skin:sd}"/><path d="M69 44 Q74.5 43 74 50 Q73.5 56.5 68 56.5Z" fill="${cute||anim?skin:sdd}"/>`)+(anim?`<path d="M30 47 Q28 50 30 53.5 M70 47 Q72 50 70 53.5" stroke="${sd}" stroke-width="1" fill="none"/>`:'')+`<path d="M29.5 47 Q28 50 30 53" stroke="${sdd}" stroke-width="1" fill="none"/>`;
-  if(cute){
-    s+=G(`<path d="M30.4 42 Q30.4 22.6 50 22.6 Q69.6 22.6 69.6 42 Q69.6 70.5 50 71.2 Q30.4 70.5 30.4 42Z" fill="${skin}"/>`);
-    s+=`<ellipse cx="37.5" cy="56" rx="3.6" ry="2.2" fill="#e0675a" opacity=".22"/><ellipse cx="62.5" cy="56" rx="3.6" ry="2.2" fill="#e0675a" opacity=".22"/>`;
-    s+=`<ellipse cx="42.6" cy="48.6" rx="2.3" ry="2.7" fill="#1a1412"/><ellipse cx="57.4" cy="48.6" rx="2.3" ry="2.7" fill="#1a1412"/><circle cx="43.4" cy="47.6" r=".8" fill="#fff"/><circle cx="58.2" cy="47.6" r=".8" fill="#fff"/>`;
-    s+=sad?`<path d="M38.4 42.6 L46.4 41.2 M61.6 42.6 L53.6 41.2" stroke="${hc}" stroke-width="2" stroke-linecap="round"/>`:`<path d="M38.4 43 Q42.4 40.8 46.4 42.6 M61.6 43 Q57.6 40.8 53.6 42.6" stroke="${hc}" stroke-width="2" stroke-linecap="round" fill="none"/>`;
-    s+=`<path d="M48.4 55 Q50 56.6 51.6 55" stroke="${sdd}" stroke-width="1.2" fill="none" stroke-linecap="round"/>`;
-    if(adult)s+=beard(L.beard,hc);
-    s+=sad?`<path d="M45.6 64 Q50 61.2 54.4 64" stroke="#5a2420" stroke-width="1.6" fill="none" stroke-linecap="round"/>`:`<path d="M44.8 61.2 Q50 66.2 55.2 61.2 Q50 63.2 44.8 61.2Z" fill="#7a2c26" stroke="#5a2420" stroke-width="1" stroke-linejoin="round"/>`;
-  }else if(anim){
-    const AJ='M32 40 Q31.6 22 50 21.6 Q68.4 22 68 40 L67.7 50 Q67.2 58 62.6 63.4 L55.6 69.4 Q50 72.2 44.4 69.4 L37.4 63.4 Q32.8 58 32.3 50Z';
-    s+=G(`<path d="${AJ}" fill="${skin}"/>`);
-    // cel gölgeler: saç altı, sağ yan, çene altı
-    s+=`<path d="M33 38 Q50 33 67 38 L67.4 42 Q50 37.4 32.6 42Z" fill="${sd}" opacity=".35"/><path d="M61 25 Q68.2 30 68 40 L67.7 50 Q67.2 58 62.6 63.4 L57 68.2 Q61.6 60 62.4 50 Q63.6 36 61 25Z" fill="${sd}" opacity=".55"/>`;
-    s+=`<path d="M35.5 55 Q38 59.5 42 60.5 Q38 61 35.8 58.2Z M64.5 55 Q62 59.5 58 60.5 Q62 61 64.2 58.2Z" fill="${sd}" opacity=".35"/>`;
-    // gözler: badem, koyu iris, belirgin üst kapak
-    const ae=(cx,d)=>`<path d="M${cx-3.9} 48.8 Q${cx-.4} 46.3 ${cx+3.9} 48.4 Q${cx+.3} 50.6 ${cx-3.9} 48.8Z" fill="#f4ede2"/><circle cx="${cx+d*.25}" cy="48.3" r="1.75" fill="#3a2516"/><circle cx="${cx+d*.25}" cy="48.3" r=".85" fill="#0d0907"/><circle cx="${cx+d*.25-.55}" cy="47.7" r=".45" fill="#fff"/><path d="M${cx-4.3} 49 Q${cx-.4} 45.6 ${cx+4.3} 48.3" stroke="${OL}" stroke-width="1.35" fill="none" stroke-linecap="round"/><path d="M${cx-3.6} 46.6 Q${cx} 45.2 ${cx+3.6} 46.4" stroke="${sd}" stroke-width=".7" fill="none"/>`;
-    s+=ae(42.6,1)+ae(57.4,-1);
-    // kaşlar: doğal, kalın, sivrilen
-    s+=sad?`<path d="M37.4 43.6 Q42 41.6 47 41.4 L47 42.9 Q42.2 43.2 37.8 44.8Z M62.6 43.6 Q58 41.6 53 41.4 L53 42.9 Q57.8 43.2 62.2 44.8Z" fill="${hc}" stroke="${OL}" stroke-width=".4"/>`
-          :`<path d="M37 43.8 Q40.6 40.6 47.2 42 L47.1 43.9 Q42 42.6 37.6 44.6Z M63 43.8 Q59.4 40.6 52.8 42 L52.9 43.9 Q58 42.6 62.4 44.6Z" fill="${hc}" stroke="${OL}" stroke-width=".4"/>`;
-    // burun: tek yan çizgi + kanatlar
-    s+=`<path d="M51.2 46.8 Q53.2 52 53.2 55.4" stroke="${OL}" stroke-opacity=".75" stroke-width=".85" fill="none" stroke-linecap="round"/><path d="M47 56 Q48.2 57.9 50.2 57.5 Q52.3 58.1 53.6 56" stroke="${OL}" stroke-width=".95" fill="none" stroke-linecap="round"/><path d="M51.4 50 Q53.6 53 53.4 55.6 L51.6 56.4Z" fill="${sd}" opacity=".45"/><path d="M47.6 58.4 Q50 59.6 52.6 58.4" stroke="${sd}" stroke-width="1" fill="none"/>`;
-    if(adult)s+=(L.beard==='kirli'?beard(L.beard,hc):G(beard(L.beard,hc)))+(['tam','boxed','keci'].includes(L.beard)?`<path d="M36 58 l1 2.4 M39 61.6 l.8 2.4 M61 61.6 l-.8 2.4 M64 58 l-1 2.4 M47 68.6 l.3 2 M53 68.6 l-.3 2" stroke="${shade(hc,30)}" stroke-width=".7" stroke-linecap="round"/>`:'');
-    // ağız
-    s+=sad?`<path d="M45.6 63.4 Q50 61.4 54.4 63.4" stroke="#5a2a22" stroke-width="1.15" fill="none" stroke-linecap="round"/>`
-          :`<path d="M45.4 62.2 Q50 63.4 54.6 62" stroke="#5a2a22" stroke-width="1.15" fill="none" stroke-linecap="round"/>`;
-    s+=`<path d="M46.8 64 Q50 66.2 53.2 64 Q50 64.8 46.8 64Z" fill="${shade(skin,-18)}"/>`;
-  }else{
-  // yüz: geniş, köşeli çene
-  s+=G(`<path d="${JAW}" fill="url(#${id}f)"/>`);
-  // sağ yüz gölgesi (keskin)
-  s+=`<path d="M60.5 24 Q69.8 28 69.4 41 L69.6 51.5 Q69.4 58.6 65.6 63.2 L57.6 69.6 Q61.5 64 62.6 56 L62.3 44 Q62.5 32 60.5 24Z" fill="${sdd}" opacity="${ink?.55:.38}"/>`;
-  // şakak çukurları
-  s+=`<path d="M31.2 33 Q33.5 38 33 44 L31 44Z M68.8 33 Q66.5 38 67 44 L69 44Z" fill="${sdd}" opacity=".22"/>`;
-  // elmacık kemikleri: köşeli üçgen gölge + ışık
-  s+=`<path d="M32.8 53 Q36.5 59.8 43.4 60.6 Q37 62.2 33.8 58.6Z" fill="${sdd}" opacity=".3"/><path d="M67.2 53 Q63.5 59.8 56.6 60.6 Q63 62.2 66.2 58.6Z" fill="${sdd}" opacity=".42"/>`;
-  s+=``;
-  // çene hattı ve gamze
-  s+=`<path d="M50 67.4 L50 70.2" stroke="${sdd}" stroke-opacity=".45" stroke-width=".8" stroke-linecap="round"/>`;
-  if(adult&&L.beard!=='tam')s+=`<path d="M32 53 Q33.5 62.5 42.6 69.6 Q50 72.8 57.4 69.6 Q66.5 62.5 68 53 Q64 62.5 56 64 Q50 61.8 44 64 Q36 62.5 32 53Z" fill="${hc}" opacity=".15"/>`;
-  // gözler: derin, hafif kısık, ağır göz kapağı
-  const eye=(cx,dir)=>`<path d="M${cx-4.3} 48.6 Q${cx} 46.2 ${cx+4.3} 48.6 Q${cx} 50.3 ${cx-4.3} 48.6Z" fill="#efe6d8"/><circle cx="${cx+dir*.3}" cy="48.4" r="1.7" fill="#3a2818"/><circle cx="${cx+dir*.3}" cy="48.4" r=".78" fill="#0a0a0a"/><circle cx="${cx-.4}" cy="47.8" r=".42" fill="#fff" opacity=".85"/><path d="M${cx-4.8} 48.7 Q${cx} 45.6 ${cx+4.8} 48.3" stroke="#151010" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M${cx-4.4} 46.3 Q${cx} 44.6 ${cx+4.4} 46.2" stroke="${sdd}" stroke-opacity=".5" stroke-width=".9" fill="none"/><path d="M${cx-3.4} 50.9 Q${cx} 52 ${cx+3.4} 50.7" stroke="${sdd}" stroke-opacity=".32" stroke-width=".8" fill="none"/>`;
-  s+=`<path d="M37 45.6 Q43 43.4 48.2 46 L48.2 48 Q43 45.6 37 47.6Z M51.8 46 Q57 43.4 63 45.6 L63 47.6 Q57 45.6 51.8 48Z" fill="${sdd}" opacity=".42"/>`;
-  s+=eye(42.8,1)+eye(57.2,-1);
-  // kaşlar: kalın, düz, alçak
-  const bc=hc;
-  s+=sad?`<path d="M37 42.8 L47 41.2 L47.1 43.2 L37.4 44.6Z M63 42.8 L53 41.2 L52.9 43.2 L62.6 44.6Z" fill="${bc}"/>`
-        :`<path d="M36.6 42.4 Q41.5 40.9 47.4 42.2 L47.2 44.6 Q42 43.4 37.1 44.6Z M63.4 42.4 Q58.5 40.9 52.6 42.2 L52.8 44.6 Q58 43.4 62.9 44.6Z" fill="${bc}"/><path d="M48.4 43.6 L49.3 46.4 M51.6 43.6 L50.7 46.4" stroke="${sdd}" stroke-opacity=".5" stroke-width=".75"/>`;
-  // burun: düz, güçlü köprü, geniş kanat
-  s+=`<path d="M48.6 47.2 L47.8 55" stroke="${hl}" stroke-opacity=".6" stroke-width="1.2" stroke-linecap="round"/><path d="M51.4 47.2 L52.6 54.2" stroke="${sdd}" stroke-opacity=".55" stroke-width="1.1" fill="none" stroke-linecap="round"/><path d="M45.8 56 Q46.6 58.4 48.6 58.2 Q50 59 51.4 58.2 Q53.4 58.4 54.2 56" stroke="${sdd}" stroke-width="1.35" fill="none" stroke-linecap="round"/><path d="M45.8 56 Q45 54.4 46.6 53.6 M54.2 56 Q55 54.4 53.4 53.6" stroke="${sdd}" stroke-opacity=".5" stroke-width=".9" fill="none"/><path d="M47.6 58.8 Q50 59.9 52.4 58.8" fill="${sdd}" opacity=".4"/>`;
-  // ağız kenarı çizgileri (keskin)
-  s+=`<path d="M45 57.2 Q43 60.2 43.6 63.6" stroke="${sdd}" stroke-opacity=".22" stroke-width=".9" fill="none"/><path d="M55 57.2 Q57 60.2 56.4 63.6" stroke="${sdd}" stroke-opacity=".28" stroke-width=".9" fill="none"/>`;
-  if(adult)s+=G(beard(L.beard,hc));
-  // ağız: sıkı, hafif yan gülüş
-  s+=sad?`<path d="M45.4 63.4 Q50 61 54.6 63.4" stroke="#4c1f1c" stroke-width="1.6" fill="none" stroke-linecap="round"/>`
-        :`<path d="M44.8 61.8 Q50 64 55.4 61.4" stroke="#4c1f1c" stroke-width="1.7" fill="none" stroke-linecap="round"/><path d="M44.4 61.4 L44.9 62.2 M55.8 61 L55.3 61.9" stroke="#4c1f1c" stroke-width="1" stroke-linecap="round"/>`;
-  s+=`<path d="M46.8 64.6 Q50 65.6 53.2 64.6" stroke="${sdd}" stroke-opacity=".45" stroke-width="1" fill="none" stroke-linecap="round"/>`;
-  }
-  if(age>=50&&!cute&&!anim)s+=`<path d="M38 37.5 Q44 36.3 49 37.5 M51 37.5 Q56 36.3 62 37.5 M37 52 L39 53.4 M63 52 L61 53.4" stroke="${sdd}" stroke-opacity=".5" stroke-width=".8" fill="none"/>`;
-  s+=G(hairFront(L.hair,hc));
-  if(L.hair!=='kel'&&!cute&&!anim)s+=`<g opacity=".9">${hairFront(L.hair,'url(#'+id+'h)')}</g>`;
-  if(age>=40&&age<58&&!['kel','asker'].includes(L.hair)&&!['gri','beyaz'].includes(L.hairColor))s+=`<path d="M31.8 45 Q31.2 38 33.2 33.5 M68.2 45 Q68.8 38 66.8 33.5" stroke="#bdbdbd" stroke-width="2.2" opacity=".55" fill="none" stroke-linecap="round"/>`;
-  ['boyun','gozyasi','kaskesik','altindis','kupe','yara','gozluk','puro','fotr'].forEach(a=>{if(accs.includes(a))s+=acc(a,skin)});
-  {const jw=opts.jw||[];const wt=jw.includes('saat'),rg=jw.some(j=>['yuzuk','pirlanta','yakut'].includes(j));
-   if(adult&&!opts.jail&&(wt||rg)){const col=(L.oc||{})[o]||ODEF[o]||'#6c737f';s+=`<path d="M9 110 L13.5 97 Q20 92.5 27.5 95.5 L31 110Z" fill="${shade(col,-8)}"/><ellipse cx="21" cy="90.5" rx="6.6" ry="6" fill="${skin}"/><path d="M15.8 88.6 h10.4 M15.8 91.6 h10.4" stroke="${sd}" stroke-width=".6"/>`+(wt?`<rect x="14.4" y="95" width="13.2" height="3.6" rx="1" fill="#c9a24a"/><circle cx="21" cy="96.8" r="2.3" fill="#e8e1cc" stroke="#9c7a2e" stroke-width=".6"/>`:'')+(rg?`<circle cx="25.6" cy="88.4" r="1.7" fill="${jw.includes('yakut')?'#b0182a':jw.includes('pirlanta')?'#eef5ff':'#d6a634'}" stroke="#a3801f" stroke-width=".5"/>`:'')}}
-  return s+(ST==='noir'?'</g>':'')+'</svg>';
-}
+let AVST='yeni';
+const AVSTYLES=[['yeni','Yeni çizim']];
+function avatarSVG(L,age=30,opts={}){return avatarSVG2(L,age,opts)}
 
 /* ============ Durum ============ */
 let S=null;const Q=[];
@@ -1187,12 +1008,12 @@ function ensure(){
   if(!S.stocks)S.stocks={};
   if(!S.px)S.px={};STOCKS.forEach(s=>{if(!S.px[s.id])S.px[s.id]={p:s.p,h:[s.p],n:gauss()}});
   if(!S.state)S.state={rec:false,trust:0};
-  if(S.premium===undefined)S.premium=true;
+  if(S.premium===undefined)S.premium=false;if(S.premium&&!dayiOK())S.premium=false;
   if(S.taxInc===undefined)S.taxInc=0;if(S.taxDebt===undefined)S.taxDebt=0;if(S.taxLast===undefined)S.taxLast=null;
   ensureOrg();
   if(!S.accts)S.accts=[];
   if(!S.econ)S.econ={ph:'yuksek',left:R(3,6)};if(!S.cpi)S.cpi=1;if(!S.infl)S.infl=.32;if(!S.fx)S.fx={usd:42.5,eur:49.3};if(!S.fxh)S.fxh={usd:[S.fx.usd],eur:[S.fx.eur]};if(!S.fxw)S.fxw={usd:0,eur:0};if(!S.council)S.council={rel:{},chair:false,rules:[],chairEnd:0};applyCPI();
-  if(S.club===undefined)S.club=null;if(S.co===undefined)S.co=null;if(S.label===undefined)S.label=null;if(S.gal===undefined)S.gal=null;if(S.black===undefined)S.black=0;if(!S.watches)S.watches=[];if(!S.firms)S.firms=[];if(!S.loans)S.loans=[];if(!S.city)S.city='istanbul';if(S.gender!=='k'&&['uzun','atkuyrugu','topuz','dalgali'].includes(S.look.hair))S.look.hair='italyan';if(S.goldKg===undefined)S.goldKg=0;if(!S.goldUsd)S.goldUsd=124000;if(S.jewels.some(j=>j.id==='kulce')){const n=S.jewels.filter(j=>j.id==='kulce').length;S.jewels=S.jewels.filter(j=>j.id!=='kulce');S.goldKg+=n;S.goldCost=(S.goldCost||0)+n*GKG()}if(!S.orders)S.orders={};if(!S.origin)S.origin='istanbul';if(!S.famBg)S.famBg='orta';
+  if(S.club===undefined)S.club=null;if(S.co===undefined)S.co=null;if(S.label===undefined)S.label=null;if(S.gal===undefined)S.gal=null;if(S.black===undefined)S.black=0;if(!S.watches)S.watches=[];if(!S.firms)S.firms=[];try{migrateArtists()}catch(e){}if(!S.loans)S.loans=[];if(!S.city)S.city='istanbul';if(S.gender!=='k'&&['uzun','atkuyrugu','topuz','dalgali'].includes(S.look.hair))S.look.hair='italyan';if(S.goldKg===undefined)S.goldKg=0;if(!S.goldUsd)S.goldUsd=124000;if(S.jewels.some(j=>j.id==='kulce')){const n=S.jewels.filter(j=>j.id==='kulce').length;S.jewels=S.jewels.filter(j=>j.id!=='kulce');S.goldKg+=n;S.goldCost=(S.goldCost||0)+n*GKG()}if(!S.orders)S.orders={};if(!S.origin)S.origin='istanbul';if(!S.famBg)S.famBg='orta';
   ensureBosses();if(!S.artists)S.artists=[];if(!S.sm)S.sm={f:0,ver:false};if(!S.offs)S.offs={};if(S.abroad===undefined)S.abroad=null;
   migrateCars();
   if(!S.lux)S.lux=[];if(!S.papers)S.papers=[];if(S.fame===undefined)S.fame=0;if(!S.ach)S.ach={};
@@ -1450,7 +1271,7 @@ const ACT={
       else{st.trust=clamp(st.trust-5);log(`${m.n} görevi başarısız oldu. Teşkilat hayal kırıklığında.`,'bad')}
     }else{S.money+=m.m;st.trust=clamp(st.trust+m.g);add('heat',-5);log(`${m.n} görevi başarıyla tamamlandı. Teşkilat ${fmt(m.m)} ödedi.`,'gold')}
     done()},
-  prem:()=>{S.premium=!S.premium;log(S.premium?'Dayı Paketi açıldı. Dayının tanıdıkları hep yanında.':'Dayı Paketi kapatıldı. Artık kendi başınasın.',S.premium?'gold':'dim');done()},
+  prem:()=>{if(!dayiOK()){dayiShop();return}S.premium=!S.premium;log(S.premium?'Dayı Paketi açıldı. Dayının tanıdıkları hep yanında.':'Dayı Paketi kapatıldı. Artık kendi başınasın.',S.premium?'gold':'dim');done()},
   tip:k=>{const cost=k==='all'?90000:20000;if(S.money<cost)return;S.money-=cost;
     const pred=st=>{const x=S.px[st.id];const r=stockR(st,x.n,.25);const up=r>0;const ok=ch(.8);const say=ok?up:!up;const real=x.p*Math.exp(r)*(1+(S.infl||0)*.2);const fake=x.p*(say?1+Math.abs(r)*R(80,130)/100:1-Math.abs(r)*R(80,130)/100);const tg=+((ok?real*R(97,103)/100:fake)).toFixed(2);return{up:say,p0:x.p,r,tg}};
     if(k==='all'){STOCKS.forEach(st=>{S.tips[st.id]=pred(st)});S.tips.all=1;log('Ferdi bütün hisseler için fısıldadı. Listeye bak.','gold')}
@@ -2307,6 +2128,7 @@ EXTRA.muzik=()=>{const l=S.label;let h='';
   l.roster.forEach(a=>h+=`<button class="row" data-x="lart:${a.id}"><span class="ic">${a.hit?'🔥':'🎙'}</span><span class="tx"><b>${a.name}</b><span>${a.g} · Potansiyel %${a.pot} · Yıllık ${fmtS(a.fee)}</span><div class="bar" style="margin-top:5px"><i style="width:${a.fame}%;background:var(--gold)"></i></div></span><span class="rt">›</span></button>`);
   h+='<div class="sec">Konserler</div>';
   VENUES.forEach(V=>h+=row(`data-x="lconcert:${V.id}"`,'🎤',V.n,`${V.cap.toLocaleString('tr-TR')} kişi · Ün en az %${V.min}`,fmtS(V.c*S.cpi),!l.roster.some(a=>a.fame>=V.min)||l.cash<V.c*S.cpi));
+  h+=row('data-x="unlu:"','📸','Ünlülerle fotoğraf','Ün +3',fmtS(100000),!canPay(100000));
   h+=row('data-x="ltour:"','🚌','Türkiye turnesi','Ünü %50+ bütün sanatçılar',fmtS(8e6*S.cpi),!l.roster.some(a=>a.fame>=50)||l.cash<8e6*S.cpi);
   h+='<div class="sec">Kara para aklama</div><p class="note">Kara para kasandaki para şirkete girer, polis dikkatin düşer. Büyük meblağ risklidir.</p>';
   h+=row('data-x="lmoney:bot"','🤖','Sahte dinlenme (bot)','%90 temiz döner','',!!S.jail||(S.black||0)<1e6);
@@ -3317,6 +3139,30 @@ function assetsHTML(){let h='';const cpi=Math.max(1,S.cpi||1);const sec=(ic,n,v)
   const debts=[];if(S.bank.loan)debts.push(['data-go="banka"','🏦','İhtiyaç kredisi',`${S.bank.loan.left} taksit`,S.bank.loan.pay*S.bank.loan.left]);if(S.bank.card&&S.bank.card.debt)debts.push(['data-go="banka"','💳','Kredi kartı borcu','',S.bank.card.debt]);(S.loans||[]).forEach(L=>debts.push(['data-go="banka"','🚗',L.n+' kredisi',`Aylık ${fmtS(L.mo)} · ${L.left} ay`,L.mo*L.left]));if(S.taxDebt>0)debts.push(['data-go="vergi"','🧾','Vergi borcu','',S.taxDebt]);
   if(debts.length){h+=sec('💳','Borçlarım',debts.reduce((x,d)=>x+d[4],0));debts.forEach(([a,ic,n,d,v])=>h+=row(a,ic,n,d,'−'+fmtS(v),false))}
   return h}
+
+/* ============ Birleştirilmiş ekranlar ============ */
+let yTab='org';
+const SALIAS={org:['yeralti','org'],rakip:['yeralti','rakip'],harita:['yeralti','harita'],konsey:['yeralti','konsey'],sahne:['muzik'],yurtdisi:['dunya'],sehir:['dunya']};
+EXTRA.yeralti=()=>{const tabs=[['org','👑 Ailem'],['rakip','⚔️ Çeteler'],['harita','🗺 Harita'],['konsey','🏛 Konsey']];
+  let h='<div class="tabs">'+tabs.map(([id,n])=>`<button class="tab ${yTab===id?'on':''}" data-x="ytab:${id}">${n}</button>`).join('')+'</div>';
+  const r=EXTRA[yTab]();h+=r[1];return['Yeraltı dünyası',h]};
+ACT.ytab=t=>{yTab=t;openSheet('yeralti')};
+EXTRA.dunya=()=>{let h='<div class="sec">🌍 Yaşadığın şehir</div>'+EXTRA.sehir()[1];
+  h+='<div class="sec">✈️ Yurt dışı operasyonları</div>'+EXTRA.yurtdisi()[1].replace(/<button class="row" data-x="yerles:[^"]*"[\s\S]*?<\/button>/g,'');
+  return['Dünya',h]};
+function migrateArtists(){if(!S||!S.artists||!S.artists.length)return;
+  if(!S.label)S.label={name:`${S.last} Müzik`,cash:0,roster:[],done:0,tours:0};
+  S.artists.forEach(a=>{if(S.label.roster.length>=8)return;S.label.roster.push({id:a.id,name:a.name,g:a.g,fame:a.fame,pot:clamp(a.fame+R(5,25)),fee:a.fee,hit:0,songs:0,tr:a.tr,huy:a.huy})});
+  S.artists=[];log(`🎤 Gece kulübündeki sanatçıların ${S.label.name} çatısına taşındı.`,'dim')}
+ACT.unlu=ACT.unlu||(()=>{});
+
+/* ============ Dayı Paketi: ücretli ============ */
+const DAYI_PRICE='₺2.000';
+const DAYI_H=["d58c78a13b5658ee1b4b3c04", "3c0174a5246b1735da21db71", "16482db62faa84fcc8a5353a", "ad71fdebc1147983a30f5eda", "4bb8474f47ad961d8dd5d130", "6e6a7baa4cb965751a0cc911", "8a64a870e8059d091496ed88", "af6294b42f6891e27c1352f6", "de642adc29a743cdd9c40dad", "8920b1c89b2c15229f0c6256", "bb6ba08cd5702dc7e5092ec5", "20a2d3a2006a50768a8449c5", "9fe3836dedae8fa284e311f7", "251a3c38028bb6efcc657911", "d623034c7fe2e1ff85fbccc4", "45931f425480f7d6ac3c8f47", "2952983fedb6d8acb5c224bf", "f39cba002abddd9266d71a1f", "2b279234a1b8fc11bd8b482a", "dce800745553fc04bba6321c", "b32be620b45db09a1b2c518d", "8ce1d19980afe5ded386c6bc", "5bc67441dfa5c07d7bc7db5e", "fa2dd3ff51e8747bae7fb895", "676b22f0cbd9b11e16f3431d", "7670cb4e8bfc8bed9daaf4c2", "c2358f7876b0b490cff0cd36", "5bef5a6ad350bb5dcbec45ca", "708cf1789512959882b438a7", "915a120b65488350116c83b4", "4ff68159223032fea09a2f2e", "f2c17827adcba8bc1600e4cf", "ec971400aa5d43a70e4ee47a", "35b38cc495c539c9d39b1cb2", "1666bc507b240547608e0361", "04c91edffeb11a10d8ece122", "a829a9780a6cfce56f0adde7", "da1410ad6a9f26f8e85322eb", "9ec31f4966de4a75468ce05d", "dd640caf31b6ea109404499a", "21cc11155bbcdf0843fc9cde", "acb37843d7b162dbca55cb9e", "67764a5945b7c4bccd940782", "6620e6c409e752279311c56b", "92c089794ec5d9f34eb64f71", "916eb8de99bfe91e43ae26d9", "685016251a781107f82b4321", "36880b99706220c4339fc902", "784785f81019b25e009f7811", "01f701e2023b312530010945", "94d7995e32ad3705574e7a76", "c8c01cac7d3681c5d33a5a5e", "891fcfb82cd97b8bb9dd3e8e", "7178c0ea0e26b251dd67a177", "3e2b13c5daa5fc4ee98bcfe7", "f7378275c031694bfa7b400c", "2bf7263fe3ff2a4465aaa4c2", "1494006b826cf3b80748e74d", "1feab6854aeb4dbb10848485", "6605ce42c83b45aacdcbeb40", "4d7d648af112424b42fe6993"];
+function dayiOK(){try{return localStorage.getItem('mafya-dayi')==='1'}catch(e){return false}}
+async function dayiTry(code){code=String(code||'').trim().toUpperCase().replace(/\s+/g,'');if(!code)return false;try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(code));const hx=[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,24);if(DAYI_H.includes(hx)){localStorage.setItem('mafya-dayi','1');return true}}catch(e){}return false}
+function dayiShop(){closeSheet();window._nm='';queue({back:'ayar',title:'👑 Dayı Paketi',text:`<b>${DAYI_PRICE}</b> · tek seferlik, bu cihazda bütün kayıtlarda geçerli.<br><br>• Her zor anda dayının tanıdıkları: hapisten, pusudan, iflastan kurtulma<br>• Kendini ve herkesi düzenleme (yetenek, özellik, ün)<br>• Dayının bankacısı, saatçisi, eksperi, doktoru<br><br>Satın aldıktan sonra sana verilen kodu buraya yaz.`+`<input id="nmBox" autocomplete="off" autocapitalize="characters" placeholder="DAYI-XXXX-XXXX" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:12px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gold2);background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box;letter-spacing:.06em">`,
+  choices:[{t:'🔑 Kodu onayla',fn:()=>{const c=(document.getElementById('nmBox')||{}).value||window._nm;dayiTry(c).then(ok=>{if(ok){S.premium=true;log('👑 Dayı Paketi açıldı! Dayının tanıdıkları artık hep yanında.','gold');toast('👑 Dayı Paketi açıldı');afterChange()}else toast('Kod geçersiz')})}},{t:'Vazgeç',fn:()=>{}}]})}
 /* ============ Hayat menüsü: kategoriler ============ */
 function hubTiles(){return [
       ['insan','👥','İnsanlar',`${S.friends.length} dost · ${S.kids.length} çocuk`,true],
@@ -3334,7 +3180,8 @@ function hubTiles(){return [
       ['muzik','💿','Müzik şirketi',S.label?`${S.label.name} · ${S.label.roster.length} sanatçı`:'Plak şirketi kur, konser düzenle',S.age>=18],
       ['gece','🍸','Gece hayatı',S.nl&&S.nl.addict?'⚠️ Bağımlılık':S.nl&&S.nl.liver>=40?`Karaciğer %${S.nl.liver}`:'Kulüp, bar, VIP masa',S.age>=18],
       ['sirket','🏭','Şirketler ve fabrikalar',(S.firms||[]).length?`${S.firms.length} şirket`:'Fabrika kur, CEO ata, borsaya aç',S.age>=18],
-      ['sehir','🌍','Yaşadığın şehir',`${CITY().fl} ${CITY().n}`,S.age>=18],
+      ['dunya','🌍','Dünya',`${CITY().fl} ${CITY().n} · Yurt dışı işler`,S.age>=18],
+      ['yeralti','🔫','Yeraltı',S.org?`${S.org.members.length} adam · ${S.rivals.some(r=>r.war)?'Savaştasın!':'güç '+orgPow()}`:'Ailen, çeteler, harita, konsey',S.age>=16],
       ['varlikyon','💼','Varlık yönetimi',has('portfoy')?`Portföy ${fmtS((S.wm&&S.wm.pool)||0)}`:'Paranı yönetecek birini tut',S.age>=18],
       ['kara','🖤','Kara para kasası',S.black?`${fmtS(S.black)} aklanmayı bekliyor`:'Kara para ve aklama yolları',true],
       ['gorev','🎯','Haftalık görevler',(()=>{wkEnsure();const d=S.wk.goals.filter(g=>g.got).length;return `${d}/3 tamamlandı${S.wk.goals.some(g=>g.done&&!g.got)?' · Ödül hazır!':''}`})(),true],
@@ -3360,11 +3207,11 @@ function hubTiles(){return [
 const tileHTML=([id,ic,n,d,ok])=>`<button class="tile" data-go="${id}" ${ok?'':'disabled'}><span class="ti">${ic}</span><b>${n}</b><span>${d}</span></button>`;
 const HCATS=[
   ['kisisel','👤','Kişisel hayat','İnsanlar, aile ağacı, gece hayatı, eğitim, sosyal medya',['insan','agac','gece','egitim','sosyal','gorev','basarim']],
-  ['yeralti','🔫','Yeraltı dünyası','Kendi ailen, çeteler, savaş haritası, kaçakçılık, konsey',['org','rakip','harita','kacak','konsey','yurtdisi']],
+  ['yeralti','🔫','Yeraltı dünyası','Kendi ailen, çeteler, savaş haritası, konsey, kaçakçılık',['yeralti','kacak']],
   ['para','💰','Para ve finans','Banka, borsa, döviz, kara para, varlık yönetimi, vergi',['banka','borsa','doviz','kara','varlikyon','vergi','kumar']],
-  ['is','🏢','İş dünyası','Şirketler, müzik, futbol kulübü, inşaat, oto galeri',['sirket','muzik','kulup','insaat','ogaleri','sahne']],
+  ['is','🏢','İş dünyası','Şirketler, müzik, futbol kulübü, inşaat, oto galeri',['sirket','muzik','kulup','insaat','ogaleri']],
   ['alisveris','🛍','Alışveriş','Emlak, araba, kuyumcu ve saat, AVM, lüks oyuncaklar',['emlak','galeri','kuyumcu','avm','luks']],
-  ['sehir','🏙','Şehir ve devlet','Siyaset, bakanlık, cumhurbaşkanlığı, karakol, istihbarat, gazete',['baskanlik','bakanlik','siyaset','sehir','karakol','mit','gazete']]];
+  ['sehir','🏙','Şehir, dünya ve devlet','Siyaset, bakanlık, yaşadığın şehir, yurt dışı, karakol, istihbarat',['baskanlik','bakanlik','siyaset','dunya','karakol','mit','gazete']]];
 HCATS.forEach(([cid,ic,n,d,ids])=>{EXTRA['cat_'+cid]=()=>{const T=hubTiles();let h=`<p class="note">${d}.</p>`;h+='<div class="tiles">'+ids.map(id=>T.find(t=>t[0]===id)).filter(Boolean).map(tileHTML).join('')+'</div>';return[`${ic} ${n}`,h]}});
 function hubAlerts(){const a=[];
   if(S.rivals&&S.rivals.some(r=>r.war&&!r.dead))a.push(['rakip','⚔️','Savaştasın! Rakip çetelere bak']);
@@ -3434,6 +3281,7 @@ $('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeSheet()});
 function riskTag(p){return p<.25?'<span class="risk r1">Düşük risk</span>':p<.4?'<span class="risk r2">Orta risk</span>':'<span class="risk r3">Yüksek risk</span>'}
 function row(attr,ic,t,d,rt,dis){return `<button class="row" ${attr} ${dis?'disabled':''}><span class="ic">${ic}</span><span class="tx"><b>${t}</b><span>${d}</span></span>${rt?`<span class="rt">${rt}</span>`:''}</button>`}
 function openSheet(k){
+  if(SALIAS[k]){const a=SALIAS[k];if(a[1])yTab=a[1];k=a[0]}
   curSheet=k;let T='',h='';
   if(k==='is'){
     T=S.jail?'Cezaevi':'İşler';
@@ -3568,7 +3416,7 @@ function openSheet(k){
     h+='<div class="sec">Ayarlar</div>'+row('data-go="ayar"','⚙️','Ayarlar',`Dayı Paketi ${S.premium?'açık':'kapalı'} · Ana menü · Kayıt · Çizim stili`,'›',false);
   }
   if(EXTRA[k]){const r=EXTRA[k]();T=r[0];h=r[1]}
-  if(k==='ayar')h=('<div class="sec">Oyun</div>').replace('<div class="sec">Oyun</div>',`<div class="sec">Ekran</div><p class="note">Alt menü ekranın altında kalıyorsa yukarı al. Bu ayar sadece bu cihazda geçerli.</p><div class="row" style="justify-content:space-between"><span class="tx"><b>Alt menü boşluğu</b><span>${BOTMAN===null?'Otomatik · '+BOT+' px':BOT+' px'}</span></span><span style="display:flex;gap:6px"><button class="x" data-x="bot:-" aria-label="Aşağı">−</button><button class="x" data-x="bot:+" aria-label="Yukarı">+</button><button class="tab" data-x="bot:auto">Oto</button></span></div>`+'<div class="sec">Çizim stili</div><div class="grid">'+AVSTYLES.map(([k,n])=>`<button class="it ${AVST===k?'on':''}" data-x="avst:${k}"><div class="av">${avatarSVG(S.look,Math.max(S.age,18),{st:k,jw:(S.jewels||[]).map(j=>j.id)})}</div><b>${n}</b></button>`).join('')+'</div>'+'<div class="sec">Oyun menüsü</div>'+row('data-x="menu:"','🏠','Ana menü','Kayıt yuvaları, tema, yeni oyun','›',false)+'<div class="sec">Mini oyunlar</div>'+row('data-x="mgtog:"','🎮','Mini oyunlar',S.mgOff?'Kapalı · Her şey otomatik zarla':'Açık · Kasa, kovalamaca, dövüş',S.mgOff?'Aç':'Kapat',false)+'<div class="sec">Premium</div>'+(S.premium?row('data-x="selfed:"','✏️','Kendini düzenle','Sağlık, saygı, karizma, ün… (profil fotoğrafına dokunarak da açılır)','›',false):'')+row('data-x="prem:"','👑','Dayı Paketi',S.premium?'Açık · Her zor anda avantajlı premium seçenekler':'Kapalı · Dokun ve aç',S.premium?'Kapat':'Aç',false)+saveSection()+'<div class="sec">Oyun</div>');
+  if(k==='ayar')h=('<div class="sec">Oyun</div>').replace('<div class="sec">Oyun</div>',`<div class="sec">Ekran</div><p class="note">Alt menü ekranın altında kalıyorsa yukarı al. Bu ayar sadece bu cihazda geçerli.</p><div class="row" style="justify-content:space-between"><span class="tx"><b>Alt menü boşluğu</b><span>${BOTMAN===null?'Otomatik · '+BOT+' px':BOT+' px'}</span></span><span style="display:flex;gap:6px"><button class="x" data-x="bot:-" aria-label="Aşağı">−</button><button class="x" data-x="bot:+" aria-label="Yukarı">+</button><button class="tab" data-x="bot:auto">Oto</button></span></div>`+'<div class="sec">Oyun menüsü</div>'+row('data-x="menu:"','🏠','Ana menü','Kayıt yuvaları, tema, yeni oyun','›',false)+'<div class="sec">Mini oyunlar</div>'+row('data-x="mgtog:"','🎮','Mini oyunlar',S.mgOff?'Kapalı · Her şey otomatik zarla':'Açık · Kasa, kovalamaca, dövüş',S.mgOff?'Aç':'Kapat',false)+'<div class="sec">Premium</div>'+(S.premium?row('data-x="selfed:"','✏️','Kendini düzenle','Sağlık, saygı, karizma, ün… (profil fotoğrafına dokunarak da açılır)','›',false):'')+row('data-x="prem:"','👑','Dayı Paketi',S.premium?'Açık · Her zor anda avantajlı premium seçenekler':dayiOK()?'Kapalı · Dokun ve aç':`Kilitli · ${DAYI_PRICE} · Kodun varsa dokun`,S.premium?'Kapat':dayiOK()?'Aç':'🔒',false)+saveSection()+'<div class="sec">Oyun</div>');
   if(k==='ayar')h='<div class="sec">İlerleme</div>'+row('data-x="yrstep:"','⏩','İLERLE adımı',S.yearStep?'1 yıl · Bir dokunuşta bütün yıl geçer (olaylarda durur)':'3 ay · Her dokunuşta bir çeyrek',S.yearStep?'1 YIL':'3 AY',false)+h;
   if(k==='ayar')h+=`<p class="note" style="text-align:center;margin-top:18px">Mafia Life Simulator · Sürüm ${APPV}</p>`;
   if(k==='ayar'){const a=h.indexOf('<div class="sec">Ekran</div>'),b=h.indexOf('<div class="sec">Oyun menüsü</div>');if(a>=0&&b>a){const disp=h.slice(a,b);h=h.slice(0,a)+h.slice(b);h=h.replace('<div class="sec">Oyun</div>',disp+'<div class="sec">Oyun</div>')}}
