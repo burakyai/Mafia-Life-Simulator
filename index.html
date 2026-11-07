@@ -306,7 +306,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.08-0230';
+const APPV='2026.11.08-0235';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -585,7 +585,7 @@ let AVST='yeni';
 const AVSTYLES=[['yeni','Yeni çizim']];
 const EMO=(age,g)=>age<4?'👶':age<13?(g==='k'?'👧':'👦'):age<60?(g==='k'?'👩':'👨'):(g==='k'?'👵':'👴');
 const EMOH=(age,g)=>`<span class="emoav">${EMO(age,g)}</span>`;
-function avatarSVG(L,age=30,opts={}){if(opts.emo)return EMOH(age,opts.g);if(L&&L.pic&&age>=4&&PRESETS[L.pic-1])return `<img src="${age>=18?PRESETS[L.pic-1].f:PRESETS[L.pic-1].k}" alt="" class="pimg"${opts.jail?' style="filter:grayscale(.7) contrast(1.1)"':''}>`;return avatarSVG2(L,age,opts)}
+function avatarSVG(L,age=30,opts={}){if(opts.emo)return EMOH(age,opts.g);if(L&&L.pic&&PRESETS[L.pic-1])return `<img src="${age>=18?PRESETS[L.pic-1].f:PRESETS[L.pic-1].k}" alt="" class="pimg"${opts.jail?' style="filter:grayscale(.7) contrast(1.1)"':''}>`;return avatarSVG2(L,age,opts)}
 
 /* ============ Durum ============ */
 let S=null;const Q=[];
@@ -3874,7 +3874,7 @@ $('nGard').onclick=()=>{backTo=null;S&&S.alive&&goSheet('insan')};
 $('nBen').onclick=()=>{backTo='hayat';S&&S.alive&&goSheet('hayat')};
 $('hblack').onclick=e=>{e.stopPropagation();if(!S)return;backTo=null;goSheet('kara')};
 $('hSet').onclick=e=>{e.stopPropagation();if(!S)return;backTo=null;goSheet('ayar')};
-document.querySelector('.top').onclick=e=>{backTo=null;if(!S||!S.alive)return;if(e.target.closest('#hav')){if(S.look.pic&&S.age>=4&&PRESETS[S.look.pic-1]){showPic();return}if(S.premium){selfEdit();return}}goSheet('ben')};
+document.querySelector('.top').onclick=e=>{backTo=null;if(!S||!S.alive)return;if(e.target.closest('#hav')){if(S.look.pic&&PRESETS[S.look.pic-1]){showPic();return}if(S.premium){selfEdit();return}}goSheet('ben')};
 function showPic(){const P=PRESETS[S.look.pic-1];let o=$('picBox');if(!o){o=document.createElement('div');o.id='picBox';document.body.appendChild(o);o.addEventListener('click',e=>{if(e.target.closest('#picEd')){o.classList.remove('on');selfEdit();return}o.classList.remove('on')})}o.innerHTML=`<div class="pbIn"><img src="${S.age>=18?P.c:P.kc}" alt="${S.first} ${S.last}"${S.jail?' style="filter:grayscale(.7)"':''}><b>${S.first} ${S.last}</b>${S.premium?'<button id="picEd">👑 Dayı modu: düzenle</button>':''}<span>Kapatmak için dokun</span></div>`;o.classList.add('on')}
 
 /* ============ Karakter oluştur ============ */
