@@ -305,7 +305,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.07-2255';
+const APPV='2026.11.07-2310';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2606,9 +2606,9 @@ function streetQ(){if(S.age<16||S.jail||S.abroad)return;const st=stEnsure();
   const leg=payers.filter(o=>!shopT(o).il);if(leg.length&&ch(.5))kabadayi(pick(leg));
   payers.forEach(o=>{if(!shopT(o).il)return;if(o.mood<15&&ch(.25)){o.st='kizgin';log(`${shopT(o).ic} ${o.owner} (${shopT(o).n}) artık haraç vermeyeceğini söyledi.`,'bad')}});
   // mühimmat talebi
-  const ls=LTS().filter(m=>!m.jail&&m.sq>0);
-  if(ls.length&&ch(st.gw?.55:.15)){const m=pick(ls);const c=Math.round(m.sq*SQA*S.cpi*(st.gw?1.3:1));
-    setTimeout(()=>queue({title:`🔫 ${m.name} mühimmat istiyor`,text:`${m.name}: "Abi, ${m.sq} kişilik ekibin ${st.gw?'savaşta mermisi bitti':'silahları eskidi'}. ${fmt(c)} lazım, yoksa çocuklar çıplak kalır."`,choices:[
+  const ls=LTS().filter(m=>!m.jail&&m.sq>0&&(m.ar||0)<60);
+  if(ls.length&&ch(st.gw?.55:.15)){const m=pick(ls);const c=Math.round(m.sq*(100-(m.ar||0))/100*SQA*S.cpi*(st.gw?1.3:1));
+    setTimeout(()=>queue({title:`🔫 ${m.name} mühimmat istiyor`,text:`${m.name}: "Abi, ${m.sq} kişilik ekibin ${st.gw?'savaşta mermisi azaldı':'silahları eskidi'} (silah %${m.ar||0}). ${fmt(c)} lazım, yoksa çocuklar çıplak kalır."`,choices:[
       {t:'Gönder',sub:`${fmtS(c)} · Silah %100 · Sadakat +`,dis:!canPay(c),fn:()=>{pay(c);m.ar=100;m.loy=clamp(m.loy+5);log(`${m.name}'in ekibine silah ve mermi gönderdin.`,'good')}},
       {t:'Yarısını gönder',sub:`${fmtS(Math.round(c/2))} · Silah +40`,dis:!canPay(Math.round(c/2)),fn:()=>{pay(Math.round(c/2));m.ar=Math.min(100,m.ar+40);log(`${m.name}'e yarım destek gönderdin.`,'dim')}},
       {t:'Para yok',sub:'Sadakat −10 · Adam kaçabilir',fn:()=>{m.loy=clamp(m.loy-10);if(ch(.35)){const d=Math.ceil(m.sq*R(15,35)/100);m.sq-=d;log(`${m.name}'in ekibinden ${d} adam başka çeteye geçti.`,'bad')}else log(`${m.name} sesini çıkarmadı ama memnun değil.`,'bad')}}]}),70)}
