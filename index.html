@@ -49,6 +49,7 @@ body{position:fixed;inset:0;width:100%;height:var(--vh,100%);overflow:hidden;tou
 .emoav{display:grid;place-items:center;width:100%;height:100%;font-size:calc(1em + 0px);line-height:1}
 .av .emoav{font-size:22px}.tn .av .emoav{font-size:32px}
 #picBox{position:fixed;inset:0;z-index:60;background:#000d;display:none;align-items:center;justify-content:center;padding:20px}#picBox.on{display:flex;animation:up .2s ease-out}.pbIn{display:flex;flex-direction:column;align-items:center;gap:10px;max-height:100%}.pbIn img{max-width:min(320px,80vw);max-height:72vh;border:3px solid var(--gold);border-radius:16px;box-shadow:0 14px 40px #000}.pbIn b{font-family:var(--display);font-size:22px;color:var(--ink)}.pbIn span{font-size:13px;color:var(--muted)}#picEd{padding:9px 16px;border-radius:10px;border:1px solid var(--gold);color:var(--gold);background:#0008}
+.row .tx span [data-cd],.row .tx span span{display:inline;margin:0}
 .pimg{width:100%;height:100%;object-fit:cover;display:block}
 .kcard{width:min(200px,52vw);margin:0 auto 14px;border:2px solid var(--gold);border-radius:14px;overflow:hidden;position:relative;box-shadow:0 10px 30px #000c}.kcard img{width:100%;display:block;aspect-ratio:240/400;object-fit:cover;object-position:top}.kcard b{position:absolute;left:0;right:0;bottom:0;padding:8px;background:linear-gradient(transparent,#000d);font-family:var(--cond);color:var(--gold);text-align:center;letter-spacing:.05em}
 .who{flex:1;min-width:0}
@@ -305,7 +306,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.08-0135';
+const APPV='2026.11.08-0210';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2414,6 +2415,7 @@ EXTRA.insaat=()=>{const co=S.co;let h='';
   if(!co){h+='<p class="note">İnşaat şirketi kur. Arsa al, bina dik, taksitleri öde, bitince sat. Büyüdükçe müteahhitlik sınıfın yükselir ve dev projeler açılır. Ayrıca kayıt dışı parayı inşaata gömüp temizleyebilirsin.</p>'+row('data-x="cofound:"','🏗','İnşaat şirketi kur','Ticaret sicili, ofis, ekipman',fmtS(500000),!canPay(500000)||S.age<18);return['İnşaat şirketi',h]}
   const cl=coCls(),act=co.projects.filter(p=>p.state!=='done');
   h+=`<div class="sum"><div><span>Şirket</span><b>${co.name}</b></div><div><span>Müteahhitlik sınıfı</span><b style="color:var(--gold)">${CCLS[cl]}</b></div><div><span>İtibar</span><b>%${co.rep}</b></div><div><span>Tamamlanan proje</span><b>${co.done}${cl<3?` · ${CCLS[cl+1]} için ${CTH[cl+1]}`:''}</b></div></div>`;
+  if(act.some(p=>p.state==='build'))h+=row('data-x="bshop:"','🎟','Bilet mağazası',`Elinde ${tix()} bilet · 1 bilet = 30 dk · İnşaatı hemen bitir`,'›',false);
   if(act.length){h+='<div class="sec">Projelerin</div>';act.forEach(p=>{const t=PJ(p.t);if(p.state==='build')pjEnsure(p);const pct=p.state==='build'?clamp(Math.round((1-(p.endT-Date.now())/p.dur)*100)):100;
     h+=`<button class="row" data-x="pj:${p.uid}"><span class="ic">${p.state==='build'?'🏗':'🏢'}</span><span class="tx"><b>${t.n}</b><span>${p.state==='build'?`İnşaat %${pct} · <span data-cd="${p.endT}">${fmtT(p.endT-Date.now())}</span> kaldı${p.delay?' · gecikmeli':''}`:`Satışta · ${p.units-p.presold-p.sold} birim kaldı`}</span><div class="bar" style="margin-top:5px"><i style="width:${pct}%;background:${p.state==='build'?'var(--warn)':'var(--good)'}"></i></div></span><span class="rt">›</span></button>`})}
   ['Küçük','Normal','Büyük','Mega'].forEach(cat=>{h+=`<div class="sec">${cat} projeler</div>`;PROJ.filter(t=>t.cat===cat).forEach(t=>{const lock=t.cls>cl;const prof=Math.round(t.u*t.up-t.cost);
@@ -2424,7 +2426,7 @@ EXTRA.insaat=()=>{const co=S.co;let h='';
 const MIN=60e3,HOUR=36e5;
 function fmtT(ms){if(ms<=0)return 'Hazır';const s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?`${h} sa ${m} dk`:m?`${m} dk ${String(x).padStart(2,'0')} sn`:`${x} sn`}
 function fmtDur(ms){const m=Math.round(ms/MIN);return m>=60?`${Math.floor(m/60)} saat${m%60?' '+m%60+' dakika':''}`:`${m} dakika`}
-const WEEKEV=[{id:'liman',n:'⚓ Liman haftası',d:'Sevkiyat kazançları %50 fazla'},{id:'harac',n:'💼 Haraç haftası',d:'Haraç gelirleri %50 fazla'},{id:'insaat',n:'🏗 Beton haftası',d:'Yeni inşaatlar yarı sürede biter'},{id:'savas',n:'⚔️ Kan haftası',d:'Çete savaşı ganimetleri 2 kat'},{id:'gece',n:'🌙 Gece haftası',d:'Yokluğunda biriken kazanç 2 kat'}];
+const WEEKEV=[{id:'liman',n:'⚓ Liman haftası',d:'Kaçakçılık seferleri %50 fazla kazandırır'},{id:'harac',n:'💼 Haraç haftası',d:'Haraç gelirleri %50 fazla'},{id:'insaat',n:'🏗 Beton haftası',d:'Yeni inşaatlar yarı sürede biter'},{id:'savas',n:'⚔️ Kan haftası',d:'Çete savaşı ganimetleri 2 kat'},{id:'gece',n:'🌙 Gece haftası',d:'Yokluğunda biriken kazanç 2 kat'}];
 const weekNo=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5+3)/7)};
 const WEV=()=>WEEKEV[weekNo()%WEEKEV.length];
 const wk=id=>WEV().id===id;
@@ -2444,13 +2446,13 @@ function pjTick(){if(!S||!S.co)return false;let c=false;S.co.projects.forEach(p=
 /* yokluk kazancı */
 function passiveParts(){let dirtyQ=0,clean=0;try{if(S.st)S.st.shops.forEach(o=>{if(o.st==='odeyor'&&shopT(o).il)dirtyQ+=shopFee(o)})}catch(e){}
   if(S.org)dirtyQ+=S.org.turf.reduce((a,v)=>a+v.inc,0)/4;clean+=propIncome();S.houses.forEach(o=>{if(o.ten)clean+=o.ten.rent});return{clean,dirty:dirtyQ}}
-function welcomeBack(){if(!S||!S.alive)return;const now=Date.now();const last=Math.max(S.savedAt||now,S.offT||0);S.offT=now;const away=now-last;const msgs=[];
+function welcomeBack(){if(!S||!S.alive)return;if(S.ops&&S.ops.length){const c=S.ops.reduce((a,o)=>a+o.cost,0);S.money+=c;S.ops=[];log(`Bekleyen sevkiyatlar kaçakçılık hatlarına devredildi, yatırımın ${fmt(c)} iade edildi.`,'dim')}const now=Date.now();const last=Math.max(S.savedAt||now,S.offT||0);S.offT=now;const away=now-last;const msgs=[];
   if(away>=10*MIN&&S.age>=16&&!S.jail){const hrs=Math.min(8,away/HOUR);const q=hrs/2*(wk('gece')?2:1)*(S.premium?2:1);const pr=passiveParts();const c=Math.round(pr.clean*q),d=Math.round(pr.dirty*q);
     if(c+d>0){S.money+=c;if(d)dirty(d);log(`💼 Yokluğunda (${fmtDur(away)}) işlerin ${fmt(c+d)} getirdi.`,'good');msgs.push(`💼 <b>${fmtDur(away)}</b> yoktun. Bu sürede işletmelerin, haraçların ve kiraların <b>${fmt(c+d)}</b> getirdi${d?` (${fmt(d)}'si kara para)`:''}.${away>8*HOUR?'<br><small>En fazla 8 saatlik kazanç birikir; sık uğra.</small>':''}${S.premium?'<br><small>👑 Dayı Paketi: 2 kat</small>':''}`)}}
-  pjTick();const rd=(S.ops||[]).filter(o=>now>=o.end).length;if(rd)msgs.push(`📦 <b>${rd}</b> sevkiyatın limanda seni bekliyor. Geç kalırsan polis basabilir.`);
+  pjTick();routesTick();const rd=(S.routes||[]).reduce((a,r)=>a+(r.ready||0),0);if(rd)msgs.push(`📦 Kaçakçılık hatlarında <b>${rd}</b> yük teslim alınmayı bekliyor.`);
   if(S.co){const b=S.co.projects.filter(p=>p.state==='build');if(b.length)msgs.push(`🏗 ${b.length} inşaatın sürüyor. En yakını: ${fmtT(Math.min(...b.map(p=>p.endT))-now)}.`)}
   if(S.threat)msgs.push(`⚠️ <b>${S.threat.who}</b> intikam peşinde. ${now>=S.threat.due?'Geldi!':fmtT(S.threat.due-now)+' sonra gelecek.'}${S.threat.prep?' Hazırlığın tamam.':''}`);
-  if(msgs.length&&away>=10*MIN)queue({title:`Hoş geldin, ${S.first}`,text:msgs.join('<br><br>')+`<br><br><b>${WEV().n}</b>: ${WEV().d}.`,choices:[{t:'⏱ Zamanlı işlere bak',fn:()=>setTimeout(()=>goSheet('zaman'),60)},{t:'Devam',fn:()=>{}}]});
+  if(msgs.length&&away>=10*MIN)queue({title:`Hoş geldin, ${S.first}`,text:msgs.join('<br><br>')+`<br><br><b>${WEV().n}</b>: ${WEV().d}.`,choices:[...(rd?[{t:'📦 Kaçakçılık hatlarına git',fn:()=>setTimeout(()=>goSheet('kacak'),60)}]:[]),...(S.co&&S.co.projects.some(p=>p.state==='build')?[{t:'🏗 İnşaatlara bak',fn:()=>setTimeout(()=>goSheet('insaat'),60)}]:[]),{t:'Devam',fn:()=>{}}]});
   dailyCheck();threatCheck();save();render()}
 /* günlük zarf */
 function dailyCheck(){if(!S||!S.alive||S.age<14)return;const k=dKey(new Date());const d=S.daily||(S.daily={k:null,streak:0});if(d.k===k)return;
@@ -2471,33 +2473,20 @@ ACT.opget=uid=>{const op=(S.ops||[]).find(x=>x.uid===uid);if(!op)return;const o=
 ACT.opnow=uid=>{if(!S.premium)return;const op=(S.ops||[]).find(x=>x.uid===uid);if(op){op.end=Date.now();ACT.opget(uid)}};
 /* tehdit */
 function makeThreat(){if(S.threat||S.age<16)return;const st=S.st;const who=st&&st.gw?`${st.gw.boss} (${st.gw.name})`:`${pick(NICK)} ${pick(NAMES)}`;const h=R(1,4);S.threat={who,due:Date.now()+h*HOUR,prep:0};
-  log(`⚠️ ${who} intikam yemini etti: "${h} saat içinde geleceğim." Zamanlı işlerden hazırlık yapabilirsin.`,'bad')}
+  log(`⚠️ ${who} intikam yemini etti: "${h} saat içinde geleceğim." Sokak menüsünden hazırlık yapabilirsin.`,'bad')}
 function threatCheck(){const T=S&&S.threat;if(!T||!S.alive||Date.now()<T.due||S.jail)return;S.threat=null;
   if(T.prep){gainResp(6);log(`🛡 ${T.who} adamlarıyla geldi ama hazırdın. Hepsini geri püskürttün.`,'gold');toast('🛡 Tehdit savuşturuldu');save();render();return}
   queue({title:`⚠️ ${T.who} geldi`,text:'Söz verdiği gibi geldi. Hazırlıksız yakalandın.',choices:[
     {t:'Dövüş',sub:`Şans %${Math.round(clamp(.3+stPow()/500,.2,.8)*100)}`,fn:()=>{if(ch(clamp(.3+stPow()/500,.2,.8))){gainResp(5);log(`Hazırlıksız da olsan ${T.who}'yu alt ettin.`,'good')}else{hurt(R(15,35),'İntikam saldırısı');const m=Math.round(S.money*.05);S.money-=m;log(`${T.who} seni hırpaladı, ${fmt(m)} aldı.`,'bad')}}},
     {t:'Kaç',sub:'Saygı −6',fn:()=>{add('respect',-6);log('Saklandın. Mahalle konuşuyor.','bad')}}]})}
 const tprepC=()=>Math.round((100000+rank()*150000)*S.cpi);
-ACT.tprep=()=>{if(!S.threat||S.threat.prep)return;if(!pay(tprepC()))return;S.threat.prep=1;log('🛡 Evine ve mekânlarına koruma diktin. Gelsinler.','good');afterChange();closeSheet();setTimeout(()=>openSheet('zaman'),40)};
+ACT.tprep=()=>{if(!S.threat||S.threat.prep)return;if(!pay(tprepC()))return;S.threat.prep=1;log('🛡 Evine ve mekânlarına koruma diktin. Gelsinler.','good');afterChange();closeSheet();setTimeout(()=>openSheet('sokak'),40)};
 /* hanedan puanı */
 function dynScore(){return Math.max(0,Math.round(Math.log10(Math.max(1,netWorth()+(S.black||0)))*120+S.respect*2+(S.fame||0)*2+Object.keys(S.ach||{}).length*15+((S.gen||1)-1)*150+(S.st?S.st.won*40:0)+karizma()))}
 function dynBest(){let b=0;try{b=+localStorage.getItem('mafya-best')||0}catch(e){}return b}
 function dynSave(){const s=dynScore();if(s>dynBest()){try{localStorage.setItem('mafya-best',String(s))}catch(e){}return true}return false}
 /* panel */
-EXTRA.zaman=()=>{const now=Date.now();let h=`<div class="sum"><div><span>Bu hafta</span><b style="color:var(--gold)">${WEV().n}</b></div><div><span>Etkinlik</span><b>${WEV().d}</b></div><div><span>Günlük zarf serisi</span><b>${S.daily?S.daily.streak:0} gün</b></div><div><span>Hanedan puanı</span><b>${dynScore()} · Rekor ${Math.max(dynBest(),dynScore())}</b></div><div><span>🎟 Biletlerin</span><b style="color:var(--gold)">${tix()}</b></div></div>`;
-  h+=row('data-x="bshop:"','🎟','Bilet mağazası','1 bilet = 30 dakika · Bekleme, hemen bitir','›',false);
-  h+='<p class="note">Bu işler gerçek saatle ilerler; oyun kapalıyken de. Sen yokken işletmelerin en fazla 8 saatlik kazanç biriktirir.</p>';
-  if(S.threat){const T=S.threat;h+=`<div class="sec">⚠️ Tehdit</div>`+row('data-x="tprep:"','🛡',`${T.who} geliyor`,`<span data-cd="${T.due}">${fmtT(T.due-now)}</span> · ${T.prep?'Hazırsın':'Hazırlık yapmazsan hazırlıksız yakalanırsın'}`,T.prep?'✓':fmtS(tprepC()),!!T.prep||!canPay(tprepC()))}
-  h+=`<div class="sec">📦 Sevkiyatlar · ${(S.ops||[]).length}/3</div>`;
-  (S.ops||[]).forEach(op=>{const o=OPX(op.id);const ready=now>=op.end;h+=row(`data-x="opget:${op.uid}"`,o.ic,o.n,ready?(now-op.end>LATE?'⚠️ Geç kaldın, polis kokusu aldı · Hemen teslim al':'Limanda hazır · Teslim al'):`<span data-cd="${op.end}">${fmtT(op.end-now)}</span> kaldı · Yatırım ${fmtS(op.cost)}`,ready?'Al':'',!ready);
-    if(!ready)h+=row(`data-x="optix:${op.uid}"`,'🎟',`${tixNeed(op.end-now)} bilet: hemen getir`,`Elinde ${tix()} bilet`,'',false);
-    if(!ready&&S.premium)h+=row(`data-x="opnow:${op.uid}"`,'👑','Dayı: hemen getir','Beklemeden teslim al','',false)});
-  if(S.age<16)h+='<p class="note">Sevkiyatlar 16 yaşında açılır.</p>';
-  else OPS.forEach(o=>{const lock=rank()<o.rk;h+=row(`data-x="opstart:${o.id}"`,o.ic,o.n,lock?`${RANKS[o.rk].n} rütbesi gerekir`:`${fmtDur(o.dur)} · Kazanç ×${o.mult[0]}–${o.mult[1]}${wk('liman')?' (+%50)':''} · Polis riski`,lock?'🔒':fmtS(Math.round(o.cost*S.cpi)),lock||(S.ops||[]).length>=3||!canPay(Math.round(o.cost*S.cpi))||!!S.jail)});
-  if(S.co){const b=S.co.projects.filter(p=>p.state==='build');h+=`<div class="sec">🏗 İnşaatlar</div>`;if(!b.length)h+='<p class="note">Devam eden inşaat yok.</p>';
-    b.forEach(p=>{pjEnsure(p);const t=PJ(p.t);h+=row(`data-x="pj:${p.uid}"`,'🏗',t.n,now>=p.endT?`Bitti · kalan ödeme ${fmtS(Math.max(0,p.cost-p.paid))}`:`<span data-cd="${p.endT}">${fmtT(p.endT-now)}</span> kaldı`,'›',false);if(now<p.endT)h+=row(`data-x="pjtix:${p.uid}"`,'🎟',`${tixNeed(p.endT-now)} bilet: hemen bitir`,`Elinde ${tix()} bilet`,'',false)});
-    h+=row('data-go="insaat"','🏙','İnşaat şirketi','Yeni proje başlat','›',false)}
-  return['⏱ Zamanlı işler',h]};
+EXTRA.zaman=()=>EXTRA.kacak();
 /* ============ Biletler ============ */
 const BLT_H={"6017f21bbba5f078223bce08": 1000, "c6ff1021ffed871b578c391b": 10, "4f1fd07175981189098d2d18": 10, "2c2fd4a79fc59d7aadaf1e73": 10, "0c330e5799302ca32d98215f": 10, "893bf454eb5c6ead422e07b4": 10, "551bb35c6339d42ca735ada0": 10, "abe36613d787bbe0835269de": 10, "1cfb17dc3cef873ab51364ff": 10, "9dd9c657ce763208372df0f5": 10, "9f93614b078eff71544627d7": 10, "48145761dd2d8ef97c6c6fca": 10, "3073625e217450eeabdf7a9d": 10, "e67da0c63fbf68769b9c030e": 10, "f252d3462923828e19005295": 10, "a72bc8927df4a1ec301895b8": 10, "ad1d2b9dc246fbfca5564b3a": 10, "c37748b36cc354a2efea1ccb": 10, "37658af4f152313158b80f8e": 10, "26150efac3ec8178b6391d31": 10, "b81433c09b2cc4961e2dbc72": 10, "89f77ff01d416365cca8ea92": 10, "cf097cde45ec321e1bf6fbf6": 10, "63d8eceae10301889ae994d8": 10, "1d5e880d5cd86380d8594d87": 10, "c9b6834dbd81b6f6447583c4": 10, "bc6fbf880abcc5ded6047303": 35, "6c3899696da75c4e823dbe12": 35, "c5a29e31665f00445c393842": 35, "3ddfbf35fb66af69e27aa42e": 35, "e16f089c1ffbb71691238448": 35, "0e1406de1da0a600cfd60e2a": 35, "439655b397a7d40b13c7a298": 35, "48d6c3b6b21ed75480793554": 35, "9504ba060affa8ad0ab429d7": 35, "93be41bb7f77b00ab1f8183e": 35, "940c8a2689ffcbf46c4883ed": 35, "1799c140910b3aa68f23be46": 35, "16521df75c89afe6d8a4bcf7": 35, "760e4ba64d9a15d2e0e19592": 35, "d1a88e462a49eebe89ec36cd": 35, "f8b83d4c45b54a2912e7721e": 35, "341131f273031d4eb9538d7b": 35, "011bb318da38512bb8ef30ce": 35, "46e901cc0f541bcc5e4cf6e5": 35, "534e5b830d21e8a2ab58b060": 35, "3b646a325a9eb30e292e48c1": 35, "a3939e612ab90cda2bb87582": 35, "bf06740e6cb217bac97fa141": 35, "6a5052f5afbbfc10a33a51d6": 35, "7628fe393b452e6f4bb3eaa1": 35, "768d11a342d8e86f4628dea9": 100, "62f2a07e5bfc51a343be8d10": 100, "81fe57a91847d8d280f41508": 100, "5b038889abf6ebf8527b3a17": 100, "584399841df54814abd92a66": 100, "04eeefc79016c8964d5d7144": 100, "34e39d94619b1ec98f350449": 100, "e4b0858e3b914f64a8020f87": 100, "b38dbf4d96e968b03124f275": 100, "2e7210fe0e5993d0a6ed8060": 100, "73e1edcaaf00baa4745c4a6b": 100, "fbc736a4a0f3877b8daa70a6": 100, "f208f93e7969156cc173357f": 100, "37462509c81660c2197339a2": 100, "d398b9f48efb89d4bbadc2f2": 100, "56bf66daf5aea5818bfa5f99": 100, "0079e4683a412c27c029b9ff": 100, "bf8afc1105af34e6570bf96f": 100, "5ee295f96c4e7909e6ccd2c4": 100, "cf11b23b25f8a7ef139a8330": 100, "f6c947ef7b9960ec583a9360": 100, "1868338ccc42d81fd795a0e8": 100, "1512d8dacf6e9f35a8096867": 100, "9f610cfb9c7cae360bb90cd6": 100, "673f27f42f19ae22ff672945": 100, "bbedbe4a0c2b308a530b91b5": 300, "7c00f7a10380d97773e664c9": 300, "78f18ba9f17d086a0076c935": 300, "a4ff414bd883219de0a51fe3": 300, "3c6ab1774301dcd68d66d868": 300, "c60b5325969636cd64f9a7f1": 300, "7442832cc9a84b12dc782828": 300, "5a52393955cb01c4835e11bb": 300, "57a45ed07fb219ad060e7910": 300, "16b2ca0b68b647b3b94b07b7": 300, "fe1370b00d1cab58787f91f9": 300, "241db6c846b25d9675370c19": 300, "901b68e2e522c18d2b23bf35": 300, "0d1f1e7ff62686a7a330ec2b": 300, "37d1984a0cc51143b444e866": 300, "31ac34f32729acc9c2374d35": 300, "a56ab62628cc111e0f431d5b": 300, "41fc2acdd98b10858a684285": 300, "eea1dab4884a56f95dba661b": 300, "93e6e91e2f4d09dba0229c56": 300, "f89ecc60004644b11d1dbd4f": 300, "704a4a6da78ec9eb92a13ba1": 300, "229224c0a6152eb0a7a1cb9f": 300, "44fc93d23329c27089984ae0": 300, "b1f2f0ff0ece37efe0307670": 300};
 const BUNDLES=[{n:'Çırak destesi',a:10,p:'₺29,99',ic:'🎟'},{n:'Patron destesi',a:35,p:'₺89,99',b:'%15 avantajlı',ic:'🎫'},{n:'Baba destesi',a:100,p:'₺199,99',b:'%40 avantajlı',ic:'💼'},{n:"Dayı'nın kasası",a:300,p:'₺449,99',b:'%55 avantajlı',ic:'👑'}];
@@ -2512,20 +2501,20 @@ const PAY_TEST=true; // gerçek ödeme sistemi bağlanınca false yapılıp payB
 function payBuy(b){// şimdilik test: ödeme anında onaylanır
   tixSet(tix()+b.a);try{const h=JSON.parse(localStorage.getItem('mafya-buys')||'[]');h.push({a:b.a,p:b.p,t:Date.now()});localStorage.setItem('mafya-buys',JSON.stringify(h))}catch(e){}
   log(`🎟 ${b.n} satın alındı: ${b.a} bilet hesabına yüklendi. Toplam ${tix()}.`,'gold');afterChange();
-  setTimeout(()=>queue({back:'zaman',title:'✅ Ödeme alındı',text:`<div style="text-align:center;font-size:44px;margin:6px 0">🎟</div><div style="text-align:center"><b>${b.n}</b><br>${b.p}<br><br><b style="color:var(--good);font-size:18px">+${b.a} bilet hesabına yüklendi</b><br><br>Toplam biletin: <b>${tix()}</b></div>`,choices:[{t:'⏱ Zamanlı işlere dön',fn:()=>setTimeout(()=>openSheet('zaman'),50)},{t:'Tamam',fn:()=>{}}]}),60)}
+  setTimeout(()=>queue({back:null,title:'✅ Ödeme alındı',text:`<div style="text-align:center;font-size:44px;margin:6px 0">🎟</div><div style="text-align:center"><b>${b.n}</b><br>${b.p}<br><br><b style="color:var(--good);font-size:18px">+${b.a} bilet hesabına yüklendi</b><br><br>Toplam biletin: <b>${tix()}</b></div>`,choices:[{t:'Tamam',fn:()=>{}}]}),60)}
 function biletShop(){closeSheet();window._nm='';
-  queue({back:'zaman',title:'🎟 Bilet mağazası',text:`Elinde <b>${tix()} bilet</b>. 1 bilet, zamanlı bir işin <b>30 dakikasını</b> atlar: inşaatlar ve sevkiyatlar. Biletler bu cihazda bütün kayıtlarda geçerli.<br><small>Ücretsiz bilet: Dayı'nın zarfında 3. gün 1, 7. gün 3 bilet.</small>`,
-    choices:[...BUNDLES.map(b=>({t:`${b.ic} ${b.n} · ${b.p}`,sub:`${b.a} bilet${b.b?' · '+b.b:''}`,fn:()=>setTimeout(()=>queue({back:'zaman',title:`${b.ic} ${b.n}`,text:`<b>${b.a} bilet</b> · <b style="color:var(--gold)">${b.p}</b><br><br>Satın almak istiyor musun?`,choices:[{t:`💳 ${b.p} öde`,sub:'Biletler hemen hesabına yüklenir',fn:()=>payBuy(b)},{t:'Vazgeç',fn:()=>setTimeout(biletShop,50)}]}),50)})),
+  queue({back:null,title:'🎟 Bilet mağazası',text:`Elinde <b>${tix()} bilet</b>. 1 bilet, zamanlı bir işin <b>30 dakikasını</b> atlar: inşaatlar ve sevkiyatlar. Biletler bu cihazda bütün kayıtlarda geçerli.<br><small>Ücretsiz bilet: Dayı'nın zarfında 3. gün 1, 7. gün 3 bilet.</small>`,
+    choices:[...BUNDLES.map(b=>({t:`${b.ic} ${b.n} · ${b.p}`,sub:`${b.a} bilet${b.b?' · '+b.b:''}`,fn:()=>setTimeout(()=>queue({back:null,title:`${b.ic} ${b.n}`,text:`<b>${b.a} bilet</b> · <b style="color:var(--gold)">${b.p}</b><br><br>Satın almak istiyor musun?`,choices:[{t:`💳 ${b.p} öde`,sub:'Biletler hemen hesabına yüklenir',fn:()=>payBuy(b)},{t:'Vazgeç',fn:()=>setTimeout(biletShop,50)}]}),50)})),
       {t:'🔑 Kodum var',sub:'Hediye ya da kampanya kodu',fn:()=>setTimeout(biletCode,50)},{t:'Kapat',fn:()=>{}}]})}
-function biletCode(){window._nm='';queue({back:'zaman',title:'🔑 Bilet kodu',text:`Elindeki kodu yaz.<input id="nmBox" autocomplete="off" autocapitalize="characters" placeholder="BLT10-XXXX-XXXX-XXXX" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:10px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gold2);background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box;letter-spacing:.06em">`,
+function biletCode(){window._nm='';queue({back:null,title:'🔑 Bilet kodu',text:`Elindeki kodu yaz.<input id="nmBox" autocomplete="off" autocapitalize="characters" placeholder="BLT10-XXXX-XXXX-XXXX" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:10px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gold2);background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box;letter-spacing:.06em">`,
     choices:[{t:'🔑 Kodu onayla',fn:()=>{const c=(document.getElementById('nmBox')||{}).value||window._nm;biletTry(c).then(a=>{if(a>0){log(`🎟 ${a} bilet hesabına eklendi. Toplam ${tix()}.`,'gold');toast(`🎟 +${a} bilet`);afterChange()}else toast(a<0?'Bu kod bu cihazda zaten kullanıldı':'Kod geçersiz')})}},{t:'Vazgeç',fn:()=>setTimeout(biletShop,50)}]})}
 ACT.bshop=()=>biletShop();
 ACT.optix=uid=>{const op=(S.ops||[]).find(x=>x.uid===uid);if(!op)return;const n=tixNeed(op.end-Date.now());if(!tixUse(n))return;op.end=Date.now();log(`🎟 ${n} bilet kullandın, sevkiyat hemen geldi.`,'dim');ACT.opget(uid)};
-ACT.pjtix=uid=>{const p=S.co&&S.co.projects.find(x=>x.uid===uid);if(!p||p.state!=='build')return;const rem=Math.max(0,Math.round(p.cost-p.paid));if(rem>0&&!canPay(rem)){toast(`Teslim için kalan ${fmtS(rem)} borç ödenmeli`);return}const n=tixNeed(p.endT-Date.now());if(!tixUse(n))return;p.endT=Date.now();log(`🎟 ${n} bilet kullandın, ${PJ(p.t).n} inşaatı bitti.`,'dim');pjCheck(p);afterChange();closeSheet();setTimeout(()=>openSheet('zaman'),40)};
+ACT.pjtix=uid=>{const p=S.co&&S.co.projects.find(x=>x.uid===uid);if(!p||p.state!=='build')return;const rem=Math.max(0,Math.round(p.cost-p.paid));if(rem>0&&!canPay(rem)){toast(`Teslim için kalan ${fmtS(rem)} borç ödenmeli`);return}const n=tixNeed(p.endT-Date.now());if(!tixUse(n))return;p.endT=Date.now();log(`🎟 ${n} bilet kullandın, ${PJ(p.t).n} inşaatı bitti.`,'dim');pjCheck(p);afterChange();closeSheet();setTimeout(()=>openSheet('insaat'),40)};
 
 let _tk=0,_hidAt=0;
 setInterval(()=>{if(!S||!S.alive)return;document.querySelectorAll('[data-cd]').forEach(e=>{e.textContent=fmtT(+e.dataset.cd-Date.now())});
-  if(++_tk%5===0){let ch2=false;try{ch2=pjTick()}catch(e){}if(!modalOn())try{threatCheck()}catch(e){}if(ch2){save();render()}}},1000);
+  if(++_tk%5===0){let ch2=false;try{ch2=pjTick()}catch(e){}try{if(routesTick())ch2=true}catch(e){}if(!modalOn())try{threatCheck()}catch(e){}if(ch2){save();render()}}},1000);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){_hidAt=Date.now();try{save()}catch(e){}}else if(S&&S.alive&&_hidAt&&Date.now()-_hidAt>=10*MIN&&!$('title').classList.contains('on')){_hidAt=0;try{welcomeBack()}catch(e){}}});
 
 /* ============ Köken ============ */
@@ -2763,6 +2752,7 @@ function gangWin(){const st=S.st,g=st.gw;st.gw=null;st.won++;st.city=st.city.fil
   log(`🏆 ${g.name} dağıldı! ${g.boss} şehirden kaçtı. Kasalarından ${fmt(m)} çıktı${taken.length?`, ${taken.length} işletme artık sana haraç veriyor`:''}, ${rec} adamları sana katıldı.`,'gold');news(`${g.name} çetesi çöktü: sokakların yeni sahibi ${S.first} ${S.last}`,3)}
 EXTRA.sokak=()=>{const st=stEnsure();let h='';
   if(S.age<16)return ['Sokak','<p class="note">Sokak işleri 16 yaşında açılır.</p>'];
+  if(S.threat){const T=S.threat;h+=`<div class="sec">⚠️ Tehdit</div>`+row('data-x="tprep:"','🛡',`${T.who} geliyor`,`<span data-cd="${T.due}">${fmtT(T.due-Date.now())}</span> · ${T.prep?'Hazırsın':'Koruma tutmazsan hazırlıksız yakalanırsın'}`,T.prep?'✓':fmtS(tprepC()),!!T.prep||!canPay(tprepC()))}
   const g=st.gw;
   if(g){h+=`<div class="sec">⚔️ Savaş · ${g.name}</div><p class="note">Lider <b>${g.boss}</b> · <b>${g.sol}</b> adam (güç ${gPow(g)}) · Sen <b>${totSq()}</b> adam (güç ${stPow()})</p><div class="bar" style="margin:0 0 10px"><i style="width:${clamp(Math.round(g.sol/Math.max(1,g.sol0)*100))}%;background:var(--blood)"></i></div><p class="note" style="margin-top:-6px">Adamları sıfıra inince çete dağılır. Her çeyrek yeni adam toplarlar. Savaşta kadron %50 prim ister, mermi hızlı biter.</p>`;
     const used=g.act===qnow();
@@ -3175,30 +3165,45 @@ function rRisk(r){const g=GT(r.gate),d=GD(r.good);let k=1;BRIBES.forEach(([b,,re
 function rInc(r){return Math.round(380000*S.cpi*GD(r.good).m*r.trucks)}
 function rBribe(r){return Math.round(BRIBES.reduce((t,[b,,,c])=>t+(r.br[b]?c:0),0)*S.cpi*(1+r.trucks*.1))}
 ACT.ropen=()=>{if(S.age<18||S.jail)return;closeSheet();queue({back:'kacak',title:'Yeni rota: sınır kapısı',text:'Hangi kapıdan geçeceksin?',choices:[...GATES.filter(g=>!(S.routes||[]).some(r=>r.gate===g.id)).map(g=>({t:`${g.ic} ${g.n}`,sub:`${g.c} · Temel risk %${Math.round(g.risk*100)}`,fn:()=>setTimeout(()=>ropen2(g.id),40)})),{t:'Vazgeç',fn:()=>{}}]})};
-function ropen2(gid){queue({back:'kacak',title:GT(gid).n+' · Ne taşınacak?',text:'Değerli mal çok kazandırır ama yakalanırsan ceza ağır ve dikkat çok artar.',choices:[...GOODS.map(d=>{const c=Math.round(1.2e6*S.cpi*(1+d.m/2));return{t:d.n,sub:`Kurulum ${fmtS(c)} · Tır başına ~${fmtS(380000*S.cpi*d.m)}/çeyrek`,dis:!canPay(c)||(d.id==='uyus'&&rank()<3)||(d.id==='silah'&&rank()<2),fn:()=>{pay(c);S.routes=S.routes||[];S.routes.push({id:'r'+R(0,99999),gate:gid,good:d.id,trucks:1,br:{},on:true,tot:0,trips:0,bust:0});log(`${GT(gid).n} hattı kuruldu: ${d.n}. İlk tır yola çıkmaya hazır.`,'gold')}}}),{t:'Vazgeç',fn:()=>{}}]})}
+function ropen2(gid){queue({back:'kacak',title:GT(gid).n+' · Ne taşınacak?',text:'Değerli mal çok kazandırır ama yakalanırsan ceza ağır ve dikkat çok artar.',choices:[...GOODS.map(d=>{const c=Math.round(1.2e6*S.cpi*(1+d.m/2));return{t:d.n,sub:`Kurulum ${fmtS(c)} · Tır başına ~${fmtS(380000*S.cpi*d.m)}/sefer · ⏱ ${fmtDur(RDUR[d.id])}`,dis:!canPay(c)||(d.id==='uyus'&&rank()<3)||(d.id==='silah'&&rank()<2),fn:()=>{pay(c);S.routes=S.routes||[];S.routes.push({id:'r'+R(0,99999),gate:gid,good:d.id,trucks:1,br:{},on:true,tot:0,trips:0,bust:0,ready:0,tEnd:Date.now()+RDUR[d.id]});log(`${GT(gid).n} hattı kuruldu: ${d.n}. İlk tır yola çıkmaya hazır.`,'gold')}}}),{t:'Vazgeç',fn:()=>{}}]})}
 ACT.route=id=>{const r=(S.routes||[]).find(x=>x.id===id);if(!r)return;closeSheet();const g=GT(r.gate),d=GD(r.good),tc=Math.round(6e5*S.cpi);
-  queue({back:'kacak',title:`${g.ic} ${g.n} · ${d.n}`,text:`${r.trucks} araç · Çeyreklik tahmini ${fmt(rInc(r))} · Yakalanma riski %${Math.round(rRisk(r)*100)} · Rüşvet ${fmt(rBribe(r))}/çeyrek<br>Toplam ${fmt(r.tot)} kazandırdı, ${r.trips} sefer, ${r.bust} baskın.`,
+  queue({back:'kacak',title:`${g.ic} ${g.n} · ${d.n}`,text:`${r.on?(r.tEnd?`🚚 Sefer yolda: <b><span data-cd="${r.tEnd}">${fmtT(r.tEnd-Date.now())}</span></b> sonra döner`:'📦 Depo dolu, teslim al'):'⏸ Seferler durdu'} · Depoda ${r.ready||0}/${RCAP} yük<br>Her sefer ${fmtDur(rDur(r))} sürer (gerçek saat, oyun kapalıyken de). Depo dolunca araçlar bekler.<br><br>${r.trucks} araç · Sefer başı ~${fmt(rInc(r))} · Yakalanma riski %${Math.round(rRisk(r)*100)} · Rüşvet ${fmt(rBribe(r))}/çeyrek<br>Toplam ${fmt(r.tot)} kazandırdı, ${r.trips} sefer, ${r.bust} baskın.`,
     prem:{t:'Dayının bakanlıktaki adamı',sub:'Bu hat bir yıl risksiz',fn:()=>{r.safe=QS()+4;log(`${g.n} hattı bir yıl boyunca dokunulmaz.`,'gold')}},
-    choices:[{t:r.on?'⏸ Seferleri durdur':'▶️ Seferleri başlat',fn:()=>{r.on=!r.on}},
+    choices:[...(r.ready?[{t:`📦 ${r.ready} yükü teslim al`,sub:'Her yükte baskın riski var',fn:()=>ACT.rget(r.id)}]:[]),
+      ...(r.on&&r.tEnd?[{t:`🎟 ${tixNeed(r.tEnd-Date.now())} bilet: seferi hemen bitir`,sub:`Kalan ${fmtT(r.tEnd-Date.now())} · Elinde ${tix()} bilet`,fn:()=>ACT.rtix(r.id)}]:[]),
+      ...(S.premium&&r.on&&r.tEnd?[{t:'👑 Dayı: seferi hemen bitir',sub:'Bilet harcamadan',fn:()=>{r.tEnd=Date.now();rTick(r);ACT.rget(r.id)}}]:[]),
+      {t:r.on?'⏸ Seferleri durdur':'▶️ Seferleri başlat',fn:()=>{r.on=!r.on;if(r.on){r.tEnd=null;rTick(r)}}},
       ...(r.trucks<10?[{t:'➕ Araç ekle',sub:`${fmt(tc)} · Gelir ve risk artar`,dis:!canPay(tc),fn:()=>{pay(tc);r.trucks++;log(`${g.n} hattına bir araç daha eklendi (${r.trucks}).`,'good')}}]:[]),
       ...BRIBES.map(([b,n,red,c])=>({t:r.br[b]?`✓ ${n} bizden`:`💰 ${n}'nu satın al`,sub:r.br[b]?'Bırakmak için dokun':`${fmtS(c*S.cpi)}/çeyrek · Risk −%${Math.round(red*100)}`,fn:()=>{r.br[b]=!r.br[b];log(r.br[b]?`${g.n}'da ${n.toLowerCase()} artık maaşlı adamın.`:`${n} ile anlaşmayı bitirdin.`,'dim')}})),
       {t:'Hattı kapat',fn:()=>{S.routes=S.routes.filter(x=>x!==r);log(`${g.n} hattı kapandı.`,'dim')}},{t:'Kapat',fn:()=>{}}]})};
-function routesQuarter(){if(!S.routes||!S.routes.length)return;let tot=0;
-  S.routes.forEach(r=>{if(!r.on)return;const g=GT(r.gate),d=GD(r.good);const br=rBribe(r);if(br){fund(br);S.money=Math.max(0,S.money-br)}
-    if(S.jail&&!S.org){return}
-    const safe=r.safe&&r.safe>QS();
-    if(!safe&&ch(rRisk(r))){r.bust++;const lost=Math.min(r.trucks,R(1,2));r.trucks=Math.max(1,r.trucks-lost);add('heat',d.h*2);log(`🚨 ${g.n} baskını! ${d.n} yüküne el konuldu, ${lost} araç gitti.`,'bad');news(`${g.n}'da dev ${d.n.toLowerCase()} operasyonu`,d.h>=9?3:2);
-      if(!S.jail&&ch(.06+d.h/100)){later('kacakarrest',0,{g:g.n,d:d.n})}}
-    else{const m=Math.round(rInc(r)*R(80,125)/100);r.tot+=m;r.trips++;S.rtTrips=(S.rtTrips||0)+1;tot+=m;add('heat',Math.round(d.h/3))}});
-  if(tot)log(`🚚 Kaçakçılık seferleri bu çeyrek ${fmt(tot)} getirdi.`,'gold');dirty(tot)}
+const RDUR={sigara:20*MIN,yakit:30*MIN,elek:45*MIN,antika:60*MIN,silah:90*MIN,uyus:120*MIN};const RCAP=3;
+const rDur=r=>RDUR[r.good]||HOUR;
+function rTick(r,now){now=now||Date.now();if(!r.on||(S.jail&&!S.org))return 0;if(r.ready===undefined)r.ready=0;let n=0;const d=rDur(r);
+  if(!r.tEnd&&r.ready<RCAP)r.tEnd=now+d;
+  while(r.tEnd&&now>=r.tEnd){r.ready++;n++;if(r.ready>=RCAP){r.tEnd=null;break}r.tEnd+=d}
+  return n}
+function routesTick(){if(!S||!S.routes)return 0;let n=0;S.routes.forEach(r=>{const k=rTick(r);if(k){n+=k;toast(`📦 ${GT(r.gate).n} hattında yük hazır`)}});return n}
+function rCollect(r){const g=GT(r.gate),d=GD(r.good);let tot=0,bust=0;const safe=r.safe&&r.safe>QS();
+  for(let i=0;i<r.ready;i++){if(!safe&&ch(rRisk(r))){bust++;r.bust++}else{const m=Math.round(rInc(r)*R(80,125)/100*(wk('liman')?1.5:1));tot+=m;r.tot+=m;r.trips++;S.rtTrips=(S.rtTrips||0)+1}}
+  r.ready=0;rTick(r);
+  if(bust){const lost=Math.min(r.trucks-1,bust);r.trucks=Math.max(1,r.trucks-lost);add('heat',d.h*2*bust);log(`🚨 ${g.n} baskını! ${bust} yüke el konuldu${lost?`, ${lost} araç gitti`:''}.`,'bad');news(`${g.n}'da dev ${d.n.toLowerCase()} operasyonu`,d.h>=9?3:2);if(!S.jail&&ch(.06+d.h/100))later('kacakarrest',0,{g:g.n,d:d.n})}
+  if(tot){dirty(tot);add('heat',Math.round(d.h/3));log(`🚚 ${g.n} · ${d.n}: yük teslim alındı, ${fmt(tot)} kazandın.`,'gold')}
+  return tot}
+function routesQuarter(){if(!S.routes||!S.routes.length)return;
+  S.routes.forEach(r=>{if(!r.on)return;const br=rBribe(r);if(br){fund(br);S.money=Math.max(0,S.money-br)}rTick(r)})}
+ACT.rget=id=>{const r=(S.routes||[]).find(x=>x.id===id);if(!r)return;rTick(r);if(!r.ready){toast('Henüz yük gelmedi');return}rCollect(r);afterChange();closeSheet();setTimeout(()=>openSheet('kacak'),40)};
+ACT.rgetall=()=>{(S.routes||[]).forEach(r=>{rTick(r);if(r.ready)rCollect(r)});afterChange();closeSheet();setTimeout(()=>openSheet('kacak'),40)};
+ACT.rtix=id=>{const r=(S.routes||[]).find(x=>x.id===id);if(!r||!r.tEnd)return;const n=tixNeed(r.tEnd-Date.now());if(!tixUse(n))return;r.tEnd=Date.now();rTick(r);log(`🎟 ${n} bilet kullandın, ${GT(r.gate).n} seferi hemen döndü.`,'dim');ACT.rget(id)};
 LATER.kacakarrest=d=>({title:'Şoför konuştu',text:`${d.g} baskınında yakalanan şoför ifadesinde senin adını verdi.`,prem:{t:'Dayının avukatı',sub:'İfade geri çekilir',fn:()=>{add('heat',-10);log('Şoför ifadesini geri çekti. "Baskı altında konuştum" dedi.','gold')}},choices:[
   {t:'Şoförün ailesine para gönder',sub:fmt(Math.round(5e5*S.cpi))+' · %70 ifadeyi değiştirir',dis:!canPay(Math.round(5e5*S.cpi)),fn:()=>{pay(Math.round(5e5*S.cpi));if(ch(.7))log('Şoför ifadesini değiştirdi.','good');else arrest(d.d+' kaçakçılığı',[3,8])}},
   {t:'Ortadan kaybol',sub:'Saygı −',fn:()=>{add('respect',-5);add('heat',10);log('Bir süre yurt dışında kaldın.','dim')}},
   {t:'Teslim ol',fn:()=>arrest(d.d+' kaçakçılığı',[3,8])}]});
-EXTRA.kacak=()=>{let h='<p class="note">Sınır kapılarından kendi kaçakçılık hattını kur. Her çeyrek araçların sefere çıkar. Gümrükçü, jandarma ve şube rüşvet ağı riski düşürür. Değerli mal çok kazandırır ama yakalanırsan dikkat ve ceza ağır.</p>';
+EXTRA.kacak=()=>{routesTick();let h='<p class="note">Sınır kapılarından kendi kaçakçılık hattını kur. Seferler gerçek saatle döner (20 dk – 2 saat), oyun kapalıyken de. Her hatta en fazla 3 yük birikir; gelip teslim al. Gümrükçü, jandarma ve şube rüşvet ağı riski düşürür. Değerli mal çok kazandırır ama yakalanırsan dikkat ve ceza ağır.</p>';
   const rs=S.routes||[];
-  if(rs.length){const t=rs.filter(r=>r.on).reduce((s,r)=>s+rInc(r),0);h+=`<div class="card" style="padding:12px;margin-bottom:10px"><b>🚚 ${rs.length} hat · ${rs.reduce((s,r)=>s+r.trucks,0)} araç</b><div class="note" style="margin:4px 0 0">Çeyreklik tahmini gelir ${fmtS(t)} · Rüşvet ${fmtS(rs.reduce((s,r)=>s+rBribe(r),0))}</div></div>`}
-  rs.forEach(r=>{const g=GT(r.gate),d=GD(r.good),rk=rRisk(r);h+=`<button class="row" data-x="route:${r.id}"><span class="ic">${g.ic}</span><span class="tx"><b>${g.n} · ${d.n}</b><span>${r.on?'Aktif':'Durdu'} · ${r.trucks} araç · ${fmtS(rInc(r))}/çeyrek</span><span class="risk ${rk<.1?'r1':rk<.2?'r2':'r3'}">Risk %${Math.round(rk*100)}${r.safe&&r.safe>QS()?' · Dokunulmaz':''}</span></span><span class="rt">›</span></button>`});
+  if(rs.length){const t=rs.filter(r=>r.on).reduce((s,r)=>s+rInc(r),0);h+=`<div class="card" style="padding:12px;margin-bottom:10px"><b>🚚 ${rs.length} hat · ${rs.reduce((s,r)=>s+r.trucks,0)} araç</b><div class="note" style="margin:4px 0 0">Sefer başı toplam ~${fmtS(t)} · Rüşvet ${fmtS(rs.reduce((s,r)=>s+rBribe(r),0))}</div></div>`}
+  {const rdy=rs.reduce((a,r)=>a+(r.ready||0),0);if(rdy)h+=row('data-x="rgetall:"','📦',`${rdy} yük hazır · hepsini teslim al`,'Her yükte baskın riski var','',false)}
+  if(rs.length)h+=row('data-x="bshop:"','🎟','Bilet mağazası',`Elinde ${tix()} bilet · 1 bilet = 30 dk`,'›',false);
+  rs.forEach(r=>{const g=GT(r.gate),d=GD(r.good),rk=rRisk(r);h+=`<button class="row" data-x="route:${r.id}"><span class="ic">${g.ic}</span><span class="tx"><b>${g.n} · ${d.n}</b><span>${!r.on?'Durdu':r.tEnd?`🚚 <span data-cd="${r.tEnd}">${fmtT(r.tEnd-Date.now())}</span>`:'Depo dolu'} · 📦 ${r.ready||0}/${RCAP} · ${r.trucks} araç · ${fmtS(rInc(r))}/sefer</span><span class="risk ${rk<.1?'r1':rk<.2?'r2':'r3'}">Risk %${Math.round(rk*100)}${r.safe&&r.safe>QS()?' · Dokunulmaz':''}</span></span><span class="rt">›</span></button>`});
   if(rs.length<GATES.length)h+=row('data-x="ropen:"','➕','Yeni hat kur',`${GATES.length-rs.length} kapı boşta`,'',S.age<18||!!S.jail);
   return['Kaçakçılık rotaları',h]};
 
@@ -3579,7 +3584,7 @@ let curSheet=null;const SCR={};
 function goSheet(k){SCR[k]=0;openSheet(k)}
 $('shB').addEventListener('scroll',()=>{if(curSheet)SCR[curSheet]=$('shB').scrollTop},{passive:true});
 function closeSheet(){$('ov').classList.remove('on');curSheet=null}
-const PARENT={ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is',zaman:'is'};
+const PARENT={ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
 $('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeSheet()});
@@ -3594,9 +3599,7 @@ function openSheet(k){if(k==='gard')k='insan';
     if(S.abroad)h+='<p class="note">Yurt dışındasın. Suç işleri Türkiye\'ye dönünce açılır.</p>';
     if(S.jail){h+='<div class="sec">Koğuş</div>';JAIL.filter(a=>!a.prem||S.premium).forEach(a=>{const c=a.dyn?Math.round(a.dyn()):0;h+=row(`data-j="${a.id}"`,a.ic,a.n,a.d,c?fmtS(c):'',c&&S.money<c)})}
     else{
-      if(S.age>=14){const rd=(S.ops||[]).filter(o=>Date.now()>=o.end).length;
-        h+=row('data-go="zaman"','⏱','Zamanlı işler',`${rd?rd+' sevkiyat hazır · ':''}${S.threat?'⚠️ Tehdit var · ':''}🎟 ${tix()} · ${WEV().n}`,'›',false);
-        h+='<div class="sec">Suç dünyası</div>';
+      if(S.age>=14){        h+='<div class="sec">Suç dünyası</div>';
         CRIMES.forEach(c=>{const lockA=S.age<c.age,lockR=rank()<c.rank;
           const d=lockA?`${c.age} yaşında açılır`:lockR?`${RANKS[c.rank].n} rütbesi gerekir`:c.d;
           h+=row(`data-c="${c.id}"`,c.ic,c.n,d+(lockA||lockR?'':'<br>'+riskTag(failP(c))),lockA||lockR?'🔒':fmtS(c.m[1]),lockA||lockR)});
@@ -3715,6 +3718,8 @@ function openSheet(k){if(k==='gard')k='insan';
       <div><span>İsim</span><b>${S.first} ${S.last}</b></div>
       <div><span>Köken</span><b>${ORIGINS[S.origin].n} · ${FAMBG[S.famBg].n}</b></div>
       <div><span>Hanedan puanı</span><b style="color:var(--gold)">${dynScore()} · Rekor ${Math.max(dynBest(),dynScore())}</b></div>
+      <div><span>Bu hafta</span><b>${WEV().n} · ${WEV().d}</b></div>
+      <div><span>🎟 Bilet</span><b>${tix()}</b></div>
       <div><span>Kuşak</span><b>${S.gen||1}. kuşak · ${S.kids.length} çocuk</b></div>
       <div><span>Yaş</span><b>${S.age}</b></div>
       <div><span>Rütbe</span><b>${RANKS[rk].n}</b></div>
@@ -3731,7 +3736,7 @@ function openSheet(k){if(k==='gard')k='insan';
   }
   if(EXTRA[k]){const r=EXTRA[k]();T=r[0];h=r[1]}
   if(k==='ayar')h=('<div class="sec">Oyun</div>').replace('<div class="sec">Oyun</div>',`<div class="sec">Ekran</div><p class="note">Alt menü ekranın altında kalıyorsa yukarı al. Bu ayar sadece bu cihazda geçerli.</p><div class="row" style="justify-content:space-between"><span class="tx"><b>Alt menü boşluğu</b><span>${BOTMAN===null?'Otomatik · '+BOT+' px':BOT+' px'}</span></span><span style="display:flex;gap:6px"><button class="x" data-x="bot:-" aria-label="Aşağı">−</button><button class="x" data-x="bot:+" aria-label="Yukarı">+</button><button class="tab" data-x="bot:auto">Oto</button></span></div>`+'<div class="sec">Oyun menüsü</div>'+row('data-x="menu:"','🏠','Ana menü','Kayıt yuvaları, tema, yeni oyun','›',false)+'<div class="sec">Mini oyunlar</div>'+row('data-x="mgtog:"','🎮','Mini oyunlar',S.mgOff?'Kapalı · Her şey otomatik zarla':'Açık · Kasa, kovalamaca, dövüş',S.mgOff?'Aç':'Kapat',false)+'<div class="sec">Premium</div>'+(S.premium?row('data-x="selfed:"','✏️','Kendini düzenle','Sağlık, saygı, karizma, ün… (profil fotoğrafına dokunarak da açılır)','›',false):'')+row('data-x="prem:"','👑','Dayı Paketi',S.premium?'Açık · Her zor anda avantajlı premium seçenekler':dayiOK()?'Kapalı · Dokun ve aç':`Kilitli · ${DAYI_PRICE} · Reklamsız dahil · Kodun varsa dokun`,S.premium?'Kapat':dayiOK()?'Aç':'🔒',false)+saveSection()+'<div class="sec">Oyun</div>');
-  if(k==='ayar')h='<div class="sec">İlerleme</div>'+row('data-x="yrstep:"','⏩','İLERLE adımı',S.yearStep?'1 yıl · Bir dokunuşta bütün yıl geçer (olaylarda durur)':'3 ay · Her dokunuşta bir çeyrek',S.yearStep?'1 YIL':'3 AY',false)+h;
+  if(k==='ayar')h='<div class="sec">Mağaza</div>'+row('data-x="bshop:"','🎟','Bilet mağazası',`Elinde ${tix()} bilet · İnşaat ve kaçakçılık seferlerini hemen bitir`,'›',false)+'<div class="sec">İlerleme</div>'+row('data-x="yrstep:"','⏩','İLERLE adımı',S.yearStep?'1 yıl · Bir dokunuşta bütün yıl geçer (olaylarda durur)':'3 ay · Her dokunuşta bir çeyrek',S.yearStep?'1 YIL':'3 AY',false)+h;
   if(k==='ayar')h+=`<p class="note" style="text-align:center;margin-top:18px">Mafia Life Simulator · Sürüm ${APPV}</p>`;
   if(k==='ayar'){const a=h.indexOf('<div class="sec">Ekran</div>'),b=h.indexOf('<div class="sec">Oyun menüsü</div>');if(a>=0&&b>a){const disp=h.slice(a,b);h=h.slice(0,a)+h.slice(b);h=h.replace('<div class="sec">Oyun</div>',disp+'<div class="sec">Oyun</div>')}}
   if(k==='ayar')h=h.replace('<div class="sec">Oyun</div>','<div class="sec">Oyun</div>'+row('data-new="1"','↺','Yeni hayat başlat','Bu karakter silinir','',false));
