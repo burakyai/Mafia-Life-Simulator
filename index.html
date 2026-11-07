@@ -46,6 +46,8 @@ body{position:fixed;inset:0;width:100%;height:var(--vh,100%);overflow:hidden;tou
 .top{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--bg))}
 .av{border-radius:50%;background:radial-gradient(circle at 50% 35%,#3b3134,#1a1517 70%);border:2px solid var(--gold2);overflow:hidden;flex:none;display:grid;place-items:center}
 .av svg{width:100%;height:100%;display:block}
+.emoav{display:grid;place-items:center;width:100%;height:100%;font-size:calc(1em + 0px);line-height:1}
+.av .emoav{font-size:22px}.tn .av .emoav{font-size:32px}
 .pimg{width:100%;height:100%;object-fit:cover;display:block}
 .kcard{width:min(200px,52vw);margin:0 auto 14px;border:2px solid var(--gold);border-radius:14px;overflow:hidden;position:relative;box-shadow:0 10px 30px #000c}.kcard img{width:100%;display:block;aspect-ratio:240/400;object-fit:cover;object-position:top}.kcard b{position:absolute;left:0;right:0;bottom:0;padding:8px;background:linear-gradient(transparent,#000d);font-family:var(--cond);color:var(--gold);text-align:center;letter-spacing:.05em}
 .who{flex:1;min-width:0}
@@ -302,7 +304,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.07-1910';
+const APPV='2026.11.07-1920';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -579,7 +581,9 @@ function avatarSVG2(L,age,opts){
 
 let AVST='yeni';
 const AVSTYLES=[['yeni','Yeni çizim']];
-function avatarSVG(L,age=30,opts={}){if(L&&L.pic&&age>=18&&PRESETS[L.pic-1])return `<img src="${PRESETS[L.pic-1].f}" alt="" class="pimg"${opts.jail?' style="filter:grayscale(.7) contrast(1.1)"':''}>`;return avatarSVG2(L,age,opts)}
+const EMO=(age,g)=>age<4?'👶':age<13?(g==='k'?'👧':'👦'):age<60?(g==='k'?'👩':'👨'):(g==='k'?'👵':'👴');
+const EMOH=(age,g)=>`<span class="emoav">${EMO(age,g)}</span>`;
+function avatarSVG(L,age=30,opts={}){if(opts.emo)return EMOH(age,opts.g);if(L&&L.pic&&age>=18&&PRESETS[L.pic-1])return `<img src="${PRESETS[L.pic-1].f}" alt="" class="pimg"${opts.jail?' style="filter:grayscale(.7) contrast(1.1)"':''}>`;return avatarSVG2(L,age,opts)}
 
 /* ============ Durum ============ */
 let S=null;const Q=[];
@@ -1325,7 +1329,7 @@ function inherit(id){
   const nw=Math.max(0,netWorth());const tax=Math.round(nw*.1);
   let cash=Math.round(P.money+P.bank.dep-loanLeft-card-tax);
   const crewBonus=k.crew?1.5:1;
-  const N={first:k.name,last:P.last,gender:k.g,age:k.age,alive:true,look:{...k.look,acc:[]},
+  const N={first:k.name,last:P.last,gender:k.g,age:k.age,alive:true,look:{...k.look,acc:[],pic:0},
     owned:{outfit:[...new Set(['tisort','esofman',...P.owned.outfit])],acc:P.owned.acc.filter(a=>a!=='yara')},
     money:Math.max(0,cash),health:R(80,100),happy:clamp(R(40,60)),respect:Math.round(P.respect*.35*crewBonus),heat:Math.round(P.heat*.3),
     family:(k.age>=16&&P.family&&!P.snitch)?P.family:null,boss:false,jail:0,jailYears:0,
@@ -1348,15 +1352,15 @@ function inherit(id){
   S.lastRank=rank();
   $('dead').classList.remove('on');save();cloudSave(true);render();scrollLog();
 }
-function tnode(n,cls){return `<div class="tn ${cls||''}"><div class="av" style="width:56px;height:56px">${avatarSVG(n.look,Math.max(n.age,n.age<16?n.age:30),{})}</div><b>${n.name}</b><span>${n.sub||''}</span></div>`}
+function tnode(n,cls){return `<div class="tn ${cls||''}"><div class="av" style="width:56px;height:56px">${avatarSVG(n.look,Math.max(n.age,n.age<16?n.age:30),n.emo?{emo:1,g:n.g}:{})}</div><b>${n.name}</b><span>${n.sub||''}</span></div>`}
 EXTRA.agac=()=>{
   let h='<p class="note">Soyunun hikâyesi. Her kuşak bir öncekinin mirasıyla başlar.</p><div class="tree">';
   (S.tree||[]).forEach((a,i)=>{h+=`<div class="gen"><div class="gl">${i+1}. kuşak</div>${tnode({name:a.name,age:a.age,look:a.look,sub:`${a.by} – ${a.by+a.age} · ${a.rank}`},'dead')}</div><div class="tl"></div>`});
   const me={name:`${S.first} ${S.last}`,age:S.age,look:S.look,sub:`${S.birthYear||1996} – · ${RANKS[rank()].n}`};
-  h+=`<div class="gen"><div class="gl">${(S.gen||1)}. kuşak · Sen</div><div class="row2">${tnode(me,'me')}${(S.siblings||[]).map(x=>tnode({name:x.name,age:x.age,look:x.look,sub:x.g==='e'?'Erkek kardeşin':'Kız kardeşin'})).join('')}</div></div>`;
+  h+=`<div class="gen"><div class="gl">${(S.gen||1)}. kuşak · Sen</div><div class="row2">${tnode(me,'me')}${(S.siblings||[]).map(x=>tnode({emo:1,g:x.g,name:x.name,age:x.age,look:x.look,sub:x.g==='e'?'Erkek kardeşin':'Kız kardeşin'})).join('')}</div></div>`;
   const gks=S.kids.flatMap(k=>(k.kids||[]).map(g=>({...g,par:k.name})));
-  if(S.kids.length){h+=`<div class="tl"></div><div class="gen"><div class="gl">${(S.gen||1)+1}. kuşak · Çocukların</div><div class="row2">${S.kids.map(k=>tnode({name:k.name,age:k.age,look:k.look,sub:`${k.age} yaş${S.heir===k.id?' · Varis':''}`},S.heir===k.id?'me':'')).join('')}</div></div>`}
-  if(gks.length)h+=`<div class="tl"></div><div class="gen"><div class="gl">${(S.gen||1)+2}. kuşak · Torunların</div><div class="row2">${gks.map(g=>tnode({name:g.name,age:g.age,look:g.look,sub:`${g.par}'in ${g.g==='e'?'oğlu':'kızı'} · ${g.age} yaş`})).join('')}</div></div>`;
+  if(S.kids.length){h+=`<div class="tl"></div><div class="gen"><div class="gl">${(S.gen||1)+1}. kuşak · Çocukların</div><div class="row2">${S.kids.map(k=>tnode({emo:1,g:k.g,name:k.name,age:k.age,look:k.look,sub:`${k.age} yaş${S.heir===k.id?' · Varis':''}`},S.heir===k.id?'me':'')).join('')}</div></div>`}
+  if(gks.length)h+=`<div class="tl"></div><div class="gen"><div class="gl">${(S.gen||1)+2}. kuşak · Torunların</div><div class="row2">${gks.map(g=>tnode({emo:1,g:g.g,name:g.name,age:g.age,look:g.look,sub:`${g.par}'in ${g.g==='e'?'oğlu':'kızı'} · ${g.age} yaş`})).join('')}</div></div>`;
   if(!S.kids.length)h+='<p class="note" style="text-align:center;margin-top:12px">Henüz çocuğun yok. Bir eşin ya da sevgilin varken İnsanlar sayfasından çocuk sahibi olabilirsin.</p>';
   return['Aile ağacı',h+'</div>']};
 ACT.baby=()=>tryBaby();
@@ -3357,7 +3361,7 @@ function openSheet(k){if(k==='gard')k='insan';
     if(S.partner)h+=row(`data-x="pc:p|p|insan"`,'🧬',S.partner+' · Özellikleri',trOf(pFind('p','p')).huy+(S.premium?' · Dayı modunda düzenle':''),'›',false);
     if(S.partner)h+=row('data-x="baby:"','🍼','Çocuk sahibi olmaya çalış',S.married?'Evliyken şans daha yüksek':'Şans %50','',!!S.jail||S.age<18||S.age>55);
     h+=`<div class="sec">Çocukların (${S.kids.length})</div>`;
-    if(S.kids.length)S.kids.forEach(k=>{h+=`<button class="row" data-x="kid:${k.id}"><span class="ic" style="padding:0;overflow:hidden;border-radius:50%"><span class="av" style="width:38px;height:38px;border-width:1px">${avatarSVG(k.look,k.age)}</span></span><span class="tx"><b>${k.name}${S.heir===k.id?' · Varis':''}</b><span>${k.g==='e'?'Oğlun':'Kızın'} · ${k.age} yaş · Yakınlık %${k.rel}${k.path?' · '+KPATH[k.path]:''}${k.spouse?' · Eşi '+k.spouse:''}${(k.kids||[]).length?' · '+k.kids.length+' torun':''}${k.est?' · Küs':''}${k.crew?' · Aile işinde':''}</span></span><span class="rt">›</span></button>`});
+    if(S.kids.length)S.kids.forEach(k=>{h+=`<button class="row" data-x="kid:${k.id}"><span class="ic" style="padding:0;overflow:hidden;border-radius:50%"><span class="av" style="width:38px;height:38px;border-width:1px">${avatarSVG(k.look,k.age,{emo:1,g:k.g})}</span></span><span class="tx"><b>${k.name}${S.heir===k.id?' · Varis':''}</b><span>${k.g==='e'?'Oğlun':'Kızın'} · ${k.age} yaş · Yakınlık %${k.rel}${k.path?' · '+KPATH[k.path]:''}${k.spouse?' · Eşi '+k.spouse:''}${(k.kids||[]).length?' · '+k.kids.length+' torun':''}${k.est?' · Küs':''}${k.crew?' · Aile işinde':''}</span></span><span class="rt">›</span></button>`});
     else h+='<p class="note">Henüz çocuğun yok. Öldüğünde çocuklarından biriyle oyuna devam edebilirsin.</p>';
     h+=row('data-go="agac"','🌳','Aile ağacı','Soyunun bütün kuşakları','›',false);
     h+='<div class="sec">Ekibin</div>';
@@ -3491,7 +3495,7 @@ function showDead(){const cause=S.cause;
       <div><span>Hapiste geçen</span><b>${fmtJ(S.jailYears)}</b></div>
       <div><span>Mülk</span><b>${S.props.length}</b></div>
     </div>
-    ${S.kids.length?`<div class="sec" style="margin-top:20px">Mirasla devam et</div><p class="note">Çocuklarından birini seç. Servetin (%10 veraset vergisi düşülerek), evlerin, işletmelerin ve itibarının bir kısmı ona geçer.</p>`+S.kids.map(k=>`<button class="row" data-inh="${k.id}"><span class="ic" style="padding:0;overflow:hidden;border-radius:50%"><span class="av" style="width:38px;height:38px;border-width:1px">${avatarSVG(k.look,k.age)}</span></span><span class="tx"><b>${k.name} ${S.last}${S.heir===k.id?' · Varis':''}</b><span>${k.g==='e'?'Oğlu':'Kızı'} · ${k.age} yaş${k.crew?' · Aile işinde':''}</span></span><span class="rt">Devam ›</span></button>`).join(''):''}
+    ${S.kids.length?`<div class="sec" style="margin-top:20px">Mirasla devam et</div><p class="note">Çocuklarından birini seç. Servetin (%10 veraset vergisi düşülerek), evlerin, işletmelerin ve itibarının bir kısmı ona geçer.</p>`+S.kids.map(k=>`<button class="row" data-inh="${k.id}"><span class="ic" style="padding:0;overflow:hidden;border-radius:50%"><span class="av" style="width:38px;height:38px;border-width:1px">${avatarSVG(k.look,k.age,{emo:1,g:k.g})}</span></span><span class="tx"><b>${k.name} ${S.last}${S.heir===k.id?' · Varis':''}</b><span>${k.g==='e'?'Oğlu':'Kızı'} · ${k.age} yaş${k.crew?' · Aile işinde':''}</span></span><span class="rt">Devam ›</span></button>`).join(''):''}
     ${UNDO.length?'<button class="btn" id="undoDeath">⏪ Geri al · ölmeden önceye dön</button>':''}
     <button class="btn ${S.kids.length?'ghost':''}" id="again">Yepyeni bir hayat</button>`;
   $('dead').classList.add('on');
