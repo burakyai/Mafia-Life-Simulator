@@ -305,7 +305,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.07-2235';
+const APPV='2026.11.07-2245';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2601,10 +2601,10 @@ function streetQ(){if(S.age<16||S.jail||S.abroad)return;const st=stEnsure();
   const n=totSq();if(n){const c=Math.round(n*SQW*S.cpi*(st.gw?1.5:1));fund(c);if(S.money>=c){S.money-=c;log(`🔫 Sokak kadron (${n} adam) maaşı${st.gw?' ve savaş primi':''}: ${fmt(c)}.`,'dim')}else{const d=sqLoss(.15);log(`Kadrona maaş ödeyemedin, ${d} adam ekibi bıraktı.`,'bad')}}
   armUse(st.gw?12:4);
   // haraç geliri
-  const pay=st.shops.filter(o=>o.st==='odeyor');let sum=0;pay.forEach(o=>{if(shopT(o).il)sum+=shopFee(o);o.mood=clamp(o.mood-2)});
-  if(sum){dirty(sum);log(`💼 Haraç turu: ${pay.filter(o=>shopT(o).il).length} yeraltı işletmesinden ${fmt(sum)} toplandı.`,'good');add('heat',Math.min(4,Math.ceil(pay.length/4)))}
-  const leg=pay.filter(o=>!shopT(o).il);if(leg.length&&ch(.5))kabadayi(pick(leg));
-  pay.forEach(o=>{if(!shopT(o).il)return;if(o.mood<15&&ch(.25)){o.st='kizgin';log(`${shopT(o).ic} ${o.owner} (${shopT(o).n}) artık haraç vermeyeceğini söyledi.`,'bad')}});
+  const payers=st.shops.filter(o=>o.st==='odeyor');let sum=0;payers.forEach(o=>{if(shopT(o).il)sum+=shopFee(o);o.mood=clamp(o.mood-2)});
+  if(sum){dirty(sum);log(`💼 Haraç turu: ${payers.filter(o=>shopT(o).il).length} yeraltı işletmesinden ${fmt(sum)} toplandı.`,'good');add('heat',Math.min(4,Math.ceil(payers.length/4)))}
+  const leg=payers.filter(o=>!shopT(o).il);if(leg.length&&ch(.5))kabadayi(pick(leg));
+  payers.forEach(o=>{if(!shopT(o).il)return;if(o.mood<15&&ch(.25)){o.st='kizgin';log(`${shopT(o).ic} ${o.owner} (${shopT(o).n}) artık haraç vermeyeceğini söyledi.`,'bad')}});
   // mühimmat talebi
   const ls=LTS().filter(m=>!m.jail&&m.sq>0);
   if(ls.length&&ch(st.gw?.55:.15)){const m=pick(ls);const c=Math.round(m.sq*SQA*S.cpi*(st.gw?1.3:1));
@@ -2613,7 +2613,7 @@ function streetQ(){if(S.age<16||S.jail||S.abroad)return;const st=stEnsure();
       {t:'Yarısını gönder',sub:`${fmtS(Math.round(c/2))} · Silah +40`,dis:!canPay(Math.round(c/2)),fn:()=>{pay(Math.round(c/2));m.ar=Math.min(100,m.ar+40);log(`${m.name}'e yarım destek gönderdin.`,'dim')}},
       {t:'Para yok',sub:'Sadakat −10 · Adam kaçabilir',fn:()=>{m.loy=clamp(m.loy-10);if(ch(.35)){const d=Math.ceil(m.sq*R(15,35)/100);m.sq-=d;log(`${m.name}'in ekibinden ${d} adam başka çeteye geçti.`,'bad')}else log(`${m.name} sesini çıkarmadı ama memnun değil.`,'bad')}}]}),70)}
   // çete savaşı
-  if(!st.gw){if(rank()>=1&&ch(.05+Math.min(.12,pay.length*.015)))setTimeout(()=>gangDeclare(),60);return}
+  if(!st.gw){if(rank()>=1&&ch(.05+Math.min(.12,payers.length*.015)))setTimeout(()=>gangDeclare(),60);return}
   const g=st.gw;g.sol=Math.round(g.sol*1.04+2);g.q++;
   if(ch(.7))setTimeout(()=>gangHit(),60)}
 function gangDeclare(name){const st=stEnsure();if(st.gw)return;let g;
@@ -2669,8 +2669,8 @@ EXTRA.sokak=()=>{const st=stEnsure();let h='';
   LTS().forEach(m=>h+=row(`data-x="sq:${m.id}"`,m.jail?'⛓️':m.hurt?'🩹':'🧔',m.name,`${m.sq||0}/${sqCap(m)} adam · Silah %${m.ar||0} · Sadakat %${m.loy}${m.jail?' · Cezaevinde':''}`,'›',false));
   if(!S.org)h+='<p class="note">Kendi aileni kurunca her üyen (en fazla 10) kendi ekibini yönetir; kadron yüzlerce kişiye çıkar.</p>';
   // haraç
-  const il=st.shops.filter(o=>shopT(o).il),lg=st.shops.filter(o=>!shopT(o).il);const pay=il.filter(o=>o.st==='odeyor');const tot=pay.reduce((a,o)=>a+shopFee(o),0);
-  h+=`<div class="sec">🏴 Yeraltı işletmeleri · ${pay.length}/${il.length}</div><p class="note">Haraç sadece kirli para kazananlardan alınır. Her çeyrek ${fmt(tot)} kara para. Çoğu bir sokak çetesinin koruması altında; el sürersen savaş çıkar. Rütben yükseldikçe büyük işletmeler açılır.</p>`;
+  const il=st.shops.filter(o=>shopT(o).il),lg=st.shops.filter(o=>!shopT(o).il);const payers=il.filter(o=>o.st==='odeyor');const tot=payers.reduce((a,o)=>a+shopFee(o),0);
+  h+=`<div class="sec">🏴 Yeraltı işletmeleri · ${payers.length}/${il.length}</div><p class="note">Haraç sadece kirli para kazananlardan alınır. Her çeyrek ${fmt(tot)} kara para. Çoğu bir sokak çetesinin koruması altında; el sürersen savaş çıkar. Rütben yükseldikçe büyük işletmeler açılır.</p>`;
   const shRow=o=>{const T=shopT(o);const vis=o.vq===qnow();return row(`data-x="shop:${o.id}"`,T.ic,`${T.n} · ${o.owner}`,`${SST[o.st]}${o.gang&&o.st!=='odeyor'?' · '+o.gang+' koruyor':''}${o.st==='odeyor'?' · Memnuniyet %'+o.mood:''}${vis?' · Bu çeyrek uğradın':''}`,o.st==='odeyor'?'+'+fmtS(shopFee(o)):fmtS(shopFee(o)),vis&&o.st!=='odeyor')};
   il.forEach(o=>h+=shRow(o));
   h+=`<div class="sec">🏪 Meşru esnaf</div><p class="note">⚠️ Namuslu esnaftan haraç alınmaz. El sürersen büyük kabadayı aileler paranın bir kısmına çöker.</p>`;lg.forEach(o=>h+=shRow(o));
