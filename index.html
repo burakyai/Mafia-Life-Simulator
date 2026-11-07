@@ -305,7 +305,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.07-2215';
+const APPV='2026.11.07-2225';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1046,7 +1046,7 @@ function ensure(){
   if(!S.lux)S.lux=[];if(!S.papers)S.papers=[];if(S.fame===undefined)S.fame=0;if(!S.ach)S.ach={};
   S.stats=Object.assign({crimes:0,jailed:0,venues:0,elections:0,wins:0,bigwin:0},S.stats||{});
   if(!S.pol)S.pol={office:null,term:0,inf:0};if(!S.grads)S.grads=[];if(S.edu===undefined)S.edu=null;if(S.job===undefined)S.job=null;
-  if(!S.kids)S.kids=[];if(!S.tree)S.tree=[];if(!S.gen)S.gen=1;if(!S.birthYear)S.birthYear=1996;if(!S.gender)S.gender='e';
+  if(S.st)try{stEnsure()}catch(e){}if(!S.kids)S.kids=[];if(!S.tree)S.tree=[];if(!S.gen)S.gen=1;if(!S.birthYear)S.birthYear=1996;if(!S.gender)S.gender='e';
   if(!S.tips)S.tips={};if(!S.tipStats)S.tipStats={ok:0,n:0};if(S.q===undefined)S.q=0;
 }
 
@@ -2566,6 +2566,8 @@ const shopFee=o=>Math.round(o.fee*S.cpi);
 const qnow=()=>S.age*4+(S.q||0);
 function stEnsure(){if(!S.st)S.st={shops:[],gw:null,won:0};const st=S.st;
   if(!st.my)st.my={sq:0,ar:60};if(!st.city)st.city=[];
+  if(st.gw&&!(st.gw.sol>=0)){const g=st.gw;g.sol=Math.max(5,Math.round((g.str||50)*2.5*(g.hp===undefined?1:g.hp/100)));g.sol0=Math.max(g.sol,Math.round((g.str||50)*2.5));delete g.hp}
+  if(st.gw&&!(st.gw.sol0>0))st.gw.sol0=Math.max(1,st.gw.sol);
   st.shops=st.shops.filter(o=>SHOPT.some(x=>x.t===o.t));
   SHOPT.filter(x=>x.rk<=rank()).forEach(x=>{if(!st.shops.some(o=>o.t===x.t))st.shops.push({id:'sh'+R(0,999999),t:x.t,owner:pick(SHOPN)+' '+pick(SHOPE),fee:Math.round(x.fee*R(85,120)/100),st:'yok',gang:x.il&&ch(.55)?gName():null,vq:-1,mood:R(40,70)})});
   while(st.city.length<12)st.city.push(newGang());
@@ -2575,8 +2577,8 @@ function newGang(){return{name:gName(),sol:R(15,60)+rank()*R(15,55),boss:`${pick
 /* kadro */
 const LTS=()=>S.org?S.org.members:[];
 const sqCap=m=>m?12+m.str*5:15+rank()*10;
-const totSq=()=>{const st=S.st;return (st?st.my.sq:0)+LTS().reduce((a,m)=>a+(m.jail?0:(m.sq||0)),0)};
-function sqPow(){const st=S.st;if(!st)return 0;let p=st.my.sq*(.3+.7*st.my.ar/100);LTS().forEach(m=>{if(!m.jail)p+=(m.sq||0)*(.3+.7*(m.ar||0)/100)*(.6+m.loy/250)});return Math.round(p*.6)}
+const totSq=()=>{const st=S.st;return (st&&st.my?st.my.sq:0)+LTS().reduce((a,m)=>a+(m.jail?0:(m.sq||0)),0)};
+function sqPow(){const st=S.st;if(!st)return 0;let p=st.my?st.my.sq*(.3+.7*st.my.ar/100):0;LTS().forEach(m=>{if(!m.jail)p+=(m.sq||0)*(.3+.7*(m.ar||0)/100)*(.6+m.loy/250)});return Math.round(p*.6)}
 function stPow(){return Math.round(15+rank()*12+karizma()*.6+(S.org?orgPow()*.25:0)+(has('tetikci')?10:0)+S.respect*.15+sqPow())}
 const gPow=g=>Math.round(20+g.sol*.6);
 const winP=(g,b)=>{const a=stPow(),d=gPow(g);return clamp(.5+(a-d)/(a+d)*.9+(b||0),.07,.95)};
