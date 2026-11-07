@@ -305,7 +305,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.07-2245';
+const APPV='2026.11.07-2255';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2490,7 +2490,7 @@ function councilYear(){const C=S.council;if(!councilOK()||S.jail)return;
   const elect=!C.chairEnd||S.age>=C.chairEnd;
   const neutral=['Beşiktaş','Fatih','Üsküdar','Ataşehir','Beykoz'].filter(d=>!(S.org&&S.org.turf.some(v=>v.dist===d)));
   const items=[];if(elect)items.push('baskan');if(neutral.length&&S.org)items.push('bolge');if(!C.rules.includes('ateskes'))items.push('ateskes');if(!C.rules.includes('pay'))items.push('pay');if(!C.rules.includes('sessizlik'))items.push('sessizlik');
-  const a=pick(items.length?items:['bolge']);if(!a)return;
+  if(!items.length)return;const a=pick(items);
   const lob=Math.round(2e6*S.cpi);
   const ask=(title,text,onYes,onNo)=>queue({back:null,title:`🏛 Mafya konseyi: ${title}`,text,prem:{t:'Dayının sözü geçer',sub:'Oylama senin lehine',fn:()=>{onYes();log('Dayın masaya bir baktı, eller kalktı.','gold')}},choices:[
     {t:'Oyla',sub:'Konsey üyelerinin tutumuna göre',fn:()=>{const v=vote();log(`Oylama: ${v.ok?'KABUL':'RED'} (güç ${v.yes} – ${v.no}).`,v.ok?'good':'bad');v.ok?onYes():onNo&&onNo()}},
@@ -3442,7 +3442,7 @@ function pEdit(t,id,back){const o=pFind(t,id);if(!o)return;
     ...(t==='m'?[{t:'💛 Sadakat ve güç tam',fn:()=>{o.tr.sad=100;o.tr.cur=100;trSync(t,o);setTimeout(()=>pEdit(t,id,back),40)}}]:[]),
     ...(t==='f'||t==='k'?[{t:'💛 Yakınlığı %100 yap',fn:()=>{o.rel=100;setTimeout(()=>pEdit(t,id,back),40)}}]:[]),
     {t:'Bitti',fn:()=>{}}]})}
-function pSet(t,id,back,k){const o=pFind(t,id);const n=PTRAITS.find(x=>x[0]===k)[2];
+function pSet(t,id,back,k){const o=pFind(t,id);if(!o)return;const n=PTRAITS.find(x=>x[0]===k)[2];
   queue({back,title:n,text:`${o.name} · şu an ${o.tr[k]}. Yeni değer:`,choices:[0,20,40,60,80,100].map(v=>({t:String(v),fn:()=>{o.tr[k]=v;trSync(t,o);setTimeout(()=>pEdit(t,id,back),40)}}))})}
 const SELF=[['health','❤️','Sağlık'],['happy','😊','Mutluluk'],['respect','🎩','Saygı'],['heat','🚨','Polis dikkati'],['fame','🌟','Ün'],['kb','😎','Karizma bonusu'],['guz','✨','Güzellik'],['zek','🧠','Zeka']];
 function selfVal(k){return k==='kb'?(S.kb||0):k==='guz'||k==='zek'?(S[k]===undefined?50:S[k]):Math.round(S[k]||0)}
