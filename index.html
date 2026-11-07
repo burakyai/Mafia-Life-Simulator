@@ -305,7 +305,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.07-2310';
+const APPV='2026.11.08-0100';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1135,7 +1135,7 @@ async function loadSlot(k){
   try{const p=await getSlot(k);if(!p||!p.json){toast('Bu yuva boş.');return}
     S=JSON.parse(p.json);S.slot=k;UNDO.length=0;ensure();Q.length=0;$('modal').classList.remove('on');$('dead').classList.remove('on');$('create').classList.remove('on');
     if(!S.alive&&!(S.kids&&S.kids.length))S.alive=true;if(!S.alive){save();render();showDead();return}
-    save();cloudSave(true);closeSheet();render();scrollLog();toast(`${p.name} yüklendi`);
+    save();cloudSave(true);closeSheet();render();scrollLog();toast(`${p.name} yüklendi`);setTimeout(()=>{try{welcomeBack()}catch(e){}},300);
   }catch(e){toast('Kayıt yüklenemedi.')}
 }
 function ago(t){if(!t)return'';const m=Math.round((Date.now()-t)/60000);if(m<1)return'az önce';if(m<60)return m+' dk önce';const h=Math.round(m/60);if(h<24)return h+' saat önce';return new Date(t).toLocaleDateString('tr-TR')}
@@ -2375,20 +2375,18 @@ const PJ=id=>PROJ.find(x=>x.id===id);
 ACT.cofound=()=>{if(!pay(500000))return;S.co={name:`${S.last} İnşaat`,rep:50,done:0,projects:[]};log(`${S.co.name} kuruldu. Artık müteahhitsin.`,'gold');done()};
 ACT.pstart=id=>{const t=PJ(id);closeSheet();const mats=[['ucuz','Ucuz malzeme',.85,.9,'Maliyet −%15 · Satış −%10 · Skandal riski'],['std','Standart',1,1,'Dengeli'],['lux','Lüks malzeme',1.15,1.18,'Maliyet +%15 · Satış +%18 · İtibar +']];
   const permit=t.pol&&!(S.pol&&(S.pol.office==='belediye'||S.pol.inf>=40));
-  queue({back:'insaat',title:t.n,text:`${t.d}. Toplam maliyet ~${fmt(t.cost)}, süre ${t.q*3} ay. Başlangıçta arsa ve ruhsat için %20 peşin, kalanı her çeyrek taksitle ödenir. Bitince birimleri satarsın.${permit?' Bu projede belediyeden ruhsat almak zor; siyasi nüfuzun yoksa rüşvet gerekir.':''}`,choices:[...mats.map(([k,n,cm,pm,d])=>{const cost=Math.round(t.cost*cm*(permit?1.08:1));return{t:n,sub:`${d} · Peşin ${fmtS(cost*.2)}`,dis:!canPay(cost*.2),fn:()=>{pay(Math.round(cost*.2));
-      S.co.projects.push({uid:'pj'+Date.now()+R(0,999),t:id,cost,paid:Math.round(cost*.2),prog:0,delay:0,qual:k,pm,units:t.u,presold:0,sold:0,launder:0,hidx0:S.hidx,up0:PJ(id).up,state:'build',start:gYear()});
+  queue({back:'insaat',title:t.n,text:`${t.d}. Toplam maliyet ~${fmt(t.cost)}. İnşaat gerçek saatle <b>${fmtDur(pjDur(t))}</b> sürer; oyun kapalıyken de devam eder. Başlangıçta %20 peşin, kalanı her çeyrek taksitle; süre bitince kalan borç tek seferde ödenir. Bitince birimleri satarsın.${permit?' Bu projede belediyeden ruhsat almak zor; siyasi nüfuzun yoksa rüşvet gerekir.':''}`,choices:[...mats.map(([k,n,cm,pm,d])=>{const cost=Math.round(t.cost*cm*(permit?1.08:1));return{t:n,sub:`${d} · Peşin ${fmtS(cost*.2)}`,dis:!canPay(cost*.2),fn:()=>{pay(Math.round(cost*.2));
+      S.co.projects.push({uid:'pj'+Date.now()+R(0,999),t:id,cost,paid:Math.round(cost*.2),prog:0,delay:0,qual:k,pm,units:t.u,presold:0,sold:0,launder:0,hidx0:S.hidx,up0:PJ(id).up,state:'build',start:gYear(),dur:pjDur(t),endT:Date.now()+pjDur(t)});
       if(permit){add('heat',6);log('Ruhsat için belediyede "kapılar" açıldı.','dim')}log(`${t.n} projesinin temeli atıldı.`,'gold');if(t.cls>=2)news(`${S.co.name}'den dev proje: ${t.n}`,2)}}}),{t:'Vazgeç',fn:()=>{}}]})};
 function upNow(p){const t=PJ(p.t);return Math.round((p.up0||t.up)*p.pm*(S.hidx/p.hidx0)*(1+(S.co.rep-50)/500))}
 function coQuarter(){const co=S.co;if(!co)return;
   co.projects.forEach(p=>{const t=PJ(p.t);
-    if(p.state==='build'){const inst=Math.round((p.cost*.8)/t.q);
-      if(S.jail){p.delay++;log(`${t.n}: sen içerideyken şantiye durdu.`,'bad');return}
-      fund(inst);if(S.money>=inst){S.money-=inst;p.paid+=inst;
-        if(ch(.1)){const e=R(0,3);if(e===0){const z=Math.round(p.cost*.06);p.cost+=z;log(`${t.n}: demir ve çimentoya zam geldi, maliyet +${fmt(z)}.`,'bad')}else if(e===1){log(`${t.n}: işçiler greve gitti, bu çeyrek iş durdu.`,'bad');p.delay++;return}else if(e===2){log(`${t.n}: belediye denetimi zarf ile atlatıldı.`,'dim');S.money=Math.max(0,S.money-Math.round(inst*.05))}else{add('heat',4);log(`${t.n}: şantiyede iş kazası. Basına sızmadan kapatıldı.`,'bad')}}
-        p.prog++;if(p.prog>=t.q){p.state='sale';log(`🏗 ${t.n} tamamlandı! ${p.units-p.presold} birim satışa hazır.`,'gold');if(t.cls>=1)news(`${S.co.name} ${t.n} projesini teslim etti`,t.cls>=2?2:1);co.rep=clamp(co.rep+(p.qual==='lux'?8:p.qual==='std'?4:1));
-          if(p.launder){const back=Math.round(p.launder*.9);S.money+=back;log(`Projeye gömülen ${fmt(p.launder)}, satış geliri olarak temiz döndü: ${fmt(back)}.`,'good')}
-          if(p.qual==='ucuz'&&ch(.25)){co.rep=clamp(co.rep-25);add('heat',15);log(`${t.n} binalarında çatlaklar çıktı! Skandal büyüyor.`,'bad');news(`${S.co.name} binalarında çatlak skandalı`,3)}}}
-      else{p.delay++;p.cost=Math.round(p.cost*1.03);log(`${t.n}: taksit ödenemedi (${fmt(inst)}). Şantiye durdu, maliyet %3 arttı.`,'bad')}}
+    if(p.state==='build'){pjEnsure(p);const inst=Math.round((p.cost*.8)/t.q);
+      if(S.jail){p.endT+=Math.round(p.dur*.1);log(`${t.n}: sen içerideyken şantiye yavaşladı.`,'bad');return}
+      if(p.prog<t.q){fund(inst);if(S.money>=inst){S.money-=inst;p.paid+=inst;p.prog++;
+        if(ch(.1)){const e=R(0,3);if(e===0){const z=Math.round(p.cost*.06);p.cost+=z;log(`${t.n}: demir ve çimentoya zam geldi, maliyet +${fmt(z)}.`,'bad')}else if(e===1){p.endT+=Math.round(p.dur*.15);log(`${t.n}: işçiler greve gitti, teslim gecikti.`,'bad')}else if(e===2){log(`${t.n}: belediye denetimi zarf ile atlatıldı.`,'dim');S.money=Math.max(0,S.money-Math.round(inst*.05))}else{add('heat',4);log(`${t.n}: şantiyede iş kazası. Basına sızmadan kapatıldı.`,'bad')}}}
+        else{p.delay++;p.endT+=Math.round(p.dur*.1);p.cost=Math.round(p.cost*1.03);log(`${t.n}: taksit ödenemedi (${fmt(inst)}). Şantiye yavaşladı, maliyet %3 arttı.`,'bad')}}
+      pjCheck(p)}
     else if(p.state==='sale'){const left=p.units-p.presold-p.sold;if(left<=0){p.state='done';co.done++;return}
       const n=Math.max(1,Math.ceil(left*clamp(.22+co.rep/300,.15,.6)));const pr=upNow(p);const rev=n*pr;S.money+=rev;p.sold+=n;
       const prof=Math.max(0,rev-p.cost*n/p.units);S.taxInc=(S.taxInc||0)+prof;
@@ -2398,9 +2396,11 @@ function coQuarter(){const co=S.co;if(!co)return;
   co.projects=co.projects.filter(p=>p.state!=='done');
 }
 ACT.pj=uid=>{const p=S.co.projects.find(x=>x.uid===uid);if(!p)return;const t=PJ(p.t);closeSheet();
-  if(p.state==='build'){const rem=Math.round(p.cost-p.paid),inst=Math.round(p.cost*.8/t.q),avail=Math.floor(p.units*.3)-p.presold;
-    return queue({back:'insaat',title:t.n,text:`İlerleme ${p.prog}/${t.q} çeyrek${p.delay?` · ${p.delay} çeyrek gecikme`:''}. Çeyreklik taksit ${fmt(inst)}. Kalan ödeme ${fmt(rem)}. ${p.launder?`Projeye gömülen kayıt dışı para: ${fmt(p.launder)}.`:''}`,choices:[
-      {t:'Hızlandır',sub:`Ek ${fmt(Math.round(inst*1.15))} · 1 çeyrek kazandırır`,dis:!canPay(Math.round(inst*1.15))||p.prog>=t.q-1,fn:()=>{pay(Math.round(inst*1.15));p.prog++;p.paid+=inst;log(`${t.n}: vardiyalar ikiye çıktı, iş hızlandı.`,'good')}},
+  if(p.state==='build'){pjEnsure(p);const rem=Math.round(p.cost-p.paid),inst=Math.round(p.cost*.8/t.q),avail=Math.floor(p.units*.3)-p.presold,left=p.endT-Date.now(),sp=Math.round(p.cost*.05);
+    return queue({back:'insaat',title:t.n,text:`Kalan süre: <b><span data-cd="${p.endT}">${fmtT(left)}</span></b> (gerçek saat). Taksitler ${Math.min(p.prog,t.q)}/${t.q} ödendi, çeyreklik ${fmt(inst)}. Kalan ödeme ${fmt(rem)}; süre bitince kalan borç tek seferde ödenir.${p.delay?` ${p.delay} taksit gecikti.`:''} ${p.launder?`Projeye gömülen kayıt dışı para: ${fmt(p.launder)}.`:''}`,choices:[
+      ...(S.premium&&left>0?[{t:'👑 Dayı: hemen bitir',sub:'Beklemeden teslim',fn:()=>{p.endT=Date.now();pjCheck(p)}}]:[]),
+      {t:'⚡ Ekstra vardiya',sub:left>0?`${fmtS(sp)} · Kalan süre yarıya iner`:'İnşaat bitti',dis:left<=0||!canPay(sp),fn:()=>{if(!pay(sp))return;p.endT=Date.now()+Math.round((p.endT-Date.now())/2);log(`${t.n}: vardiyalar ikiye çıktı, kalan süre yarıya indi.`,'good')}},
+      ...(left<=0&&rem>0?[{t:'Kalan borcu öde, teslim al',sub:fmtS(rem),dis:!canPay(rem),fn:()=>{pjCheck(p)}}]:[]),
       ...(avail>0&&t.u>1?[{t:'Ön satış yap',sub:`${avail} birim · %80 fiyatla ${fmt(Math.round(avail*upNow(p)*.8))}`,fn:()=>{const m=Math.round(avail*upNow(p)*.8);S.money+=m;p.presold+=avail;S.taxInc=(S.taxInc||0)+Math.round(m*.3);log(`${t.n}: ${avail} birim maketten satıldı, ${fmt(m)}.`,'good')}}]:[]),
       {t:'Kara parayı projeye göm',sub:'Maliyet gibi gösterilir, satışta temiz döner',fn:()=>setTimeout(()=>{const opts=[1e6,1e7,1e8,1e9].filter(a=>a<=(S.black||0)&&a<=p.cost*.5);queue({back:'insaat',title:'İnşaatla aklama',text:`Projenin maliyeti şişirilmiş gösterilir. Para proje bitince %10 kayıpla temiz döner, polis dikkatin hemen düşer. Proje maliyetinin %30'unu aşarsan vergi müfettişi ilgilenebilir.`,choices:[...opts.map(a=>({t:fmt(a),sub:`Dikkat −${Math.min(30,Math.round(a/2e6)+4)}`,fn:()=>{S.black-=a;p.launder+=a;add('heat',-Math.min(30,Math.round(a/2e6)+4));if(p.launder>p.cost*.3&&ch(.3)){const f=Math.round(a*.4);S.money=Math.max(0,S.money-f);add('heat',15);log(`Vergi müfettişi şişirilmiş faturaları buldu! ${fmt(f)} ceza.`,'bad')}else log(`${fmt(a)} ${t.n} projesine "malzeme gideri" olarak girdi.`,'dim')}})),{t:'Vazgeç',fn:()=>{}}]})},40)},
       {t:'Kapat',fn:()=>{}}]})}
@@ -2413,11 +2413,92 @@ EXTRA.insaat=()=>{const co=S.co;let h='';
   if(!co){h+='<p class="note">İnşaat şirketi kur. Arsa al, bina dik, taksitleri öde, bitince sat. Büyüdükçe müteahhitlik sınıfın yükselir ve dev projeler açılır. Ayrıca kayıt dışı parayı inşaata gömüp temizleyebilirsin.</p>'+row('data-x="cofound:"','🏗','İnşaat şirketi kur','Ticaret sicili, ofis, ekipman',fmtS(500000),!canPay(500000)||S.age<18);return['İnşaat şirketi',h]}
   const cl=coCls(),act=co.projects.filter(p=>p.state!=='done');
   h+=`<div class="sum"><div><span>Şirket</span><b>${co.name}</b></div><div><span>Müteahhitlik sınıfı</span><b style="color:var(--gold)">${CCLS[cl]}</b></div><div><span>İtibar</span><b>%${co.rep}</b></div><div><span>Tamamlanan proje</span><b>${co.done}${cl<3?` · ${CCLS[cl+1]} için ${CTH[cl+1]}`:''}</b></div></div>`;
-  if(act.length){h+='<div class="sec">Projelerin</div>';act.forEach(p=>{const t=PJ(p.t);const pct=p.state==='build'?Math.round(p.prog/t.q*100):100;
-    h+=`<button class="row" data-x="pj:${p.uid}"><span class="ic">${p.state==='build'?'🏗':'🏢'}</span><span class="tx"><b>${t.n}</b><span>${p.state==='build'?`İnşaat %${pct} · ${(t.q-p.prog)*3} ay kaldı${p.delay?' · gecikmeli':''}`:`Satışta · ${p.units-p.presold-p.sold} birim kaldı`}</span><div class="bar" style="margin-top:5px"><i style="width:${pct}%;background:${p.state==='build'?'var(--warn)':'var(--good)'}"></i></div></span><span class="rt">›</span></button>`})}
+  if(act.length){h+='<div class="sec">Projelerin</div>';act.forEach(p=>{const t=PJ(p.t);if(p.state==='build')pjEnsure(p);const pct=p.state==='build'?clamp(Math.round((1-(p.endT-Date.now())/p.dur)*100)):100;
+    h+=`<button class="row" data-x="pj:${p.uid}"><span class="ic">${p.state==='build'?'🏗':'🏢'}</span><span class="tx"><b>${t.n}</b><span>${p.state==='build'?`İnşaat %${pct} · <span data-cd="${p.endT}">${fmtT(p.endT-Date.now())}</span> kaldı${p.delay?' · gecikmeli':''}`:`Satışta · ${p.units-p.presold-p.sold} birim kaldı`}</span><div class="bar" style="margin-top:5px"><i style="width:${pct}%;background:${p.state==='build'?'var(--warn)':'var(--good)'}"></i></div></span><span class="rt">›</span></button>`})}
   ['Küçük','Normal','Büyük','Mega'].forEach(cat=>{h+=`<div class="sec">${cat} projeler</div>`;PROJ.filter(t=>t.cat===cat).forEach(t=>{const lock=t.cls>cl;const prof=Math.round(t.u*t.up-t.cost);
-    h+=row(`data-x="pstart:${t.id}"`,cat==='Mega'?'🌆':cat==='Büyük'?'🏙':'🏘',t.n,lock?`${CCLS[t.cls]} gerekir`:`${t.d} · ${t.q*3} ay · Tahmini kâr ${fmtS(prof)}`,lock?'🔒':fmtS(t.cost),lock||!canPay(t.cost*.2)||!!S.jail)})});
+    h+=row(`data-x="pstart:${t.id}"`,cat==='Mega'?'🌆':cat==='Büyük'?'🏙':'🏘',t.n,lock?`${CCLS[t.cls]} gerekir`:`${t.d} · ⏱ ${fmtDur(pjDur(t))} · Tahmini kâr ${fmtS(prof)}`,lock?'🔒':fmtS(t.cost),lock||!canPay(t.cost*.2)||!!S.jail)})});
   return['İnşaat şirketi',h]};
+
+/* ============ Zamanlı işler: yokluk kazancı, günlük zarf, sevkiyat, tehdit, haftalık etkinlik, hanedan puanı ============ */
+const MIN=60e3,HOUR=36e5;
+function fmtT(ms){if(ms<=0)return 'Hazır';const s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?`${h} sa ${m} dk`:m?`${m} dk ${String(x).padStart(2,'0')} sn`:`${x} sn`}
+function fmtDur(ms){const m=Math.round(ms/MIN);return m>=60?`${Math.floor(m/60)} saat${m%60?' '+m%60+' dakika':''}`:`${m} dakika`}
+const WEEKEV=[{id:'liman',n:'⚓ Liman haftası',d:'Sevkiyat kazançları %50 fazla'},{id:'harac',n:'💼 Haraç haftası',d:'Haraç gelirleri %50 fazla'},{id:'insaat',n:'🏗 Beton haftası',d:'Yeni inşaatlar yarı sürede biter'},{id:'savas',n:'⚔️ Kan haftası',d:'Çete savaşı ganimetleri 2 kat'},{id:'gece',n:'🌙 Gece haftası',d:'Yokluğunda biriken kazanç 2 kat'}];
+const weekNo=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5+3)/7)};
+const WEV=()=>WEEKEV[weekNo()%WEEKEV.length];
+const wk=id=>WEV().id===id;
+const dKey=d=>`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+const modalOn=()=>$('modal').classList.contains('on')||Q.length>0;
+/* gerçek zamanlı inşaat */
+const PDUR={apt:10*MIN,lukapt:20*MIN,site:40*MIN,villa:45*MIN,ofis:50*MIN,rezidans:HOUR,avm:90*MIN,otel:2*HOUR,donusum:4*HOUR,sehir:8*HOUR};
+const pjDur=t=>Math.round((PDUR[t.id]||HOUR)*(wk('insaat')?.5:1));
+function pjEnsure(p){const t=PJ(p.t);if(!p.endT){p.dur=pjDur(t);p.endT=Date.now()+Math.round(p.dur*Math.max(.1,(t.q-p.prog)/t.q))}}
+function pjCheck(p){if(p.state!=='build')return false;pjEnsure(p);if(Date.now()<p.endT)return false;const t=PJ(p.t),co=S.co;
+  const rem=Math.round(p.cost-p.paid);if(rem>0){fund(rem);if(S.money<rem){if(!p.wait){p.wait=1;log(`🏗 ${t.n}: inşaat bitti ama kalan ${fmt(rem)} ödenmeden teslim alınamıyor.`,'bad')}return false}S.money-=rem;p.paid+=rem}
+  p.prog=t.q;p.state='sale';log(`🏗 ${t.n} tamamlandı! ${p.units-p.presold} birim satışa hazır.`,'gold');toast(`🏗 ${t.n} tamamlandı!`);if(t.cls>=1)news(`${co.name} ${t.n} projesini teslim etti`,t.cls>=2?2:1);co.rep=clamp(co.rep+(p.qual==='lux'?8:p.qual==='std'?4:1));
+  if(p.launder){const back=Math.round(p.launder*.9);S.money+=back;log(`Projeye gömülen ${fmt(p.launder)}, satış geliri olarak temiz döndü: ${fmt(back)}.`,'good')}
+  if(p.qual==='ucuz'&&ch(.25)){co.rep=clamp(co.rep-25);add('heat',15);log(`${t.n} binalarında çatlaklar çıktı! Skandal büyüyor.`,'bad');news(`${co.name} binalarında çatlak skandalı`,3)}
+  return true}
+function pjTick(){if(!S||!S.co)return false;let c=false;S.co.projects.forEach(p=>{if(pjCheck(p))c=true});return c}
+/* yokluk kazancı */
+function passiveParts(){let dirtyQ=0,clean=0;try{if(S.st)S.st.shops.forEach(o=>{if(o.st==='odeyor'&&shopT(o).il)dirtyQ+=shopFee(o)})}catch(e){}
+  if(S.org)dirtyQ+=S.org.turf.reduce((a,v)=>a+v.inc,0)/4;clean+=propIncome();S.houses.forEach(o=>{if(o.ten)clean+=o.ten.rent});return{clean,dirty:dirtyQ}}
+function welcomeBack(){if(!S||!S.alive)return;const now=Date.now();const last=Math.max(S.savedAt||now,S.offT||0);S.offT=now;const away=now-last;const msgs=[];
+  if(away>=10*MIN&&S.age>=16&&!S.jail){const hrs=Math.min(8,away/HOUR);const q=hrs/2*(wk('gece')?2:1)*(S.premium?2:1);const pr=passiveParts();const c=Math.round(pr.clean*q),d=Math.round(pr.dirty*q);
+    if(c+d>0){S.money+=c;if(d)dirty(d);log(`💼 Yokluğunda (${fmtDur(away)}) işlerin ${fmt(c+d)} getirdi.`,'good');msgs.push(`💼 <b>${fmtDur(away)}</b> yoktun. Bu sürede işletmelerin, haraçların ve kiraların <b>${fmt(c+d)}</b> getirdi${d?` (${fmt(d)}'si kara para)`:''}.${away>8*HOUR?'<br><small>En fazla 8 saatlik kazanç birikir; sık uğra.</small>':''}${S.premium?'<br><small>👑 Dayı Paketi: 2 kat</small>':''}`)}}
+  pjTick();const rd=(S.ops||[]).filter(o=>now>=o.end).length;if(rd)msgs.push(`📦 <b>${rd}</b> sevkiyatın limanda seni bekliyor. Geç kalırsan polis basabilir.`);
+  if(S.co){const b=S.co.projects.filter(p=>p.state==='build');if(b.length)msgs.push(`🏗 ${b.length} inşaatın sürüyor. En yakını: ${fmtT(Math.min(...b.map(p=>p.endT))-now)}.`)}
+  if(S.threat)msgs.push(`⚠️ <b>${S.threat.who}</b> intikam peşinde. ${now>=S.threat.due?'Geldi!':fmtT(S.threat.due-now)+' sonra gelecek.'}${S.threat.prep?' Hazırlığın tamam.':''}`);
+  if(msgs.length&&away>=10*MIN)queue({title:`Hoş geldin, ${S.first}`,text:msgs.join('<br><br>')+`<br><br><b>${WEV().n}</b>: ${WEV().d}.`,choices:[{t:'⏱ Zamanlı işlere bak',fn:()=>setTimeout(()=>goSheet('zaman'),60)},{t:'Devam',fn:()=>{}}]});
+  dailyCheck();threatCheck();save();render()}
+/* günlük zarf */
+function dailyCheck(){if(!S||!S.alive||S.age<14)return;const k=dKey(new Date());const d=S.daily||(S.daily={k:null,streak:0});if(d.k===k)return;
+  const y=new Date();y.setDate(y.getDate()-1);d.streak=d.k===dKey(y)?d.streak+1:1;d.k=k;const day=(d.streak-1)%7+1;
+  const mult=[1,1.3,1.6,2,2.5,3,6][day-1];const m=Math.round((40000+rank()*60000)*S.cpi*mult);
+  const boxes=[1,2,3,4,5,6,7].map(i=>`<span style="display:inline-block;width:38px;margin:2px;padding:4px 0;text-align:center;border-radius:8px;border:1px solid ${i===day?'var(--gold)':'var(--line)'};opacity:${i<day?.45:1};font-size:12px">${i===7?'🎁':i<day?'✔️':'✉️'}<br>${i}</span>`).join('');
+  queue({title:`✉️ Dayı'nın zarfı · ${day}. gün`,text:`<div style="text-align:center">${boxes}</div><br>${day===7?'Haftanın büyük zarfı!':'Her gün uğra, zarf büyüsün. Bir gün kaçırırsan seri baştan başlar.'}<br><br>Zarftan <b>${fmt(m)}</b> çıktı${day===7?' ve saygı +5':''}. Seri: ${d.streak} gün.`,choices:[{t:'Zarfı al',sub:fmt(m),fn:()=>{S.money+=m;if(day===7)add('respect',5);log(`✉️ Dayı'nın ${day}. gün zarfı: ${fmt(m)}.`,'gold')}}]})}
+/* sevkiyat */
+const OPS=[{id:'kamyon',n:'Kamyonla mal',ic:'🚚',dur:30*MIN,cost:200000,mult:[1.45,1.85],rk:0,risk:.08},{id:'liman',n:'Liman konteyneri',ic:'🚢',dur:2*HOUR,cost:1.5e6,mult:[1.7,2.3],rk:2,risk:.12},{id:'ucak',n:'Özel uçakla sevkiyat',ic:'✈️',dur:6*HOUR,cost:8e6,mult:[2,2.9],rk:4,risk:.15}];
+const OPX=id=>OPS.find(o=>o.id===id);const LATE=6*HOUR;
+ACT.opstart=id=>{const o=OPX(id);if(!S.ops)S.ops=[];if(S.ops.length>=3){toast('Aynı anda en fazla 3 sevkiyat');return}const c=Math.round(o.cost*S.cpi);if(!pay(c))return;
+  S.ops.push({uid:'op'+Date.now(),id,cost:c,end:Date.now()+o.dur});log(`${o.ic} ${o.n} yola çıktı. ${fmtDur(o.dur)} sonra teslim alınacak.`,'dim');afterChange();closeSheet();setTimeout(()=>openSheet('zaman'),40)};
+ACT.opget=uid=>{const op=(S.ops||[]).find(x=>x.uid===uid);if(!op)return;const o=OPX(op.id);const now=Date.now();if(now<op.end)return;S.ops=S.ops.filter(x=>x!==op);
+  const late=now-op.end>LATE;const risk=clamp(o.risk+(late?.4:0)+S.heat/400,.03,.85);
+  if(ch(risk)){add('heat',10);log(`🚨 ${o.n}: ${late?'Geç kaldın, ':''}polis malı bastı. ${fmt(op.cost)} gitti.`,'bad')}
+  else{const r=Math.round(op.cost*(o.mult[0]+Math.random()*(o.mult[1]-o.mult[0]))*(wk('liman')?1.5:1));dirty(r);gainResp(2);log(`${o.ic} ${o.n} teslim alındı: ${fmt(r)} kazandın.`,'good')}
+  afterChange();closeSheet();setTimeout(()=>openSheet('zaman'),40)};
+ACT.opnow=uid=>{if(!S.premium)return;const op=(S.ops||[]).find(x=>x.uid===uid);if(op){op.end=Date.now();ACT.opget(uid)}};
+/* tehdit */
+function makeThreat(){if(S.threat||S.age<16)return;const st=S.st;const who=st&&st.gw?`${st.gw.boss} (${st.gw.name})`:`${pick(NICK)} ${pick(NAMES)}`;const h=R(1,4);S.threat={who,due:Date.now()+h*HOUR,prep:0};
+  log(`⚠️ ${who} intikam yemini etti: "${h} saat içinde geleceğim." Zamanlı işlerden hazırlık yapabilirsin.`,'bad')}
+function threatCheck(){const T=S&&S.threat;if(!T||!S.alive||Date.now()<T.due||S.jail)return;S.threat=null;
+  if(T.prep){gainResp(6);log(`🛡 ${T.who} adamlarıyla geldi ama hazırdın. Hepsini geri püskürttün.`,'gold');toast('🛡 Tehdit savuşturuldu');save();render();return}
+  queue({title:`⚠️ ${T.who} geldi`,text:'Söz verdiği gibi geldi. Hazırlıksız yakalandın.',choices:[
+    {t:'Dövüş',sub:`Şans %${Math.round(clamp(.3+stPow()/500,.2,.8)*100)}`,fn:()=>{if(ch(clamp(.3+stPow()/500,.2,.8))){gainResp(5);log(`Hazırlıksız da olsan ${T.who}'yu alt ettin.`,'good')}else{hurt(R(15,35),'İntikam saldırısı');const m=Math.round(S.money*.05);S.money-=m;log(`${T.who} seni hırpaladı, ${fmt(m)} aldı.`,'bad')}}},
+    {t:'Kaç',sub:'Saygı −6',fn:()=>{add('respect',-6);log('Saklandın. Mahalle konuşuyor.','bad')}}]})}
+const tprepC=()=>Math.round((100000+rank()*150000)*S.cpi);
+ACT.tprep=()=>{if(!S.threat||S.threat.prep)return;if(!pay(tprepC()))return;S.threat.prep=1;log('🛡 Evine ve mekânlarına koruma diktin. Gelsinler.','good');afterChange();closeSheet();setTimeout(()=>openSheet('zaman'),40)};
+/* hanedan puanı */
+function dynScore(){return Math.max(0,Math.round(Math.log10(Math.max(1,netWorth()+(S.black||0)))*120+S.respect*2+(S.fame||0)*2+Object.keys(S.ach||{}).length*15+((S.gen||1)-1)*150+(S.st?S.st.won*40:0)+karizma()))}
+function dynBest(){let b=0;try{b=+localStorage.getItem('mafya-best')||0}catch(e){}return b}
+function dynSave(){const s=dynScore();if(s>dynBest()){try{localStorage.setItem('mafya-best',String(s))}catch(e){}return true}return false}
+/* panel */
+EXTRA.zaman=()=>{const now=Date.now();let h=`<div class="sum"><div><span>Bu hafta</span><b style="color:var(--gold)">${WEV().n}</b></div><div><span>Etkinlik</span><b>${WEV().d}</b></div><div><span>Günlük zarf serisi</span><b>${S.daily?S.daily.streak:0} gün</b></div><div><span>Hanedan puanı</span><b>${dynScore()} · Rekor ${Math.max(dynBest(),dynScore())}</b></div></div>`;
+  h+='<p class="note">Bu işler gerçek saatle ilerler; oyun kapalıyken de. Sen yokken işletmelerin en fazla 8 saatlik kazanç biriktirir.</p>';
+  if(S.threat){const T=S.threat;h+=`<div class="sec">⚠️ Tehdit</div>`+row('data-x="tprep:"','🛡',`${T.who} geliyor`,`<span data-cd="${T.due}">${fmtT(T.due-now)}</span> · ${T.prep?'Hazırsın':'Hazırlık yapmazsan hazırlıksız yakalanırsın'}`,T.prep?'✓':fmtS(tprepC()),!!T.prep||!canPay(tprepC()))}
+  h+=`<div class="sec">📦 Sevkiyatlar · ${(S.ops||[]).length}/3</div>`;
+  (S.ops||[]).forEach(op=>{const o=OPX(op.id);const ready=now>=op.end;h+=row(`data-x="opget:${op.uid}"`,o.ic,o.n,ready?(now-op.end>LATE?'⚠️ Geç kaldın, polis kokusu aldı · Hemen teslim al':'Limanda hazır · Teslim al'):`<span data-cd="${op.end}">${fmtT(op.end-now)}</span> kaldı · Yatırım ${fmtS(op.cost)}`,ready?'Al':'',!ready);
+    if(!ready&&S.premium)h+=row(`data-x="opnow:${op.uid}"`,'👑','Dayı: hemen getir','Beklemeden teslim al','',false)});
+  if(S.age<16)h+='<p class="note">Sevkiyatlar 16 yaşında açılır.</p>';
+  else OPS.forEach(o=>{const lock=rank()<o.rk;h+=row(`data-x="opstart:${o.id}"`,o.ic,o.n,lock?`${RANKS[o.rk].n} rütbesi gerekir`:`${fmtDur(o.dur)} · Kazanç ×${o.mult[0]}–${o.mult[1]}${wk('liman')?' (+%50)':''} · Polis riski`,lock?'🔒':fmtS(Math.round(o.cost*S.cpi)),lock||(S.ops||[]).length>=3||!canPay(Math.round(o.cost*S.cpi))||!!S.jail)});
+  if(S.co){const b=S.co.projects.filter(p=>p.state==='build');h+=`<div class="sec">🏗 İnşaatlar</div>`;if(!b.length)h+='<p class="note">Devam eden inşaat yok.</p>';
+    b.forEach(p=>{pjEnsure(p);const t=PJ(p.t);h+=row(`data-x="pj:${p.uid}"`,'🏗',t.n,now>=p.endT?`Bitti · kalan ödeme ${fmtS(Math.max(0,p.cost-p.paid))}`:`<span data-cd="${p.endT}">${fmtT(p.endT-now)}</span> kaldı`,'›',false)});
+    h+=row('data-go="insaat"','🏙','İnşaat şirketi','Yeni proje başlat','›',false)}
+  return['⏱ Zamanlı işler',h]};
+let _tk=0,_hidAt=0;
+setInterval(()=>{if(!S||!S.alive)return;document.querySelectorAll('[data-cd]').forEach(e=>{e.textContent=fmtT(+e.dataset.cd-Date.now())});
+  if(++_tk%5===0){let ch2=false;try{ch2=pjTick()}catch(e){}if(!modalOn())try{threatCheck()}catch(e){}if(ch2){save();render()}}},1000);
+document.addEventListener('visibilitychange',()=>{if(document.hidden){_hidAt=Date.now();try{save()}catch(e){}}else if(S&&S.alive&&_hidAt&&Date.now()-_hidAt>=10*MIN&&!$('title').classList.contains('on')){_hidAt=0;try{welcomeBack()}catch(e){}}});
 
 /* ============ Köken ============ */
 const ORIGINS={
@@ -2601,7 +2682,7 @@ function streetQ(){if(S.age<16||S.jail||S.abroad)return;const st=stEnsure();
   const n=totSq();if(n){const c=Math.round(n*SQW*S.cpi*(st.gw?1.5:1));fund(c);if(S.money>=c){S.money-=c;log(`🔫 Sokak kadron (${n} adam) maaşı${st.gw?' ve savaş primi':''}: ${fmt(c)}.`,'dim')}else{const d=sqLoss(.15);log(`Kadrona maaş ödeyemedin, ${d} adam ekibi bıraktı.`,'bad')}}
   armUse(st.gw?12:4);
   // haraç geliri
-  const payers=st.shops.filter(o=>o.st==='odeyor');let sum=0;payers.forEach(o=>{if(shopT(o).il)sum+=shopFee(o);o.mood=clamp(o.mood-2)});
+  const payers=st.shops.filter(o=>o.st==='odeyor');let sum=0;payers.forEach(o=>{if(shopT(o).il)sum+=shopFee(o);o.mood=clamp(o.mood-2)});if(wk('harac'))sum=Math.round(sum*1.5);
   if(sum){dirty(sum);log(`💼 Haraç turu: ${payers.filter(o=>shopT(o).il).length} yeraltı işletmesinden ${fmt(sum)} toplandı.`,'good');add('heat',Math.min(4,Math.ceil(payers.length/4)))}
   const leg=payers.filter(o=>!shopT(o).il);if(leg.length&&ch(.5))kabadayi(pick(leg));
   payers.forEach(o=>{if(!shopT(o).il)return;if(o.mood<15&&ch(.25)){o.st='kizgin';log(`${shopT(o).ic} ${o.owner} (${shopT(o).n}) artık haraç vermeyeceğini söyledi.`,'bad')}});
@@ -2612,6 +2693,7 @@ function streetQ(){if(S.age<16||S.jail||S.abroad)return;const st=stEnsure();
       {t:'Gönder',sub:`${fmtS(c)} · Silah %100 · Sadakat +`,dis:!canPay(c),fn:()=>{pay(c);m.ar=100;m.loy=clamp(m.loy+5);log(`${m.name}'in ekibine silah ve mermi gönderdin.`,'good')}},
       {t:'Yarısını gönder',sub:`${fmtS(Math.round(c/2))} · Silah +40`,dis:!canPay(Math.round(c/2)),fn:()=>{pay(Math.round(c/2));m.ar=Math.min(100,m.ar+40);log(`${m.name}'e yarım destek gönderdin.`,'dim')}},
       {t:'Para yok',sub:'Sadakat −10 · Adam kaçabilir',fn:()=>{m.loy=clamp(m.loy-10);if(ch(.35)){const d=Math.ceil(m.sq*R(15,35)/100);m.sq-=d;log(`${m.name}'in ekibinden ${d} adam başka çeteye geçti.`,'bad')}else log(`${m.name} sesini çıkarmadı ama memnun değil.`,'bad')}}]}),70)}
+  if(rank()>=1&&ch(st.gw?.12:.03))makeThreat();
   // çete savaşı
   if(!st.gw){if(rank()>=1&&ch(.05+Math.min(.12,payers.length*.015)))setTimeout(()=>gangDeclare(),60);return}
   const g=st.gw;g.sol=Math.round(g.sol*1.04+2);g.q++;
@@ -2647,7 +2729,7 @@ function gangFight(lo,hi,how){const g=S.st.gw;if(!g)return;const p=winP(g,g.inte
   else{const myL=Math.max(1,Math.round(totSq()*R(5,15)/100));sqLossN(myL);hurt(R(5,18),'Çete çatışması');add('respect',-3);add('heat',R(3,7));log(`${g.name} hazırlıklıydı: ${myL} adamın düştü.`,'bad');if(LTS().length&&ch(.3)){const m=pick(LTS().filter(x=>!x.jail)||[]);if(m){m.hurt=R(1,3);log(`${m.name} yaralandı.`,'bad')}}}
   if(g.sol<=0)gangWin()}
 function sqLossN(n){const st=S.st;const pool=[st.my,...LTS().filter(m=>!m.jail)];while(n>0&&pool.some(x=>(x.sq||0)>0)){const x=pick(pool.filter(y=>(y.sq||0)>0));x.sq--;n--}}
-function gangWin(){const st=S.st,g=st.gw;st.gw=null;st.won++;st.city=st.city.filter(x=>x.name!==g.name);const m=Math.round(R(150000,800000)*S.cpi*(1+g.sol0/150));dirty(m);gainResp(15);
+function gangWin(){const st=S.st,g=st.gw;st.gw=null;st.won++;st.city=st.city.filter(x=>x.name!==g.name);const m=Math.round(R(150000,800000)*S.cpi*(1+g.sol0/150)*(wk('savas')?2:1));dirty(m);gainResp(15);
   const taken=st.shops.filter(o=>shopT(o).il&&(o.gang===g.name||o.st==='korkuyor'));taken.forEach(o=>{o.gang=null;o.st='odeyor';o.mood=clamp(o.mood+10)});
   const rec=Math.round(g.sol0*R(10,25)/100);st.my.sq=Math.min(sqCap(null)+rec,st.my.sq+rec);
   log(`🏆 ${g.name} dağıldı! ${g.boss} şehirden kaçtı. Kasalarından ${fmt(m)} çıktı${taken.length?`, ${taken.length} işletme artık sana haraç veriyor`:''}, ${rec} adamları sana katıldı.`,'gold');news(`${g.name} çetesi çöktü: sokakların yeni sahibi ${S.first} ${S.last}`,3)}
@@ -3469,7 +3551,7 @@ let curSheet=null;const SCR={};
 function goSheet(k){SCR[k]=0;openSheet(k)}
 $('shB').addEventListener('scroll',()=>{if(curSheet)SCR[curSheet]=$('shB').scrollTop},{passive:true});
 function closeSheet(){$('ov').classList.remove('on');curSheet=null}
-const PARENT={ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
+const PARENT={ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is',zaman:'is'};
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
 $('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeSheet()});
@@ -3484,7 +3566,8 @@ function openSheet(k){if(k==='gard')k='insan';
     if(S.abroad)h+='<p class="note">Yurt dışındasın. Suç işleri Türkiye\'ye dönünce açılır.</p>';
     if(S.jail){h+='<div class="sec">Koğuş</div>';JAIL.filter(a=>!a.prem||S.premium).forEach(a=>{const c=a.dyn?Math.round(a.dyn()):0;h+=row(`data-j="${a.id}"`,a.ic,a.n,a.d,c?fmtS(c):'',c&&S.money<c)})}
     else{
-      if(S.age>=14){
+      if(S.age>=14){const rd=(S.ops||[]).filter(o=>Date.now()>=o.end).length;
+        h+=row('data-go="zaman"','⏱','Zamanlı işler',`${rd?rd+' sevkiyat hazır · ':''}${S.threat?'⚠️ Tehdit var · ':''}${WEV().n}`,'›',false);
         h+='<div class="sec">Suç dünyası</div>';
         CRIMES.forEach(c=>{const lockA=S.age<c.age,lockR=rank()<c.rank;
           const d=lockA?`${c.age} yaşında açılır`:lockR?`${RANKS[c.rank].n} rütbesi gerekir`:c.d;
@@ -3603,6 +3686,7 @@ function openSheet(k){if(k==='gard')k='insan';
     h+=`<div class="sum">
       <div><span>İsim</span><b>${S.first} ${S.last}</b></div>
       <div><span>Köken</span><b>${ORIGINS[S.origin].n} · ${FAMBG[S.famBg].n}</b></div>
+      <div><span>Hanedan puanı</span><b style="color:var(--gold)">${dynScore()} · Rekor ${Math.max(dynBest(),dynScore())}</b></div>
       <div><span>Kuşak</span><b>${S.gen||1}. kuşak · ${S.kids.length} çocuk</b></div>
       <div><span>Yaş</span><b>${S.age}</b></div>
       <div><span>Rütbe</span><b>${RANKS[rk].n}</b></div>
@@ -3678,6 +3762,7 @@ function showDead(){const cause=S.cause;
   $('deadIn').innerHTML=`<div class="av bigav">${avatarSVG(S.look,S.age,{jail:S.jail>0})}</div>
     <h2>${S.first} ${S.last}</h2><p class="rip">${S.birthYear||1996} – ${(S.birthYear||1996)+S.age} · ${rip}</p>
     <div class="sum">
+      <div><span>Hanedan puanı</span><b style="color:var(--gold)">${dynScore()}${dynSave()?' · 🏆 YENİ REKOR':' · Rekor '+dynBest()}</b></div>
       <div><span>Ölüm nedeni</span><b>${cause}</b></div>
       <div><span>Yaş</span><b>${S.age}</b></div>
       <div><span>Son rütbe</span><b>${RANKS[rk].n}</b></div>
@@ -3865,7 +3950,7 @@ function drawTitle(){const P=PENDING;const cont=P&&(P.alive||(P.kids&&P.kids.len
   h+=`<div class="sec">Tema</div><div class="themes">${Object.entries(THEMES).map(([k,t])=>`<button class="th ${curTheme===k?'on':''}" data-tt="${k}" style="background:${t.panel};border-color:${t.gold};color:${t.ink}"><i style="background:${t.gold}"></i>${t.n}</button>`).join('')}</div>`;
   $('titleIn').innerHTML=h}
 $('titleIn').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
-  if(b.id==='tCont'){UNDO.length=0;S=PENDING;ensure();hideTitle();render();scrollLog();if(!S.alive)showDead();return}
+  if(b.id==='tCont'){UNDO.length=0;S=PENDING;ensure();hideTitle();render();scrollLog();if(!S.alive)showDead();else setTimeout(()=>{try{welcomeBack()}catch(e){console.error(e)}},300);return}
   if(d.tt){setTheme(d.tt);drawTitle();if(S)render();return}
   if(d.td){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misin?';return}await delSlot(d.td);drawTitle();return}
   if(d.ts){if(SLOTS[d.ts]){await loadSlot(d.ts);hideTitle()}else{hideTitle();showCreate(d.ts)}}});
