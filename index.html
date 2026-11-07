@@ -305,7 +305,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.07-2200';
+const APPV='2026.11.07-2210';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2657,6 +2657,8 @@ EXTRA.sokak=()=>{const st=stEnsure();let h='';
     h+=row('data-x="gw:baris"','🕊️','Barış teklif et','Saygı −10 · Savaş biter',fmtS(Math.round(gPow(g)*9000*S.cpi)),!canPay(Math.round(gPow(g)*9000*S.cpi)));}
   // kadro
   const n=totSq();h+=`<div class="sec">🔫 Sokak kadron · ${n} adam</div><p class="note">Ailendeki her üyenin kendi sokak ekibi var. Kadro büyüdükçe savaşta ve haraçta güçlenirsin. Her çeyrek adam başı ${fmt(Math.round(SQW*S.cpi))} maaş${st.gw?' (savaşta ×1,5)':''}; silahlar zamanla eskir, savaşta mermi hızla biter. Toplam güç: <b>${stPow()}</b></p>`;
+  {const c=fullCost();if(S.premium)h+=row('data-x="sqfull:dayi"','👑','Dayı modu: kadroyu fulle','Bütün ekipler tam kadro, silahlar %100, sadakat %100 · Ücretsiz','',false);
+   h+=row('data-x="sqfull:"','⚡','Bütün ekipleri doldur ve silahlandır',c?`Tek tuşla tam kadro + silah %100`:'Kadron zaten tam',c?fmtS(c):'',!c||!canPay(c));}
   h+=row('data-x="sq:me"','🧍','Senin ekibin',`${st.my.sq}/${sqCap(null)} adam · Silah %${st.my.ar}`,'›',false);
   LTS().forEach(m=>h+=row(`data-x="sq:${m.id}"`,m.jail?'⛓️':m.hurt?'🩹':'🧔',m.name,`${m.sq||0}/${sqCap(m)} adam · Silah %${m.ar||0} · Sadakat %${m.loy}${m.jail?' · Cezaevinde':''}`,'›',false));
   if(!S.org)h+='<p class="note">Kendi aileni kurunca her üyen (en fazla 10) kendi ekibini yönetir; kadron yüzlerce kişiye çıkar.</p>';
@@ -2672,6 +2674,10 @@ EXTRA.sokak=()=>{const st=stEnsure();let h='';
   return [st.gw?'Sokak savaşı':'Sokak',h]};
 ACT.gang=nm=>{const st=stEnsure();const c=st.city.find(x=>x.name===decodeURIComponent(nm));if(!c||st.gw)return;closeSheet();
   queue({back:'sokak',title:`🏴 ${c.name}`,text:`Lider ${c.boss}. ${c.sol} adam, güç ${gPow(c)}. Senin gücün ${stPow()}.`,choices:[{t:'⚔️ Savaş aç',sub:`Kazanma şansı her çatışmada %${Math.round(winP(c)*100)}`,fn:()=>{gainResp(3);gangDeclare(c.name)}},{t:'Vazgeç',fn:()=>{}}]})};
+function fullCost(){const st=stEnsure();let c=0;[[st.my,null],...LTS().filter(m=>!m.jail).map(m=>[m,m])].forEach(([o,m])=>{const add=Math.max(0,sqCap(m)-(o.sq||0));c+=add*SQR+(sqCap(m))*(100-((o.sq||0)*(o.ar||0)/Math.max(1,sqCap(m))))/100*SQA});return Math.round(c*S.cpi)}
+ACT.sqfull=a=>{const st=stEnsure();const dayi=a==='dayi';if(dayi&&!S.premium)return;if(!dayi){const c=fullCost();if(!c||!pay(c))return}
+  let n=0;[[st.my,null],...LTS().filter(m=>!m.jail).map(m=>[m,m])].forEach(([o,m])=>{n+=Math.max(0,sqCap(m)-(o.sq||0));o.sq=sqCap(m);o.ar=100;if(m&&dayi){m.loy=100;m.hurt=0}});
+  log(`${dayi?'👑 ':'⚡ '}Bütün sokak ekipleri tam kadro${n?` (+${n} adam)`:''}, silahlar %100. Kadron artık ${totSq()} adam.`,'gold');afterChange();closeSheet();setTimeout(()=>openSheet('sokak'),40)};
 ACT.sq=id=>{const st=stEnsure();const me=id==='me';const m=me?null:LTS().find(x=>x.id===id);const o=me?st.my:m;if(!o)return;closeSheet();
   const nm=me?'Senin ekibin':`${m.name}'in ekibi`;const cap=sqCap(m);const add10=Math.min(10,cap-(o.sq||0));const rc=Math.round(add10*SQR*S.cpi);const ac=Math.round((o.sq||0)*(100-(o.ar||0))/100*SQA*S.cpi);
   queue({back:'sokak',title:`🔫 ${nm}`,text:`${o.sq||0}/${cap} adam · Silah ve mühimmat %${o.ar||0}${m?`<br>Güç ${m.str}/10 · Sadakat %${m.loy}. Üyenin gücü arttıkça daha büyük ekip yönetir.`:''}`,choices:[
