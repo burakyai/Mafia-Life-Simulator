@@ -282,7 +282,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
     <button id="nIs"><svg viewBox="0 0 24 24"><path d="M4 8h16v11H4zM9 8V5h6v3M4 13h16"/></svg>İşler</button>
     <button id="nMulk"><svg viewBox="0 0 24 24"><path d="M3 20h18M5 20V9l7-5 7 5v11M10 20v-6h4v6"/></svg>Varlıklar</button>
     <button class="age" id="nAge" aria-label="İlerle"><span class="c"><span style="font-size:17px">İlerle<small id="advSub">3 AY</small></span></span></button>
-    <button id="nGard"><svg viewBox="0 0 24 24"><path d="M8 4l4 3 4-3 4 4-3 3v9H7v-9L4 8z"/></svg>Gardırop</button>
+    <button id="nGard"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.3c3 .2 5.5 2.4 5.5 5.7"/></svg>İnsanlar</button>
     <button id="nBen"><svg viewBox="0 0 24 24"><path d="M3 21V10l5-3v14M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20M11 9h2M11 12h2M11 15h2"/></svg>Hayat</button>
   </div>
  </div>
@@ -300,7 +300,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.07-1820';
+const APPV='2026.11.07-1900';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -601,7 +601,7 @@ function gainResp(v){const m=1+karizma()/40;add('respect',Math.round(v*m))}
 function log(t,c){S.log[S.log.length-1].lines.push({t,c:c||''})}
 function propIncome(){return Math.round(S.props.reduce((s,id)=>s+PROPS.find(p=>p.id===id).inc,0)*(S.job&&S.job.id==='isinsani'?1.2:1))}
 function propLaund(){return S.props.reduce((s,id)=>s+PROPS.find(p=>p.id===id).la,0)}
-function hurt(v,cause){add('health',-v);S.hurtCause=cause;if(!S.owned.acc.includes('yara')&&v>=15&&ch(.35)){S.owned.acc.push('yara');log('Yüzünde bir yara izi kaldı. Gardıroptan takabilirsin.','gold')}}
+function hurt(v,cause){add('health',-v);S.hurtCause=cause;if(!S.owned.acc.includes('yara')&&v>=15&&ch(.35)){S.owned.acc.push('yara');log('Yüzünde bir yara izi kaldı.','gold')}}
 
 function newLife(first,last,look,org,fb){org=org||'istanbul';fb=fb||'orta';
   const pj=pick(['liman işçisi','taksici','kahveci','inşaat ustası','balıkçı']),mj=pick(['terzi','ev hanımı','hemşire','çamaşırcı','aşçı']);
@@ -638,7 +638,9 @@ $('mcard').addEventListener('click',e=>{
   if(!Q.length&&ev.back){openSheet(ev.back);scrollLog()}
   if(!Q.length&&YR>0)setTimeout(stepYr,250);else if(!Q.length&&YSTART!==null)setTimeout(finishYear,50);
 });
-function afterChange(ny){S.money=Math.round(S.money);S.peak=Math.max(S.peak,S.money);checkDeath(ny);if(S.alive){try{wkEnsure();wkCheck()}catch(e){}}if(S.alive)checkAch();save();render()}
+const RFIT=['tisort','deri','takim','cizgili','beyaz','smokin'];
+function autoFit(){if(!S||!S.look||S.jail)return;if(S.age<16){S.look.outfit=S.age<12?'tisort':'esofman';return}const o=RFIT[rank()]||'tisort';S.look.outfit=o;if(!S.owned.outfit.includes(o))S.owned.outfit.push(o)}
+function afterChange(ny){try{autoFit()}catch(e){}S.money=Math.round(S.money);S.peak=Math.max(S.peak,S.money);checkDeath(ny);if(S.alive){try{wkEnsure();wkCheck()}catch(e){}}if(S.alive)checkAch();save();render()}
 
 /* ============ Yıl ilerletme ============ */
 const SEASONS=['Kış','İlkbahar','Yaz','Sonbahar'];
@@ -1158,7 +1160,7 @@ const EXTRA={
     const hl=hMarket().filter(l=>hFilt==='all'||HT(l.t).cls===hFilt);if(!hl.length)h+='<p class="note">Bu kategoride bu çeyrek ilan yok.</p>';
     hl.forEach(l=>{const t=HT(l.t);const lock=t.rank&&rank()<t.rank;const pr=Math.round(t.p*S.hidx*l.q);h+=row(`data-x="hl:${l.lid}"`,t.ic,t.n,lock?`${RANKS[t.rank].n} rütbesi gerekir`:`${Math.round(t.m2*l.q)} m² · ${l.kat?l.kat+'. kat · ':''}${l.yas?l.yas+' yıllık':'Sıfır'} · Kira ~${fmtS(t.rent*S.hidx*l.q)}/yıl`,lock?'🔒':fmtS(pr),lock||!canPay(pr))});
     return['Emlakçı',h]},
-  avm:()=>{let h='<div class="sec">Butik</div>'+row('data-go="gard"','👔','Butik ve berber','Kıyafet, aksesuar, saç, sakal','›',false)+'<div class="sec">Mağazalar</div>';
+  avm:()=>{let h='<div class="sec">Mağazalar</div>';
     SHOP.forEach(s=>{const bad=(s.home&&!S.home)||(s.partner&&!S.partner);h+=row(`data-x="shop:${s.id}"`,s.ic,s.n,bad?(s.home?'Önce bir evine yerleşmelisin':'Önce bir sevgilin olmalı'):`Mutluluk +${s.h}`,fmtS(s.p),bad||!canPay(s.p))});
     if(S.bank.card)h+=`<p class="note">Nakit yetmezse fark kredi kartından çekilir. Kalan kart limitin: ${fmt(cardAvail())}</p>`;
     return['Alışveriş merkezi',h]},
@@ -3173,7 +3175,7 @@ function hubTiles(){return [
       ['emlak','🏘','Emlakçı',S.houses.length?`${S.houses.length} ev`:'Ev al, kiraya ver',!S.jail&&S.age>=18],
       ['galeri','🚘','Araba galerisi',S.cars.length?`Garajda ${S.cars.length} araba`:'18 yaşından itibaren',!S.jail&&S.age>=18],
       ['kuyumcu','💎','Kuyumcu',S.jewels.length?`Kasada ${S.jewels.length} parça`:'Mücevher ve altın',!S.jail&&S.age>=16],
-      ['avm','🛍','Alışveriş merkezi','Butik, elektronik, hediye',!S.jail&&S.age>=12],
+      ['avm','🛍','Alışveriş merkezi','Elektronik, hediye, mağazalar',!S.jail&&S.age>=12],
       ['banka','🏦','Banka',`Kredi notu ${S.bank.score}`,S.age>=18],
       ['konsey','🏛','Mafya konseyi',councilOK()?(S.council.chair?'Başkan sensin':'Masada yerin var'):'Babalara açık',S.age>=18],
       ['doviz','💱','Döviz ve ekonomi',`Enflasyon %${Math.round(S.infl*100)} · $${S.fx.usd.toLocaleString('tr-TR',{maximumFractionDigits:1})}`,S.age>=16],
@@ -3281,7 +3283,7 @@ $('shX').onclick=closeSheet;
 $('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeSheet()});
 function riskTag(p){return p<.25?'<span class="risk r1">Düşük risk</span>':p<.4?'<span class="risk r2">Orta risk</span>':'<span class="risk r3">Yüksek risk</span>'}
 function row(attr,ic,t,d,rt,dis){return `<button class="row" ${attr} ${dis?'disabled':''}><span class="ic">${ic}</span><span class="tx"><b>${t}</b><span>${d}</span></span>${rt?`<span class="rt">${rt}</span>`:''}</button>`}
-function openSheet(k){
+function openSheet(k){if(k==='gard')k='insan';
   if(SALIAS[k]){const a=SALIAS[k];if(a[1])yTab=a[1];k=a[0]}
   curSheet=k;let T='',h='';
   if(k==='is'){
@@ -3368,7 +3370,8 @@ function openSheet(k){
     h+='<div class="sec">Yeni insanlarla tanış</div>';
     PLACES.filter(p=>p.jail?S.jail>0:(!S.jail&&S.age>=p.min&&(p.max===undefined||S.age<=p.max))).forEach(p=>h+=row(`data-meet="${p.id}"`,p.ic,p.n,p.d,'',S.friends.length>=MAXF));
   }
-  if(k==='gard'){
+  if(k==='gard'){k='insan'}
+  if(k==='gard_x'){
     T='Gardırop';
     h+=`<div class="wprev"><div class="av" style="width:96px;height:96px">${avatarSVG(S.look,S.age,{jail:S.jail>0,mood:S.happy,jw:[...S.jewels.map(j=>j.id),...((S.watches||[]).length?['saat']:[])]})}</div><div><p class="note" style="margin:0">Karizma: <b style="color:var(--gold)">${karizma()}</b></p><p class="note" style="margin:4px 0 0">Karizma kazandığın saygıyı artırır, işlerde riski düşürür.</p></div></div>`;
     if(S.jail)h+='<p class="note">Cezaevinde mahkûm kıyafeti giyiyorsun. Gardırop tahliyede açılır.</p>';
@@ -3550,48 +3553,50 @@ document.addEventListener('keydown',e=>{if(!S||!S.alive)return;const tg=e.target
 
 $('nIs').onclick=()=>{backTo=null;S&&S.alive&&goSheet('is')};
 $('nMulk').onclick=()=>{backTo=null;vTab='ozet';S&&S.alive&&goSheet('varlik')};
-$('nGard').onclick=()=>{backTo=null;S&&S.alive&&goSheet('gard')};
+$('nGard').onclick=()=>{backTo=null;S&&S.alive&&goSheet('insan')};
 $('nBen').onclick=()=>{backTo='hayat';S&&S.alive&&goSheet('hayat')};
 $('hblack').onclick=e=>{e.stopPropagation();if(!S)return;backTo=null;goSheet('kara')};
 $('hSet').onclick=e=>{e.stopPropagation();if(!S)return;backTo=null;goSheet('ayar')};
 document.querySelector('.top').onclick=e=>{backTo=null;if(!S||!S.alive)return;if(S.premium&&e.target.closest('#hav')){selfEdit();return}goSheet('ben')};
 
 /* ============ Karakter oluştur ============ */
-let draft,cTab='hair';
+let draft;
+const PRESETS=[
+ {n:'Sokak kurdu',d:'Kirli sakal, kısa saç',look:{skin:1,hair:'kisa',hairColor:'siyah',beard:'kirli'}},
+ {n:'İtalyan',d:'Geriye taralı, ince bıyık',look:{skin:1,hair:'geriye',hairColor:'siyah',beard:'ince'}},
+ {n:'Pala',d:'Pala bıyık, asker tıraşı',look:{skin:2,hair:'asker',hairColor:'siyah',beard:'biyik'}},
+ {n:'Jilet',d:'Skin fade, sinekkaydı',look:{skin:0,hair:'skinfade',hairColor:'kahve',beard:'yok'}},
+ {n:'Kara Kemal',d:'Gür sakal, klasik saç',look:{skin:3,hair:'klasik',hairColor:'siyah',beard:'tam'}},
+ {n:'Sarışın',d:'Undercut, kısa sakal',look:{skin:0,hair:'undercut',hairColor:'sari',beard:'kisasakal'}},
+ {n:'Kıvırcık',d:'Kıvırcık saç, keçi sakalı',look:{skin:2,hair:'kivircik',hairColor:'kahve',beard:'keci'}},
+ {n:'Kel Ali',d:'Kazıtılmış, çerçeve sakal',look:{skin:1,hair:'kel',hairColor:'siyah',beard:'boxed'}},
+ {n:'Kumral',d:'Pompadur, balbo',look:{skin:1,hair:'pompadour',hairColor:'kumral',beard:'balbo'}},
+ {n:'Esmer',d:'İtalyan kesim, Van Dyke',look:{skin:4,hair:'italyan',hairColor:'siyah',beard:'vandyke'}},
+ {n:'Kızıl',d:'Peaky kesim, favori',look:{skin:0,hair:'peaky',hairColor:'kizil',beard:'favori'}},
+ {n:'Usta',d:'Jöleli saç, Garibaldi',look:{skin:2,hair:'jole',hairColor:'kahve',beard:'garibaldi'}}];
 function showCreate(slot){
-  draft={slot:slot||null,origin:'istanbul',fam:'orta',first:pick(NAMES),last:pick(SURN),look:{skin:R(0,3),hair:pick(['kisa','geriye','yan','kivircik']),hairColor:pick(['siyah','kahve','kumral']),beard:pick(['yok','kirli','biyik']),outfit:'tisort',acc:[]}};
+  draft={slot:slot||null,pi:R(0,PRESETS.length-1),first:pick(NAMES),last:pick(SURN)};
   drawCreate();$('create').classList.add('on');
 }
+const pLook=i=>({...PRESETS[i].look,outfit:'deri',acc:[]});
 function drawCreate(){
-  const L=draft.look;
-  const tabs=[['memleket','Memleket'],['aile','Aile'],['skin','Ten'],['hair','Saç'],['hairColor','Saç rengi'],['beard','Sakal']];
-  let opts='';
-  if(cTab==='memleket')opts=Object.entries(ORIGINS).map(([k,o])=>`<button class="row" data-og="${k}" style="${draft.origin===k?'border-color:var(--gold)':''}"><span class="tx"><b>${o.n}${draft.origin===k?' ✓':''}</b><span>${o.m} · ${o.b}</span></span></button>`).join('');
-  else if(cTab==='aile')opts=Object.entries(FAMBG).map(([k,o])=>`<button class="row" data-fb="${k}" style="${draft.fam===k?'border-color:var(--gold)':''}"><span class="tx"><b>${o.n}${draft.fam===k?' ✓':''}</b><span>${o.b}</span></span></button>`).join('');
-  else if(cTab==='skin')opts='<div class="sw">'+SKINS.map((c,i)=>`<button data-s="${i}" class="${L.skin===i?'on':''}" style="background:${c}" aria-label="Ten ${i+1}"></button>`).join('')+'</div>';
-  else if(cTab==='hairColor')opts='<div class="sw">'+Object.keys(HCOL).map(c=>`<button data-hc="${c}" class="${L.hairColor===c?'on':''}" style="background:${HCOL[c]}" aria-label="${HCOL_N[c]}"></button>`).join('')+'</div>';
-  else opts='<div class="grid">'+WARD[cTab].map(it=>{const l={...L,[cTab]:it.id};return `<button class="it ${L[cTab]===it.id?'on':''}" data-o="${cTab}:${it.id}"><div class="av">${avatarSVG(l,30)}</div><b>${it.n}</b></button>`}).join('')+'</div>';
+  const L=pLook(draft.pi);
   $('createIn').innerHTML=`<div class="logo">Mafia <span>Life</span></div><p class="tag">Sokaktan tahta bir ömür</p>
     <div class="av bigav">${avatarSVG(L,30)}</div>
-    <div class="names"><input id="fn" value="${draft.first}" maxlength="14" aria-label="Ad"><input id="ln" value="${draft.last}" maxlength="14" aria-label="Soyad"><button class="dice" id="rnd" aria-label="Rastgele">🎲</button></div>
-    <div class="tabs">${tabs.map(([id,n])=>`<button class="tab ${cTab===id?'on':''}" data-ct="${id}">${n}</button>`).join('')}</div>
-    ${opts}
-    <p class="note" style="margin-top:12px">Önizleme yetişkin halini gösterir. Sakal ve aksesuarlar 16 yaşından sonra görünür; kıyafetleri oyunda para kazandıkça alırsın.</p>
-    <button class="btn" id="start">Hayata başla</button>`;
+    <div class="names"><input id="fn" value="${draft.first}" maxlength="14" aria-label="Ad" placeholder="Ad"><input id="ln" value="${draft.last}" maxlength="14" aria-label="Soyad" placeholder="Soyad"><button class="dice" id="rnd" aria-label="Rastgele isim">🎲</button></div>
+    <div class="sec" style="margin:12px 0 6px">Karakterini seç</div>
+    <div class="grid">${PRESETS.map((p,i)=>`<button class="it ${draft.pi===i?'on':''}" data-pi="${i}"><div class="av">${avatarSVG(pLook(i),30)}</div><b>${p.n}</b></button>`).join('')}</div>
+    <button class="btn" id="start" style="margin-top:14px">Hayata başla</button>`;
 }
 $('createIn').addEventListener('input',e=>{if(e.target.id==='fn')draft.first=e.target.value;if(e.target.id==='ln')draft.last=e.target.value});
 $('createIn').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
-  if(d.ct)cTab=d.ct;
-  else if(d.s!==undefined)draft.look.skin=+d.s;
-  else if(d.hc)draft.look.hairColor=d.hc;
-  else if(d.o){const[c,id]=d.o.split(':');draft.look[c]=id}
-  else if(d.og)draft.origin=d.og;
-  else if(d.fb)draft.fam=d.fb;
-  else if(b.id==='rnd'){const l=draft.look;draft.first=pick(NAMES);draft.last=pick(SURN);l.skin=R(0,4);l.hair=pick(WARD.hair).id;l.hairColor=pick(Object.keys(HCOL).slice(0,5));l.beard=pick(WARD.beard).id}
+  if(d.pi!==undefined)draft.pi=+d.pi;
+  else if(b.id==='rnd'){draft.first=pick(NAMES);draft.last=pick(SURN)}
   else if(b.id==='start'){
     const f=(draft.first||'').trim()||pick(NAMES),l=(draft.last||'').trim()||pick(SURN);
-    UNDO.length=0;newLife(f,l,draft.look,draft.origin,draft.fam);S.slot=draft.slot;cloudSave(true);$('create').classList.remove('on');render();scrollLog();return;
+    const look={...PRESETS[draft.pi].look,outfit:'tisort',acc:[]};
+    UNDO.length=0;newLife(f,l,look,pick(Object.keys(ORIGINS)),pick(Object.keys(FAMBG)));S.slot=draft.slot;cloudSave(true);$('create').classList.remove('on');render();scrollLog();return;
   }else return;
   drawCreate();
 });
