@@ -305,7 +305,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.07-2225';
+const APPV='2026.11.07-2235';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1570,10 +1570,14 @@ EXTRA.org=()=>{
   let h=`<div class="sum"><div><span>Aile</span><b>${o.name}</b></div><div><span>Güç</span><b style="color:var(--gold)">${orgPow()}</b></div><div><span>Üye</span><b>${o.members.length} (${avail().length} sahada)</b></div><div><span>Bölge geliri / yıl</span><b style="color:var(--good)">${fmt(inc)}</b></div><div><span>Adamların payı / yıl</span><b>${fmt(wg)}</b></div><div><span>Savaş</span><b style="color:${wars.length?'var(--blood)':'var(--ink)'}">${wars.length?wars.map(r=>r.n).join(', '):'Yok'}</b></div></div>`;
   h+=row('data-x="allout:"','🚀','Tüm ekibi sahaya sür','Boştaki herkes gücüne göre bir göreve çıkar','',!avail().filter(m=>m.busy!==QS()).length);
   h+=row('data-x="bonusall:"','💰','Herkese prim ver',`Bütün üyelerin sadakati +15`,fmtS(o.members.reduce((x,m)=>x+m.str*5000,0)),!o.members.length||!canPay(o.members.reduce((x,m)=>x+m.str*5000,0)));
+  {const st=stEnsure(),c=fullCost();
+   if(S.premium)h+=row('data-x="sqfull:dayi|org"','👑','Dayı modu: aileyi fulle','Üyelerin gücü 10/10, sokak ekipleri tam kadro, silahlar %100, sadakat %100 · Ücretsiz','',false);
+   h+=row('data-x="sqfull:|org"','⚡','Bütün ekipleri doldur ve silahlandır',c?'Tek tuşla tam kadro + silah %100':'Kadron zaten tam',c?fmtS(c):'',!c||!canPay(c));
+   h+=row('data-go="sokak"','🔫','Sokak kadrosu ve haraç',`${totSq()} adam · ${st.shops.filter(x=>x.st==='odeyor'&&shopT(x).il).length} işletme haraç veriyor${st.gw?' · ⚔️ '+st.gw.name:''}`,'›',false)}
   h+=row('data-go="rakip"','⚔️','Düşman çeteler','Savaş, mekân baskını, saldırı','›',false);
-  h+=`<div class="sec">Üyeler (${o.members.length}/12)</div>`;
+  h+=`<div class="sec">Üyeler (${o.members.length}/10)</div>`;
   if(!o.members.length)h+='<p class="note">Henüz kimse yok. Aşağıdan akrabalarını ve sokaktan adam ekle.</p>';
-  o.members.forEach(m=>{const st=m.jail?'🔒 Cezaevinde':m.hurt?'🩹 Yaralı':m.busy===QS()?'Görevde':'Hazır';h+=`<button class="row" data-x="mem:${m.id}"><span class="ic">${m.kin?'🧔':'🕶'}</span><span class="tx"><b>${m.name}</b><span>${m.kin?m.kin+' · ':''}Güç ${m.str} · ${st}</span><div class="bar" style="margin-top:5px"><i style="width:${m.loy}%;background:${m.loy>=60?'var(--good)':m.loy>=30?'var(--warn)':'var(--blood)'}"></i></div></span><span class="rt">›</span></button>`});
+  o.members.forEach(m=>{const st=m.jail?'🔒 Cezaevinde':m.hurt?'🩹 Yaralı':m.busy===QS()?'Görevde':'Hazır';h+=`<button class="row" data-x="mem:${m.id}"><span class="ic">${m.kin?'🧔':'🕶'}</span><span class="tx"><b>${m.name}</b><span>${m.kin?m.kin+' · ':''}Güç ${m.str} · ${m.sq||0} adam · Silah %${m.ar||0} · ${st}</span><div class="bar" style="margin-top:5px"><i style="width:${m.loy}%;background:${m.loy>=60?'var(--good)':m.loy>=30?'var(--warn)':'var(--blood)'}"></i></div></span><span class="rt">›</span></button>`});
   if(o.turf.length){h+='<div class="sec">Bölgen</div>';o.turf.forEach(v=>h+=row('data-x="nop:"','🏚',v.n,`Yıllık ${fmtS(v.inc)}${v.from?' · '+RV(v.from).n+'\'den alındı':''}`,'',true))}
   h+='<div class="sec">Eleman ekle</div>';
   S.rels.filter(r=>!r.joined&&!r.dead).forEach(r=>h+=row(`data-x="recrel:${r.id}"`,'🧔',r.name,`${r.kin} · Güç ${r.str}/10 · Kan bağı, sadakat yüksek`,'Davet et',o.members.length>=10));
@@ -2677,9 +2681,9 @@ EXTRA.sokak=()=>{const st=stEnsure();let h='';
 ACT.gang=nm=>{const st=stEnsure();const c=st.city.find(x=>x.name===decodeURIComponent(nm));if(!c||st.gw)return;closeSheet();
   queue({back:'sokak',title:`🏴 ${c.name}`,text:`Lider ${c.boss}. ${c.sol} adam, güç ${gPow(c)}. Senin gücün ${stPow()}.`,choices:[{t:'⚔️ Savaş aç',sub:`Kazanma şansı her çatışmada %${Math.round(winP(c)*100)}`,fn:()=>{gainResp(3);gangDeclare(c.name)}},{t:'Vazgeç',fn:()=>{}}]})};
 function fullCost(){const st=stEnsure();let c=0;[[st.my,null],...LTS().filter(m=>!m.jail).map(m=>[m,m])].forEach(([o,m])=>{const add=Math.max(0,sqCap(m)-(o.sq||0));c+=add*SQR+(sqCap(m))*(100-((o.sq||0)*(o.ar||0)/Math.max(1,sqCap(m))))/100*SQA});return Math.round(c*S.cpi)}
-ACT.sqfull=a=>{const st=stEnsure();const dayi=a==='dayi';if(dayi&&!S.premium)return;if(!dayi){const c=fullCost();if(!c||!pay(c))return}
+ACT.sqfull=a=>{const st=stEnsure();const back=(a||'').includes('org')?'org':'sokak';a=(a||'').split('|')[0];const dayi=a==='dayi';if(dayi&&!S.premium)return;if(!dayi){const c=fullCost();if(!c||!pay(c))return}
   let n=0;if(dayi)LTS().filter(m=>!m.jail).forEach(m=>{m.str=10});[[st.my,null],...LTS().filter(m=>!m.jail).map(m=>[m,m])].forEach(([o,m])=>{n+=Math.max(0,sqCap(m)-(o.sq||0));o.sq=sqCap(m);o.ar=100;if(m&&dayi){m.loy=100;m.hurt=0}});
-  log(`${dayi?'👑 ':'⚡ '}Bütün sokak ekipleri tam kadro${n?` (+${n} adam)`:''}, silahlar %100. Kadron artık ${totSq()} adam.`,'gold');afterChange();closeSheet();setTimeout(()=>openSheet('sokak'),40)};
+  log(`${dayi?'👑 ':'⚡ '}Bütün sokak ekipleri tam kadro${n?` (+${n} adam)`:''}, silahlar %100. Kadron artık ${totSq()} adam.`,'gold');afterChange();closeSheet();setTimeout(()=>openSheet(back),40)};
 ACT.sq=id=>{const st=stEnsure();const me=id==='me';const m=me?null:LTS().find(x=>x.id===id);const o=me?st.my:m;if(!o)return;closeSheet();
   const nm=me?'Senin ekibin':`${m.name}'in ekibi`;const cap=sqCap(m);const add10=Math.min(10,cap-(o.sq||0));const rc=Math.round(add10*SQR*S.cpi);const ac=Math.round((o.sq||0)*(100-(o.ar||0))/100*SQA*S.cpi);
   queue({back:'sokak',title:`🔫 ${nm}`,text:`${o.sq||0}/${cap} adam · Silah ve mühimmat %${o.ar||0}${m?`<br>Güç ${m.str}/10 · Sadakat %${m.loy}. Üyenin gücü arttıkça daha büyük ekip yönetir.`:''}`,choices:[
