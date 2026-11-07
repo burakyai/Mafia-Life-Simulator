@@ -304,7 +304,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.07-1920';
+const APPV='2026.11.07-1930';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1329,7 +1329,7 @@ function inherit(id){
   const nw=Math.max(0,netWorth());const tax=Math.round(nw*.1);
   let cash=Math.round(P.money+P.bank.dep-loanLeft-card-tax);
   const crewBonus=k.crew?1.5:1;
-  const N={first:k.name,last:P.last,gender:k.g,age:k.age,alive:true,look:{...k.look,acc:[],pic:0},
+  const N={first:k.name,last:P.last,gender:k.g,age:k.age,alive:true,look:{...k.look,acc:[],pic:P.look.pic||k.look.pic||0},
     owned:{outfit:[...new Set(['tisort','esofman',...P.owned.outfit])],acc:P.owned.acc.filter(a=>a!=='yara')},
     money:Math.max(0,cash),health:R(80,100),happy:clamp(R(40,60)),respect:Math.round(P.respect*.35*crewBonus),heat:Math.round(P.heat*.3),
     family:(k.age>=16&&P.family&&!P.snitch)?P.family:null,boss:false,jail:0,jailYears:0,
