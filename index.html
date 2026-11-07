@@ -306,7 +306,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.08-0235';
+const APPV='2026.11.08-0240';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1049,7 +1049,7 @@ function ensure(){
   if(!S.lux)S.lux=[];if(!S.papers)S.papers=[];if(S.fame===undefined)S.fame=0;if(!S.ach)S.ach={};
   S.stats=Object.assign({crimes:0,jailed:0,venues:0,elections:0,wins:0,bigwin:0},S.stats||{});
   if(!S.pol)S.pol={office:null,term:0,inf:0};if(!S.grads)S.grads=[];if(S.edu===undefined)S.edu=null;if(S.job===undefined)S.job=null;
-  if(S.st)try{stEnsure()}catch(e){}if(!S.kids)S.kids=[];if(!S.tree)S.tree=[];if(!S.gen)S.gen=1;if(!S.birthYear)S.birthYear=1996;if(!S.gender)S.gender='e';
+  if(S.look&&!S.look.pic){let hh=0;for(const c of (S.first+S.last))hh=(hh*31+c.charCodeAt(0))>>>0;S.look.pic=hh%15+1}if(S.st)try{stEnsure()}catch(e){}if(!S.kids)S.kids=[];if(!S.tree)S.tree=[];if(!S.gen)S.gen=1;if(!S.birthYear)S.birthYear=1996;if(!S.gender)S.gender='e';
   if(!S.tips)S.tips={};if(!S.tipStats)S.tipStats={ok:0,n:0};if(S.q===undefined)S.q=0;
 }
 
