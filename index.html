@@ -228,6 +228,52 @@ body.t-baba .nav .age span.c{background:radial-gradient(circle at 50% 35%,#b5282
 body.t-baba .nav .age span.c>span{font-size:13.5px!important;letter-spacing:.02em}
 body.t-baba .nav .age span.c small{font-family:var(--cond);font-size:11px}
 body.t-baba #nUndo{background:#0e0a09;border-color:#c9a24a;color:#c9a24a}
+
+/* ===== Ofis arayüzü (Baba teması) ===== */
+body.t-baba #app,body.t-baba .full{background:radial-gradient(ellipse at 78% 30%,#4a33204d 0%,transparent 45%),radial-gradient(ellipse at 50% 45%,#2a1d15 0%,#140e0b 55%,#070505 100%)}
+body.t-baba #app::before{content:"";position:fixed;left:0;top:12%;width:48%;height:46%;max-width:260px;background:repeating-linear-gradient(180deg,#f0cf9c22 0 7px,transparent 7px 15px);-webkit-mask-image:radial-gradient(ellipse at 30% 45%,#000 20%,transparent 72%);mask-image:radial-gradient(ellipse at 30% 45%,#000 20%,transparent 72%);pointer-events:none;z-index:0}
+body.t-baba #app::after{content:"";position:fixed;right:6%;top:18%;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#f2c27a33,transparent 70%);pointer-events:none;z-index:0}
+body.t-baba #hdr{background:linear-gradient(180deg,#221914,#120d0a);box-shadow:0 1px 0 #6b5225,0 2px 0 #000,0 3px 12px #000a}
+body.t-baba .top{padding:12px 14px;gap:12px}
+body.t-baba #hav{width:68px!important;height:68px!important;border:3px solid #c9a24a;box-shadow:0 0 0 2px #000,0 0 0 4px #6b5225,0 8px 18px #000}
+body.t-baba .who h1{font-family:var(--cond);font-weight:700;font-size:22px;white-space:normal;line-height:1.05;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;letter-spacing:.03em;color:#e9cf9a;text-transform:uppercase}
+body.t-baba .who p{font-family:Georgia,"Times New Roman",serif;font-size:14px;color:#b9ab95;letter-spacing:0;margin-top:3px}
+body.t-baba .who p b{color:#b9ab95;font-weight:400}
+body.t-baba #hSet{width:38px;height:38px;border-radius:9px;border:1px solid #6b5225;background:linear-gradient(180deg,#2c221c,#120d0b);box-shadow:inset 0 0 0 2px #0b0807,0 0 14px #e8b8602e;display:grid;place-items:center;font-size:0}
+body.t-baba #hSet svg{filter:drop-shadow(0 0 4px #f3c66b99)}
+body.t-baba .cash small{color:#a8987f;font-size:13px}
+body.t-baba .cash strong{font-size:22px;color:#e9cf9a;text-shadow:none}
+body.t-baba #log{padding:6px 14px 16px 10px}
+body.t-baba .yr{border-bottom:none;padding:6px 0 8px}
+body.t-baba .yr h3{font-family:var(--cond);font-size:21px;font-weight:700;letter-spacing:.04em;color:#e7c88f;margin:4px 0 4px;gap:12px}
+body.t-baba .yr h3::before{width:9px;height:9px;background:linear-gradient(135deg,#f3d9a4,#a37a3a);box-shadow:none;margin:0 7px}
+body.t-baba .yr p{display:grid;grid-template-columns:30px 1fr;gap:8px;align-items:start;font-family:Georgia,"Times New Roman",serif;font-size:15.5px;line-height:1.35;color:#ecdcc0;margin:5px 0}
+body.t-baba .yr p .li{font-size:19px;line-height:1.1;text-align:center;font-family:system-ui}
+body.t-baba .yr p.good{color:#a9dc9a}body.t-baba .yr p.bad{color:#f07264}body.t-baba .yr p.gold{color:#e6c27a;font-weight:400}body.t-baba .yr p.dim{color:#a3937c}
+body.t-baba #ftr{background:linear-gradient(180deg,#1b1410,#0b0807);border-top:1px solid #000;box-shadow:0 -1px 0 #6b5225,0 -12px 26px #000}
+body.t-baba .stats{gap:6px 18px;padding:12px 16px 8px}
+body.t-baba .st label{font-family:var(--cond);font-size:15px;font-weight:600;color:#d8c6a6;letter-spacing:.04em}
+body.t-baba .st label b{color:var(--c);font-weight:700;text-shadow:0 0 8px var(--c2)}
+body.t-baba .bw{filter:drop-shadow(0 0 4px var(--c2));margin-top:4px}
+body.t-baba .bar{height:12px;border-radius:0;background:#0a0706;box-shadow:none;margin:0;clip-path:polygon(6px 0,calc(100% - 6px) 0,100% 50%,calc(100% - 6px) 100%,6px 100%,0 50%);border:0;position:relative}
+body.t-baba .bar::after{content:"";position:absolute;inset:0;clip-path:inherit;box-shadow:inset 0 0 0 1px #5a4630}
+body.t-baba .bar i{border-radius:0;background:linear-gradient(180deg,var(--c),var(--c2));box-shadow:inset 0 2px 0 #ffffff55}
+body.t-baba .chips{max-width:none;justify-content:flex-end;align-items:center}
+.kbadge{display:inline-flex;align-items:center;gap:6px;padding:3px 3px 3px 10px;border-radius:999px;border:1px solid #8a6a35;background:linear-gradient(180deg,#2a211b,#120d0b);font-family:var(--cond);font-size:15px;color:#e3c48c;font-weight:600}
+.kbadge .kc{color:#e3c48c;font-size:15px}
+.kbadge i{font-style:normal;display:grid;place-items:center;min-width:32px;height:32px;padding:0 4px;border-radius:50%;background:radial-gradient(circle at 40% 30%,#f3d9a4,#a37a3a);color:#24170c;font-weight:800;font-size:15px;box-shadow:0 0 0 2px #2a1d12,0 0 0 3px #c9a24a}
+body.t-baba .nav{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,2.3fr) minmax(0,1fr) minmax(0,1fr);gap:3px;padding:8px 3px 10px;border-top:1px solid #2e2219;align-items:end}
+body.t-baba .nav>button{height:78px;justify-content:flex-end;gap:5px;padding:8px 0 7px;background:linear-gradient(180deg,#2a211b,#140f0c);border:1px solid #4f3d29;border-radius:6px;box-shadow:inset 0 0 0 2px #0c0907,inset 0 1px 0 #ffffff12;font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:-.01em;color:#e3c48c;text-transform:uppercase;min-width:0;overflow:hidden;white-space:nowrap}
+body.t-baba .nav>button svg{width:34px;height:34px;stroke:none;fill:url(#gBr);filter:drop-shadow(0 2px 2px #000)}
+.agew{position:relative;display:flex;align-items:center;justify-content:center;align-self:center;margin-top:-24px}
+.agew::before{content:"";position:absolute;left:0;right:0;top:50%;height:42px;transform:translateY(-50%);border-radius:999px;background:linear-gradient(180deg,#2a211b,#0f0b09);border:1px solid #6b5225;box-shadow:inset 0 0 0 2px #0a0706}
+.agew #nUndo,.agew #nPlus{position:relative;left:auto;bottom:auto;z-index:1;width:28px;height:34px;flex:none;border-radius:50%;background:none;border:0;box-shadow:none;color:#f0d29a;text-shadow:0 0 6px #c9a24a;font-size:26px;font-weight:600;line-height:1}
+.agew #nUndo{margin-right:-2px}.agew #nPlus{margin-left:-2px}
+.agew .age{position:relative;z-index:2;margin:0!important;padding:0}
+body.t-baba .nav .age span.c{width:80px;height:80px;background:radial-gradient(circle at 50% 32%,#e0473f,#a51f24 45%,#4e0b0e 80%);border:3px solid #d1ab5a;box-shadow:0 0 0 3px #1a110b,0 0 0 6px #8a6a35,0 0 0 8px #120c09,0 10px 24px #000,inset 0 -6px 10px #0009,inset 0 3px 6px #ffffff33;color:#f6dc9c;font-family:var(--cond)}
+body.t-baba .nav .age span.c>span{font-size:17px!important;font-weight:800;letter-spacing:.02em;text-transform:uppercase;line-height:.95;text-shadow:0 2px 2px #0008}
+body.t-baba .nav .age span.c small{font-family:var(--cond);font-size:14px;font-weight:800;letter-spacing:.04em;margin-top:2px}
+body.t-baba #toast{background:linear-gradient(180deg,#2a211b,#120d0b);border:1px solid #8a6a35;color:#e3c48c;font-family:var(--cond);letter-spacing:.04em;text-transform:uppercase}
 body.t-baba .sheet{background:linear-gradient(180deg,#171110,#0d0a09);border-top:1px solid #c9a24a66}
 body.t-baba .sh-h{border-bottom:1px solid #2a1f19}
 body.t-baba .sh-h h2,body.t-baba .card h2,body.t-baba .logo,body.t-baba .dead h2{font-family:"Cinzel",serif;font-weight:800;letter-spacing:.05em}
@@ -270,25 +316,26 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 </head>
 <body>
 <div id="app">
+ <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gBr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3d9a4"/><stop offset=".55" stop-color="#c79a55"/><stop offset="1" stop-color="#8a6330"/></linearGradient></defs></svg>
  <div id="hdr">
   <div class="top" role="button" tabindex="0" aria-label="Hayatım" style="cursor:pointer">
     <div class="av" id="hav" style="width:58px;height:58px"></div>
     <div class="who"><h1 id="hname">—</h1><p id="hsub">—</p></div>
-    <button id="hSet" aria-label="Ayarlar" title="Ayarlar">⚙️</button><div class="cash"><small>Kasa</small><strong id="hmoney">₺0</strong><small id="hblack" style="display:none;color:#c9bfae;font-size:11px;margin-top:2px;cursor:pointer;letter-spacing:0;text-transform:none">🖤 ₺0</small></div>
+    <button id="hSet" aria-label="Ayarlar" title="Ayarlar"><svg viewBox="0 0 24 24" width="24" height="24"><g fill="url(#gBr)"><rect x="10.4" y="1.6" width="3.2" height="5" rx=".8" transform="rotate(0 12 12)"/><rect x="10.4" y="1.6" width="3.2" height="5" rx=".8" transform="rotate(45 12 12)"/><rect x="10.4" y="1.6" width="3.2" height="5" rx=".8" transform="rotate(90 12 12)"/><rect x="10.4" y="1.6" width="3.2" height="5" rx=".8" transform="rotate(135 12 12)"/><rect x="10.4" y="1.6" width="3.2" height="5" rx=".8" transform="rotate(180 12 12)"/><rect x="10.4" y="1.6" width="3.2" height="5" rx=".8" transform="rotate(225 12 12)"/><rect x="10.4" y="1.6" width="3.2" height="5" rx=".8" transform="rotate(270 12 12)"/><rect x="10.4" y="1.6" width="3.2" height="5" rx=".8" transform="rotate(315 12 12)"/><circle cx="12" cy="12" r="7"/></g><circle cx="12" cy="12" r="2.9" fill="#1a120c"/></svg></button><div class="cash"><small>Kasa</small><strong id="hmoney">₺0</strong><small id="hblack" style="display:none;color:#c9bfae;font-size:11px;margin-top:2px;cursor:pointer;letter-spacing:0;text-transform:none">🖤 ₺0</small></div>
   </div>
   <div class="banner" id="banner"></div>
  </div>
   <div id="log"></div>
  <div id="ftr" style="position:fixed">
-  <button id="nUndo" aria-label="Geri al" title="Geri al">−</button>
   <div class="stats" id="stats"></div>
   <div class="nav">
-    <button id="nIs"><svg viewBox="0 0 24 24"><path d="M4 8h16v11H4zM9 8V5h6v3M4 13h16"/></svg>İşler</button>
-    <button id="nMulk"><svg viewBox="0 0 24 24"><path d="M3 20h18M5 20V9l7-5 7 5v11M10 20v-6h4v6"/></svg>Varlıklar</button>
-    <button class="age" id="nAge" aria-label="İlerle"><span class="c"><span style="font-size:17px">İlerle<small id="advSub">3 AY</small></span></span></button>
-    <button id="nGard"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.3c3 .2 5.5 2.4 5.5 5.7"/></svg>İnsanlar</button>
-    <button id="nBen"><svg viewBox="0 0 24 24"><path d="M3 21V10l5-3v14M8 21V4l8 3v14M16 21V11l5 2v8M2 21h20M11 9h2M11 12h2M11 15h2"/></svg>Hayat</button>
+    <button id="nIs"><svg viewBox="0 0 24 24" fill="url(#gBr)"><path fill-rule="evenodd" d="M9 3.5h6a1.2 1.2 0 0 1 1.2 1.2V7H20a1.5 1.5 0 0 1 1.5 1.5v10.5A1.5 1.5 0 0 1 20 20.5H4A1.5 1.5 0 0 1 2.5 19V8.5A1.5 1.5 0 0 1 4 7h3.8V4.7A1.2 1.2 0 0 1 9 3.5zm.6 1.8V7h4.8V5.3z"/><rect x="2.5" y="12" width="19" height="1.4" fill="#2a1d12"/><rect x="10.5" y="11" width="3" height="3.4" rx=".6"/></svg>İşler</button>
+    <button id="nMulk"><svg viewBox="0 0 24 24" fill="url(#gBr)"><path fill-rule="evenodd" d="M12 2.8l9.5 8-1.2 1.4-1.3-1.1V21H5V11.1l-1.3 1.1-1.2-1.4zM10 21v-5.5h4V21zM6.8 12.5v2.8h2.4v-2.8zm8 0v2.8h2.4v-2.8z"/></svg>Varlıklar</button>
+    <div class="agew"><button id="nUndo" aria-label="Geri al" title="Geri al">−</button><button class="age" id="nAge" aria-label="İlerle"><span class="c"><span>İlerle<small id="advSub">3 AY</small></span></span></button><button id="nPlus" aria-label="Adımı değiştir" title="3 ay / 1 yıl">+</button></div>
+    <button id="nGard"><svg viewBox="0 0 24 24" fill="url(#gBr)"><circle cx="8.5" cy="7.5" r="3.6"/><path d="M1.8 20.5c0-4.3 3-7 6.7-7s6.7 2.7 6.7 7z"/><circle cx="16.8" cy="8.6" r="2.9"/><path d="M15 13.7c.6-.2 1.2-.3 1.8-.3 3 0 5.4 2.4 5.4 7.1h-5.5c0-2.8-.6-5.1-1.7-6.8z"/></svg>İnsanlar</button>
+    <button id="nBen"><svg viewBox="0 0 24 24" fill="url(#gBr)"><path d="M2 21.5V12h3.5V8.5H8V12h1V4.5l3-2 3 2V10h2.5V7h2v3H21v11.5z"/><g fill="#2a1d12"><rect x="10.3" y="6" width="1.3" height="1.6"/><rect x="12.4" y="6" width="1.3" height="1.6"/><rect x="10.3" y="9" width="1.3" height="1.6"/><rect x="12.4" y="9" width="1.3" height="1.6"/><rect x="10.3" y="12" width="1.3" height="1.6"/><rect x="12.4" y="12" width="1.3" height="1.6"/><rect x="3.4" y="14" width="1.2" height="1.4"/><rect x="5.6" y="14" width="1.2" height="1.4"/><rect x="3.4" y="17" width="1.2" height="1.4"/><rect x="5.6" y="17" width="1.2" height="1.4"/><rect x="16.4" y="12.5" width="1.2" height="1.4"/><rect x="18.6" y="12.5" width="1.2" height="1.4"/><rect x="16.4" y="15.5" width="1.2" height="1.4"/><rect x="18.6" y="15.5" width="1.2" height="1.4"/></g></svg>Hayat</button>
   </div>
+ </div>
  </div>
 </div>
 
@@ -304,7 +351,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.07-1930';
+const APPV='2026.11.07-2000';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -3505,23 +3552,26 @@ function showDead(){const cause=S.cause;
 }
 
 /* ============ Ana ekran ============ */
+const EMRX=/^((?:\p{Regional_Indicator}{2})|(?:\p{Extended_Pictographic}️?(?:‍\p{Extended_Pictographic}️?)*))\s*/u;
+const LMAP=[[/^Gelir/,'⬆️'],[/maaş/i,'💰'],[/^Gider|kira/i,'💸'],[/satıldı|satış|sattın/i,'🏗️'],[/faiz|vadeli|banka|mevduat/i,'🏦'],[/kur krizi|dolar|döviz/i,'💥'],[/enflasyon/i,'📈'],[/konsey|başkan/i,'👑'],[/müttefik|selam|ittifak/i,'🤝'],[/tanıdık|görüştün|dost|arkadaş/i,'👥'],[/gazete|manşet|haber/i,'📰'],[/polis|komiser|baskın|gözaltı/i,'🚔'],[/hapis|cezaevi|parmaklık|tutuklan|mahkûm/i,'⛓️'],[/terfi|rütbe/i,'⭐'],[/öldü|vefat|cenaze|mezar/i,'⚰️'],[/dünyaya geldi|doğdu|bebe/i,'👶'],[/evlen|nişan|düğün/i,'💍'],[/sevgili|aşk|çıkmaya|ilişki/i,'❤️'],[/kulüp|içki|gece/i,'🍸'],[/hastane|sağlık|yaralan|ameliyat/i,'🏥'],[/okul|lise|üniversite|mezun/i,'🎓'],[/yaş günü|mum/i,'🎂'],[/araba|galeri|araç/i,'🚗'],[/ev |villa|köşk|daire|mülk/i,'🏠'],[/borsa|hisse|tüyo/i,'📊'],[/kara para|aklama|aklan/i,'🖤'],[/silah|vur|kurşun|çatışma|saldır/i,'🔫'],[/rakip|düşman/i,'⚔️'],[/şirket|fabrika|firma/i,'🏭'],[/müzik|konser|albüm|şarkı/i,'🎵'],[/₺/,'💰']];
+function lIcon(t,c){const m=String(t).match(EMRX);if(m)return[m[1],t.slice(m[0].length)];const plain=String(t).replace(/<[^>]*>/g,'');for(const[r,ic]of LMAP)if(r.test(plain))return[ic,t];return[c==='good'?'✅':c==='bad'?'🔻':c==='gold'?'⭐':'◆',t]}
 function render(){
   if(!S)return;const rk=rank();
   $('hav').innerHTML=avatarSVG(S.look,S.age,{jail:S.jail>0,mood:S.happy,jw:[...S.jewels.map(j=>j.id),...((S.watches||[]).length?['saat']:[])]});
   $('hname').textContent=`${S.first} ${S.last}`;
-  $('hsub').innerHTML=`${S.age} yaş${S.age>=14?' · '+SEASONS[S.q||0]:''} · <b>${RANKS[rk].n}</b>${S.org?' · '+S.org.name:S.family?' · '+S.family.replace(' Ailesi',''):''}`;
+  $('hsub').innerHTML=`${S.age} yaş${S.age>=14?' • '+SEASONS[S.q||0]:''} • <b>${RANKS[rk].n}</b>${S.org?' • '+S.org.name:S.family?' • '+S.family.replace(' Ailesi',''):''}`;
   $('hmoney').textContent=fmtS(S.money);{const hb=$('hblack');if(hb){hb.style.display='block';hb.textContent='🖤 '+fmtS(S.black||0)}}
   $('advSub').textContent=S.age<14||S.yearStep?'1 YIL':'3 AY';$('nUndo').disabled=!UNDO.length;
   const bn=$('banner');
   if(S.jail){bn.className='banner on';bn.textContent=`Cezaevindesin · ${fmtJ(S.jail)} kaldı`}
   else if(S.heat>=60){bn.className='banner on';bn.style.color='#f09a90';bn.textContent='Polis tepende! Dikkat çok yüksek, baskın gelebilir.'}
   else{bn.className='banner';bn.style.color=''}
-  const bar=(n,v,c)=>`<div class="st"><label>${n}<b>${v}%</b></label><div class="bar"><i style="width:${v}%;background:${c}"></i></div></div>`;
-  const hc=v=>v>60?'var(--good)':v>30?'var(--warn)':'var(--blood)';
-  $('stats').innerHTML=bar('Sağlık',S.health,hc(S.health))+bar('Mutluluk',S.happy,hc(S.happy))+bar('Saygı',S.respect,'var(--gold)')+bar('Polis dikkati',S.heat,S.heat>60?'var(--blood)':S.heat>30?'var(--warn)':'#7f8fa6')
-    +`<div class="chips"><span class="chip">Karizma <b>${karizma()}</b></span>${S.premium?'<span class="chip" style="border-color:var(--gold);color:var(--gold)">👑</span>':''}${curCar()?`<span class="chip">🚘 <b>${CM(curCar().mid).m}</b></span>`:''}</div>`;
+  const bar=(n,v,c)=>`<div class="st" style="--c:${c[0]};--c2:${c[1]}"><label>${n}<b>${v}%</b></label><div class="bw"><div class="bar"><i style="width:${v}%"></i></div></div></div>`;
+  const BC={g:['#b8f07c','#4b9e2a'],b:['#9fdcff','#2c86d1'],o:['#ffc77a','#c46a1c'],r:['#ff9282','#b0261f'],y:['#f5dc98','#b8862e'],s:['#b9c6d6','#5f6f86']};const hc=(v,k)=>v>60?BC[k]:v>30?BC.o:BC.r;
+  $('stats').innerHTML=bar('Sağlık',S.health,hc(S.health,'g'))+bar('Mutluluk',S.happy,hc(S.happy,'b'))+bar('Saygı',S.respect,BC.y)+bar('Polis dikkati',S.heat,S.heat>60?BC.r:S.heat>30?BC.o:BC.s)
+    +`<div class="chips"><span class="kbadge"><span class="kc">♛</span>Karizma<i>${karizma()}</i></span>${S.premium?'<span class="chip" style="border-color:var(--gold);color:var(--gold)">👑</span>':''}${curCar()?`<span class="chip">🚘 <b>${CM(curCar().mid).m}</b></span>`:''}</div>`;
   const recent=S.log.slice(-60);
-  $('log').innerHTML=recent.map(y=>`<div class="yr"><h3>Yaş ${y.age}${y.q!==undefined?' · '+SEASONS[y.q]:''}</h3>${y.lines.map(l=>`<p class="${l.c}">${l.t}</p>`).join('')}</div>`).join('');
+  $('log').innerHTML=recent.map(y=>`<div class="yr"><h3>Yaş ${y.age}${y.q!==undefined?' · '+SEASONS[y.q]:''}</h3>${y.lines.map(l=>{const[ic,t]=lIcon(l.t,l.c);return `<p class="${l.c}"><span class="li">${ic}</span><span>${t}</span></p>`}).join('')}</div>`).join('');
 }
 let BOT=0,BOTIO=0,BOTMAN=null;
 try{const v=localStorage.getItem('mafya-bot');if(v!==null)BOTMAN=+v}catch(e){}
@@ -3559,6 +3609,7 @@ document.addEventListener('keydown',e=>{if(!S||!S.alive)return;const tg=e.target
 
 $('nIs').onclick=()=>{backTo=null;S&&S.alive&&goSheet('is')};
 $('nMulk').onclick=()=>{backTo=null;vTab='ozet';S&&S.alive&&goSheet('varlik')};
+$('nPlus').onclick=e=>{e.stopPropagation();if(!S||!S.alive)return;if(S.age<14){toast('14 yaşına kadar her İLERLE 1 yıl');return}ACT.yrstep()};
 $('nGard').onclick=()=>{backTo=null;S&&S.alive&&goSheet('insan')};
 $('nBen').onclick=()=>{backTo='hayat';S&&S.alive&&goSheet('hayat')};
 $('hblack').onclick=e=>{e.stopPropagation();if(!S)return;backTo=null;goSheet('kara')};
