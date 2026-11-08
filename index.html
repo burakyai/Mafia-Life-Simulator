@@ -310,7 +310,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0055';
+const APPV='2026.11.09-0100';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -4024,7 +4024,7 @@ function drawCreate(){
     $('createIn').innerHTML=`<div class="logo">Derin <span>Dünya</span></div><p class="tag">Sokaktan tahta bir ömür</p>
     <div class="avbig" style="margin:0 auto 14px">${avHTML(draft.look,30)}</div>
     <div class="names"><input id="fn" value="${draft.first}" maxlength="14" aria-label="Ad" placeholder="Ad"><input id="ln" value="${draft.last}" maxlength="14" aria-label="Soyad" placeholder="Soyad"><button class="dice" id="rnd" aria-label="Rastgele isim">🎲</button></div>
-    ${avPicker(draft.look,'y')}<button class="row" id="avr" style="justify-content:center"><b>🎲 Rastgele görünüm</b></button>
+    ${avPicker(draft.look,'y')}<button class="row" id="avr" style="justify-content:center;margin-top:22px"><b>🎲 Rastgele görünüm</b></button>
     <div class="sec" style="margin:14px 0 6px">Hikâyen</div>
     ${crPick('origin','🌍','Memleket',ORIGINS,o=>o.n+' · '+o.m)}
     ${crPick('fam','🏠','Aile',FAMBG,o=>o.n)}
