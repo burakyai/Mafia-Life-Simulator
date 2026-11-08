@@ -1,0 +1,11 @@
+{
+  "appId": "com.burakyoruk.mafialife",
+  "appName": "Mafia Life",
+  "webDir": "www",
+  "backgroundColor": "#0a0808",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#0a0808",
+    "allowsLinkPreview": false
+  }
+}
