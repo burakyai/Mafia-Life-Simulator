@@ -313,7 +313,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0310';
+const APPV='2026.11.09-0320';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1631,7 +1631,7 @@ const ACH=[
   ['diploma','Diplomalı','Üniversiteden mezun ol',()=>(S.grads||[]).length>=1],
   ['kumar','Şanslı gece','Kumarda tek seferde ₺1 milyon kazan',()=>S.stats.bigwin>=1],['manset','Manşetlerin adamı','10 kez gazeteye çık',()=>S.papers.filter(p=>p.me).length>=10],
   ['borsa','Borsa kurdu','Portföyün ₺10 milyonu geçsin',()=>portVal()>=1e7],['yuz','Asırlık çınar','100 yaşına gir',()=>S.age>=100],['sampiyon','Şampiyon','Kulübünle lig şampiyonu ol',()=>(S.stats.titles||0)>=1],['muteahhit','Müteahhit','5 inşaat projesini tamamla',()=>S.co&&S.co.done>=5]];
-function checkAch(){if(!S||!S.ach)return;ACH.forEach(([id,n,,f])=>{try{if(!S.ach[id]&&f()){S.ach[id]=S.age;const rw=Math.round(wkRew()/2/1e4)*1e4;S.money+=rw;tixSet(tix()+1);log(`🏆 Başarım: ${n} · Ödül ${fmt(rw)} ve 1 🎟 bilet`,'gold');toast('🏆 '+n)}}catch(e){}})}
+function checkAch(){if(!S||!S.ach)return;ACH.forEach(([id,n,,f])=>{try{if(!S.ach[id]&&f()){S.ach[id]=S.age;log(`🏆 Başarım: ${n}`,'gold');toast('🏆 '+n)}}catch(e){}})}
 EXTRA.basarim=()=>{const got=ACH.filter(a=>S.ach[a[0]]).length;let h=`<p class="note">${got}/${ACH.length} başarım. Başarımlar kuşaktan kuşağa geçer.</p><div class="grid">`;
   ACH.forEach(([id,n,d])=>{const ok=S.ach[id]!==undefined;h+=`<div class="it ${ok?'on':''}" style="opacity:${ok?1:.55}"><span style="font-size:30px">${ok?'🏆':'🔒'}</span><b>${n}</b><em>${d}</em></div>`});
   h+='</div><div class="sec">İstatistikler</div><div class="sum">'+[['İşlenen suç',S.stats.crimes],['Hapse giriş',S.stats.jailed],['Ele geçirilen mekân',S.stats.venues],['Kumar galibiyeti',S.stats.wins],['Gazete manşeti',S.papers.filter(p=>p.me).length],['En yüksek kasa',fmt(S.peak)],['Kuşak',S.gen||1]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('')+'</div>';
@@ -3135,7 +3135,7 @@ EXTRA.gorev=()=>{wkEnsure();const w=S.wk;const left=7-Math.floor((Date.now()/864
   w.goals.forEach((g,i)=>{const t=WKT.find(x=>x[0]===g.k);const p=Math.min(g.n,wkProg(g));const pct=Math.round(p/g.n*100);
     h+=`<div class="card" style="padding:12px;margin-bottom:8px"><b>${g.got?'✅':g.done?'🎁':'🎯'} ${t[1](g.n)}</b><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="flex:1;height:7px;border-radius:4px;background:#ffffff1a;overflow:hidden"><span style="display:block;height:100%;width:${pct}%;background:var(--gold)"></span></span><small>${g.k==='nw'?fmtS(p)+' / '+fmtS(g.n):p+' / '+g.n}</small></div>${g.done&&!g.got?`<button class="btn" style="margin-top:10px" data-x="wkclaim:${i}">Ödülü al · ${fmtS(wkRew())} + 2 🎟</button>`:''}</div>`});
   const all=w.goals.every(g=>g.got);h+=`<div class="sec">Haftalık sandık</div>`+row('data-x="wkchest:"','💎','Haftalık sandık',w.chest?'Bu hafta açıldı':all?'Hazır! Dokun ve aç':'3 görevin ödülünü alınca açılır',w.chest?'✓':fmtS(wkRew()*2)+' + 5 🎟',w.chest||!all);
-  const got=ACH.filter(a=>S.ach[a[0]]).length;h+=`<div class="sec">Başarım ödülleri</div><p class="note">Her yeni başarım artık para ödülü veriyor. ${got}/${ACH.length} başarım açık.</p>`+row('data-go="basarim"','🏆','Başarımlar','Hepsini gör','›',false);
+  const got=ACH.filter(a=>S.ach[a[0]]).length;h+=`<div class="sec">Başarımlar</div><p class="note">${got}/${ACH.length} başarım açık. Başarımlar koleksiyondur, ödül vermez.</p>`+row('data-go="basarim"','🏆','Başarımlar','Hepsini gör','›',false);
   return['Haftalık görevler',h]};
 /* ============ Yeni heyecanlı olaylar ============ */
 const BIG=()=>Math.round(Math.max(1e5*S.cpi,Math.min(netWorth()*.04,4e8))/1000)*1000;
