@@ -311,9 +311,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0135';
-/* SİYASET ANAHTARI: true yapınca siyaset (seçimler, bakanlık, cumhurbaşkanlığı) geri açılır. Kod duruyor. */
-const POL=false;
+const APPV='2026.11.09-0145';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -712,7 +710,7 @@ function ageUp(){
   }
   quarterSystems(f);
   payExpenses(f);
-  if(!kid){try{streetQ()}catch(e){console.error(e)}orgQuarter(f);eduQuarter();polQuarter();fxQuarter();acctQuarter();bossQuarter();relQuarter();abroadQuarter();artistsQuarter();smQuarter();clubQuarter();coQuarter();labelQuarter();galQuarter();semtQuarter();routesQuarter();blackQuarter();goldQuarter();loansQuarter();cityQuarter();wmQuarter();firmQuarter();nightQuarter()}
+  if(!kid){try{streetQ()}catch(e){console.error(e)}orgQuarter(f);eduQuarter();fxQuarter();acctQuarter();bossQuarter();relQuarter();abroadQuarter();artistsQuarter();smQuarter();clubQuarter();coQuarter();labelQuarter();galQuarter();semtQuarter();routesQuarter();blackQuarter();goldQuarter();loansQuarter();cityQuarter();wmQuarter();firmQuarter();nightQuarter()}
   if(newYear){if(hasL('yat'))add('happy',3);if(hasL('kangal'))add('happy',1)}
   if(newYear&&!kid){econYear();councilYear()}
   if(newYear){carYear();yearSystems();if(!kid)taxTime()}
@@ -720,7 +718,7 @@ function ageUp(){
   S.friends.filter(x=>x.rel<=5).forEach(x=>log(`${x.name} ile aranız soğudu, artık görüşmüyorsunuz.`,'dim'));
   S.friends=S.friends.filter(x=>x.rel>5);
   if(S.autoMeet&&!kid)meetAll(true);
-  S.heat=clamp(S.heat-Math.round((4+propLaund()+(has('muhasebe')?3:0)+(has('kostebek')?5:0)+Math.min(6,friends('polis')*2)+(S.job&&S.job.id==='polis'?12:0)+(S.famBg==='polis'?2:0)+(S.council&&S.council.rules.includes('sessizlik')?2:0)+(S.pol&&S.pol.inf>=50?3:0))*f));
+  S.heat=clamp(S.heat-Math.round((4+propLaund()+(has('muhasebe')?3:0)+(has('kostebek')?5:0)+Math.min(6,friends('polis')*2)+(S.job&&S.job.id==='polis'?12:0)+(S.famBg==='polis'?2:0)+(S.council&&S.council.rules.includes('sessizlik')?2:0))*f));
   if(newYear){
     (S.siblings||[]).forEach(k=>k.age++);
     S.kids.forEach(k=>{k.age++;kidYear(k);k.rel=clamp(k.rel-R(0,4));if(k.age===18)log(`${k.name} 18 yaşına girdi.`,'dim');if(k.crew&&!S.jail)gainResp(1)});
@@ -813,7 +811,6 @@ function raid(){
   {t:'Teslim ol',sub:'Mahkemeye çık',fn:()=>arrest('Operasyon',[2,5])}]}}
 
 function arrest(crime,sev){
-  if(POL&&S.pol&&S.pol.office==='baskan'){add('heat',-10);log(`🇹🇷 ${crime} dosyası Cumhurbaşkanı dokunulmazlığı yüzünden kapatıldı.`,'gold');return}
   let yrs=R(sev[0],sev[1]);const fam=has('avukat'),lawyer=fam?0:yrs*12000,bribe=yrs*30000;
   const bp=Math.min(.92,.45+(fam?.25:0)+Math.min(.15,friends('avukat')*.1)+((S.grads||[]).includes('hukuk')?.2:0));
   queue({title:'Kelepçeler takıldı',prem:{t:'Dayının tanıdıklarını ara',sub:'Dosya bile açılmaz',fn:()=>{add('heat',-15);gainResp(3);log('Dayının tanıdıkları birkaç telefon açtı. Karakolda çay içip çıktın, dosya bile açılmadı.','gold')}},text:`${crime} nedeniyle gözaltına alındın. Savcı ${yrs} yıl hapis istiyor.`,choices:[
@@ -824,11 +821,8 @@ function arrest(crime,sev){
     {t:'İtirafçı ol',sub:'Ceza azalır · Saygı çöker',fn:()=>{add('respect',-30);S.snitch=true;const y=Math.max(1,Math.floor(yrs/3));if(S.family){log(`${S.family} seni dışladı. Artık bir ispiyoncusun.`,'bad');S.family=null;S.boss=false}jailFor(y,`İtirafçı oldun. ${y} yıl hapis.`)}}]});
   {const ex=[];
     if(hasL('jet'))ex.push({t:'Özel jetle yurt dışına kaç',sub:'Hapis yok · Paranın %10\'u gider',fn:()=>{S.money=Math.round(S.money*.9);S.heat=45;log('Gece yarısı özel jetinle Dubai\'ye uçtun. Avukatların dosyayı zaman aşımına uğrattı.','gold');news(`${S.first} ${S.last} yurt dışına kaçtı!`,3)}});
-    if(POL&&S.pol&&S.pol.office==='mv')ex.push({t:'Milletvekili dokunulmazlığı',sub:'%90 şans',fn:()=>{if(ch(.9)){log('Dokunulmazlığın var. Savcı dosyayı rafa kaldırdı.','gold');news(`Milletvekili ${S.last} hakkındaki fezleke bekletiliyor`,2)}else jailFor(yrs,`Dokunulmazlığın kaldırıldı! ${yrs} yıl hapis.`)}});
-    if(POL&&S.pol&&S.pol.inf>=40)ex.push({t:'Siyasetçi dostunu ara',sub:`%${Math.min(85,S.pol.inf)} şans`,fn:()=>{if(ch(Math.min(.85,S.pol.inf/100))){S.pol.inf=clamp(S.pol.inf-10);log('Ankara\'dan gelen bir telefonla serbest kaldın.','gold')}else jailFor(yrs,`Siyasetçi dostun telefonu açmadı. ${yrs} yıl hapis.`)}});
     if(S.job&&S.job.id==='polis')ex.push({t:'Meslektaşlarını ara',sub:'%60 şans',fn:()=>{if(ch(.6)){log('Komiser arkadaşların tutanağı "kaybetti".','gold')}else{S.job=null;jailFor(yrs,`Meslekten ihraç edildin ve ${yrs} yıl hapis aldın.`)}}});
     if(ex.length){Q[Q.length-1].choices.splice(S.premium?1:0,0,...ex);showEv()}}
-  if(S.state&&S.state.rec&&S.state.trust>=40){const tr=S.state.trust;Q[Q.length-1].choices.unshift({t:'Yukarıyı ara',sub:`Devlet koruması · %${Math.min(90,tr)} şans`,fn:()=>{if(ch(Math.min(.9,tr/100))){S.state.trust=clamp(tr-10);add('heat',-10);log('Ankara\'dan bir telefon geldi, dosya kapandı. Devlet seni koruyor.','gold')}else jailFor(yrs,`Telefonu kimse açmadı. ${yrs} yıl hapis.`)}});showEv()}
 }
 function jailFor(y,msg){if(hasY('defter'))y=Math.max(.25,Math.round(y*.8*4)/4);S.jail=y;S.heat=15;add('happy',-15);log(msg,'bad');S.stats.jailed++;news(`${S.first} ${S.last} tutuklandı: ${y} yıl hapis`,y>=5?3:2)}
 
@@ -1044,13 +1038,6 @@ const STOCKS=[
   {id:'ALTFN',n:'Altın Fonu',p:100,v:.1,d:.08},
   {id:'MAFYA',n:'MafyaCoin (kripto)',p:2,v:1,d:.12}
 ];
-const MISSIONS=[
-  {id:'izle',n:'Rakip aileyi gözetle',ic:'🔭',t:0,m:30000,g:8,risk:.15},
-  {id:'hesap',n:'Kara para hesaplarını raporla',ic:'🧾',t:15,m:90000,g:10,risk:.2},
-  {id:'sinir',n:'Sınırdaki kaçakçılık ağını çökert',ic:'🛂',t:30,m:260000,g:12,risk:.3,hurt:true,rank:2},
-  {id:'ajan',n:'Yabancı bir ajanı takip et',ic:'🕵',t:45,m:550000,g:14,risk:.3},
-  {id:'darbe',n:'Bir darbe planını boz',ic:'🦅',t:70,m:2000000,g:20,risk:.35,hurt:true}
-];
 const HT=id=>HOUSES.find(x=>x.id===id);
 function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
 function ensure(){
@@ -1059,7 +1046,7 @@ function ensure(){
   if(!S.bank)S.bank={dep:0,score:1200,loan:null,card:null};
   if(!S.stocks)S.stocks={};
   if(!S.px)S.px={};STOCKS.forEach(s=>{if(!S.px[s.id])S.px[s.id]={p:s.p,h:[s.p],n:gauss()}});
-  if(!S.state)S.state={rec:false,trust:0};
+  delete S.state;
   if(S.premium===undefined)S.premium=false;if(S.premium&&!dayiOK())S.premium=false;
   if(S.taxInc===undefined)S.taxInc=0;if(S.taxDebt===undefined)S.taxDebt=0;if(S.taxLast===undefined)S.taxLast=null;
   ensureOrg();
@@ -1070,7 +1057,7 @@ function ensure(){
   migrateCars();
   if(!S.lux)S.lux=[];if(!S.papers)S.papers=[];if(S.fame===undefined)S.fame=0;if(!S.ach)S.ach={};
   S.stats=Object.assign({crimes:0,jailed:0,venues:0,elections:0,wins:0,bigwin:0},S.stats||{});
-  if(!S.pol)S.pol={office:null,term:0,inf:0};if(!S.grads)S.grads=[];if(S.edu===undefined)S.edu=null;if(S.job===undefined)S.job=null;
+  delete S.pol;if(!S.grads)S.grads=[];if(S.edu===undefined)S.edu=null;if(S.job===undefined)S.job=null;
   if(S.look&&!S.look.pic&&!S.look.av){let hh=0;for(const c of (S.first+S.last))hh=(hh*31+c.charCodeAt(0))>>>0;S.look.pic=hh%15+1}if(S.st)try{stEnsure()}catch(e){}if(!S.kids)S.kids=[];if(!S.lb)S.lb=(S.gen||1)>1?{...(S.stats||{}),co:S.co?S.co.done||0:0}:{};if(!S.yad)S.yad=[];if(!S.tree)S.tree=[];if(!S.gen)S.gen=1;if(!S.birthYear)S.birthYear=1996;if(!S.gender)S.gender='e';
   if(!S.tips)S.tips={};if(!S.tipStats)S.tipStats={ok:0,n:0};if(S.q===undefined)S.q=0;
 }
@@ -1114,7 +1101,6 @@ function quarterSystems(f){
   if(b.dep>0){const i=Math.round(b.dep*Math.max(.03,depRate()*.35)*f);b.dep+=i;S.taxInc=(S.taxInc||0)+i;log(`Mevduat faizin: ${fmt(i)}.`,'good')}
   STOCKS.forEach(st=>{const x=S.px[st.id];x.p=Math.max(.5,+(x.p*Math.exp(stockR(st,x.n,f))*(1+(S.infl||0)*f*.8)).toFixed(2));x.h.push(x.p);if(x.h.length>16)x.h.shift();x.n=gauss()});
   if(S.orders)Object.keys(S.orders).forEach(id=>{const o=S.stocks[id];if(!o){delete S.orders[id];return}if(S.px[id].p>=S.orders[id]){log(`Satış emrin gerçekleşti (hedef ₺${S.orders[id].toLocaleString('tr-TR')}).`,'gold');sellStock(id,o.sh);delete S.orders[id]}});
-  if(S.state.rec&&S.state.trust>=60)S.heat=clamp(S.heat-Math.round(5*f));
 }
 function stockR(st,n,f){return st.d*f-st.v*st.v*f/2+st.v*Math.sqrt(f)*n}
 function yearSystems(){
@@ -1253,13 +1239,7 @@ const EXTRA={
     h+=row('data-x="pol:muhbir"','🗣','Muhbirlik yap','Rakipleri ihbar et · Dikkat −, para +, ifşa riski','',S.age<16);
     h+=row('data-x="pol:teslim"','🙌','Kendini teslim et','Kısa ceza, dikkat sıfırlanır','',S.heat<40);
     return['Polis karakolu',h]},
-  mit:()=>{const st=S.state;let h='';
-    if(!st.rec){h+='<p class="note">Kapıdaki görevli seni süzüyor. İçeride yeraltı dünyasını tanıyan insanlara ihtiyaç duyan biri olduğu söyleniyor.</p>'+row('data-x="mit:join"','🚪','Kapıyı çal','Devlete hizmet teklifi alabilirsin','',false);return['İstihbarat binası',h]}
-    h+=`<p class="note">Devlet güveni</p><div class="bar" style="height:9px;margin-bottom:8px"><i style="width:${st.trust}%;background:var(--gold)"></i></div>`;
-    h+=`<p class="note">${st.trust>=40?'Devlet koruması aktif: yakalandığında "Yukarıyı ara" seçeneğin var.':'Güven %40 olunca devlet koruması açılır.'} ${st.trust>=60?'Polis dikkatin her yıl ekstra düşüyor.':'Güven %60 olunca dikkatin her yıl ekstra düşer.'}</p><div class="sec">Görevler</div>`;
-    MISSIONS.forEach(m=>{const lock=st.trust<m.t||(m.rank&&rank()<m.rank);h+=row(`data-x="mis:${m.id}"`,m.ic,m.n,lock?(st.trust<m.t?`Güven %${m.t} gerekir`:`${RANKS[m.rank].n} rütbesi gerekir`):riskTag(m.risk),lock?'🔒':fmtS(m.m),lock)});
-    h+='<div class="sec">Teşkilat</div>'+row('data-x="mit:quit"','🚶','Teşkilattan ayrıl','Devlet koruması biter','',false);
-    return['İstihbarat binası',h]}
+
 };
 function amtRead(max){const raw=String((document.getElementById('nmBox')||{}).value||window._nm||'').trim().toLocaleLowerCase('tr-TR');if(!raw)return 0;
   if(/^(hepsi|tümü|tamamı|hepsini|tamami|tumu)$/.test(raw))return max;
@@ -1307,21 +1287,6 @@ const ACT={
       if(ch(.25)){add('respect',-20);S.snitch=true;if(S.family){log(`Muhbirliğin ortaya çıktı. ${S.family} seni dışladı.`,'bad');S.family=null;S.boss=false}else log('Muhbirliğin sokakta duyuldu. Saygın çöktü.','bad')}
       else log(`Rakip ailelerin işlerini polise anlattın. ${fmt(m)} aldın, kimse duymadı.`,'good')}
     if(k==='teslim'){const y=R(1,2);add('respect',-3);S.heat=0;closeSheet();jailFor(y,`Kendini teslim ettin. ${y} yıl hapis.`);S.heat=0}
-    done()},
-  mit:k=>{
-    if(k==='quit'){S.state.rec=false;S.state.trust=0;log('Teşkilatla bağını kopardın.','dim');return done()}
-    closeSheet();
-    queue({back:'mit',title:'Kapalı bir oda',text:'Takım elbiseli bir adam dosyanı önüne koyuyor: "Seni uzun zamandır izliyoruz. Bu şehirde olan biteni bilen birine ihtiyacımız var. Devlete hizmet eder misin?"',choices:[
-      {t:'Kabul et',sub:'Devlet görevleri açılır',fn:()=>{S.state.rec=true;S.state.trust=Math.max(S.state.trust,5);log('Artık devletin sahadaki gözlerinden birisin. Kimse bilmemeli.','gold')}},
-      {t:'Reddet',sub:'Dikkat +10',fn:()=>{add('heat',10);log('Teklifi reddettin. Dosyan kalınlaştı.','bad')}}]})},
-  mis:id=>{const m=MISSIONS.find(x=>x.id===id),st=S.state;
-    if(ch(clamp(m.risk-st.trust*.002-karizma()*.002,.05,.8))){
-      if(m.hurt&&ch(.5)){hurt(R(15,35),m.n+' görevinde aldığı yaralar');log(`${m.n} görevi kanlı bitti.`,'bad')}
-      else if(S.family&&ch(.4)){closeSheet();queue({back:'mit',title:'Çifte ajan dedikodusu',prem:{t:'Dedikoduyu yayanı bul',sub:'Saygı ++',fn:()=>{gainResp(8);log('Dedikoduyu yayan rakip ailenin adamıymış. Babanın gözünde yükseldin.','gold')}},text:`${S.family} içinde devletle çalıştığın fısıldanıyor. ${boss()} seni çağırttı.`,choices:[
-        {t:'İnkâr et',sub:'Şans %55',fn:()=>{if(ch(.55)){log('Yalanına inandılar. Şimdilik.','good')}else{log(`${S.family} seni aileden attı.`,'bad');S.family=null;S.boss=false;add('respect',-15);S.snitch=true}}},
-        {t:'Aileden ayrıl',sub:'Saygı −10',fn:()=>{log('Aileden sessizce çekildin.','bad');S.family=null;S.boss=false;add('respect',-10)}}]});return done()}
-      else{st.trust=clamp(st.trust-5);log(`${m.n} görevi başarısız oldu. Teşkilat hayal kırıklığında.`,'bad')}
-    }else{S.money+=m.m;st.trust=clamp(st.trust+m.g);add('heat',-5);log(`${m.n} görevi başarıyla tamamlandı. Teşkilat ${fmt(m.m)} ödedi.`,'gold')}
     done()},
   prem:()=>{if(!dayiOK()){dayiShop();return}S.premium=!S.premium;log(S.premium?'Dayı Paketi açıldı. Dayının tanıdıkları hep yanında.':'Dayı Paketi kapatıldı. Artık kendi başınasın.',S.premium?'gold':'dim');done()},
   tip:k=>{const cost=k==='all'?90000:20000;if(S.money<cost)return;S.money-=cost;
@@ -1441,7 +1406,7 @@ function payExpenses(f){
 }
 function taxTime(){
   if(S.age<18)return;
-  const tc=S.pol&&(S.pol.taxCut||0)>QS()?.5:1;const gi=Math.round(incomeTax(S.taxInc||0)*(S.offs&&S.offs.paravan?.7:1)*tc),et=Math.round(propTax()*tc),mtv=carTax(),T=gi+et+mtv;const base=S.taxInc||0;S.taxInc=0;
+  const tc=1;const gi=Math.round(incomeTax(S.taxInc||0)*(S.offs&&S.offs.paravan?.7:1)*tc),et=Math.round(propTax()*tc),mtv=carTax(),T=gi+et+mtv;const base=S.taxInc||0;S.taxInc=0;
   if(T<=0)return;
   const detail=`Beyan edilen gelir ${fmt(base)} · Gelir vergisi ${fmt(gi)}${et?` · Emlak vergisi ${fmt(et)}`:''}${mtv?` · MTV ${fmt(mtv)}`:''}.`;
   const evade=Math.max(.1,.35-(has('muhasebe')?.15:0)+(S.heat>50?.15:0));
@@ -1660,15 +1625,14 @@ const ACH=[
   ['mekan3','Bölge hâkimi','3 mekânı kontrol et',()=>S.org&&S.org.turf.length>=3],['sehir','Şehrin sahibi','10 mekânı kontrol et',()=>S.org&&S.org.turf.length>=10],
   ['evli','Kurulu düzen','Evlen',()=>S.married],['cocuk','Soy devam ediyor','Çocuk sahibi ol',()=>S.kids.length>=1],
   ['kusak3','Üç kuşak','3. kuşağa ulaş',()=>(S.gen||1)>=3],['yali','Boğaz manzarası','Bir yalı ya da köşk al',()=>S.houses.some(o=>HT(o.t).cls==='yali')],['koleksiyon','Koleksiyoner','Garajında 10 farklı model olsun',()=>new Set(S.cars.map(c=>c.mid)).size>=10],
-  ['jet','Gökyüzü benim','Özel jet al',()=>hasL('jet')],['secim','Halkın adamı','Bir seçim kazan',()=>S.stats.elections>=1],
-  ['bakan','Ekselansları','Bakan ol',()=>S.pol&&S.pol.office==='bakan'],['diploma','Diplomalı','Üniversiteden mezun ol',()=>(S.grads||[]).length>=1],
+  ['jet','Gökyüzü benim','Özel jet al',()=>hasL('jet')],
+  ['diploma','Diplomalı','Üniversiteden mezun ol',()=>(S.grads||[]).length>=1],
   ['kumar','Şanslı gece','Kumarda tek seferde ₺1 milyon kazan',()=>S.stats.bigwin>=1],['manset','Manşetlerin adamı','10 kez gazeteye çık',()=>S.papers.filter(p=>p.me).length>=10],
   ['borsa','Borsa kurdu','Portföyün ₺10 milyonu geçsin',()=>portVal()>=1e7],['yuz','Asırlık çınar','100 yaşına gir',()=>S.age>=100],['sampiyon','Şampiyon','Kulübünle lig şampiyonu ol',()=>(S.stats.titles||0)>=1],['muteahhit','Müteahhit','5 inşaat projesini tamamla',()=>S.co&&S.co.done>=5]];
-if(!POL)for(let i=ACH.length-1;i>=0;i--)if(['secim','bakan'].includes(ACH[i][0]))ACH.splice(i,1);
 function checkAch(){if(!S||!S.ach)return;ACH.forEach(([id,n,,f])=>{try{if(!S.ach[id]&&f()){S.ach[id]=S.age;const rw=Math.round(wkRew()/2/1e4)*1e4;S.money+=rw;tixSet(tix()+1);log(`🏆 Başarım: ${n} · Ödül ${fmt(rw)} ve 1 🎟 bilet`,'gold');toast('🏆 '+n)}}catch(e){}})}
 EXTRA.basarim=()=>{const got=ACH.filter(a=>S.ach[a[0]]).length;let h=`<p class="note">${got}/${ACH.length} başarım. Başarımlar kuşaktan kuşağa geçer.</p><div class="grid">`;
   ACH.forEach(([id,n,d])=>{const ok=S.ach[id]!==undefined;h+=`<div class="it ${ok?'on':''}" style="opacity:${ok?1:.55}"><span style="font-size:30px">${ok?'🏆':'🔒'}</span><b>${n}</b><em>${d}</em></div>`});
-  h+='</div><div class="sec">İstatistikler</div><div class="sum">'+[['İşlenen suç',S.stats.crimes],['Hapse giriş',S.stats.jailed],['Ele geçirilen mekân',S.stats.venues],...(POL?[['Kazanılan seçim',S.stats.elections]]:[]),['Kumar galibiyeti',S.stats.wins],['Gazete manşeti',S.papers.filter(p=>p.me).length],['En yüksek kasa',fmt(S.peak)],['Kuşak',S.gen||1]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('')+'</div>';
+  h+='</div><div class="sec">İstatistikler</div><div class="sum">'+[['İşlenen suç',S.stats.crimes],['Hapse giriş',S.stats.jailed],['Ele geçirilen mekân',S.stats.venues],['Kumar galibiyeti',S.stats.wins],['Gazete manşeti',S.papers.filter(p=>p.me).length],['En yüksek kasa',fmt(S.peak)],['Kuşak',S.gen||1]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('')+'</div>';
   return['Başarımlar',h]};
 
 /* ============ Eğitim ve meslek ============ */
@@ -1701,45 +1665,6 @@ EXTRA.egitim=()=>{let h='';
   if(g.length&&!S.job){h+='<div class="sec">Diplomaların</div>';g.forEach(id=>{const d=DEPTS.find(x=>x.id===id);h+=row(`data-x="job:${id}"`,'💼',`${d.jn} olarak çalış`,`Yıllık ${fmtS(d.sal)} maaş · ${d.d}`,'',!!S.jail)})}
   if(!S.edu){h+='<div class="sec">Üniversite</div>';DEPTS.filter(d=>!g.includes(d.id)).forEach(d=>h+=row(`data-x="uni:${d.id}"`,'🎓',d.n,`${d.q/4} yıl · ${d.d}`,fmtS(d.fee)+'/yıl',S.age>40||!!S.jail))}
   return['Eğitim ve meslek',h]};
-
-/* ============ Siyaset ============ */
-const OFFICES=[
-  {id:'meclis',n:'Belediye meclis üyesi',age:25,cost:300000,sal:150000,base:.5},
-  {id:'belediye',n:'Belediye başkanı',age:30,cost:2500000,sal:600000,base:.38,need:'meclis'},
-  {id:'mv',n:'Milletvekili',age:30,cost:6000000,sal:900000,base:.35},
-  {id:'bakan',n:'Bakan',age:35,sal:1500000,need:'mv',appoint:true},
-  {id:'baskan',n:'Cumhurbaşkanı',age:40,sal:8000000,appoint:true}];
-const OF=id=>OFFICES.find(o=>o.id===id);
-function polQuarter(){const P=S.pol;if(!POL||!P.office)return;
-  const o=OF(P.office);const sal=Math.round(o.sal*.25);S.money+=sal;S.taxInc=(S.taxInc||0)+sal;P.inf=clamp(P.inf+2);P.term--;
-  log(`${o.n} maaşı: ${fmt(sal)}.`,'dim');
-  if(S.jail&&P.office!=='baskan'){log(`Hapse girdiğin için ${o.n.toLowerCase()} görevinden düştün.`,'bad');news(`${o.n} ${S.first} ${S.last} tutuklandı!`,3);P.office=null;return}
-  if(S.heat>=60&&ch(.15)){queue({title:'Skandal!',text:'Bir gazete yeraltı bağlantılarını ortaya çıkardı. Muhalefet istifanı istiyor.',prem:{t:'Dayının basın bağlantıları',sub:'Haber yalanlanır',fn:()=>{add('heat',-10);log('Haber ertesi gün "asılsız iddia" olarak yalanlandı.','gold')}},choices:[
-    {t:'Basını sustur',sub:fmt(1000000),dis:!canPay(1000000),fn:()=>{pay(1000000);add('heat',-8);log('Skandal kapandı. Pahalıya patladı.','dim')}},
-    {t:'Görmezden gel',sub:'Şans %50',fn:()=>{if(ch(.5))log('Skandal kendiliğinden söndü.','good');else{log(`Görevden alındın.`,'bad');news(`${S.first} ${S.last} görevden alındı`,3);P.office=null}}},
-    {t:'İstifa et',fn:()=>{log('İstifa ettin.','dim');P.office=null}}]})}
-  if(P.office&&P.term<=0){log(`${o.n} olarak görev süren doldu.`,'dim');P.prev=P.office;const ended=P.office;P.office=null;if(ended==='bakan')P.min=null;polEnd(ended)}
-  polQ2();
-}
-ACT.run=id=>{const o=OF(id);closeSheet();const P=S.pol;
-  const ch0=b=>clamp(o.base+S.respect/300+karizma()/200+(S.fame||0)/300+P.inf/200-S.heat/250+b,.05,.95);
-  queue({back:'siyaset',title:`${o.n} adaylığı`,text:`Seçim kampanyası parayla döner. Ne kadar harcayacaksın? Saygın, karizman, ünün ve nüfuzun şansını artırır; polis dikkati düşürür.`,
-    prem:{t:'Dayının parti bağlantısı',sub:'Kesin zafer',fn:()=>winElect(o)},
-    choices:[[1,0,'Mütevazı kampanya'],[2,.12,'Güçlü kampanya'],[3,.22,'Her köşede afiş']].map(([m,b,n])=>({t:n,sub:`${fmt(o.cost*m)} · Şans %${Math.round(ch0(b)*100)}`,dis:!canPay(o.cost*m),fn:()=>{pay(o.cost*m);if(ch(ch0(b)))winElect(o);else{log(`${o.n} seçimini kaybettin.`,'bad');news(`${S.first} ${S.last} seçimde hezimete uğradı`,1)}}})).concat([{t:'Vazgeç',fn:()=>{}}])})};
-function winElect(o){S.pol.office=o.id;S.pol.term=20;S.pol.inf=clamp(S.pol.inf+10);S.stats.elections++;gainResp(6);log(`Seçimi kazandın! Artık ${o.n.toLowerCase()}sın.`,'gold');news(`${S.first} ${S.last} ${o.n.toLowerCase()} seçildi!`,3)}
-ACT.lobby=()=>{if(!pay(5000000))return;if(ch(.4+S.pol.inf/300)){S.pol.office='bakan';S.pol.term=20;S.pol.min=null;log('Bakanlığa atandın!','gold');news(`Yeni bakan: ${S.first} ${S.last}`,4);setTimeout(pickMinistry,60)}else log('Lobi çalışması sonuç vermedi. Bu sefer.','bad');done()};
-ACT.buypol=()=>{if(!pay(1000000))return;S.pol.inf=clamp(S.pol.inf+R(10,18));log('Bir milletvekiliyle "özel" bir yemek yedin. Nüfuzun arttı.','dim');done()};
-ACT.ihale=()=>{if(S.pol.ihaleQ===QS())return;S.pol.ihaleQ=QS();const m=R(5,30)*100000;S.money+=m;add('heat',8);S.pol.inf=clamp(S.pol.inf+3);log(`Belediye ihalesini kendi şirketine verdin: ${fmt(m)}.`,'gold');if(ch(.3))news('Belediye ihalesinde akraba şirket iddiası',2);done()};
-EXTRA.siyaset=()=>{const P=S.pol;let h=`<div class="sum"><div><span>Görev</span><b>${P.office?OF(P.office).n:'Yok'}</b></div>${P.office?`<div><span>Görev süresi</span><b>${fmtJ(P.term/4)}</b></div>`:''}<div><span>Siyasi nüfuz</span><b style="color:var(--gold)">%${P.inf}</b></div><div><span>Halk desteği</span><b>%${polP().pop}</b></div></div>`;
-  h+='<p class="note">Nüfuz %40 olunca yakalandığında "Siyasetçi dostunu ara" seçeneği açılır. Milletvekilleri dokunulmazlığa sahiptir.</p>';
-  if(P.office==='belediye')h+=row('data-x="ihale:"','🏗','İhaleleri yönet','Her çeyrek bir kez · Para ++ · Dikkat +','',P.ihaleQ===QS());
-  if(P.office==='bakan')h+=row('data-go="bakanlik"','🏛','Bakanlığını yönet',P.min?MINS[P.min].n:'Bakanlığını seç','›',false);
-  if(P.office==='baskan')h+=row('data-go="baskanlik"','🇹🇷','Cumhurbaşkanlığı','Kararnameler, dış politika','›',false);
-  if((P.office==='mv'||P.office==='bakan'||P.prev==='bakan')&&P.office!=='baskan')h+=row('data-x="pres:"','🇹🇷','Cumhurbaşkanlığına aday ol',S.age<40?'40 yaşından itibaren':`Halk desteği %${polP().pop}`,'',S.age<40||!!S.jail);
-  if(P.office==='mv')h+=row('data-x="lobby:"','🏛','Bakanlık için lobi yap',`Şans %${Math.round((.4+P.inf/300)*100)}`,fmtS(5000000),!canPay(5000000));
-  h+=row('data-x="buypol:"','🤝','Siyasetçi satın al','Nüfuz +10–18',fmtS(1000000),!canPay(1000000));
-  if(!P.office){h+='<div class="sec">Seçimler</div>';OFFICES.filter(o=>!o.appoint).forEach(o=>{const lock=S.age<o.age||(o.need&&!(P.prev===o.need||S.stats.elections>0));h+=row(`data-x="run:${o.id}"`,'🗳',`${o.n} adayı ol`,lock?(S.age<o.age?`${o.age} yaşından itibaren`:'Önce meclis üyeliği kazanmalısın'):`Kampanya ${fmtS(o.cost)}'den başlar · Yıllık maaş ${fmtS(o.sal)}`,'',lock||!!S.jail)})}
-  return['Siyaset',h]};
 
 /* ============ Kumarhane ============ */
 function betModal(title,fn){const opts=[1000,10000,100000,1000000,10000000].filter(a=>a<=S.money);
@@ -2400,7 +2325,7 @@ const coCls=()=>{let c=0;CTH.forEach((t,i)=>{if(S.co.done>=t)c=i});return c};
 const PJ=id=>PROJ.find(x=>x.id===id);
 ACT.cofound=()=>{if(!pay(500000))return;S.co={name:`${S.last} İnşaat`,rep:50,done:0,projects:[]};log(`${S.co.name} kuruldu. Artık müteahhitsin.`,'gold');done()};
 ACT.pstart=id=>{const t=PJ(id);closeSheet();const mats=[['ucuz','Ucuz malzeme',.85,.9,'Maliyet −%15 · Satış −%10 · Skandal riski'],['std','Standart',1,1,'Dengeli'],['lux','Lüks malzeme',1.15,1.18,'Maliyet +%15 · Satış +%18 · İtibar +']];
-  const permit=t.pol&&!(S.pol&&(S.pol.office==='belediye'||S.pol.inf>=40));
+  const permit=t.pol;
   queue({back:'insaat',title:t.n,text:`${t.d}. Toplam maliyet ~${fmt(t.cost)}. İnşaat gerçek saatle <b>${fmtDur(pjDur(t))}</b> sürer; oyun kapalıyken de devam eder. Başlangıçta %20 peşin, kalanı her çeyrek taksitle; süre bitince kalan borç tek seferde ödenir. Bitince birimleri satarsın.${permit?' Bu projede belediyeden ruhsat almak zor; siyasi nüfuzun yoksa rüşvet gerekir.':''}`,choices:[...mats.map(([k,n,cm,pm,d])=>{const cost=Math.round(t.cost*cm*(permit?1.08:1));return{t:n,sub:`${d} · Peşin ${fmtS(cost*.2)}`,dis:!canPay(cost*.2),fn:()=>{pay(Math.round(cost*.2));
       S.co.projects.push({uid:'pj'+Date.now()+R(0,999),t:id,cost,paid:Math.round(cost*.2),prog:0,delay:0,qual:k,pm,units:t.u,presold:0,sold:0,launder:0,hidx0:S.hidx,up0:PJ(id).up,state:'build',start:gYear(),dur:pjDur(t),endT:Date.now()+pjDur(t)});
       if(permit){add('heat',6);log('Ruhsat için belediyede "kapılar" açıldı.','dim')}log(`${t.n} projesinin temeli atıldı.`,'gold');if(t.cls>=2)news(`${S.co.name}'den dev proje: ${t.n}`,2)}}}),{t:'Vazgeç',fn:()=>{}}]})};
@@ -2591,7 +2516,7 @@ const FAMBG={
 const oc=k=>S&&S.origin===k;
 
 /* ============ Enflasyon ve döviz ============ */
-const CPI_LISTS=()=>[[CAT,['p']],[JEWELS,['p']],[PROPS,['p','inc']],[LUX,['p','up']],[SHOP,['p']],[STAFF,['sal']],[RANKS,['sal']],[CRIMES,['m']],[WARD.outfit,['p']],[WARD.acc,['p']],[LEAGUES,['price','rev','prize']],[PROJ,['cost','up']],[OMIS,['m']],[DEST,['trip']],[DEPTS,['fee','sal']],[OFFICES,['cost','sal']]];
+const CPI_LISTS=()=>[[CAT,['p']],[JEWELS,['p']],[PROPS,['p','inc']],[LUX,['p','up']],[SHOP,['p']],[STAFF,['sal']],[RANKS,['sal']],[CRIMES,['m']],[WARD.outfit,['p']],[WARD.acc,['p']],[LEAGUES,['price','rev','prize']],[PROJ,['cost','up']],[OMIS,['m']],[DEST,['trip']],[DEPTS,['fee','sal']]];
 function applyCPI(){const c=(S&&S.cpi)||1;
   CPI_LISTS().forEach(([arr,fs])=>arr.forEach(it=>{if(!it._b){it._b={};fs.forEach(f=>it._b[f]=Array.isArray(it[f])?[...it[f]]:it[f])}
     fs.forEach(f=>{const b=it._b[f];if(b===undefined)return;if(Array.isArray(b))it[f]=b.map(v=>Math.round(v*c));else if(typeof b==='number'&&b>0)it[f]=Math.round(b*c)})}));
@@ -2881,10 +2806,6 @@ const LATER={
     {t:'Karşısına çık',sub:'Mini oyun: dövüş',fn:()=>{if(S.mgOff){if(ch(.6)){gainResp(10);log(`${d.n} ile hesaplaştınız. Kazanan sendin.`,'good')}else hurt(R(15,35),'İntikam')}else setTimeout(()=>miniGame('dovus',w=>{if(w){gainResp(10);log(`${d.n} yere serildi. Hesap kapandı.`,'gold')}else hurt(R(15,35),'İntikam saldırısı')}),60)}},
     {t:'Barış teklif et',sub:fmt(M(200000)),dis:!canPay(M(200000)),fn:()=>{pay(M(200000));log(`${d.n} parayı aldı ve kayboldu.`,'dim')}},
     {t:'Şehirden bir süre uzaklaş',sub:'Mutluluk −',fn:()=>{add('happy',-6);add('heat',-5);log('Bir süre Bodrum\'da yattın. Ortalık durulunca döndün.','dim')}}]}),
-  secim:d=>({title:'Başkan seçildi',text:`Desteklediğin aday ${d.n} seçimi kazandı ve sözünü tutmak istiyor.`,choices:[
-    {t:'Belediye ihalesi iste',sub:'Büyük para',fn:()=>{const m=M(R(3,12)*1e6);S.money+=m;add('heat',5);log(`Belediyeden ${fmt(m)}'lik ihale sana kaldı.`,'gold')}},
-    {t:'Kayıt dışı imar izni',sub:'Mülklerine değer',fn:()=>{S.hidx=+(S.hidx*1.08).toFixed(3);gainResp(4);log('Mülklerinin değeri arttı.','good')}},
-    {t:'Polisi üzerimden çek',sub:'Dikkat −30',fn:()=>{add('heat',-30);log('Zabıta ve emniyet seni rahat bırakıyor.','good')}}]}),
   hucre:d=>({title:`${d.n} geri döndü`,text:`İşe aldığın eski hücre arkadaşın ${d.n} bir iş çevirmiş ve payını getirmiş.`,choices:[{t:'Payını al',sub:fmt(d.m),fn:()=>{S.money+=d.m;gainResp(2);log(`${d.n} sözünün eri çıktı.`,'good')}}]}),
   muhbir:d=>({title:'Tuzak işe yaradı',text:`Kurduğun tuzak sonuç verdi: muhbir ${d.n}.`,choices:[{t:'Aileden at',fn:()=>{if(S.org)S.org.members=S.org.members.filter(x=>x.name!==d.n);add('heat',-15);gainResp(5);log(`${d.n} ailenden kovuldu. Polisin kulağı sağır oldu.`,'good')}},{t:'Ona yanlış bilgi besle',sub:'Polis yanlış yere baskın yapar',fn:()=>{add('heat',-25);gainResp(7);log('Polis boş depoya baskın yaptı. Gazeteler emniyetle dalga geçiyor.','gold');news('Emniyetin "büyük operasyonu" boş depoda bitti',2)}}]})
 };
@@ -2908,78 +2829,6 @@ EV(2,()=>okE()&&S.age>=22,()=>{const n=`${pick(['Bakkal','Kasap','Berber','Kuyum
   {t:'Bir yıl süre ver',sub:'Sonra faiziyle öder',fn:()=>{later('borc',4,{n,m});log(`${n}'e bir yıl süre verdin.`,'good')}},
   {t:'Borcu sil',sub:'Halk seni sever',fn:()=>{S.fame=clamp((S.fame||0)+4);add('happy',6);log(`${n}'in borcunu sildin. Mahalle seni konuşuyor.`,'good')}}]}});
 LATER.borc=d=>({title:'Borç ödendi',text:`${d.n} sözünü tuttu, borcunu faiziyle getirdi ve elini öptü.`,choices:[{t:'Al',sub:fmt(Math.round(d.m*1.4)),fn:()=>{S.money+=Math.round(d.m*1.4);gainResp(3);log('Mahallede adın "sözünün eri" diye anılıyor.','good')}}]});
-/* ============ Bakanlıklar ve Cumhurbaşkanlığı ============ */
-const MINS={
-  icisleri:{n:'İçişleri Bakanlığı',ic:'🚔',d:'Emniyet, jandarma ve sınırlar senin elinde'},
-  hazine:{n:'Hazine ve Maliye Bakanlığı',ic:'🏦',d:'Vergiler, Maliye ve devletin kasası senin elinde'},
-  ulastirma:{n:'Ulaştırma ve Altyapı Bakanlığı',ic:'🌉',d:'Köprüler, havalimanları, otoyollar ve dev ihaleler'}};
-const polP=()=>{const P=S.pol;if(P.pop===undefined)P.pop=50;if(P.scr===undefined)P.scr=0;if(!P.used||P.used.q!==QS())P.used={q:QS(),a:{}};return P};
-const masakK=()=>S.pol&&(S.pol.masak||0)>QS()?.3:1;
-function pickMinistry(){queue({back:'bakanlik',title:'🏛 Hangi bakanlığı alıyorsun?',text:'Cumhurbaşkanı sana üç bakanlıktan birini teklif ediyor.',choices:Object.entries(MINS).map(([k,m])=>({t:`${m.ic} ${m.n}`,sub:m.d,fn:()=>{S.pol.min=k;log(`${m.n} görevine başladın.`,'gold');news(`Yeni ${m.n.replace(' Bakanlığı','').toLowerCase()} bakanı: ${S.first} ${S.last}`,4)}}))})}
-function minAct(k,c,fn){const P=polP();if(P.used.a[k]){toast('Bu çeyrek bu kararı zaten verdin');return}const cc=Math.round((c||0)*Math.max(1,S.cpi));if(cc&&!pay(cc))return;P.used.a[k]=1;fn();done()}
-ACT.min=k=>{const P=polP();const C=Math.max(1,S.cpi);
-  const A={
-    // İçişleri
-    op:()=>minAct('op',0,()=>{const r=pick(S.rivals.filter(x=>!x.dead));if(!r)return;r.pow=Math.max(10,r.pow-18);const lost=r.venues.splice(0,1);P.scr+=12;P.pop=clamp(P.pop+4);gainResp(6);log(`🚔 ${r.n}'e büyük operasyon! Gücü kırıldı${lost.length?`, ${lost[0].n} mühürlendi`:''}. Halk "suçla mücadele" diye alkışlıyor.`,'gold');news(`İçişleri'nden ${r.n}'e dev operasyon`,3)}),
-    dosya:()=>minAct('dosya',0,()=>{add('heat',-30);P.scr+=15;log('Hakkındaki dosyalar bir gecede "kayboldu".','gold')}),
-    gumruk:()=>minAct('gumruk',0,()=>{P.gumruk=QS()+4;P.scr+=10;log('Sınır kapılarındaki ekipler değişti. Bir yıl boyunca kaçakçılık hatların neredeyse dokunulmaz.','gold')}),
-    emniyet:()=>minAct('emniyet',2e6,()=>{P.pop=clamp(P.pop+8);P.scr=Math.max(0,P.scr-8);log('Emniyete yeni araç ve personel: halk desteği arttı, muhalefet sustu.','good')}),
-    // Hazine
-    af:()=>minAct('af',0,()=>{const d=S.taxDebt||0;S.taxDebt=0;P.scr+=10;P.pop=clamp(P.pop+5);log(`Vergi affı çıktı. ${d?fmt(d)+' borcun silindi.':'Herkesin borcu silindi.'} Halk memnun.`,'gold')}),
-    masak:()=>minAct('masak',0,()=>{P.masak=QS()+4;P.scr+=14;log('Maliye\'ye "kaynak yetersizliği" yaşatıldı. Bir yıl boyunca aklama riskin üçte birine indi.','gold')}),
-    faiz:()=>minAct('faiz',0,()=>{STOCKS.forEach(st=>{const x=S.px[st.id];const r=stockR(st,x.n,.25);S.tips[st.id]={up:r>0,p0:x.p,r,tg:+(x.p*Math.exp(r)).toFixed(2)}});S.tips.all=1;P.scr+=8;log('Faiz kararını herkesten önce öğrendin. Borsada bütün hisselerin yönü ve hedefi önünde, %100 doğru.','gold')}),
-    tahvil:()=>minAct('tahvil',0,()=>{const m=Math.round(R(20,60)*1e6*C);dirty(m);P.scr+=12;log(`Devlet tahvili ihracında "danışmanlık ücreti": ${fmt(m)}.`,'gold')}),
-    // Ulaştırma
-    ihale:()=>minAct('ihale',0,()=>{const pr=pick(['Üçüncü havalimanı terminali','Boğaz\'a dördüncü köprü','Kuzey otoyolu','Hızlı tren hattı','Marmara tüneli']);const k=Math.round(R(50,200)*1e6*C);dirty(k);P.scr+=15;if(S.co){const x=Math.round(k*.8);S.money+=x;log(`🌉 ${pr} ihalesi senin inşaat şirketine verildi! Rüşvet ${fmt(k)} kara kasaya, hakediş ${fmt(x)} cüzdana.`,'gold')}else log(`🌉 ${pr} ihalesi "dost" bir şirkete verildi. Komisyonun: ${fmt(k)}.`,'gold');news(`${pr} ihalesi sonuçlandı`,3)}),
-    garanti:()=>minAct('garanti',0,()=>{P.garanti=(P.garanti||0)+Math.round(R(5,12)*1e6*C);P.scr+=10;log(`Köprü ve otoyol geçiş garantisi imzalandı. Her çeyrek ${fmt(P.garanti)} senin şirketlerine akacak.`,'gold')}),
-    acilis:()=>minAct('acilis',3e6,()=>{P.pop=clamp(P.pop+10);S.fame=clamp((S.fame||0)+5);log('Dev açılış töreni: kurdeleyi sen kestin, halk desteğin yükseldi.','good');news(`${S.first} ${S.last} yeni otoyolu açtı`,2)}),
-    // Cumhurbaşkanı
-    kar_af:()=>minAct('kar_af',0,()=>{add('heat',-100);if(S.org)S.org.members.forEach(m=>m.jail=0);P.pop=clamp(P.pop-8);log('Genel af kararnamesi imzalandı. Adamların cezaevinden çıktı, sicilin tertemiz.','gold');news('Cumhurbaşkanı genel af ilan etti',4)}),
-    kar_ohal:()=>minAct('kar_ohal',0,()=>{S.rivals.forEach(r=>{if(!r.dead)r.pow=Math.max(8,r.pow-30)});P.pop=clamp(P.pop-12);gainResp(15);log('Olağanüstü hal ilan edildi. Bütün rakip çeteler çökertildi.','gold');news('Ülke genelinde olağanüstü hal',4)}),
-    kar_asgari:()=>minAct('kar_asgari',0,()=>{P.pop=clamp(P.pop+15);S.infl=+(S.infl+.06).toFixed(3);log('Asgari ücrete büyük zam! Halk sokakta bayram ediyor, ama enflasyon kıpırdadı.','good')}),
-    kar_program:()=>minAct('kar_program',0,()=>{S.econ.ph='program';S.econ.left=R(2,3);S.infl=Math.max(.05,+(S.infl-.08).toFixed(3));P.pop=clamp(P.pop+5);log('Enflasyonla mücadele programı başladı. Fiyatlar yavaşlıyor.','good')}),
-    kar_mega:()=>minAct('kar_mega',0,()=>{const k=Math.round(R(300,900)*1e6*Math.max(1,S.cpi));dirty(k);P.pop=clamp(P.pop+6);log(`🏗 "Yüzyılın projesi" kanal ihalesi! Payın: ${fmt(k)}.`,'gold');news('Yüzyılın projesi için ilk kazma vuruldu',4)}),
-    kar_yatirim:()=>minAct('kar_yatirim',0,()=>{S.fx.usd=+(S.fx.usd*.88).toFixed(2);S.fx.eur=+(S.fx.eur*.88).toFixed(2);P.pop=clamp(P.pop+6);log('Yabancı yatırımcı zirvesi: milyarlarca dolar ülkeye girdi, kur %12 düştü.','gold')}),
-    kar_vergi:()=>minAct('kar_vergi',0,()=>{P.taxCut=QS()+8;P.pop=clamp(P.pop-3);log('Servet vergisi kaldırıldı. İki yıl boyunca vergin yarı yarıya.','gold')}),
-    zirve:()=>minAct('zirve',5e6,()=>{P.pop=clamp(P.pop+7);S.fame=clamp((S.fame||0)+8);if(S.friends.length<MAXF)S.friends.push({id:'z'+R(0,9999),name:pick(['Başkan ','Prens ','Şeyh ','Başbakan '])+pick(['Al-Rashid','Volkov','Moretti','Delacroix','Tanaka']),job:'isinsani',rel:75});log('Uluslararası zirveye ev sahipliği yaptın. Dünya liderleriyle tokalaştın, yeni bir dost edindin.','gold');news('Dünya liderleri İstanbul\'da',3)})};
-  if(A[k])A[k]()};
-function polQ2(){const P=S.pol;if(!POL||!P||!P.office)return;polP();
-  if(P.office==='bakan'&&P.min==='icisleri')add('heat',-5);
-  if(P.office==='baskan'){add('heat',-15);if(P.garanti)S.money+=P.garanti}
-  if(P.garanti&&P.office==='bakan')S.money+=P.garanti;
-  P.pop=clamp(P.pop+(P.pop>50?-1:1)-(S.infl>.4?2:0));P.scr=Math.max(0,P.scr-3);
-  if(P.office==='bakan'&&P.scr>=40&&ch(P.scr/250)){queue({back:'bakanlik',title:'Meclis soruşturması!',text:'Muhalefet hakkında gensoru verdi. Bakanlığındaki "kararlar" incelenecek.',prem:{t:'Dayın milletvekillerini ikna etsin',sub:'Gensoru reddedilir',fn:()=>{P.scr=0;log('Gensoru önergesi oy çokluğuyla reddedildi.','gold')}},choices:[
-    {t:'Vekilleri satın al',sub:fmt(Math.round(2e7*Math.max(1,S.cpi))),dis:!canPay(2e7*Math.max(1,S.cpi)),fn:()=>{pay(Math.round(2e7*Math.max(1,S.cpi)));P.scr=Math.round(P.scr/3);log('Gensoru düştü. Pahalıya patladı.','dim')}},
-    {t:'Savun kendini',sub:`Şans %${Math.round(clamp(.3+P.pop/150+karizma()/150,.1,.9)*100)}`,fn:()=>{if(ch(clamp(.3+P.pop/150+karizma()/150,.1,.9))){P.scr=Math.round(P.scr/2);P.pop=clamp(P.pop+5);log('Kürsüdeki konuşman tarihe geçti, gensoru reddedildi.','good')}else{P.office=null;P.min=null;add('heat',20);log('Gensoru kabul edildi. Bakanlıktan düşürüldün, dosyan savcılıkta.','bad');news(`${S.first} ${S.last} görevden alındı`,4)}}},
-    {t:'İstifa et',fn:()=>{P.office=null;P.min=null;log('Bakanlıktan istifa ettin.','dim')}}]})}
-  if(P.office==='baskan'&&P.pop<25&&ch(.12)){queue({back:'baskanlik',title:'⚠️ Darbe girişimi!',text:'Gece yarısı tanklar köprüleri kesti. Bir grup general yönetime el koymaya çalışıyor.',prem:{t:'Dayının adamları sokağa',sub:'Darbe bastırılır',fn:()=>{P.pop=clamp(P.pop+20);gainResp(15);log('Darbe sabaha karşı bastırıldı. Halk meydanlarda.','gold')}},choices:[
-    {t:'Halkı sokağa çağır',sub:`Şans %${Math.round(clamp(.35+P.pop/100+(S.org?orgPow()/300:0),.1,.9)*100)}`,fn:()=>{if(ch(clamp(.35+P.pop/100+(S.org?orgPow()/300:0),.1,.9))){P.pop=clamp(P.pop+25);log('Halk sokaklara döküldü, darbe başarısız oldu!','gold');news('Darbe girişimi püskürtüldü',4)}else{P.office=null;S.city='dubai';add('happy',-20);log('Darbe başarılı oldu. Jetinle Dubai\'ye kaçtın.','bad');news('Cumhurbaşkanı ülkeyi terk etti',4)}}},
-    {t:'Ülkeyi terk et',fn:()=>{P.office=null;S.city='londra';log('Londra\'ya kaçtın. Başkanlık bitti.','bad')}}]})}}
-function polEnd(o){const P=S.pol;if(o==='baskan'&&(P.pterms||1)<2){queue({back:'baskanlik',title:'🗳 Yeniden seçim',text:`Görev süren doldu. Halk desteğin %${P.pop}. Yeniden aday olacak mısın?`,choices:[{t:'Aday ol',sub:`Şans %${Math.round(clamp(P.pop/100+.1,.05,.95)*100)}`,fn:()=>{if(ch(clamp(P.pop/100+.1,.05,.95))){P.office='baskan';P.term=20;P.pterms=(P.pterms||1)+1;log('İkinci kez Cumhurbaşkanı seçildin!','gold');news(`${S.first} ${S.last} yeniden seçildi`,4)}else log('Seçimi kaybettin. Saraydan ayrılıyorsun.','bad')}},{t:'Bırak',fn:()=>log('Siyasi hayatını tamamladın.','dim')}]})}}
-ACT.pres=()=>{const P=polP();const c=Math.round(2e8*Math.max(1,S.cpi));closeSheet();const pp=b=>clamp(.08+P.pop/220+P.inf/250+karizma()/250+(S.fame||0)/250-S.heat/200+b,.03,.9);
-  queue({back:'siyaset',title:'🗳 Cumhurbaşkanlığı seçimi',text:'Ülkenin en büyük seçimi. Halk desteğin, nüfuzun, karizman ve ünün şansını belirler.',prem:{t:'Dayının bütün bağlantıları',sub:'Kesin zafer',fn:()=>presWin()},
-    choices:[[1,0,'Güçlü kampanya'],[3,.12,'Bütün ülkede miting'],[6,.22,'Medyayı satın al']].map(([m,b,n])=>({t:n,sub:`${fmtS(c*m)} · Şans %${Math.round(pp(b)*100)}`,dis:!canPay(c*m),fn:()=>{pay(c*m);if(ch(pp(b)))presWin();else{log('Cumhurbaşkanlığı seçimini kaybettin.','bad');news(`${S.first} ${S.last} seçimi kaybetti`,3)}}})).concat([{t:'Vazgeç',fn:()=>{}}])})};
-function presWin(){const P=polP();P.office='baskan';P.term=20;P.pterms=1;P.min=null;P.pop=clamp(P.pop+15);gainResp(25);S.fame=clamp((S.fame||0)+30);log('🇹🇷 Cumhurbaşkanı seçildin! Ülke artık senin.','gold');news(`Yeni Cumhurbaşkanı: ${S.first} ${S.last}`,5)}
-EXTRA.bakanlik=()=>{const P=polP();let h='';if(P.office!=='bakan')return['Bakanlık','<p class="note">Bakan değilsin. Milletvekili olup lobi yaparak bakanlığa atanabilirsin.</p>'];
-  if(!P.min){h+='<p class="note">Henüz bakanlığın belli değil.</p>'+row('data-x="pickmin:"','🏛','Bakanlığını seç','İçişleri, Hazine ya da Ulaştırma','›',false);return['Bakanlık',h]}
-  const M=MINS[P.min];h+=`<div class="card" style="padding:12px;margin-bottom:10px"><b>${M.ic} ${M.n}</b><div class="note" style="margin:4px 0 0">Halk desteği %${P.pop} · Meclis baskısı %${Math.min(100,P.scr)} · Görev ${fmtJ(P.term/4)}</div></div><p class="note">Her karar çeyrekte bir kez verilebilir. Kirli kararlar meclis baskısını artırır; %40'ı geçerse gensoru gelebilir.</p>`;
-  const u=k=>P.used.a[k];const C=Math.max(1,S.cpi);
-  const L={icisleri:[['op','🚔','Rakip çeteye operasyon','Rakip çökertilir, halk desteği +'],['dosya','📁','Dosyalarını kapattır','Polis dikkati −30'],['gumruk','🛃','Gümrük ekiplerini değiştir','1 yıl kaçakçılık riski çok düşük'],['emniyet','🚓','Emniyete bütçe ver','Halk desteği ++, baskı −',2e6]],
-    hazine:[['af','🧾','Vergi affı çıkar','Vergi borcun silinir'],['masak','🖤','Maliye\'yi yavaşlat','1 yıl aklama riski ⅓'],['faiz','📈','Faiz kararını önceden öğren','Bütün hisselerin yönü %100 doğru'],['tahvil','💵','Tahvil ihracında komisyon','Kara kasaya büyük para']],
-    ulastirma:[['ihale','🌉','Mega proje ihalesi','Dev rüşvet · İnşaat şirketin varsa hakediş'],['garanti','🛣','Geçiş garantisi imzala','Her çeyrek sabit gelir'],['acilis','✂️','Açılış töreni yap','Halk desteği ++, ün +',3e6]]}[P.min];
-  L.forEach(([k,ic,n,d,c])=>h+=row(`data-x="min:${k}"`,ic,n,u(k)?'Bu çeyrek yapıldı':d,c?fmtS(c*C):'',!!u(k)||(c&&!canPay(c*C))));
-  if(P.garanti)h+=`<p class="note">Geçiş garantisi geliri: her çeyrek ${fmt(P.garanti)}.</p>`;
-  h+='<div class="sec">Sonraki adım</div>'+row('data-x="pres:"','🇹🇷','Cumhurbaşkanlığına aday ol',S.age<40?'40 yaşından itibaren':`Halk desteği %${P.pop}`,'',S.age<40||!!S.jail);
-  return['Bakanlık',h]};
-EXTRA.baskanlik=()=>{const P=polP();let h='';if(P.office!=='baskan')return['Cumhurbaşkanlığı','<p class="note">Cumhurbaşkanı değilsin.</p>'];
-  h+=`<div class="card" style="padding:14px;margin-bottom:10px;text-align:center"><div style="font-size:34px">🇹🇷</div><b style="font-size:18px">Cumhurbaşkanı ${S.first} ${S.last}</b><div class="note" style="margin:6px 0 0">Halk desteği <b>%${P.pop}</b> · Görev ${fmtJ(P.term/4)} · ${P.pterms||1}. dönem</div></div>`;
-  h+=`<p class="note">Dokunulmazlığın var: kimse seni tutuklayamaz, polis dikkatin her çeyrek düşer. Halk desteğin %25'in altına inerse darbe girişimi olabilir. Her kararname çeyrekte bir kez imzalanır.</p>`;
-  const u=k=>P.used.a[k];
-  h+='<div class="sec">Kararnameler</div>';
-  [['kar_program','📉','Enflasyonla mücadele programı','Enflasyon düşer, halk desteği +'],['kar_asgari','💰','Asgari ücrete büyük zam','Halk desteği +++ · Enflasyon +'],['kar_yatirim','🌍','Yabancı yatırım zirvesi','Dolar %12 düşer'],['kar_vergi','🧾','Servet vergisini kaldır','2 yıl vergin yarıya iner'],['kar_mega','🏗','Yüzyılın projesi','Dev rüşvet kara kasaya'],['kar_af','🕊','Genel af ilan et','Sicilin ve adamların temizlenir · destek −'],['kar_ohal','⚔️','Olağanüstü hal','Bütün rakip çeteler çöker · destek −−']].forEach(([k,ic,n,d])=>h+=row(`data-x="min:${k}"`,ic,n,u(k)?'Bu çeyrek imzalandı':d,'',!!u(k)));
-  h+='<div class="sec">Dış politika</div>'+row('data-x="min:zirve"','🤝','Dünya liderleri zirvesi','Halk desteği +, ün +, yeni dost',fmtS(5e6*Math.max(1,S.cpi)),!!u('zirve')||!canPay(5e6*Math.max(1,S.cpi)));
-  return['Cumhurbaşkanlığı',h]};
-ACT.pickmin=()=>{closeSheet();pickMinistry()};
 /* ============ Gece hayatı ============ */
 const NIGHT=[['meyhane','Mahalle meyhanesi','🍷',3000,0,'Rakı-balık, fasıl'],['bar','Beyoğlu\'nda bar','🍺',8000,1,'Kalabalık, canlı müzik'],['lounge','Bebek\'te lounge','🍸',30000,2,'Şehrin zenginleri burada'],['kulup','Boğaz\'da süper kulüp','🪩',120000,4,'Ünlüler, DJ, şampanya'],['vip','VIP masa ve şişe servisi','🍾',600000,6,'Bütün gözler senin masanda']].map(([id,n,ic,c,fame,d])=>({id,n,ic,c,fame,d}));
 const DRINK=[['su','İçme, soda iç','Sağlığına dokunmaz',0,2],['az','Birkaç kadeh','Keyif, az hasar',1,5],['cok','Sabaha kadar','Çok eğlence, çok hasar',3,10]];
@@ -3165,7 +3014,7 @@ const LMETH=[
   {id:'emlak',ic:'🏠',n:'Tapuda düşük bedel',d:'Ev al, gerçek fiyattan sat',fee:.1,risk:.07,cap:()=>3e7,need:()=>S.houses&&S.houses.length>0},
   {id:'off',ic:'🌍',n:'Offshore paravan şirket',d:'Yurt dışından "yatırım" olarak döner · 1 çeyrek sürer',fee:.25,risk:.03,cap:()=>5e8,slow:1}];
 ACT.lmeth=id=>{const M=LMETH.find(x=>x.id===id);closeSheet();const cap=Math.round(M.cap()*Math.max(1,S.cpi));const left=Math.max(0,cap-lqUse(id));const opts=[1e6,5e6,2e7,1e8,5e8].map(a=>Math.round(a*Math.max(1,S.cpi)/1e5)*1e5).filter(a=>a<=S.black&&a<=left);if(S.black<=left&&S.black>0&&!opts.includes(S.black))opts.push(S.black);
-  queue({back:'kara',title:`${M.ic} ${M.n}`,text:`${M.d}. Komisyon %${Math.round(M.fee*100)}, yakalanma riski %${Math.round(M.risk*100)}${S.heat>=60?' (polis dikkatin yüksek, risk 2 kat)':''}. Bu çeyrek kalan limit ${fmt(left)}.`,choices:[...opts.map(a=>({t:fmt(a),sub:`Temiz dönen ${fmt(Math.round(a*(1-M.fee)))}`,fn:()=>{S.black-=a;S.lq.u[id]=lqUse(id)+a;const rk=M.risk*(S.heat>=60?2:1)*masakK();
+  queue({back:'kara',title:`${M.ic} ${M.n}`,text:`${M.d}. Komisyon %${Math.round(M.fee*100)}, yakalanma riski %${Math.round(M.risk*100)}${S.heat>=60?' (polis dikkatin yüksek, risk 2 kat)':''}. Bu çeyrek kalan limit ${fmt(left)}.`,choices:[...opts.map(a=>({t:fmt(a),sub:`Temiz dönen ${fmt(Math.round(a*(1-M.fee)))}`,fn:()=>{S.black-=a;S.lq.u[id]=lqUse(id)+a;const rk=M.risk*(S.heat>=60?2:1);
       if(ch(rk)){const back=Math.round(a*.4);S.black+=back;add('heat',20);log(`🚨 Maliye ${M.n.toLowerCase()} işlemini yakaladı! ${fmt(a-back)} el konuldu.`,'bad');news('Maliye\'den kara para operasyonu',3)}
       else if(M.slow){later('offshore2',1,{m:Math.round(a*(1-M.fee))});log(`${fmt(a)} paravan şirkete gönderildi. Bir çeyrek sonra temiz dönecek.`,'dim')}
       else{const c=Math.round(a*(1-M.fee));S.money+=c;add('heat',-Math.min(10,Math.round(a/5e6)+1));log(`${fmt(a)} aklandı, cüzdanına ${fmt(c)} temiz para girdi.`,'good')}}})),{t:'Vazgeç',fn:()=>{}}]})};
@@ -3211,7 +3060,7 @@ const GATES=[{id:'kapikule',n:'Kapıkule',c:'Bulgaristan',ic:'🚛',risk:.15},{i
 const GOODS=[{id:'sigara',n:'Kaçak sigara',m:1,h:2},{id:'yakit',n:'Akaryakıt',m:1.3,h:3},{id:'elek',n:'Telefon ve elektronik',m:1.7,h:3},{id:'antika',n:'Tarihi eser',m:2.4,h:6},{id:'silah',n:'Silah',m:3.2,h:9},{id:'uyus',n:'Uyuşturucu',m:4.2,h:13}];
 const BRIBES=[['gumruk','Gümrük memuru',.3,150000],['jandarma','Jandarma komutanı',.25,120000],['emniyet','Narkotik/kaçakçılık şubesi',.2,100000]];
 const GT=id=>GATES.find(g=>g.id===id),GD=id=>GOODS.find(g=>g.id===id);
-function rRisk(r){const g=GT(r.gate),d=GD(r.good);let k=1;BRIBES.forEach(([b,,red])=>{if(r.br[b])k-=red});return clamp(g.risk*(.6+d.h/12)*Math.max(.15,k)*(1+r.trucks*.04)*(S.heat>60?1.3:1)*(S.pol&&(S.pol.gumruk||0)>QS()?.3:1),.02,.8)}
+function rRisk(r){const g=GT(r.gate),d=GD(r.good);let k=1;BRIBES.forEach(([b,,red])=>{if(r.br[b])k-=red});return clamp(g.risk*(.6+d.h/12)*Math.max(.15,k)*(1+r.trucks*.04)*(S.heat>60?1.3:1),.02,.8)}
 function rInc(r){return Math.round(380000*S.cpi*GD(r.good).m*r.trucks)}
 function rBribe(r){return Math.round(BRIBES.reduce((t,[b,,,c])=>t+(r.br[b]?c:0),0)*S.cpi*(1+r.trucks*.1))}
 ACT.ropen=()=>{if(S.age<18||S.jail)return;closeSheet();queue({back:'kacak',title:'Yeni rota: sınır kapısı',text:'Hangi kapıdan geçeceksin?',choices:[...GATES.filter(g=>!(S.routes||[]).some(r=>r.gate===g.id)).map(g=>({t:`${g.ic} ${g.n}`,sub:`${g.c} · Temel risk %${Math.round(g.risk*100)}`,fn:()=>setTimeout(()=>ropen2(g.id),40)})),{t:'Vazgeç',fn:()=>{}}]})};
@@ -3318,10 +3167,6 @@ EV(1,()=>okE()&&S.age>=16,()=>({title:'Dedenin haritası',text:'Eski bir sandık
   {t:'Kazmaya git',sub:'Bir çeyrek sürer',fn:()=>{later('hazine',1);log('Gece yarısı kürekle ormana gittin.','dim')}},
   {t:'Haritayı sat',sub:fmt(Math.round(5e4*S.cpi)),fn:()=>{S.money+=Math.round(5e4*S.cpi);log('Bir koleksiyoncu haritayı satın aldı.','dim')}}]}));
 LATER.hazine=()=>{const r=Math.random();const g=Math.round(R(20,120)*1e5*S.cpi);return{title:'Kazının sonu',text:r<.45?`Kürek metale çarptı. Paslı bir sandık dolusu altın! Değeri ${fmt(g)}.`:r<.75?'Sadece eski bir tüfek ve birkaç sikke çıktı.':'Orman bekçisi seni kazarken yakaladı!',choices:[{t:'Tamam',fn:()=>{if(r<.45){S.money+=g;add('happy',15);log(`Dedenin altınları: ${fmt(g)}!`,'gold');news('Belgrad Ormanı\'nda gizemli kazı',1)}else if(r<.75){S.money+=Math.round(g*.05);log('Birkaç sikke kurtardın.','dim')}else{add('heat',8);S.money=Math.max(0,S.money-Math.round(2e4*S.cpi));log('Para cezası yedin.','bad')}}}]}};
-EV(2,()=>okE()&&rank()>=2,()=>{const m=BIG()*3;return{title:'Politikacının akşam yemeği',text:'Bir milletvekili seni Bebek\'te özel bir yemeğe davet etti. Masada bir dosya: büyük bir ihale. "Seçim kampanyama destek olursan…"',choices:[
-  {t:'Kampanyaya bağış yap',sub:`${fmt(Math.round(m*.3))} · İhale ve koruma`,dis:!canPay(Math.round(m*.3)),fn:()=>{pay(Math.round(m*.3));if(ch(.75)){S.money+=m;add('heat',-15);log(`İhale senin şirketine çıktı: ${fmt(m)}. Üstüne emniyet de seni görmüyor.`,'gold')}else{log('Vekil seçimi kaybetti. Paran gitti.','bad')}}},
-  {t:'Konuşmayı gizlice kaydet',sub:'Şantaj kozu',fn:()=>{if(ch(.7)){S.money+=Math.round(m*.5);add('heat',-10);log(`Ses kaydını gösterince vekil sessizce ${fmt(Math.round(m*.5))} gönderdi.`,'gold')}else{add('heat',20);log('Korumaları kayıt cihazını buldu. Artık hedefindesin.','bad')}}},
-  {t:'Kibarca reddet',fn:()=>gainResp(2)}]}});
 EV(2,()=>okE()&&(S.fame||0)>=15,()=>({title:'Araştırmacı gazeteci',text:'Bir gazeteci hakkında dosya hazırlıyor. Yarın manşet olacak: "Şehrin gölgedeki patronu".',choices:[
   {t:'Gazeteyi satın al',sub:fmt(Math.round(BIG()*.8)),dis:!canPay(Math.round(BIG()*.8)),fn:()=>{pay(Math.round(BIG()*.8));add('heat',-12);log('Gazetenin sahibi değişti. Haber hiç çıkmadı.','gold')}},
   {t:'Röportaj ver, hikâyeyi sen anlat',sub:'Ün ++ · %50 ters teper',fn:()=>{S.fame=clamp((S.fame||0)+8);if(ch(.5)){add('heat',-5);log('"Hayırsever iş insanı" manşeti attılar!','gold')}else{add('heat',15);log('Sözlerini çarpıttılar. Savcılık harekete geçti.','bad')}}},
@@ -3397,10 +3242,6 @@ EV(1,()=>okE()&&S.age>=20,()=>({title:'Deprem',text:'Şehri sallayan depremde ma
   {t:'Yardım kampanyası başlat',sub:fmt(M(1e6))+' · Ün +++',dis:!canPay(M(1e6)),fn:()=>{pay(M(1e6));S.fame=clamp((S.fame||0)+12);gainResp(8);add('happy',5);log('Çadırlar, yemek, battaniye... Mahalle seni unutmayacak.','gold');news(`${S.first} ${S.last}'den depremzedelere dev yardım`,2)}},
   ...(S.co?[{t:'Yeniden yapım ihalelerini kap',sub:'Büyük para · Dikkat +',fn:()=>{const m=M(R(5,20)*1e6);S.money+=m;add('heat',12);log(`Deprem konutları ihalesinden ${fmt(m)} kazandın.`,'gold')}}]:[]),
   {t:'Ailene sahip çık',fn:()=>{add('happy',2);log('Aileni güvenli bir yere taşıdın.','dim')}}]}));
-EV(2,()=>POL&&okE()&&S.age>=25&&!(S.pol&&S.pol.office),()=>{const n=`${pick(NAMES)} ${pick(SURN)}`;return{title:'Seçim kampanyası',text:`Belediye başkan adayı ${n} kampanyası için senden destek istiyor.`,choices:[
-  {t:'Kampanyaya bağış yap',sub:fmt(M(2e6))+' · %55 kazanır',dis:!canPay(M(2e6)),fn:()=>{pay(M(2e6));if(ch(.55))later('secim',R(2,4),{n});else log(`${n} seçimi kaybetti. Paran boşa gitti.`,'bad');log(`${n}'in kampanyasına destek verdin.`,'dim')}},
-  {t:'Mahalleyi oy vermeye ikna et',sub:'Ücretsiz · %35 kazanır',fn:()=>{if(ch(.35))later('secim',R(2,4),{n});log('Mahallenin oyları senden sorulur.','dim')}},
-  {t:'Siyasete bulaşma',fn:()=>{}}]}});
 EV(2,()=>okE()&&S.age>=18,()=>{const r=Math.random();return{title:'Limandaki konteyner',text:'Gümrükte iki yıldır kimsenin almadığı sahipsiz bir konteyner var. Bekçi rüşvetle açtırır.',choices:[
   {t:'Aç',sub:fmt(M(50000)),dis:!canPay(M(50000)),fn:()=>{pay(M(50000));if(r<.25){const m=CAT.filter(x=>x.c==='spor'||x.c==='luks');const c=pick(m);const col=pick(COLORS);S.cars.push({uid:'c'+Date.now(),mid:c.id,y:gYear()-1,km:3000,col:col[0],hex:col[1],val:c.p});log(`İçinden kaçak getirilmiş bir ${c.n} çıktı! Artık senin.`,'gold')}else if(r<.5){const m=M(R(500,2000)*1000);S.money+=m;log(`İçi kaçak sigara doluymuş. ${fmt(m)}'ye okuttun.`,'good')}else if(r<.75){log('İçi eski buzdolabı dolu. Boşa gitti.','dim')}else{add('heat',20);log('Polis tuzağıymış! Kaçmayı başardın ama artık izleniyorsun.','bad')}}},
   {t:'Bulaşma',fn:()=>{}}]}});
@@ -3559,7 +3400,6 @@ function hubTiles(){return [
       ['sosyal','📱','Sosyal medya',`${fmtF(S.sm.f)} takipçi`,S.age>=13&&!S.jail],
       ['harita','🗺','Mafya savaşı haritası',S.org?`${S.org.turf.length} mekân senin`:'Kim nereyi tutuyor',true],
       ['gazete','📰','Gazete',`Ün %${Math.round(S.fame||0)}`,true],
-      ...(POL?[['siyaset','🏛','Siyaset',S.pol.office?OF(S.pol.office).n:'Seçimlere gir',S.age>=21]]:[]),
       ['kumar','🎰','Kumarhane','Rulet, blackjack, barbut',S.age>=18&&!S.jail],
       ['luks','🛥','Lüks oyuncaklar',S.lux.length?`${S.lux.length} parça`:'Yat, jet, helikopter',S.age>=18&&!S.jail],
       ['basarim','🏆','Başarımlar',`${Object.keys(S.ach).length}/${ACH.length}`,true],
@@ -3567,10 +3407,7 @@ function hubTiles(){return [
       ['lakap','🎖️','Lakaplar',`${LAKAP.filter(L=>LKG()[L[0]]).length}/${LAKAP.length}`,true],
       ['vergi','🧾','Vergi dairesi',S.taxDebt>0?`Vergi borcu ${fmtS(S.taxDebt)}`:'Vergiler ve giderler',S.age>=18],
       ['borsa','📈','Borsa',portVal()?`Portföy ${fmtS(portVal())}`:'Hisse al, sat',!S.jail&&S.age>=18],
-      ['karakol','🚓','Polis karakolu',`Dikkat %${S.heat}`,!S.jail&&S.age>=14],
-      ...(POL&&S.pol&&S.pol.office==='bakan'?[['bakanlik','🏛','Bakanlık',S.pol.min?MINS[S.pol.min].n:'Bakanlığını seç',true]]:[]),
-      ...(POL&&S.pol&&S.pol.office==='baskan'?[['baskanlik','🇹🇷','Cumhurbaşkanlığı',`Halk desteği %${polP().pop}`,true]]:[]),
-      ['mit','🏛','İstihbarat binası',S.state.rec?`Devlet güveni %${S.state.trust}`:'21 yaşından itibaren',!S.jail&&S.age>=21]]}
+      ['karakol','🚓','Polis karakolu',`Dikkat %${S.heat}`,!S.jail&&S.age>=14]]}
 const tileHTML=([id,ic,n,d,ok])=>`<button class="tile" data-go="${id}" ${ok?'':'disabled'}><span class="ti">${ic}</span><b>${n}</b><span>${d}</span></button>`;
 const HCATS=[
   ['kisisel','👤','Kişisel hayat','İnsanlar, aile ağacı, gece hayatı, sosyal medya, yadigârlar, lakaplar',['insan','agac','gece','sosyal','gorev','basarim','yadigar','lakap']],
@@ -3578,7 +3415,7 @@ const HCATS=[
   ['para','💰','Para ve finans','Banka, borsa, döviz, kara para, varlık yönetimi, vergi',['banka','borsa','doviz','kara','varlikyon','vergi','kumar']],
   ['is','🏢','İş dünyası','Şirketler, müzik, futbol kulübü, inşaat, oto galeri',['sirket','muzik','kulup','insaat','ogaleri']],
   ['alisveris','🛍','Alışveriş','Emlak, araba, kuyumcu ve saat, AVM, lüks oyuncaklar',['emlak','galeri','kuyumcu','avm','luks']],
-  ['sehir','🏙','Şehir, dünya ve devlet',POL?'Siyaset, bakanlık, yaşadığın şehir, yurt dışı, karakol, istihbarat':'Yaşadığın şehir, yurt dışı, karakol, istihbarat',['baskanlik','bakanlik','siyaset','dunya','karakol','mit','gazete']]];
+  ['sehir','🏙','Şehir ve dünya','Yaşadığın şehir, yurt dışı, karakol, gazete',['dunya','karakol','gazete']]];
 HCATS.forEach(([cid,ic,n,d,ids])=>{EXTRA['cat_'+cid]=()=>{const T=hubTiles();let h=`<p class="note">${d}.</p>`;h+='<div class="tiles">'+ids.map(id=>T.find(t=>t[0]===id)).filter(Boolean).map(tileHTML).join('')+'</div>';return[`${ic} ${n}`,h]}});
 function hubAlerts(){const a=[];
   if(S.rivals&&S.rivals.some(r=>r.war&&!r.dead))a.push(['rakip','⚔️','Savaştasın! Rakip çetelere bak']);
@@ -3587,7 +3424,6 @@ function hubAlerts(){const a=[];
   if(S.taxDebt>0)a.push(['vergi','🧾',`Vergi borcun var: ${fmtS(S.taxDebt)}`]);
   if(S.heat>=60)a.push(['karakol','🚨',`Polis dikkati %${S.heat}, baskın gelebilir`]);
   if(S.nl&&(S.nl.addict||S.nl.liver>=60))a.push(['gece','🏥','Sağlığın içkiden zarar görüyor']);
-  if(POL&&S.pol&&S.pol.office==='bakan'&&!S.pol.min)a.push(['bakanlik','🏛','Bakanlığını seçmedin']);
   if((S.loans||[]).some(l=>l.late))a.push(['banka','⚠️','Gecikmiş kredi taksitin var']);
   return a}
 const DYNP={};
@@ -3854,7 +3690,6 @@ const LAKAP=[
   ['kalantor',()=>'Kalantor','💰','Parası parasını kazandı.','Net servetin (bugünün parasıyla) ₺500 milyonu geçsin',()=>netWorth()/(S.cpi||1)>=5e8],
   ['muteahhit',()=>'Müteahhit','🏗️','Şehrin silüetinde imzası var.','Bir hayatta 5 inşaat bitir',()=>((S.co&&S.co.done)||0)-((S.lb||{}).co||0)>=5],
   ['kacakci',()=>'Kaçakçı','🚚','Sınır kapıları onu tanırdı.','Kaçakçılık hatlarında 30 sefer tamamla',()=>(S.rtTrips||0)>=30],
-  ['halkin',()=>'Halkın Adamı','🗳️','Sandıktan hep o çıktı.','Bir hayatta 2 seçim kazan',()=>LB('elections')>=2],
   ['fatih',()=>'Bölge Fatihi','🚩','Rakiplerin mekânlarını bir bir aldı.','Bir hayatta 6 mekân ya da bölge ele geçir',()=>LB('venues')>=6],
   ['baskan',()=>'Başkan','⚽','Kulübüne kupa kaldırttı.','Kulübünle şampiyon ol',()=>LB('titles')>=1],
   ['hayalet',()=>'Hayalet','👻','Kırk suç, sıfır dosya.','40 suç işle, hiç hapse girme',()=>LB('crimes')>=40&&LB('jailed')===0],
@@ -3865,7 +3700,6 @@ const LAKAP=[
   ['cinar',()=>'Çınar','🌳','Herkesi gömdü, kendisi en son gitti.','95 yaşını gör',()=>S.age>=95],
   ['genc',()=>'Genç Giden','🥀','Hızlı yaşadı, erken gitti.','30 yaşından önce öl',()=>S.age<30],
   ['siradan',()=>'Sıradan','🍵','Ne iz bıraktı ne leke.','Hiçbir lakaba uymayan bir hayat yaşa',()=>true]];
-if(!POL){const _i=LAKAP.findIndex(L=>L[0]==='halkin');if(_i>=0)LAKAP.splice(_i,1)}
 const LKG=()=>{try{return JSON.parse(localStorage.getItem('mafya-lakap')||'{}')}catch(e){return {}}};
 function lakapPick(){for(const L of LAKAP){try{if(L[5]())return L}catch(e){}}return LAKAP[LAKAP.length-1]}
 function lakapAward(){if(S.lakap)return;const L=lakapPick();S.lakap=L[0];S.lakapN=L[1]();const c=LKG(),fresh=!c[L[0]];
