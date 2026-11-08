@@ -306,7 +306,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.08-2000';
+const APPV='2026.11.08-2015';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2506,12 +2506,16 @@ const IAP={dayi:'com.burakyoruk.derindunya.dayi',b10:'com.burakyoruk.derindunya.
 const IAP_TIX={[IAP.b10]:10,[IAP.b35]:35,[IAP.b100]:100,[IAP.b300]:300};
 const isApp=()=>{try{return !!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())}catch(e){return false}};
 const NPP=()=>window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.NativePurchases;
-const IAP_PRICE={};let iapReady=false;
+const IAP_PRICE={};let iapReady=false;let IAP_ENV=null;
+const isTestBuild=()=>isApp()&&!!IAP_ENV&&IAP_ENV!=='Production';
 async function iapInit(){if(!isApp()||!NPP())return;
+  try{const r=await NPP().getAppTransaction();IAP_ENV=(r&&r.appTransaction&&r.appTransaction.environment)||null}catch(e){}
   try{const r=await NPP().getProducts({productIdentifiers:Object.values(IAP),productType:'inapp'});(r.products||[]).forEach(p=>{IAP_PRICE[p.identifier]=p.priceString});iapReady=true}catch(e){console.warn('iap products',e)}
   try{const r=await NPP().getPurchases({productType:'inapp',onlyCurrentEntitlements:true});if((r.purchases||[]).some(t=>t.productIdentifier===IAP.dayi))dayiGrant(true)}catch(e){}}
 function dayiGrant(silent){const was=dayiOK();try{localStorage.setItem('mafya-dayi','1')}catch(e){}if(S){S.premium=true;if(!was&&!silent)log('👑 Dayı Paketi açıldı! Dayının tanıdıkları artık hep yanında. Reklam yok.','gold');afterChange()}if(!was&&!silent)toast('👑 Dayı Paketi açıldı')}
 async function iapBuy(id){const np=NPP();if(!np){toast('Satın alma şu an kullanılamıyor');return null}
+  if(iapReady&&!IAP_PRICE[id]){toast(isTestBuild()?'Bu ürün App Store Connect\'te henüz tanımlı değil':'Bu ürün şu an satın alınamıyor');return null}
+  if(!iapReady){try{await iapInit()}catch(e){}if(!IAP_PRICE[id]){toast(isTestBuild()?'Ürünler App Store\'dan gelmedi: sözleşme ve ürünleri kontrol et':'Mağazaya ulaşılamadı, sonra tekrar dene');return null}}
   try{toast('App Store açılıyor…');const t=await np.purchaseProduct({productIdentifier:id,productType:'inapp',quantity:1,isConsumable:!!IAP_TIX[id]});return t||{}}
   catch(e){const m=String(e&&(e.message||e)||'');if(!/cancel/i.test(m))toast('Satın alma tamamlanmadı');return null}}
 async function iapRestore(){const np=NPP();if(!np)return;toast('Satın alımlar kontrol ediliyor…');
@@ -2528,7 +2532,8 @@ async function payBuy(b){if(isApp()){const t=await iapBuy(b.id);if(!t)return}// 
 function biletShop(){closeSheet();window._nm='';
   queue({back:null,title:'🎟 Bilet mağazası',text:`Elinde <b>${tix()} bilet</b>. 1 bilet, zamanlı bir işin <b>30 dakikasını</b> atlar: inşaatlar ve sevkiyatlar. Biletler bu cihazda bütün kayıtlarda geçerli.<br><small>Ücretsiz bilet: Dayı'nın zarfında 3. gün 1, 7. gün 3 bilet.</small>`,
     choices:[...BUNDLES.map(b=>({t:`${b.ic} ${b.n} · ${iapPrice(b.id,b.p)}`,sub:`${b.a} bilet${b.b?' · '+b.b:''}`,fn:()=>setTimeout(()=>queue({back:null,title:`${b.ic} ${b.n}`,text:`<b>${b.a} bilet</b> · <b style="color:var(--gold)">${iapPrice(b.id,b.p)}</b><br><br>Satın almak istiyor musun?${isApp()?'<br><small>Ödeme Apple hesabından alınır.</small>':''}`,choices:[{t:`💳 ${iapPrice(b.id,b.p)} öde`,sub:'Biletler hemen hesabına yüklenir',fn:()=>payBuy(b)},{t:'Vazgeç',fn:()=>setTimeout(biletShop,50)}]}),50)})),
-      ...(isApp()?[]:[{t:'🔑 Kodum var',sub:'Hediye ya da kampanya kodu',fn:()=>setTimeout(biletCode,50)}]),{t:'Kapat',fn:()=>{}}]})}
+      ...(isApp()?[]:[{t:'🔑 Kodum var',sub:'Hediye ya da kampanya kodu',fn:()=>setTimeout(biletCode,50)}]),
+      ...(isTestBuild()?[{t:'🧪 Test: 100 bilet ekle',sub:'Sadece TestFlight sürümünde görünür',fn:()=>{tixSet(tix()+100);toast('🎟 +100 test bileti');afterChange()}}]:[]),{t:'Kapat',fn:()=>{}}]})}
 function biletCode(){window._nm='';queue({back:null,title:'🔑 Bilet kodu',text:`Elindeki kodu yaz.<input id="nmBox" autocomplete="off" autocapitalize="characters" placeholder="BLT10-XXXX-XXXX-XXXX" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:10px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gold2);background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box;letter-spacing:.06em">`,
     choices:[{t:'🔑 Kodu onayla',fn:()=>{const c=(document.getElementById('nmBox')||{}).value||window._nm;biletTry(c).then(a=>{if(a>0){log(`🎟 ${a} bilet hesabına eklendi. Toplam ${tix()}.`,'gold');toast(`🎟 +${a} bilet`);afterChange()}else toast(a<0?'Bu kod bu cihazda zaten kullanıldı':'Kod geçersiz')})}},{t:'Vazgeç',fn:()=>setTimeout(biletShop,50)}]})}
 ACT.bshop=()=>biletShop();
@@ -3498,6 +3503,7 @@ function dayiShop(){closeSheet();window._nm='';const pr=iapPrice(IAP.dayi,DAYI_P
   queue({back:'ayar',title:'👑 Dayı Paketi + Reklamsız',text:`<b style="color:var(--gold);font-size:20px">${pr}</b> · tek seferlik, bu cihazdaki bütün kayıtlarda geçerli.<br><br>• 🚫 Reklamsız oyun<br>• ↩️ Sınırsız ve ücretsiz geri alma<br>• Her zor anda dayının tanıdıkları: hapisten, pusudan, iflastan kurtulma<br>• Kendini ve herkesi düzenleme (yetenek, özellik, ün)<br>• Kadroyu tek tuşla fulleme, seferleri ve inşaatları beklemeden bitirme<br>• Yokluğunda biriken kazanç 2 kat${isApp()?'<br><br><small>Ödeme Apple hesabından alınır. Telefon değiştirirsen "Satın alımları geri yükle" ile geri gelir.</small>':''}`,
     choices:[{t:`💳 ${pr} ile satın al`,sub:'Dayı Paketi hemen açılır',fn:async()=>{if(isApp()){const t=await iapBuy(IAP.dayi);if(!t)return}dayiGrant();setTimeout(()=>queue({title:'✅ Ödeme alındı',text:'<div style="text-align:center;font-size:44px">👑</div><div style="text-align:center"><b>Dayı Paketi açıldı</b><br>Dayının tanıdıkları artık hep yanında.</div>',choices:[{t:'Tamam',fn:()=>{}}]}),80)}},
       ...(isApp()?[{t:'🔄 Satın alımları geri yükle',sub:'Daha önce aldıysan',fn:()=>iapRestore()}]:[{t:'🔑 Kodum var',sub:'Hediye kodu',fn:()=>setTimeout(dayiCode,50)}]),
+      ...(isTestBuild()?[{t:'🧪 Test: ücretsiz aç',sub:'Sadece TestFlight sürümünde görünür',fn:()=>dayiGrant()}]:[]),
       {t:'Vazgeç',fn:()=>{}}]})}
 function dayiCode(){window._nm='';queue({back:'ayar',title:'🔑 Dayı kodu',text:`Elindeki kodu yaz.<input id="nmBox" autocomplete="off" autocapitalize="characters" placeholder="DAYI-XXXX-XXXX" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:12px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gold2);background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box;letter-spacing:.06em">`,
   choices:[{t:'🔑 Kodu onayla',fn:()=>{const c=(document.getElementById('nmBox')||{}).value||window._nm;dayiTry(c).then(ok=>{if(ok)dayiGrant();else toast('Kod geçersiz')})}},{t:'Vazgeç',fn:()=>setTimeout(dayiShop,50)}]})}
