@@ -175,6 +175,7 @@ body{position:fixed;inset:0;width:100%;height:var(--vh,100%);overflow:hidden;tou
 .tile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:14px 12px;border-radius:14px;background:var(--panel2);border:1px solid var(--line);text-align:left;min-height:118px}
 .tile:not(:disabled):active{background:#312a2c}
 .carpic{position:relative;display:inline-block;width:88px;height:39px;flex:none}.carpic img{width:100%;height:100%;object-fit:contain}.carpic i{position:absolute;right:2px;bottom:1px;width:9px;height:9px;border-radius:50%;border:1px solid #000a}
+.shico{width:30px;height:30px;object-fit:contain;vertical-align:-7px;margin-right:8px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
 .tile .ti{font-size:28px;line-height:1;margin-bottom:6px}.tile .tiimg{width:48px;height:48px;object-fit:contain;display:block;margin:0 auto;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}.row .ic .icimg{width:34px;height:34px;object-fit:contain}
 .tile b{font-size:16px;font-weight:600}
 .tile span:last-child{font-family:var(--cond);font-size:13.5px;color:var(--muted);line-height:1.25}
@@ -312,7 +313,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0245';
+const APPV='2026.11.09-0250';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -3647,7 +3648,7 @@ function openSheet(k){if(k==='gard')k='insan';
   if(k==='ayar'){const a=h.indexOf('<div class="sec">Ekran</div>'),b=h.indexOf('<div class="sec">Oyun menüsü</div>');if(a>=0&&b>a){const disp=h.slice(a,b);h=h.slice(0,a)+h.slice(b);h=h.replace('<div class="sec">Oyun</div>',disp+'<div class="sec">Oyun</div>')}}
   if(k==='ayar')h=h.replace('<div class="sec">Oyun</div>','<div class="sec">Oyun</div>'+row('data-new="1"','↺','Yeni hayat başlat','Bu karakter silinir','',false));
   $('shBack').style.display=(backTo&&k!=='hayat')?'':'none';
-  $('shT').textContent=T;$('shB').innerHTML=h;$('ov').classList.add('on');$('shB').scrollTop=SCR[k]||0;
+  {const isrc=k.startsWith('cat_')?(typeof RICO!=='undefined'&&RICO['c_'+k.slice(4)]):icoSrc(k);const sT=$('shT');if(isrc){let tt=String(T).replace(/^[^\p{L}\p{N}]+/u,'');if(!tt){try{const tl=hubTiles().find(x=>x[0]===k);if(tl)tt=tl[2]}catch(e){}}sT.textContent=tt;const im=document.createElement('img');im.src=isrc;im.alt='';im.className='shico';sT.prepend(im)}else sT.textContent=T}$('shB').innerHTML=h;$('ov').classList.add('on');$('shB').scrollTop=SCR[k]||0;
 }
 $('shB').addEventListener('click',e=>{
   const g=e.target.closest('g[data-x]');if(g){const v=g.getAttribute('data-x');const i=v.indexOf(':');ACT[v.slice(0,i)](v.slice(i+1));return}
