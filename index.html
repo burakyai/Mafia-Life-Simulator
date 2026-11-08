@@ -313,7 +313,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0250';
+const APPV='2026.11.09-0310';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -659,7 +659,7 @@ function showEv(){
   $('modal').classList.add('on');
 }
 $('mcard').addEventListener('click',e=>{
-  const b=e.target.closest('.ch');if(!b||b.disabled)return;
+  const b=e.target.closest('.ch');if(!b||b.disabled)return;if(!Q.length){$('modal').classList.remove('on');return}
   const ev=Q.shift();ev.choices[+b.dataset.i].fn();
   afterChange();
   if(!S.alive){Q.length=0;$('modal').classList.remove('on');return}
@@ -1199,7 +1199,7 @@ const EXTRA={
     hl.forEach(l=>{const t=HT(l.t);const lock=t.rank&&rank()<t.rank;const pr=Math.round(t.p*S.hidx*l.q);h+=row(`data-x="hl:${l.lid}"`,t.ic,t.n,lock?`${RANKS[t.rank].n} rütbesi gerekir`:`${Math.round(t.m2*l.q)} m² · ${l.kat?l.kat+'. kat · ':''}${l.yas?l.yas+' yıllık':'Sıfır'} · Kira ~${fmtS(t.rent*S.hidx*l.q)}/yıl`,lock?'🔒':fmtS(pr),lock||!canPay(pr))});
     return['Emlakçı',h]},
   avm:()=>{let h='<div class="sec">Mağazalar</div>';
-    SHOP.forEach(s=>{const bad=(s.home&&!S.home)||(s.partner&&!S.partner);h+=row(`data-x="shop:${s.id}"`,s.ic,s.n,bad?(s.home?'Önce bir evine yerleşmelisin':'Önce bir sevgilin olmalı'):`Mutluluk +${s.h}`,fmtS(s.p),bad||!canPay(s.p))});
+    SHOP.forEach(s=>{const bad=(s.home&&!S.home)||(s.partner&&!S.partner);h+=row(`data-x="avmbuy:${s.id}"`,s.ic,s.n,bad?(s.home?'Önce bir evine yerleşmelisin':'Önce bir sevgilin olmalı'):`Mutluluk +${s.h}`,fmtS(s.p),bad||!canPay(s.p))});
     if(S.bank.card)h+=`<p class="note">Nakit yetmezse fark kredi kartından çekilir. Kalan kart limitin: ${fmt(cardAvail())}</p>`;
     return['Alışveriş merkezi',h]},
   banka:()=>{const b=S.bank;let h='';
@@ -1259,7 +1259,7 @@ const ACT={
       ...(o.ten?[{t:'Kiracıyı çıkar',sub:'Ev boşalır',fn:()=>{log(`${o.ten.name} evden çıkarıldı.`,'dim');o.ten=null}}]:[]),
       {t:'Sat',sub:fmt(v)+' (emlakçı payı %5)',fn:()=>{S.money+=v;S.houses=S.houses.filter(x=>x!==o);if(S.home===uid)S.home=null;log(`${t.n} evini ${fmt(v)} karşılığında sattın.`)}},
       {t:'Vazgeç',fn:()=>{}}]})},
-  shop:id=>{const s=SHOP.find(x=>x.id===id);if(!pay(s.p))return;add('happy',s.h);log(s.partner?`${S.partner} çantayı görünce boynuna sarıldı.`:`${s.n} aldın.`,'good');done()},
+  avmbuy:id=>{const s=SHOP.find(x=>x.id===id);if(!s)return;if(!pay(s.p))return;add('happy',s.h);log(s.partner?`${S.partner} çantayı görünce boynuna sarıldı.`:`${s.n} aldın.`,'good');done()},
   dep:k=>{closeSheet();if(k==='in')amountModal('Vadesiz hesaba yatır',`Yıllık %${Math.round(Math.max(.03,depRate()*.35)*100)} faiz işler, istediğin an çekebilirsin.`,S.money,a=>{S.money-=a;S.bank.dep+=a;if(S.heat>=50&&a>=300000&&ch(.5)){add('heat',12);log(`Bankaya ${fmt(a)} yatırdın. Banka işlemi Maliye'ye bildirdi, dikkat arttı.`,'bad')}else log(`Bankaya ${fmt(a)} yatırdın.`,'dim')},'banka');
     else amountModal('Para çek','Mevduattan kasana aktar.',S.bank.dep,a=>{S.bank.dep-=a;S.money+=a;log(`Bankadan ${fmt(a)} çektin.`,'dim')},'banka')},
   loan:k=>{const b=S.bank;
@@ -3496,7 +3496,7 @@ const RICO={"aile":"data:image/webp;base64,UklGRv4WAABXRUJQVlA4WAoAAAAQAAAAbwAAb
 const REMO={'🌹':'aile','👛':'yanke','🚗':'araba','🤝':'harac','📦':'kacak','🔥':'baskin','💍':'kuyumcu','🚚':'zirhli','✈️':'altin','🏗':'ihale','🏴':'sokak','👊':'dovus','🍺':'meyhane','🏋':'spor','🩺':'doktor','🍾':'gece','⛵':'bodrum','💵':'rusvet','🃏':'kumar','🔒':'kilit'};
 const rIco=ic=>{const k=typeof ic==='string'&&ic[0]==='@'?ic.slice(1):REMO[ic];return k&&RICO[k]?`<img class="icimg" src="${RICO[k]}" alt="">`:ic};
 function row(attr,ic,t,d,rt,dis){return `<button class="row" ${attr} ${dis?'disabled':''}><span class="ic">${rIco(ic)}</span><span class="tx"><b>${t}</b><span>${d}</span></span>${rt?`<span class="rt">${rt}</span>`:''}</button>`}
-function openSheet(k){if(k==='gard')k='insan';
+function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';k='varlik'}
   if(SALIAS[k]){const a=SALIAS[k];if(a[1])yTab=a[1];k=a[0]}
   curSheet=k;let T='',h='';
   if(k==='is'){
