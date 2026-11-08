@@ -306,7 +306,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.08-2300';
+const APPV='2026.11.08-2315';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -598,7 +598,7 @@ function karizma(){if(S&&((S.look&&S.look.acc.includes('hac'))||(S.owned&&S.owne
   {const cc=S.car&&Array.isArray(S.cars)&&S.cars.find(x=>x.uid===S.car);if(cc&&CM(cc.mid))k+=CM(cc.mid).k}
   S.jewels.forEach(j=>{const x=JEWELS.find(y=>y.id===j.id);if(x)k+=x.k});{const ws=(S.watches||[]).map(o=>WATCHES.find(w=>w.id===o.id)).filter(Boolean).sort((a,b)=>b.k-a.k);if(ws.length)k+=ws[0].k+Math.min(4,ws.length-1)}
   (S.lux||[]).forEach(id=>{const l=LUX.find(x=>x.id===id);if(l)k+=l.k});if(S.origin==='istanbul')k+=1;k+=Math.round((S.fame||0)/10);k+=(S.city&&S.city!=='istanbul'?CITY().k:0)+(S.kb||0)+Math.round(((S.guz===undefined?50:S.guz)-50)/10);
-  if(S.age<16)k=0;return k}
+  if(hasY('fotr'))k+=5;if(S.age<16)k=0;return k}
 function has(id){return S.staff.some(x=>x.id===id)}
 function friends(job,min=50){return S.friends.filter(f=>f.job===job&&f.rel>=min).length}
 function rank(){let i=0;RANKS.forEach((r,k)=>{if(S.respect>=r.r)i=k});const cap=S.org?5:!S.family?1:(S.boss?5:4);return Math.min(i,cap)}
@@ -606,7 +606,7 @@ function fam(){return FAMILIES.find(f=>f.n===S.family)}
 function boss(){return S.boss?'Sen':(fam()?'Baba '+fam().b:'Mahalle abisi')}
 function rival(){const o=FAMILIES.filter(f=>f.n!==S.family);return pick(o).n}
 function add(k,v){S[k]=clamp(S[k]+v)}
-function gainResp(v){const m=1+karizma()/40;add('respect',Math.round(v*m))}
+function gainResp(v){const m=(1+karizma()/40)*(hasY('yuzuk')&&v>0?1.1:1);add('respect',Math.round(v*m))}
 function log(t,c){S.log[S.log.length-1].lines.push({t,c:c||''})}
 function propIncome(){return Math.round(S.props.reduce((s,id)=>s+PROPS.find(p=>p.id===id).inc,0)*(S.job&&S.job.id==='isinsani'?1.2:1))}
 function propLaund(){return S.props.reduce((s,id)=>s+PROPS.find(p=>p.id===id).la,0)}
@@ -649,7 +649,7 @@ $('mcard').addEventListener('click',e=>{
 });
 const RFIT=['tisort','deri','takim','cizgili','beyaz','smokin'];
 function autoFit(){if(!S||!S.look||S.jail)return;if(S.age<16){S.look.outfit=S.age<12?'tisort':'esofman';return}const o=RFIT[rank()]||'tisort';S.look.outfit=o;if(!S.owned.outfit.includes(o))S.owned.outfit.push(o)}
-function afterChange(ny){try{autoFit()}catch(e){}S.money=Math.round(S.money);S.peak=Math.max(S.peak,S.money);checkDeath(ny);if(S.alive){try{wkEnsure();wkCheck()}catch(e){}}if(S.alive)checkAch();save();render()}
+function afterChange(ny){try{autoFit()}catch(e){}S.money=Math.round(S.money);S.peak=Math.max(S.peak,S.money);checkDeath(ny);if(S.alive){try{wkEnsure();wkCheck()}catch(e){}}if(S.alive){checkAch();try{yadCheck()}catch(e){}}save();render()}
 
 /* ============ Yıl ilerletme ============ */
 const SEASONS=['Kış','İlkbahar','Yaz','Sonbahar'];
@@ -672,6 +672,7 @@ function ageUp(){
   else{S.q=((S.q||0)+1)%4;newYear=S.q===0;if(newYear)S.age++}
   const f=kid?1:.25;
   S.log.push({age:S.age,q:kid?undefined:S.q,lines:[]});
+  if(newYear)try{yadYear()}catch(e){}
   if(newYear&&!kid&&S.age>=14)log(`${S.age}. yaş günün. Mumları üfledin.`,'dim');
   if(S.jail>0){
     S.jail=Math.max(0,+(S.jail-f).toFixed(2));S.jailYears=+(S.jailYears+f).toFixed(2);add('happy',-Math.round(6*f*2));S.heat=clamp(S.heat-Math.round(10*f));
@@ -809,7 +810,7 @@ function arrest(crime,sev){
     if(ex.length){Q[Q.length-1].choices.splice(S.premium?1:0,0,...ex);showEv()}}
   if(S.state&&S.state.rec&&S.state.trust>=40){const tr=S.state.trust;Q[Q.length-1].choices.unshift({t:'Yukarıyı ara',sub:`Devlet koruması · %${Math.min(90,tr)} şans`,fn:()=>{if(ch(Math.min(.9,tr/100))){S.state.trust=clamp(tr-10);add('heat',-10);log('Ankara\'dan bir telefon geldi, dosya kapandı. Devlet seni koruyor.','gold')}else jailFor(yrs,`Telefonu kimse açmadı. ${yrs} yıl hapis.`)}});showEv()}
 }
-function jailFor(y,msg){S.jail=y;S.heat=15;add('happy',-15);log(msg,'bad');S.stats.jailed++;news(`${S.first} ${S.last} tutuklandı: ${y} yıl hapis`,y>=5?3:2)}
+function jailFor(y,msg){if(hasY('defter'))y=Math.max(.25,Math.round(y*.8*4)/4);S.jail=y;S.heat=15;add('happy',-15);log(msg,'bad');S.stats.jailed++;news(`${S.first} ${S.last} tutuklandı: ${y} yıl hapis`,y>=5?3:2)}
 
 const EVENTS=[
   {w:3,c:()=>!S.jail&&S.family&&!S.boss&&rank()>=1,e:()=>({title:'Babadan bir iş',prem:{t:'İşi kusursuz hallet',sub:'Saygı ++ · Para ++',fn:()=>{gainResp(9);S.money+=25000;log('Müteahhit borcunu faiziyle ödedi, polis hiçbir şey duymadı. Baba sana ₺25.000 pay verdi.','gold')}},text:`${boss()} seni çağırttı: "Borcunu ödemeyen bir müteahhit var. Ona borcunu hatırlat."`,choices:[
@@ -867,7 +868,7 @@ const EVENTS=[
 
 /* ============ İşler ============ */
 function useAct(){return true}
-function failP(c){return clamp((c.id==='kacak'&&S.origin==='karadeniz'?-.05:0)+c.risk-(S.school?.04:0)-karizma()*.003-rank()*.02+S.heat*.003-(has('tetikci')?.06:0)-Math.min(.06,friends('sokak')*.02),.05,.85)}
+function failP(c){return clamp((c.id==='kacak'&&S.origin==='karadeniz'?-.05:0)+c.risk-(S.school?.04:0)-karizma()*.003-rank()*.02+S.heat*.003-(has('tetikci')?.06:0)-Math.min(.06,friends('sokak')*.02)-(hasY('stiletto')?c.risk*.1:0),.05,.85)}
 function doCrime(id,forced){
   const c=CRIMES.find(x=>x.id===id);
   if(S.abroad){toast('Yurt dışındayken burada iş çeviremezsin.');return}
@@ -1050,7 +1051,7 @@ function ensure(){
   if(!S.lux)S.lux=[];if(!S.papers)S.papers=[];if(S.fame===undefined)S.fame=0;if(!S.ach)S.ach={};
   S.stats=Object.assign({crimes:0,jailed:0,venues:0,elections:0,wins:0,bigwin:0},S.stats||{});
   if(!S.pol)S.pol={office:null,term:0,inf:0};if(!S.grads)S.grads=[];if(S.edu===undefined)S.edu=null;if(S.job===undefined)S.job=null;
-  if(S.look&&!S.look.pic){let hh=0;for(const c of (S.first+S.last))hh=(hh*31+c.charCodeAt(0))>>>0;S.look.pic=hh%15+1}if(S.st)try{stEnsure()}catch(e){}if(!S.kids)S.kids=[];if(!S.lb)S.lb=(S.gen||1)>1?{...(S.stats||{}),co:S.co?S.co.done||0:0}:{};if(!S.tree)S.tree=[];if(!S.gen)S.gen=1;if(!S.birthYear)S.birthYear=1996;if(!S.gender)S.gender='e';
+  if(S.look&&!S.look.pic){let hh=0;for(const c of (S.first+S.last))hh=(hh*31+c.charCodeAt(0))>>>0;S.look.pic=hh%15+1}if(S.st)try{stEnsure()}catch(e){}if(!S.kids)S.kids=[];if(!S.lb)S.lb=(S.gen||1)>1?{...(S.stats||{}),co:S.co?S.co.done||0:0}:{};if(!S.yad)S.yad=[];if(!S.tree)S.tree=[];if(!S.gen)S.gen=1;if(!S.birthYear)S.birthYear=1996;if(!S.gender)S.gender='e';
   if(!S.tips)S.tips={};if(!S.tipStats)S.tipStats={ok:0,n:0};if(S.q===undefined)S.q=0;
 }
 
@@ -1349,7 +1350,7 @@ function kidMenu(id){const k=S.kids.find(x=>x.id===id);if(!k)return;closeSheet()
 function inherit(id){
   const P=S,k=P.kids.find(x=>x.id===id);if(!k)return;
   const loanLeft=P.bank.loan?P.bank.loan.pay*P.bank.loan.left:0,card=P.bank.card?P.bank.card.debt:0;
-  const nw=Math.max(0,netWorth());const tax=Math.round(nw*.1);
+  const nw=Math.max(0,netWorth());const tax=(P.yad||[]).some(y=>y.id==='anahtar')?0:Math.round(nw*.1);
   let cash=Math.round(P.money+P.bank.dep-loanLeft-card-tax);
   const crewBonus=k.crew?1.5:1;
   const N={first:k.name,last:P.last,gender:k.g,age:k.age,alive:true,look:{...k.look,acc:[],pic:P.look.pic||k.look.pic||0},
@@ -1364,7 +1365,7 @@ function inherit(id){
     slot:P.slot,origin:P.origin,famBg:(P.org||P.family)?'mafya':(P.famBg||'orta'),club:P.club||null,co:P.co||null,label:P.label||null,gal:P.gal||null,black:P.black||0,firms:(P.firms||[]).map(f=>({...f})),wm:P.wm?{...P.wm}:null,loans:(P.loans||[]).map(l=>({...l})),city:P.city||'istanbul',
     premium:P.premium,autoMeet:P.autoMeet,q:P.q||0,tips:{},tipStats:P.tipStats,lux:[...(P.lux||[])],ach:P.ach,stats:P.stats,papers:P.papers,fame:Math.round((P.fame||0)/2),
     kids:(k.kids||[]).map(g=>({id:g.id,name:g.name,g:g.g,age:g.age,bornAt:Math.max(0,k.age-g.age),rel:R(65,90),look:g.look,crew:false})),partner:k.spouse||null,married:!!k.spouse,prel:k.spouse?70:null,siblings:P.kids.filter(x=>x!==k).map(x=>({name:x.name,g:x.g,age:x.age,look:x.look})),
-    lb:{...(P.stats||{}),co:P.co?P.co.done||0:0},gen:(P.gen||1)+1,birthYear:(P.birthYear||1996)+k.bornAt,
+    yad:(P.yad||[]).map(y=>({...y})),lb:{...(P.stats||{}),co:P.co?P.co.done||0:0},gen:(P.gen||1)+1,birthYear:(P.birthYear||1996)+k.bornAt,
     tree:[...(P.tree||[]),{name:`${P.first} ${P.last}`,g:P.gender||'e',by:P.birthYear||1996,age:P.age,rank:RANKS[rank()].n,cause:P.cause,look:P.look,family:P.family,kids:P.kids.map(x=>x.name),heir:k.name,lk:P.lakapN||''}],
     log:[{age:k.age,q:k.age>=14?(P.q||0):undefined,lines:[]}]};
   S=N;ensure();
@@ -2437,7 +2438,7 @@ const dKey=d=>`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
 const modalOn=()=>$('modal').classList.contains('on')||Q.length>0;
 /* gerçek zamanlı inşaat */
 const PDUR={apt:10*MIN,lukapt:20*MIN,site:40*MIN,villa:45*MIN,ofis:50*MIN,rezidans:HOUR,avm:90*MIN,otel:2*HOUR,donusum:4*HOUR,sehir:8*HOUR};
-const pjDur=t=>Math.round((PDUR[t.id]||HOUR)*(wk('insaat')?.5:1));
+const pjDur=t=>Math.round((PDUR[t.id]||HOUR)*(wk('insaat')?.5:1)*(hasY('saat')?.85:1));
 function pjEnsure(p){const t=PJ(p.t);if(!p.endT){p.dur=pjDur(t);p.endT=Date.now()+Math.round(p.dur*Math.max(.1,(t.q-p.prog)/t.q))}}
 function pjCheck(p){if(p.state!=='build')return false;pjEnsure(p);if(Date.now()<p.endT)return false;const t=PJ(p.t),co=S.co;
   const rem=Math.round(p.cost-p.paid);if(rem>0){fund(rem);if(S.money<rem){if(!p.wait){p.wait=1;log(`🏗 ${t.n}: inşaat bitti ama kalan ${fmt(rem)} ödenmeden teslim alınamıyor.`,'bad')}return false}S.money-=rem;p.paid+=rem}
@@ -2709,7 +2710,7 @@ const LTS=()=>S.org?S.org.members:[];
 const sqCap=m=>m?12+m.str*5:15+rank()*10;
 const totSq=()=>{const st=S.st;return (st&&st.my?st.my.sq:0)+LTS().reduce((a,m)=>a+(m.jail?0:(m.sq||0)),0)};
 function sqPow(){const st=S.st;if(!st)return 0;let p=st.my?st.my.sq*(.3+.7*st.my.ar/100):0;LTS().forEach(m=>{if(!m.jail)p+=(m.sq||0)*(.3+.7*(m.ar||0)/100)*(.6+m.loy/250)});return Math.round(p*.6)}
-function stPow(){return Math.round(15+rank()*12+karizma()*.6+(S.org?orgPow()*.25:0)+(has('tetikci')?10:0)+S.respect*.15+sqPow())}
+function stPow(){return Math.round((hasY('tabanca')?1.1:1)*(15+rank()*12+karizma()*.6+(S.org?orgPow()*.25:0)+(has('tetikci')?10:0)+S.respect*.15+sqPow()))}
 const gPow=g=>Math.round(20+g.sol*.6);
 const winP=(g,b)=>{const a=stPow(),d=gPow(g);return clamp(.5+(a-d)/(a+d)*.9+(b||0),.07,.95)};
 const SQW=1200,SQR=6000,SQA=3500;
@@ -3205,7 +3206,7 @@ ACT.route=id=>{const r=(S.routes||[]).find(x=>x.id===id);if(!r)return;closeSheet
       ...BRIBES.map(([b,n,red,c])=>({t:r.br[b]?`✓ ${n} bizden`:`💰 ${n}'nu satın al`,sub:r.br[b]?'Bırakmak için dokun':`${fmtS(c*S.cpi)}/çeyrek · Risk −%${Math.round(red*100)}`,fn:()=>{r.br[b]=!r.br[b];log(r.br[b]?`${g.n}'da ${n.toLowerCase()} artık maaşlı adamın.`:`${n} ile anlaşmayı bitirdin.`,'dim')}})),
       {t:'Hattı kapat',fn:()=>{S.routes=S.routes.filter(x=>x!==r);log(`${g.n} hattı kapandı.`,'dim')}},{t:'Kapat',fn:()=>{}}]})};
 const RDUR={sigara:20*MIN,yakit:30*MIN,elek:45*MIN,antika:60*MIN,silah:90*MIN,uyus:120*MIN};const RCAP=3;
-const rDur=r=>RDUR[r.good]||HOUR;
+const rDur=r=>Math.round((RDUR[r.good]||HOUR)*(hasY('saat')?.85:1));
 function rTick(r,now){now=now||Date.now();if(!r.on||(S.jail&&!S.org))return 0;if(r.ready===undefined)r.ready=0;let n=0;const d=rDur(r);
   if(!r.tEnd&&r.ready<RCAP)r.tEnd=now+d;
   while(r.tEnd&&now>=r.tEnd){r.ready++;n++;if(r.ready>=RCAP){r.tEnd=null;break}r.tEnd+=d}
@@ -3541,6 +3542,7 @@ function hubTiles(){return [
       ['kumar','🎰','Kumarhane','Rulet, blackjack, barbut',S.age>=18&&!S.jail],
       ['luks','🛥','Lüks oyuncaklar',S.lux.length?`${S.lux.length} parça`:'Yat, jet, helikopter',S.age>=18&&!S.jail],
       ['basarim','🏆','Başarımlar',`${Object.keys(S.ach).length}/${ACH.length}`,true],
+      ['yadigar','🧳','Yadigârlar',`${(S.yad||[]).length}/${YAD.length}`,true],
       ['lakap','🎖️','Lakaplar',`${LAKAP.filter(L=>LKG()[L[0]]).length}/${LAKAP.length}`,true],
       ['vergi','🧾','Vergi dairesi',S.taxDebt>0?`Vergi borcu ${fmtS(S.taxDebt)}`:'Vergiler ve giderler',S.age>=18],
       ['borsa','📈','Borsa',portVal()?`Portföy ${fmtS(portVal())}`:'Hisse al, sat',!S.jail&&S.age>=18],
@@ -3550,7 +3552,7 @@ function hubTiles(){return [
       ['mit','🏛','İstihbarat binası',S.state.rec?`Devlet güveni %${S.state.trust}`:'21 yaşından itibaren',!S.jail&&S.age>=21]]}
 const tileHTML=([id,ic,n,d,ok])=>`<button class="tile" data-go="${id}" ${ok?'':'disabled'}><span class="ti">${ic}</span><b>${n}</b><span>${d}</span></button>`;
 const HCATS=[
-  ['kisisel','👤','Kişisel hayat','İnsanlar, aile ağacı, gece hayatı, sosyal medya, lakaplar',['insan','agac','gece','sosyal','gorev','basarim','lakap']],
+  ['kisisel','👤','Kişisel hayat','İnsanlar, aile ağacı, gece hayatı, sosyal medya, yadigârlar, lakaplar',['insan','agac','gece','sosyal','gorev','basarim','yadigar','lakap']],
   ['yeralti','🔫','Yeraltı dünyası','Ailen, rakip aileler, harita, konsey, sokak kadrosu, haraç, kaçakçılık',['org','rakip','harita','konsey','sokak','kacak']],
   ['para','💰','Para ve finans','Banka, borsa, döviz, kara para, varlık yönetimi, vergi',['banka','borsa','doviz','kara','varlikyon','vergi','kumar']],
   ['is','🏢','İş dünyası','Şirketler, müzik, futbol kulübü, inşaat, oto galeri',['sirket','muzik','kulup','insaat','ogaleri']],
@@ -3591,7 +3593,7 @@ function pEdit(t,id,back){const o=pFind(t,id);if(!o)return;
     ...(t==='m'?[{t:'💛 Sadakat ve güç tam',fn:()=>{o.tr.sad=100;o.tr.cur=100;trSync(t,o);setTimeout(()=>pEdit(t,id,back),40)}}]:[]),
     ...(t==='f'||t==='k'?[{t:'💛 Yakınlığı %100 yap',fn:()=>{o.rel=100;setTimeout(()=>pEdit(t,id,back),40)}}]:[]),
     {t:'Bitti',fn:()=>{}}]})}
-function pSet(t,id,back,k){const o=pFind(t,id);if(!o)return;const n=PTRAITS.find(x=>x[0]===k)[2];
+function pSet(t,id,back,k){const o=pFind(t,id);if(!o)return;o.tr=o.tr||{};const n=PTRAITS.find(x=>x[0]===k)[2];
   queue({back,title:n,text:`${o.name} · şu an ${o.tr[k]}. Yeni değer:`,choices:[0,20,40,60,80,100].map(v=>({t:String(v),fn:()=>{o.tr[k]=v;trSync(t,o);setTimeout(()=>pEdit(t,id,back),40)}}))})}
 const SELF=[['health','❤️','Sağlık'],['happy','😊','Mutluluk'],['respect','🎩','Saygı'],['heat','🚨','Polis dikkati'],['fame','🌟','Ün'],['kb','😎','Karizma bonusu'],['guz','✨','Güzellik'],['zek','🧠','Zeka']];
 function selfVal(k){return k==='kb'?(S.kb||0):k==='guz'||k==='zek'?(S[k]===undefined?50:S[k]):Math.round(S[k]||0)}
@@ -3850,6 +3852,29 @@ EXTRA.lakap=()=>{const c=LKG(),got=LAKAP.filter(L=>c[L[0]]).length;
   let h=`<p class="note">${got}/${LAKAP.length} lakap. Her karakter öldüğünde hayatı tek bir lakapla anılır. İlk kez kazandığın her lakap 🎟️ 1 bilet verir. Koleksiyon bütün hayatların boyunca kalır.</p><div class="grid">`;
   LAKAP.forEach(L=>{const g=c[L[0]];h+=`<div class="it ${g?'on':''}" style="opacity:${g?1:.55}"><span style="font-size:30px">${g?L[2]:'🔒'}</span><b>${g?(g.t||L[1]()):L[1]()}</b><em>${g?`${L[3]} · ${g.who}${g.n>1?' · ×'+g.n:''}`:L[4]}</em></div>`});
   return['🎖️ Lakaplar',h+'</div>']};
+
+/* ============ Yadigârlar: hayatta bulunur, kalıcı küçük etki verir, mirasçıya geçer ============ */
+const YAD=[
+  ['tespih','📿','Kehribar Tespih','Dedenden kalma. Çekerken sinirin yatışır.','Her yıl polis dikkati −3','18 yaşına gir',()=>S.age>=18,'Deden ölmeden önce kehribar tespihini avucuna bıraktı: "Sabırlı olan kazanır evlat."'],
+  ['stiletto','🔪','Sustalı Stiletto','Sapı sedef, ağzı ustura gibi.','Suçlarda başarısızlık %10 az','15 suç işle',()=>(S.stats.crimes||0)>=15,'Eski bir kabadayı sana sedef saplı sustalısını verdi: "Bunu çeken geri koymaz."'],
+  ['tabanca','🔫','Kabzası Kazınmış Tabanca','Üzerinde baş harfler kazılı.','Sokak gücü %10 fazla','Bir sokak çetesini dağıt',()=>(S.st&&S.st.won||0)>=1,'Dağıttığın çetenin reisinin tabancası artık senin. Kabzasında baş harfler kazılı.'],
+  ['defter','📓','Kara Defter','Kimin kime ne borcu var, hepsi yazılı.','Hapis cezaları %20 kısa','2 kez hapse gir',()=>(S.stats.jailed||0)>=2,'Koğuşta yaşlı bir mahkûm sana kara bir defter verdi. İçinde kimin kime ne borcu olduğu yazıyor.'],
+  ['yuzuk','💍','Mühür Yüzük','Ailenin mührü. Öpen saygı gösterir.','Saygı kazancı %10 fazla','Kaptan rütbesine çık',()=>rank()>=3,'Kaptan oldun. Büyükler sana ailenin mühürlü altın yüzüğünü taktı.'],
+  ['saat','⌚','Altın Cep Saati','Hiç geri kalmadı.','İnşaat ve kaçakçılık süreleri %15 kısa','İlk inşaatını bitir ya da 10 sefer tamamla',()=>((S.co&&S.co.done)||0)>=1||(S.rtTrips||0)>=10,'İşleri zamanında bitirdin. Ortağın sana altın bir cep saati hediye etti.'],
+  ['anahtar','🗝️','Demir Anahtar','Hangi kasayı açtığını yalnız sen bilirsin.','Mirasta veraset vergisi ödenmez','Kasanda ₺10 milyon gör',()=>S.peak/(S.cpi||1)>=1e7,'Bankacı dostun eline ağır bir demir anahtar tutuşturdu: "Bu kasa vergi memuru tanımaz."'],
+  ['foto','🖼️','Eski Aile Fotoğrafı','Siyah beyaz, köşesi yanık.','Her yıl mutluluk +3','3 çocuk sahibi ol',()=>(S.kids||[]).length>=3,'Annenin sandığından eski bir aile fotoğrafı çıktı. Köşesi yanık, herkes gülüyor.'],
+  ['nazar','🧿','Eski Nazar Boncuğu','Kaç kurşundan korudu, kimse bilmez.','Her yıl sağlık +2','45 yaşını gör',()=>S.age>=45,'Kapı eşiğinde eski bir nazar boncuğu buldun. Annen "bunu sakla" dedi.'],
+  ['fotr','🎩','Fötr Şapka','Kapıdan girince herkes ayağa kalkar.','Karizma +5','Baba rütbesine çık',()=>rank()>=5,'Baba oldun. Eski Baba\'nın fötr şapkası artık senin başında.']];
+const hasY=id=>!!(S&&S.yad&&S.yad.some(y=>y.id===id));
+const YKG=()=>{try{return JSON.parse(localStorage.getItem('mafya-yad')||'{}')}catch(e){return {}}};
+function yadCheck(){if(!S||!S.alive||S.jail)return;S.yad=S.yad||[];for(const Y of YAD){if(hasY(Y[0]))continue;let ok=false;try{ok=Y[6]()}catch(e){}if(!ok)continue;
+  S.yad.push({id:Y[0],by:`${S.first} ${S.last}`,gen:S.gen||1,age:S.age});const c=YKG();if(!c[Y[0]]){c[Y[0]]=1;try{localStorage.setItem('mafya-yad',JSON.stringify(c))}catch(e){}}
+  log(`${Y[1]} Yadigâr: ${Y[2]}. ${Y[4]}.`,'gold');queue({title:`${Y[1]} Yadigâr: ${Y[2]}`,text:`${Y[7]}<br><br><b>${Y[4]}.</b> Öldüğünde mirasçına geçer.`,choices:[{t:'Sakla',fn:()=>{}}]});break}}
+function yadYear(){if(hasY('tespih'))S.heat=clamp(S.heat-3);if(hasY('foto'))add('happy',3);if(hasY('nazar'))add('health',2)}
+EXTRA.yadigar=()=>{const own=S.yad||[],c=YKG();
+  let h=`<p class="note">${own.length}/${YAD.length} yadigâr sende. Yadigârlar kalıcı küçük avantajlar verir ve öldüğünde mirasçına geçer. Mirasçı bırakmazsan kaybolurlar.</p><div class="grid">`;
+  YAD.forEach(Y=>{const o=own.find(x=>x.id===Y[0]);h+=`<div class="it ${o?'on':''}" style="opacity:${o?1:.55}"><span style="font-size:30px">${o||c[Y[0]]?Y[1]:'🔒'}</span><b>${Y[2]}</b><em>${o?`${Y[4]} · ${o.gen<(S.gen||1)?`${o.by} bulmuştu`:'Sen buldun'}`:`${Y[5]}${c[Y[0]]?' · daha önce bulunmuştu':''}`}</em></div>`});
+  return['🧳 Yadigârlar',h+'</div>']};
 function die(cause){
   S.alive=false;S.cause=cause;try{lakapAward()}catch(e){}log('Hayatını kaybettin.','bad');save();cloudSave(true);showDead();}
 function showDead(){const cause=S.cause;
@@ -3868,7 +3893,7 @@ function showDead(){const cause=S.cause;
       <div><span>Hapiste geçen</span><b>${fmtJ(S.jailYears)}</b></div>
       <div><span>Mülk</span><b>${S.props.length}</b></div>
     </div>
-    ${S.kids.length?`<div class="sec" style="margin-top:20px">Mirasla devam et</div><p class="note">Çocuklarından birini seç. Servetin (%10 veraset vergisi düşülerek), evlerin, işletmelerin ve itibarının bir kısmı ona geçer.</p>`+S.kids.map(k=>`<button class="row" data-inh="${k.id}"><span class="ic" style="padding:0;overflow:hidden;border-radius:50%"><span class="av" style="width:38px;height:38px;border-width:1px">${avatarSVG(k.look,k.age,{emo:1,g:k.g})}</span></span><span class="tx"><b>${k.name} ${S.last}${S.heir===k.id?' · Varis':''}</b><span>${k.g==='e'?'Oğlu':'Kızı'} · ${k.age} yaş${k.crew?' · Aile işinde':''}</span></span><span class="rt">Devam ›</span></button>`).join(''):''}
+    ${S.kids.length?`<div class="sec" style="margin-top:20px">Mirasla devam et</div><p class="note">Çocuklarından birini seç. ${(S.yad||[]).length?`Yadigârların (${S.yad.map(y=>(YAD.find(Y=>Y[0]===y.id)||[])[1]).join(' ')}) ona geçer. `:''}Servetin (${(S.yad||[]).some(y=>y.id==='anahtar')?'🗝️ vergisiz':'%10 veraset vergisi düşülerek'}), evlerin, işletmelerin ve itibarının bir kısmı ona geçer.</p>`+S.kids.map(k=>`<button class="row" data-inh="${k.id}"><span class="ic" style="padding:0;overflow:hidden;border-radius:50%"><span class="av" style="width:38px;height:38px;border-width:1px">${avatarSVG(k.look,k.age,{emo:1,g:k.g})}</span></span><span class="tx"><b>${k.name} ${S.last}${S.heir===k.id?' · Varis':''}</b><span>${k.g==='e'?'Oğlu':'Kızı'} · ${k.age} yaş${k.crew?' · Aile işinde':''}</span></span><span class="rt">Devam ›</span></button>`).join(''):''}
     ${UNDO.length?'<button class="btn" id="undoDeath">⏪ Geri al · ölmeden önceye dön</button>':''}
     <button class="btn ${S.kids.length?'ghost':''}" id="again">Yepyeni bir hayat</button>`;
   $('dead').classList.add('on');
