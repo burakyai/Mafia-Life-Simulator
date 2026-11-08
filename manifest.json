@@ -1,1 +1,1 @@
-{"name":"Mafia Life Simulator","short_name":"Mafia Life","start_url":"./","display":"standalone","background_color":"#0a0807","theme_color":"#0a0807","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"}]}
+{"name": "Derin Dünya", "short_name": "Derin Dünya", "start_url": "./", "display": "standalone", "background_color": "#0a0807", "theme_color": "#0a0807", "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}]}
