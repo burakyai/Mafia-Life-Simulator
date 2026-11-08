@@ -306,7 +306,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.08-2140';
+const APPV='2026.11.08-2300';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1050,7 +1050,7 @@ function ensure(){
   if(!S.lux)S.lux=[];if(!S.papers)S.papers=[];if(S.fame===undefined)S.fame=0;if(!S.ach)S.ach={};
   S.stats=Object.assign({crimes:0,jailed:0,venues:0,elections:0,wins:0,bigwin:0},S.stats||{});
   if(!S.pol)S.pol={office:null,term:0,inf:0};if(!S.grads)S.grads=[];if(S.edu===undefined)S.edu=null;if(S.job===undefined)S.job=null;
-  if(S.look&&!S.look.pic){let hh=0;for(const c of (S.first+S.last))hh=(hh*31+c.charCodeAt(0))>>>0;S.look.pic=hh%15+1}if(S.st)try{stEnsure()}catch(e){}if(!S.kids)S.kids=[];if(!S.tree)S.tree=[];if(!S.gen)S.gen=1;if(!S.birthYear)S.birthYear=1996;if(!S.gender)S.gender='e';
+  if(S.look&&!S.look.pic){let hh=0;for(const c of (S.first+S.last))hh=(hh*31+c.charCodeAt(0))>>>0;S.look.pic=hh%15+1}if(S.st)try{stEnsure()}catch(e){}if(!S.kids)S.kids=[];if(!S.lb)S.lb=(S.gen||1)>1?{...(S.stats||{}),co:S.co?S.co.done||0:0}:{};if(!S.tree)S.tree=[];if(!S.gen)S.gen=1;if(!S.birthYear)S.birthYear=1996;if(!S.gender)S.gender='e';
   if(!S.tips)S.tips={};if(!S.tipStats)S.tipStats={ok:0,n:0};if(S.q===undefined)S.q=0;
 }
 
@@ -1364,8 +1364,8 @@ function inherit(id){
     slot:P.slot,origin:P.origin,famBg:(P.org||P.family)?'mafya':(P.famBg||'orta'),club:P.club||null,co:P.co||null,label:P.label||null,gal:P.gal||null,black:P.black||0,firms:(P.firms||[]).map(f=>({...f})),wm:P.wm?{...P.wm}:null,loans:(P.loans||[]).map(l=>({...l})),city:P.city||'istanbul',
     premium:P.premium,autoMeet:P.autoMeet,q:P.q||0,tips:{},tipStats:P.tipStats,lux:[...(P.lux||[])],ach:P.ach,stats:P.stats,papers:P.papers,fame:Math.round((P.fame||0)/2),
     kids:(k.kids||[]).map(g=>({id:g.id,name:g.name,g:g.g,age:g.age,bornAt:Math.max(0,k.age-g.age),rel:R(65,90),look:g.look,crew:false})),partner:k.spouse||null,married:!!k.spouse,prel:k.spouse?70:null,siblings:P.kids.filter(x=>x!==k).map(x=>({name:x.name,g:x.g,age:x.age,look:x.look})),
-    gen:(P.gen||1)+1,birthYear:(P.birthYear||1996)+k.bornAt,
-    tree:[...(P.tree||[]),{name:`${P.first} ${P.last}`,g:P.gender||'e',by:P.birthYear||1996,age:P.age,rank:RANKS[rank()].n,cause:P.cause,look:P.look,family:P.family,kids:P.kids.map(x=>x.name),heir:k.name}],
+    lb:{...(P.stats||{}),co:P.co?P.co.done||0:0},gen:(P.gen||1)+1,birthYear:(P.birthYear||1996)+k.bornAt,
+    tree:[...(P.tree||[]),{name:`${P.first} ${P.last}`,g:P.gender||'e',by:P.birthYear||1996,age:P.age,rank:RANKS[rank()].n,cause:P.cause,look:P.look,family:P.family,kids:P.kids.map(x=>x.name),heir:k.name,lk:P.lakapN||''}],
     log:[{age:k.age,q:k.age>=14?(P.q||0):undefined,lines:[]}]};
   S=N;ensure();
   const parentWord=(P.gender==='k'?'Annen':'Baban');
@@ -1378,7 +1378,7 @@ function inherit(id){
 function tnode(n,cls){return `<div class="tn ${cls||''}"><div class="av" style="width:56px;height:56px">${avatarSVG(n.look,Math.max(n.age,n.age<16?n.age:30),n.emo?{emo:1,g:n.g}:{})}</div><b>${n.name}</b><span>${n.sub||''}</span></div>`}
 EXTRA.agac=()=>{
   let h='<p class="note">Soyunun hikâyesi. Her kuşak bir öncekinin mirasıyla başlar.</p><div class="tree">';
-  (S.tree||[]).forEach((a,i)=>{h+=`<div class="gen"><div class="gl">${i+1}. kuşak</div>${tnode({name:a.name,age:a.age,look:a.look,sub:`${a.by} – ${a.by+a.age} · ${a.rank}`},'dead')}</div><div class="tl"></div>`});
+  (S.tree||[]).forEach((a,i)=>{h+=`<div class="gen"><div class="gl">${i+1}. kuşak</div>${tnode({name:a.name,age:a.age,look:a.look,sub:`${a.by} – ${a.by+a.age} · ${a.lk?'“'+a.lk+'”':a.rank}`},'dead')}</div><div class="tl"></div>`});
   const me={name:`${S.first} ${S.last}`,age:S.age,look:S.look,sub:`${S.birthYear||1996} – · ${RANKS[rank()].n}`};
   h+=`<div class="gen"><div class="gl">${(S.gen||1)}. kuşak · Sen</div><div class="row2">${tnode(me,'me')}${(S.siblings||[]).map(x=>tnode({emo:1,g:x.g,name:x.name,age:x.age,look:x.look,sub:x.g==='e'?'Erkek kardeşin':'Kız kardeşin'})).join('')}</div></div>`;
   const gks=S.kids.flatMap(k=>(k.kids||[]).map(g=>({...g,par:k.name})));
@@ -3541,6 +3541,7 @@ function hubTiles(){return [
       ['kumar','🎰','Kumarhane','Rulet, blackjack, barbut',S.age>=18&&!S.jail],
       ['luks','🛥','Lüks oyuncaklar',S.lux.length?`${S.lux.length} parça`:'Yat, jet, helikopter',S.age>=18&&!S.jail],
       ['basarim','🏆','Başarımlar',`${Object.keys(S.ach).length}/${ACH.length}`,true],
+      ['lakap','🎖️','Lakaplar',`${LAKAP.filter(L=>LKG()[L[0]]).length}/${LAKAP.length}`,true],
       ['vergi','🧾','Vergi dairesi',S.taxDebt>0?`Vergi borcu ${fmtS(S.taxDebt)}`:'Vergiler ve giderler',S.age>=18],
       ['borsa','📈','Borsa',portVal()?`Portföy ${fmtS(portVal())}`:'Hisse al, sat',!S.jail&&S.age>=18],
       ['karakol','🚓','Polis karakolu',`Dikkat %${S.heat}`,!S.jail&&S.age>=14],
@@ -3549,7 +3550,7 @@ function hubTiles(){return [
       ['mit','🏛','İstihbarat binası',S.state.rec?`Devlet güveni %${S.state.trust}`:'21 yaşından itibaren',!S.jail&&S.age>=21]]}
 const tileHTML=([id,ic,n,d,ok])=>`<button class="tile" data-go="${id}" ${ok?'':'disabled'}><span class="ti">${ic}</span><b>${n}</b><span>${d}</span></button>`;
 const HCATS=[
-  ['kisisel','👤','Kişisel hayat','İnsanlar, aile ağacı, gece hayatı, sosyal medya',['insan','agac','gece','sosyal','gorev','basarim']],
+  ['kisisel','👤','Kişisel hayat','İnsanlar, aile ağacı, gece hayatı, sosyal medya, lakaplar',['insan','agac','gece','sosyal','gorev','basarim','lakap']],
   ['yeralti','🔫','Yeraltı dünyası','Ailen, rakip aileler, harita, konsey, sokak kadrosu, haraç, kaçakçılık',['org','rakip','harita','konsey','sokak','kacak']],
   ['para','💰','Para ve finans','Banka, borsa, döviz, kara para, varlık yönetimi, vergi',['banka','borsa','doviz','kara','varlikyon','vergi','kumar']],
   ['is','🏢','İş dünyası','Şirketler, müzik, futbol kulübü, inşaat, oto galeri',['sirket','muzik','kulup','insaat','ogaleri']],
@@ -3820,13 +3821,42 @@ function checkDeath(ny){
     if(S.premium&&!S.dying){S.dying=true;queue({title:'Son nefes',text:'Yaşlı bedenin artık yorgun. Doktorlar ailene hazırlıklı olmasını söylüyor.',prem:{t:'Dayının İsviçre kliniği',sub:'10 yıl daha · Sağlık %90',fn:()=>{S.dying=false;S.extend=S.age+10;S.health=90;log('İsviçre\'deki klinikten on yaş gençleşmiş döndün.','gold')}},choices:[{t:'Huzurla veda et',fn:()=>{S.dying='accept';S.health=0;S.cause='Yaşlılık. Yatağında, huzur içinde.'}}]});return}
     die('Yaşlılık. Yatağında, huzur içinde.')}
 }
+
+/* ============ Lakaplar: ölümde hayatı tek lakapla özetle, koleksiyon ============ */
+const LB=k=>Math.max(0,((S.stats||{})[k]||0)-((S.lb||{})[k]||0));
+const LAKAP=[
+  ['baba',()=>S.gender==='k'?'Ana':'Baba','👑','Kendi örgütünü kurdu, en tepeye çıktı.','Kendi örgütünle Baba rütbesine çık',()=>!!S.org&&rank()>=5],
+  ['kral',()=>'Sokakların Kralı','🏙️','Şehrin çetelerini tek tek dağıttı.','Bir hayatta 10 sokak çetesi dağıt',()=>(S.st&&S.st.won||0)>=10],
+  ['kalantor',()=>'Kalantor','💰','Parası parasını kazandı.','Net servetin (bugünün parasıyla) ₺500 milyonu geçsin',()=>netWorth()/(S.cpi||1)>=5e8],
+  ['muteahhit',()=>'Müteahhit','🏗️','Şehrin silüetinde imzası var.','Bir hayatta 5 inşaat bitir',()=>((S.co&&S.co.done)||0)-((S.lb||{}).co||0)>=5],
+  ['kacakci',()=>'Kaçakçı','🚚','Sınır kapıları onu tanırdı.','Kaçakçılık hatlarında 30 sefer tamamla',()=>(S.rtTrips||0)>=30],
+  ['halkin',()=>'Halkın Adamı','🗳️','Sandıktan hep o çıktı.','Bir hayatta 2 seçim kazan',()=>LB('elections')>=2],
+  ['fatih',()=>'Bölge Fatihi','🚩','Rakiplerin mekânlarını bir bir aldı.','Bir hayatta 6 mekân ya da bölge ele geçir',()=>LB('venues')>=6],
+  ['baskan',()=>'Başkan','⚽','Kulübüne kupa kaldırttı.','Kulübünle şampiyon ol',()=>LB('titles')>=1],
+  ['hayalet',()=>'Hayalet','👻','Kırk suç, sıfır dosya.','40 suç işle, hiç hapse girme',()=>LB('crimes')>=40&&LB('jailed')===0],
+  ['kogus',()=>'Koğuş Ağası','⛓️','Ömrünün büyük kısmı parmaklık arkasında geçti.','Toplam 15 yıl hapis yat',()=>(S.jailYears||0)>=15],
+  ['kumarbaz',()=>'Kumarbaz','🎲','Masadan hiç kalkmadı.','Kumarda tek seferde ₺1 milyon ya da 30 el kazan',()=>LB('bigwin')>=1||LB('wins')>=30],
+  ['kus',()=>'Hapishane Kuşu','🐦','Girdi, çıktı, yine girdi.','Bir hayatta 4 kez hapse gir',()=>LB('jailed')>=4],
+  ['aile',()=>S.gender==='k'?'Aile Annesi':'Aile Babası','👨‍👩‍👧‍👦','Sofrası hep kalabalıktı.','5 çocuk sahibi ol',()=>(S.kids||[]).length>=5],
+  ['cinar',()=>'Çınar','🌳','Herkesi gömdü, kendisi en son gitti.','95 yaşını gör',()=>S.age>=95],
+  ['genc',()=>'Genç Giden','🥀','Hızlı yaşadı, erken gitti.','30 yaşından önce öl',()=>S.age<30],
+  ['siradan',()=>'Sıradan','🍵','Ne iz bıraktı ne leke.','Hiçbir lakaba uymayan bir hayat yaşa',()=>true]];
+const LKG=()=>{try{return JSON.parse(localStorage.getItem('mafya-lakap')||'{}')}catch(e){return {}}};
+function lakapPick(){for(const L of LAKAP){try{if(L[5]())return L}catch(e){}}return LAKAP[LAKAP.length-1]}
+function lakapAward(){if(S.lakap)return;const L=lakapPick();S.lakap=L[0];S.lakapN=L[1]();const c=LKG(),fresh=!c[L[0]];
+  c[L[0]]={n:((c[L[0]]&&c[L[0]].n)||0)+1,who:`${S.first} ${S.last}`,y:(S.birthYear||1996)+S.age,t:S.lakapN};try{localStorage.setItem('mafya-lakap',JSON.stringify(c))}catch(e){}
+  S.lakapNew=fresh;if(fresh&&L[0]!=='siradan')tixSet(tix()+1)}
+EXTRA.lakap=()=>{const c=LKG(),got=LAKAP.filter(L=>c[L[0]]).length;
+  let h=`<p class="note">${got}/${LAKAP.length} lakap. Her karakter öldüğünde hayatı tek bir lakapla anılır. İlk kez kazandığın her lakap 🎟️ 1 bilet verir. Koleksiyon bütün hayatların boyunca kalır.</p><div class="grid">`;
+  LAKAP.forEach(L=>{const g=c[L[0]];h+=`<div class="it ${g?'on':''}" style="opacity:${g?1:.55}"><span style="font-size:30px">${g?L[2]:'🔒'}</span><b>${g?(g.t||L[1]()):L[1]()}</b><em>${g?`${L[3]} · ${g.who}${g.n>1?' · ×'+g.n:''}`:L[4]}</em></div>`});
+  return['🎖️ Lakaplar',h+'</div>']};
 function die(cause){
-  S.alive=false;S.cause=cause;log('Hayatını kaybettin.','bad');save();cloudSave(true);showDead();}
+  S.alive=false;S.cause=cause;try{lakapAward()}catch(e){}log('Hayatını kaybettin.','bad');save();cloudSave(true);showDead();}
 function showDead(){const cause=S.cause;
   const rk=rank();
   const rip=rk>=5?'Şehrin yarısı cenazesine geldi. Bir efsane göçtü.':rk>=3?'Adı uzun yıllar kahvehanelerde anıldı.':rk>=1?'Sokaklar onu bir süre hatırladı.':'Sessizce unutuldu.';
   $('deadIn').innerHTML=`<div class="av bigav">${avatarSVG(S.look,S.age,{jail:S.jail>0})}</div>
-    <h2>${S.first} ${S.last}</h2><p class="rip">${S.birthYear||1996} – ${(S.birthYear||1996)+S.age} · ${rip}</p>
+    <h2>${S.first} ${S.last}</h2>${S.lakap?(()=>{const L=LAKAP.find(x=>x[0]===S.lakap)||LAKAP[LAKAP.length-1];return `<div style="margin:6px 0 2px;text-align:center"><span style="display:inline-block;padding:6px 14px;border:1px solid var(--gold);border-radius:20px;color:var(--gold);font-weight:700">${L[2]} “${S.lakapN||L[1]()}”</span>${S.lakapNew?`<div class="note" style="color:var(--gold);margin:4px 0 0">YENİ LAKAP${S.lakap!=='siradan'?' · 🎟️ +1 bilet':''}</div>`:''}<p class="note" style="margin:4px 0 0">${L[3]}</p></div>`})():''}<p class="rip">${S.birthYear||1996} – ${(S.birthYear||1996)+S.age} · ${rip}</p>
     <div class="sum">
       <div><span>Hanedan puanı</span><b style="color:var(--gold)">${dynScore()}${dynSave()?' · 🏆 YENİ REKOR':' · Rekor '+dynBest()}</b></div>
       <div><span>Ölüm nedeni</span><b>${cause}</b></div>
