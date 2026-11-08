@@ -44,6 +44,7 @@ jobs:
         if: env.HAS_KEYS != 'true' || github.event_name == 'push' || inputs.yukle == false
         working-directory: app/ios/App
         run: |
+          set -eo pipefail
           xcodebuild -project App.xcodeproj -scheme App -configuration Release \
             -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO build | tail -n 30
@@ -57,15 +58,15 @@ jobs:
           ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
+          set -eo pipefail
           mkdir -p ~/.appstoreconnect/private_keys
           KEY_PATH=~/.appstoreconnect/private_keys/AuthKey_${KEY_ID}.p8
           printf '%s' "$API_KEY" > "$KEY_PATH"
           BUILD_NO=$(( ${{ github.run_number }} + 100 ))
           xcodebuild -project App.xcodeproj -scheme App -configuration Release \
             -destination 'generic/platform=iOS' -archivePath $RUNNER_TEMP/App.xcarchive \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$KEY_PATH" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER_ID" \
             DEVELOPMENT_TEAM="$TEAM_ID" CURRENT_PROJECT_VERSION=$BUILD_NO \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
             archive | tail -n 40
           sed -i '' "s/TEAM_ID_PLACEHOLDER/$TEAM_ID/" ../ExportOptions.plist
           xcodebuild -exportArchive -archivePath $RUNNER_TEMP/App.xcarchive \
