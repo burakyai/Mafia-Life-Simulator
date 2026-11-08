@@ -310,7 +310,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0100';
+const APPV='2026.11.09-0105';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -3996,7 +3996,7 @@ EXTRA.berber=()=>{if(!S.look.av)Object.assign(S.look,avRand());if(!BDRAFT)BDRAFT
   return['💈 Berber',h]};
 ACT.berbergo=()=>{BDRAFT=null;openSheet('berber')};
 ACT.berok=()=>{if(!BDRAFT)return;if(!S.premium){if(!canPay(ABER()))return;pay(ABER())}Object.assign(S.look,BDRAFT,{av:2});BDRAFT=null;log('💈 Berberden yeni bir görünümle çıktın.','dim');add('happy',2);toast('💈 Yeni görünüm');closeSheet();afterChange()};
-document.addEventListener('click',e=>{const b=e.target.closest('[data-zs],[data-zc]');if(!b||!BDRAFT)return;avPick(BDRAFT,b.dataset,'z');openSheet('berber')});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-zs],[data-zc]');if(!b||!BDRAFT)return;avPick(BDRAFT,b.dataset,'z');const sl=[...document.querySelectorAll('.avrow')].map(e=>e.scrollLeft),sb=document.querySelector('.sh-b'),st=sb?sb.scrollTop:0;openSheet('berber');document.querySelectorAll('.avrow').forEach((e,i)=>{if(sl[i])e.scrollLeft=sl[i]});const sb2=document.querySelector('.sh-b');if(sb2)sb2.scrollTop=st});
 
 /* ============ Karakter oluştur ============ */
 let draft;
@@ -4020,7 +4020,7 @@ function showCreate(slot){
   draft={slot:slot||null,pi:0,look:avRand(),first:pick(NAMES),last:pick(SURN),origin:null,fam:null,open:null};
   drawCreate();$('create').classList.add('on');
 }
-function drawCreate(){
+function drawCreate(){const _sl=[...document.querySelectorAll('#createIn .avrow')].map(e=>e.scrollLeft);
     $('createIn').innerHTML=`<div class="logo">Derin <span>Dünya</span></div><p class="tag">Sokaktan tahta bir ömür</p>
     <div class="avbig" style="margin:0 auto 14px">${avHTML(draft.look,30)}</div>
     <div class="names"><input id="fn" value="${draft.first}" maxlength="14" aria-label="Ad" placeholder="Ad"><input id="ln" value="${draft.last}" maxlength="14" aria-label="Soyad" placeholder="Soyad"><button class="dice" id="rnd" aria-label="Rastgele isim">🎲</button></div>
@@ -4029,6 +4029,7 @@ function drawCreate(){
     ${crPick('origin','🌍','Memleket',ORIGINS,o=>o.n+' · '+o.m)}
     ${crPick('fam','🏠','Aile',FAMBG,o=>o.n)}
     <button class="btn" id="start" style="margin-top:14px">Hayata başla</button>`;
+  document.querySelectorAll('#createIn .avrow').forEach((e,i)=>{if(_sl[i])e.scrollLeft=_sl[i]});
 }
 function crPick(key,ic,label,SRC,nm){const cur=draft[key];const op=draft.open===key;
   let h=`<button class="row" data-op="${key}"><span class="ic">${ic}</span><span class="tx"><b>${label}: ${cur?nm(SRC[cur]):'🎲 Rastgele'}</b><span>${cur?SRC[cur].b:'Seçmezsen kader seçer'}</span></span><span class="rt">${op?'▴':'▾'}</span></button>`;
