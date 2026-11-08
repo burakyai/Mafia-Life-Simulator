@@ -311,7 +311,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0130';
+const APPV='2026.11.09-0135';
 /* SİYASET ANAHTARI: true yapınca siyaset (seçimler, bakanlık, cumhurbaşkanlığı) geri açılır. Kod duruyor. */
 const POL=false;
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
@@ -1278,7 +1278,7 @@ const ACT={
       {t:'Sat',sub:fmt(v)+' (emlakçı payı %5)',fn:()=>{S.money+=v;S.houses=S.houses.filter(x=>x!==o);if(S.home===uid)S.home=null;log(`${t.n} evini ${fmt(v)} karşılığında sattın.`)}},
       {t:'Vazgeç',fn:()=>{}}]})},
   shop:id=>{const s=SHOP.find(x=>x.id===id);if(!pay(s.p))return;add('happy',s.h);log(s.partner?`${S.partner} çantayı görünce boynuna sarıldı.`:`${s.n} aldın.`,'good');done()},
-  dep:k=>{closeSheet();if(k==='in')amountModal('Vadesiz hesaba yatır',`Yıllık %${Math.round(Math.max(.03,depRate()*.35)*100)} faiz işler, istediğin an çekebilirsin.`,S.money,a=>{S.money-=a;S.bank.dep+=a;if(S.heat>=50&&a>=300000&&ch(.5)){add('heat',12);log(`Bankaya ${fmt(a)} yatırdın. Banka işlemi MASAK'a bildirdi, dikkat arttı.`,'bad')}else log(`Bankaya ${fmt(a)} yatırdın.`,'dim')},'banka');
+  dep:k=>{closeSheet();if(k==='in')amountModal('Vadesiz hesaba yatır',`Yıllık %${Math.round(Math.max(.03,depRate()*.35)*100)} faiz işler, istediğin an çekebilirsin.`,S.money,a=>{S.money-=a;S.bank.dep+=a;if(S.heat>=50&&a>=300000&&ch(.5)){add('heat',12);log(`Bankaya ${fmt(a)} yatırdın. Banka işlemi Maliye'ye bildirdi, dikkat arttı.`,'bad')}else log(`Bankaya ${fmt(a)} yatırdın.`,'dim')},'banka');
     else amountModal('Para çek','Mevduattan kasana aktar.',S.bank.dep,a=>{S.bank.dep-=a;S.money+=a;log(`Bankadan ${fmt(a)} çektin.`,'dim')},'banka')},
   loan:k=>{const b=S.bank;
     if(k==='close'){const c=Math.round(b.loan.pay*b.loan.left*.9);if(S.money<c)return;S.money-=c;b.loan=null;b.score=Math.min(1900,b.score+60);log(`Kredini ${fmt(c)} ödeyerek kapattın.`,'good');return done()}
@@ -1894,7 +1894,7 @@ ACT.gcar=uid=>{const g=S.gal,c=g.stock.find(x=>x.uid===uid);if(!c)return;const m
 function galSold(c,v,who){const g=S.gal,m=CM(c.mid);g.stock=g.stock.filter(x=>x!==c);S.money+=v;S.taxInc=(S.taxInc||0)+Math.max(0,v-c.cost);g.sold++;const pl=v-c.cost;g.profit+=pl;log(`${c.y} ${m.n} ${who} ${fmt(v)}'ye satıldı. ${pl>=0?'Kâr':'Zarar'}: ${fmt(Math.abs(pl))}.`,pl>=0?'good':'bad')}
 ACT.gusta=()=>{const g=S.gal;const c=Math.round([1e6,4e6,1.2e7][g.usta]*S.cpi);if(g.usta>=3||!pay(c))return;g.usta++;log(`Galerine ${['','usta kaportacı','boya ve mekanik atölyesi','tam donanımlı servis'][g.usta]} eklendi. Tamirler %${g.usta*15} ucuz.`,'good');done()};
 ACT.gaut=()=>{const g=S.gal;closeSheet();const yr=Math.max(GTIER[g.tier].cap*3e6*S.cpi,g.stock.reduce((t,c)=>t+galVal(c),0)*2);const opts=[1e6,5e6,2e7,1e8].filter(a=>a<=(S.black||0));
-  queue({back:'ogaleri',title:'Sahte satış faturası',text:`Kayıt dışı parayı hiç yapılmamış araç satışları gibi gösterirsin. %88'i temiz döner, polis dikkatin düşer. Galerinin yıllık hacmi ~${fmtS(yr)}; bunun çok üstü MASAK'ın dikkatini çeker.`,choices:[...opts.map(a=>{const risk=clamp(a/(yr*3),.03,.8);return{t:fmt(a),sub:`Yakalanma riski %${Math.round(risk*100)}`,fn:()=>{S.black-=a;if(ch(risk)){S.black+=Math.round(a*.3);add('heat',22);log(`Vergi müfettişleri galeriye çöktü! Paranın çoğuna el konuldu.`,'bad');news('Oto galeride sahte fatura operasyonu',3)}else{S.money+=Math.round(a*.88);add('heat',-Math.min(28,Math.round(a/2e6)+4));log(`${fmt(a)} araç satışı gibi gösterilip aklandı.`,'good')}}}}),{t:'Vazgeç',fn:()=>{}}]})};
+  queue({back:'ogaleri',title:'Sahte satış faturası',text:`Kayıt dışı parayı hiç yapılmamış araç satışları gibi gösterirsin. %88'i temiz döner, polis dikkatin düşer. Galerinin yıllık hacmi ~${fmtS(yr)}; bunun çok üstü Maliye'nin dikkatini çeker.`,choices:[...opts.map(a=>{const risk=clamp(a/(yr*3),.03,.8);return{t:fmt(a),sub:`Yakalanma riski %${Math.round(risk*100)}`,fn:()=>{S.black-=a;if(ch(risk)){S.black+=Math.round(a*.3);add('heat',22);log(`Vergi müfettişleri galeriye çöktü! Paranın çoğuna el konuldu.`,'bad');news('Oto galeride sahte fatura operasyonu',3)}else{S.money+=Math.round(a*.88);add('heat',-Math.min(28,Math.round(a/2e6)+4));log(`${fmt(a)} araç satışı gibi gösterilip aklandı.`,'good')}}}}),{t:'Vazgeç',fn:()=>{}}]})};
 ACT.gsell=()=>{const g=S.gal;const v=Math.round(GTIER[g.tier].c*S.cpi*.7+g.stock.reduce((t,c)=>t+galVal(c)*.85,0)+g.usta*2e6*S.cpi);closeSheet();queue({back:'ogaleri',title:'Galeriyi devret',text:`Dükkân, stok ve atölye için ${fmt(v)} teklif var.`,choices:[{t:'Devret',fn:()=>{S.money+=v;S.gal=null;log(`Galeriyi ${fmt(v)}'ye devrettin.`,'gold')}},{t:'Vazgeç',fn:()=>{}}]})};
 function galQuarter(){const g=S.gal;if(!g)return;const T=GTIER[g.tier];
   if(S.q===0){const r=Math.round(T.rent*S.cpi);fund(r);S.money=Math.max(0,S.money-r);log(`Galeri kirası ve personel: ${fmt(r)}.`,'dim')}
@@ -2164,8 +2164,8 @@ ACT.lmoney=k=>{const l=S.label;closeSheet();
   if(k==='out')return amountModal('Şirketten para çek','Kâr payı olarak sana geçer ve vergilendirilir.',Math.max(0,l.cash),a=>{l.cash-=a;S.money+=a;S.taxInc=(S.taxInc||0)+a;log(`${l.name}'dan ${fmt(a)} çektin.`,'dim')},'muzik');
   const yr=Math.max(lblRev()*4,1e6*S.cpi)+l.roster.length*2e6*S.cpi;const opts=[1e6,1e7,5e7,1e8,5e8].filter(a=>a<=(S.black||0));
   const way={bot:['Sahte dinlenme (bot)','Kara parayla dinlenme satın alınır, platformlar telif olarak geri öder.',.9,1],bilet:['Hayalet bilet satışı','Konserlere hiç satılmamış biletler satılmış gibi gösterilir.',.88,.8],telif:['Yurt dışı telif','Paravan şirketlerden şarkılara telif ödemesi yapılır.',.85,.6]}[k];
-  queue({back:'muzik',title:way[0],text:`${way[1]} Şirketin yıllık cirosu ~${fmtS(yr)}. Ciroya göre büyük meblağ MASAK'ın dikkatini çeker.`,choices:[...opts.map(a=>{const risk=clamp(a/(yr*3)*way[3],.03,.8);return{t:fmt(a),sub:`%${Math.round(way[2]*100)} temiz döner · Yakalanma riski %${Math.round(risk*100)}`,fn:()=>{S.black-=a;
-      if(ch(risk)){l.cash+=Math.round(a*.35);add('heat',22);l.roster.forEach(x=>x.fame=clamp(x.fame-R(3,10)));log(`MASAK ${l.name}'a çöktü! Paranın çoğuna el konuldu, sanatçıların itibarı zedelendi.`,'bad');news(`${l.name}'da kara para operasyonu`,3)}
+  queue({back:'muzik',title:way[0],text:`${way[1]} Şirketin yıllık cirosu ~${fmtS(yr)}. Ciroya göre büyük meblağ Maliye'nin dikkatini çeker.`,choices:[...opts.map(a=>{const risk=clamp(a/(yr*3)*way[3],.03,.8);return{t:fmt(a),sub:`%${Math.round(way[2]*100)} temiz döner · Yakalanma riski %${Math.round(risk*100)}`,fn:()=>{S.black-=a;
+      if(ch(risk)){l.cash+=Math.round(a*.35);add('heat',22);l.roster.forEach(x=>x.fame=clamp(x.fame-R(3,10)));log(`Maliye ${l.name}'a çöktü! Paranın çoğuna el konuldu, sanatçıların itibarı zedelendi.`,'bad');news(`${l.name}'da kara para operasyonu`,3)}
       else{l.cash+=Math.round(a*way[2]);add('heat',-Math.min(30,Math.round(a/2e6)+4));log(`${fmt(a)} ${way[0].toLowerCase()} yoluyla aklandı ve şirket kasasına girdi.`,'good')}}}}),{t:'Vazgeç',fn:()=>{}}]})};
 ACT.lsell=()=>{const l=S.label;const v=Math.round(lblRev()*4*3+l.cash+l.roster.reduce((t,a)=>t+a.fame*a.fame*2000,0)*S.cpi+2e6*S.cpi);closeSheet();queue({back:'muzik',title:'Şirketi sat',text:`${l.name} için ${fmt(v)} teklif var (kasa ve katalog dahil).`,choices:[{t:'Sat',fn:()=>{S.money+=v;log(`${l.name}'ı ${fmt(v)}'ye sattın.`,'gold');S.label=null}},{t:'Vazgeç',fn:()=>{}}]})};
 function labelQuarter(){const l=S.label;if(!l)return;const rev=lblRev();l.cash+=rev;l.last=rev;
@@ -2355,9 +2355,9 @@ ACT.cmoney=k=>{const c=S.club,L=LEAGUES[c.lv];closeSheet();
   if(k==='in')return amountModal('Kulübe sermaye koy','Temiz para. Kulüp kasasına geçer.',S.money,a=>{S.money-=a;c.cash+=a;log(`Kulübe ${fmt(a)} sermaye koydun.`,'dim')},'kulup');
   if(k==='out')return amountModal('Kulüpten para çek','Kâr payı olarak sana geçer ve vergilendirilir.',Math.max(0,c.cash),a=>{c.cash-=a;S.money+=a;S.taxInc=(S.taxInc||0)+a;log(`Kulüpten ${fmt(a)} çektin.`,'dim')},'kulup');
   const opts=[1e6,1e7,1e8,1e9].filter(a=>a<=(S.black||0));
-  queue({back:'kulup',title:'Kulüp üzerinden para akla',text:`Kayıt dışı parayı sahte sponsorluk ve bilet geliri gibi kulübe sokarsın. %10'u masrafa gider, kalanı kulüp kasasına temiz para olarak girer ve polis dikkatin düşer. Kulübün yıllık geliri (${fmtS(L.rev)}) küçükken büyük meblağ sokmak MASAK'ın dikkatini çeker.`,choices:[
+  queue({back:'kulup',title:'Kulüp üzerinden para akla',text:`Kayıt dışı parayı sahte sponsorluk ve bilet geliri gibi kulübe sokarsın. %10'u masrafa gider, kalanı kulüp kasasına temiz para olarak girer ve polis dikkatin düşer. Kulübün yıllık geliri (${fmtS(L.rev)}) küçükken büyük meblağ sokmak Maliye'nin dikkatini çeker.`,choices:[
     ...opts.map(a=>{const risk=clamp(a/(L.rev*3),.03,.75);return{t:fmt(a),sub:`Dikkat −${Math.min(30,Math.round(a/2e6)+4)} · Yakalanma riski %${Math.round(risk*100)}`,fn:()=>{S.black-=a;
-      if(ch(risk)){const fine=Math.round(a*.5);c.cash+=Math.round(a*.4);add('heat',20);c.season.teams.find(x=>x.me).Pts-=6;log(`MASAK ve federasyon soruşturması! ${fmt(fine)} ceza, 6 puan silme.`,'bad');news(`${c.name}'e kara para soruşturması`,3)}
+      if(ch(risk)){const fine=Math.round(a*.5);c.cash+=Math.round(a*.4);add('heat',20);c.season.teams.find(x=>x.me).Pts-=6;log(`Maliye ve federasyon soruşturması! ${fmt(fine)} ceza, 6 puan silme.`,'bad');news(`${c.name}'e kara para soruşturması`,3)}
       else{c.cash+=Math.round(a*.9);add('heat',-Math.min(30,Math.round(a/2e6)+4));log(`${fmt(a)} sponsorluk geliri olarak kulübe girdi. Para artık temiz.`,'good')}}}}),{t:'Vazgeç',fn:()=>{}}]})};
 ACT.coach=()=>{const c=S.club,L=LEAGUES[c.lv];closeSheet();const k=L.rev/1e6;
   const C=[{n:`${pick(NAMES)} ${pick(SURN)}`,t:'Genç yerli hoca',b:1,w:Math.round(k*30000)},{n:`${pick(NAMES)} ${pick(SURN)}`,t:'Tecrübeli hoca',b:3,w:Math.round(k*70000)},{n:`${pick(FOREIGN)} ${pick(['Marco','Jürgen','Carlos','Luis','Pep','Fabio'])}`,t:'Yabancı yıldız hoca',b:6,w:Math.round(k*160000)}];
@@ -2369,7 +2369,7 @@ EXTRA.kulup=()=>{const c=S.club;let h='';
   const L=LEAGUES[c.lv],pos=myPos(c);
   h+=`<div class="sum"><div><span>Kulüp</span><b>${c.name}</b></div><div><span>Lig</span><b>${L.n} · ${pos}. sıra</b></div><div><span>Hafta</span><b>${c.season.round}/22</b></div><div><span>Takım gücü</span><b style="color:var(--gold)">${clubStr(c)}</b> <small style="color:var(--muted)">(lig ort. ${L.base})</small></div><div><span>Kulüp kasası</span><b style="color:${c.cash>=0?'var(--good)':'var(--blood)'}">${fmt(c.cash)}</b></div><div><span>Teknik direktör</span><b>${c.coach?c.coach.n:'Yok'}</b></div><div><span>Kupalar</span><b>${c.trophies} 🏆</b></div></div>`;
   h+=row('data-go="lig"','📊','Lig tablosu','Puan durumu ve geçmiş sezonlar','›',false)+row('data-go="transfer"','🔁','Transfer piyasası','Bu çeyreğin oyuncuları','›',false)+row('data-x="coach:"','📋','Teknik direktör tut','Takım gücünü artırır','',false);
-  h+='<div class="sec">Para</div>'+row('data-x="cmoney:in"','💰','Sermaye koy','Temiz para','',S.money<1000)+row('data-x="cmoney:akla"','🧺','Kara para akla',`Kara kasada ${fmtS(S.black||0)} · Dikkat −, MASAK riski`,'',(S.black||0)<1e6)+row('data-x="cmoney:out"','🏦','Kulüpten para çek','Vergilendirilir','',c.cash<=0);
+  h+='<div class="sec">Para</div>'+row('data-x="cmoney:in"','💰','Sermaye koy','Temiz para','',S.money<1000)+row('data-x="cmoney:akla"','🧺','Kara para akla',`Kara kasada ${fmtS(S.black||0)} · Dikkat −, Maliye riski`,'',(S.black||0)<1e6)+row('data-x="cmoney:out"','🏦','Kulüpten para çek','Vergilendirilir','',c.cash<=0);
   const sq=[...c.squad].sort((a,b)=>FPOS.indexOf(a.pos)-FPOS.indexOf(b.pos)||b.r-a.r);
   h+=`<div class="sec">Kadro (${c.squad.length}/26)</div>`;sq.forEach(p=>h+=`<button class="row" data-x="pl:${p.id}" style="padding:8px 12px"><span class="ic" style="font-family:var(--cond);font-size:13px;font-weight:700;color:var(--gold)">${p.pos}</span><span class="tx"><b style="font-size:15px">${p.n}</b><span>${p.age} yaş · ~${fmtS(pVal(p.r,p.age))}</span></span><span class="rt" style="font-size:18px">${p.r}</span></button>`);
   h+=row('data-x="sellclub:"','🤝','Kulübü sat','','',false);
@@ -2669,7 +2669,7 @@ const BANKS=[
   {id:'anadolu',n:'Anadolu Katılım',c:'#2e7d4f',l:'A',d:'Faizsiz bankacılık: faiz yerine kâr payı verir, oran dönem sonunda biraz oynar.',adj:-.01,vary:.05},
   {id:'galata',n:'Galata Yatırım',c:'#8a2f2f',l:'G',d:'Büyük paraya özel: ₺10 milyon üstü hesaplara +%3.',adj:.005,big:.03},
   {id:'cepte',n:'Cepte Dijital',c:'#7b4fd6',l:'C',d:'Sadece uygulama, şube yok. En yüksek oran ama hesap başına ₺5 milyon sınırı.',adj:.04,max:5e6},
-  {id:'zurih',n:'Zürih Private Bank',c:'#b8962e',l:'Z',d:'İsviçre özel bankacılık. Faiz düşük ama MASAK görmez, icra dokunamaz. En az ₺10 milyon.',adj:-.14,min:1e7,secret:true}];
+  {id:'zurih',n:'Zürih Private Bank',c:'#b8962e',l:'Z',d:'İsviçre özel bankacılık. Faiz düşük ama Maliye görmez, icra dokunamaz. En az ₺10 milyon.',adj:-.14,min:1e7,secret:true}];
 const TERMS=[{q:1,n:'3 ay',b:-.05},{q:2,n:'6 ay',b:-.025},{q:4,n:'1 yıl',b:0},{q:8,n:'2 yıl',b:.02}];
 const BK=id=>BANKS.find(b=>b.id===id);
 function bRate(bk,t,amt){return clamp((S.infl||.3)+bk.adj+t.b+(bk.big&&amt>=1e7*S.cpi?bk.big:0),.02,1.2)}
@@ -2689,7 +2689,7 @@ ACT.bopen=k=>{const [bid,q]=k.split(':');const bk=BK(bid),t=TERMS.find(x=>x.q===
     choices:[...opts.map(a=>({t:fmt(a),sub:`Vade sonunda ~${fmt(Math.round(a*(1+bRate(bk,t,a)*t.q/4)))}`,fn:()=>openAcct(bk,t,a)})),...(all>=minA?[{t:`Tamamı (${fmt(all)})`,sub:'Kasa + vadesiz',fn:()=>openAcct(bk,t,all)}]:[]),{t:'Vazgeç',fn:()=>{}}]})};
 function openAcct(bk,t,a){let need=a;const m=Math.min(S.money,need);S.money-=m;need-=m;if(need>0){S.bank.dep-=Math.min(S.bank.dep,need)}
   S.accts.push({id:'ac'+Date.now()+R(0,999),bank:bk.id,amt:Math.round(a),q:t.q,rate:bRate(bk,t,a),mat:QS()+t.q,auto:true});
-  if(!bk.secret&&S.heat>=50&&a>=3e5*S.cpi&&ch(.4)){add('heat',10);log(`${bk.n} büyük yatırımını MASAK'a bildirdi.`,'bad')}
+  if(!bk.secret&&S.heat>=50&&a>=3e5*S.cpi&&ch(.4)){add('heat',10);log(`${bk.n} büyük yatırımını Maliye'ye bildirdi.`,'bad')}
   log(`${bk.n}'de ${t.n} vadeli hesap açtın: ${fmt(a)}, yıllık %${Math.round(bRate(bk,t,a)*100)}.`,'good')}
 ACT.acct=id=>{const a=S.accts.find(x=>x.id===id);if(!a)return;const bk=BK(a.bank);closeSheet();const left=a.mat-QS();
   queue({back:'banka',title:`${bk.n} · ${TERMS.find(x=>x.q===a.q).n} vadeli`,text:`Anapara ${fmt(a.amt)}, yıllık %${Math.round(a.rate*100)}. Vadeye ${left*3} ay var. Vade sonunda ~${fmt(Math.round(a.amt*(1+a.rate*a.q/4)))}. ${a.auto?'Vade sonunda otomatik yenilenir.':'Vade sonunda vadesiz hesaba geçer.'}`,choices:[
@@ -2911,7 +2911,7 @@ LATER.borc=d=>({title:'Borç ödendi',text:`${d.n} sözünü tuttu, borcunu faiz
 /* ============ Bakanlıklar ve Cumhurbaşkanlığı ============ */
 const MINS={
   icisleri:{n:'İçişleri Bakanlığı',ic:'🚔',d:'Emniyet, jandarma ve sınırlar senin elinde'},
-  hazine:{n:'Hazine ve Maliye Bakanlığı',ic:'🏦',d:'Vergiler, MASAK ve devletin kasası senin elinde'},
+  hazine:{n:'Hazine ve Maliye Bakanlığı',ic:'🏦',d:'Vergiler, Maliye ve devletin kasası senin elinde'},
   ulastirma:{n:'Ulaştırma ve Altyapı Bakanlığı',ic:'🌉',d:'Köprüler, havalimanları, otoyollar ve dev ihaleler'}};
 const polP=()=>{const P=S.pol;if(P.pop===undefined)P.pop=50;if(P.scr===undefined)P.scr=0;if(!P.used||P.used.q!==QS())P.used={q:QS(),a:{}};return P};
 const masakK=()=>S.pol&&(S.pol.masak||0)>QS()?.3:1;
@@ -2926,7 +2926,7 @@ ACT.min=k=>{const P=polP();const C=Math.max(1,S.cpi);
     emniyet:()=>minAct('emniyet',2e6,()=>{P.pop=clamp(P.pop+8);P.scr=Math.max(0,P.scr-8);log('Emniyete yeni araç ve personel: halk desteği arttı, muhalefet sustu.','good')}),
     // Hazine
     af:()=>minAct('af',0,()=>{const d=S.taxDebt||0;S.taxDebt=0;P.scr+=10;P.pop=clamp(P.pop+5);log(`Vergi affı çıktı. ${d?fmt(d)+' borcun silindi.':'Herkesin borcu silindi.'} Halk memnun.`,'gold')}),
-    masak:()=>minAct('masak',0,()=>{P.masak=QS()+4;P.scr+=14;log('MASAK\'a "kaynak yetersizliği" yaşatıldı. Bir yıl boyunca aklama riskin üçte birine indi.','gold')}),
+    masak:()=>minAct('masak',0,()=>{P.masak=QS()+4;P.scr+=14;log('Maliye\'ye "kaynak yetersizliği" yaşatıldı. Bir yıl boyunca aklama riskin üçte birine indi.','gold')}),
     faiz:()=>minAct('faiz',0,()=>{STOCKS.forEach(st=>{const x=S.px[st.id];const r=stockR(st,x.n,.25);S.tips[st.id]={up:r>0,p0:x.p,r,tg:+(x.p*Math.exp(r)).toFixed(2)}});S.tips.all=1;P.scr+=8;log('Faiz kararını herkesten önce öğrendin. Borsada bütün hisselerin yönü ve hedefi önünde, %100 doğru.','gold')}),
     tahvil:()=>minAct('tahvil',0,()=>{const m=Math.round(R(20,60)*1e6*C);dirty(m);P.scr+=12;log(`Devlet tahvili ihracında "danışmanlık ücreti": ${fmt(m)}.`,'gold')}),
     // Ulaştırma
@@ -2965,7 +2965,7 @@ EXTRA.bakanlik=()=>{const P=polP();let h='';if(P.office!=='bakan')return['Bakanl
   const M=MINS[P.min];h+=`<div class="card" style="padding:12px;margin-bottom:10px"><b>${M.ic} ${M.n}</b><div class="note" style="margin:4px 0 0">Halk desteği %${P.pop} · Meclis baskısı %${Math.min(100,P.scr)} · Görev ${fmtJ(P.term/4)}</div></div><p class="note">Her karar çeyrekte bir kez verilebilir. Kirli kararlar meclis baskısını artırır; %40'ı geçerse gensoru gelebilir.</p>`;
   const u=k=>P.used.a[k];const C=Math.max(1,S.cpi);
   const L={icisleri:[['op','🚔','Rakip çeteye operasyon','Rakip çökertilir, halk desteği +'],['dosya','📁','Dosyalarını kapattır','Polis dikkati −30'],['gumruk','🛃','Gümrük ekiplerini değiştir','1 yıl kaçakçılık riski çok düşük'],['emniyet','🚓','Emniyete bütçe ver','Halk desteği ++, baskı −',2e6]],
-    hazine:[['af','🧾','Vergi affı çıkar','Vergi borcun silinir'],['masak','🖤','MASAK\'ı yavaşlat','1 yıl aklama riski ⅓'],['faiz','📈','Faiz kararını önceden öğren','Bütün hisselerin yönü %100 doğru'],['tahvil','💵','Tahvil ihracında komisyon','Kara kasaya büyük para']],
+    hazine:[['af','🧾','Vergi affı çıkar','Vergi borcun silinir'],['masak','🖤','Maliye\'yi yavaşlat','1 yıl aklama riski ⅓'],['faiz','📈','Faiz kararını önceden öğren','Bütün hisselerin yönü %100 doğru'],['tahvil','💵','Tahvil ihracında komisyon','Kara kasaya büyük para']],
     ulastirma:[['ihale','🌉','Mega proje ihalesi','Dev rüşvet · İnşaat şirketin varsa hakediş'],['garanti','🛣','Geçiş garantisi imzala','Her çeyrek sabit gelir'],['acilis','✂️','Açılış töreni yap','Halk desteği ++, ün +',3e6]]}[P.min];
   L.forEach(([k,ic,n,d,c])=>h+=row(`data-x="min:${k}"`,ic,n,u(k)?'Bu çeyrek yapıldı':d,c?fmtS(c*C):'',!!u(k)||(c&&!canPay(c*C))));
   if(P.garanti)h+=`<p class="note">Geçiş garantisi geliri: her çeyrek ${fmt(P.garanti)}.</p>`;
@@ -3166,7 +3166,7 @@ const LMETH=[
   {id:'off',ic:'🌍',n:'Offshore paravan şirket',d:'Yurt dışından "yatırım" olarak döner · 1 çeyrek sürer',fee:.25,risk:.03,cap:()=>5e8,slow:1}];
 ACT.lmeth=id=>{const M=LMETH.find(x=>x.id===id);closeSheet();const cap=Math.round(M.cap()*Math.max(1,S.cpi));const left=Math.max(0,cap-lqUse(id));const opts=[1e6,5e6,2e7,1e8,5e8].map(a=>Math.round(a*Math.max(1,S.cpi)/1e5)*1e5).filter(a=>a<=S.black&&a<=left);if(S.black<=left&&S.black>0&&!opts.includes(S.black))opts.push(S.black);
   queue({back:'kara',title:`${M.ic} ${M.n}`,text:`${M.d}. Komisyon %${Math.round(M.fee*100)}, yakalanma riski %${Math.round(M.risk*100)}${S.heat>=60?' (polis dikkatin yüksek, risk 2 kat)':''}. Bu çeyrek kalan limit ${fmt(left)}.`,choices:[...opts.map(a=>({t:fmt(a),sub:`Temiz dönen ${fmt(Math.round(a*(1-M.fee)))}`,fn:()=>{S.black-=a;S.lq.u[id]=lqUse(id)+a;const rk=M.risk*(S.heat>=60?2:1)*masakK();
-      if(ch(rk)){const back=Math.round(a*.4);S.black+=back;add('heat',20);log(`🚨 MASAK ${M.n.toLowerCase()} işlemini yakaladı! ${fmt(a-back)} el konuldu.`,'bad');news('MASAK\'tan kara para operasyonu',3)}
+      if(ch(rk)){const back=Math.round(a*.4);S.black+=back;add('heat',20);log(`🚨 Maliye ${M.n.toLowerCase()} işlemini yakaladı! ${fmt(a-back)} el konuldu.`,'bad');news('Maliye\'den kara para operasyonu',3)}
       else if(M.slow){later('offshore2',1,{m:Math.round(a*(1-M.fee))});log(`${fmt(a)} paravan şirkete gönderildi. Bir çeyrek sonra temiz dönecek.`,'dim')}
       else{const c=Math.round(a*(1-M.fee));S.money+=c;add('heat',-Math.min(10,Math.round(a/5e6)+1));log(`${fmt(a)} aklandı, cüzdanına ${fmt(c)} temiz para girdi.`,'good')}}})),{t:'Vazgeç',fn:()=>{}}]})};
 LATER.offshore2=d=>({title:'Offshore transferi geldi',text:`Paravan şirketten "yabancı yatırım" olarak ${fmt(d.m)} hesabına geçti.`,choices:[{t:'Tamam',fn:()=>{S.money+=d.m;log(`${fmt(d.m)} temiz para olarak döndü.`,'good')}}]});
