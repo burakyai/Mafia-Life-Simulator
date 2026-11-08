@@ -310,7 +310,9 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0110';
+const APPV='2026.11.09-0115';
+/* SİYASET ANAHTARI: true yapınca siyaset (seçimler, bakanlık, cumhurbaşkanlığı) geri açılır. Kod duruyor. */
+const POL=false;
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -810,7 +812,7 @@ function raid(){
   {t:'Teslim ol',sub:'Mahkemeye çık',fn:()=>arrest('Operasyon',[2,5])}]}}
 
 function arrest(crime,sev){
-  if(S.pol&&S.pol.office==='baskan'){add('heat',-10);log(`🇹🇷 ${crime} dosyası Cumhurbaşkanı dokunulmazlığı yüzünden kapatıldı.`,'gold');return}
+  if(POL&&S.pol&&S.pol.office==='baskan'){add('heat',-10);log(`🇹🇷 ${crime} dosyası Cumhurbaşkanı dokunulmazlığı yüzünden kapatıldı.`,'gold');return}
   let yrs=R(sev[0],sev[1]);const fam=has('avukat'),lawyer=fam?0:yrs*12000,bribe=yrs*30000;
   const bp=Math.min(.92,.45+(fam?.25:0)+Math.min(.15,friends('avukat')*.1)+((S.grads||[]).includes('hukuk')?.2:0));
   queue({title:'Kelepçeler takıldı',prem:{t:'Dayının tanıdıklarını ara',sub:'Dosya bile açılmaz',fn:()=>{add('heat',-15);gainResp(3);log('Dayının tanıdıkları birkaç telefon açtı. Karakolda çay içip çıktın, dosya bile açılmadı.','gold')}},text:`${crime} nedeniyle gözaltına alındın. Savcı ${yrs} yıl hapis istiyor.`,choices:[
@@ -821,8 +823,8 @@ function arrest(crime,sev){
     {t:'İtirafçı ol',sub:'Ceza azalır · Saygı çöker',fn:()=>{add('respect',-30);S.snitch=true;const y=Math.max(1,Math.floor(yrs/3));if(S.family){log(`${S.family} seni dışladı. Artık bir ispiyoncusun.`,'bad');S.family=null;S.boss=false}jailFor(y,`İtirafçı oldun. ${y} yıl hapis.`)}}]});
   {const ex=[];
     if(hasL('jet'))ex.push({t:'Özel jetle yurt dışına kaç',sub:'Hapis yok · Paranın %10\'u gider',fn:()=>{S.money=Math.round(S.money*.9);S.heat=45;log('Gece yarısı özel jetinle Dubai\'ye uçtun. Avukatların dosyayı zaman aşımına uğrattı.','gold');news(`${S.first} ${S.last} yurt dışına kaçtı!`,3)}});
-    if(S.pol&&S.pol.office==='mv')ex.push({t:'Milletvekili dokunulmazlığı',sub:'%90 şans',fn:()=>{if(ch(.9)){log('Dokunulmazlığın var. Savcı dosyayı rafa kaldırdı.','gold');news(`Milletvekili ${S.last} hakkındaki fezleke bekletiliyor`,2)}else jailFor(yrs,`Dokunulmazlığın kaldırıldı! ${yrs} yıl hapis.`)}});
-    if(S.pol&&S.pol.inf>=40)ex.push({t:'Siyasetçi dostunu ara',sub:`%${Math.min(85,S.pol.inf)} şans`,fn:()=>{if(ch(Math.min(.85,S.pol.inf/100))){S.pol.inf=clamp(S.pol.inf-10);log('Ankara\'dan gelen bir telefonla serbest kaldın.','gold')}else jailFor(yrs,`Siyasetçi dostun telefonu açmadı. ${yrs} yıl hapis.`)}});
+    if(POL&&S.pol&&S.pol.office==='mv')ex.push({t:'Milletvekili dokunulmazlığı',sub:'%90 şans',fn:()=>{if(ch(.9)){log('Dokunulmazlığın var. Savcı dosyayı rafa kaldırdı.','gold');news(`Milletvekili ${S.last} hakkındaki fezleke bekletiliyor`,2)}else jailFor(yrs,`Dokunulmazlığın kaldırıldı! ${yrs} yıl hapis.`)}});
+    if(POL&&S.pol&&S.pol.inf>=40)ex.push({t:'Siyasetçi dostunu ara',sub:`%${Math.min(85,S.pol.inf)} şans`,fn:()=>{if(ch(Math.min(.85,S.pol.inf/100))){S.pol.inf=clamp(S.pol.inf-10);log('Ankara\'dan gelen bir telefonla serbest kaldın.','gold')}else jailFor(yrs,`Siyasetçi dostun telefonu açmadı. ${yrs} yıl hapis.`)}});
     if(S.job&&S.job.id==='polis')ex.push({t:'Meslektaşlarını ara',sub:'%60 şans',fn:()=>{if(ch(.6)){log('Komiser arkadaşların tutanağı "kaybetti".','gold')}else{S.job=null;jailFor(yrs,`Meslekten ihraç edildin ve ${yrs} yıl hapis aldın.`)}}});
     if(ex.length){Q[Q.length-1].choices.splice(S.premium?1:0,0,...ex);showEv()}}
   if(S.state&&S.state.rec&&S.state.trust>=40){const tr=S.state.trust;Q[Q.length-1].choices.unshift({t:'Yukarıyı ara',sub:`Devlet koruması · %${Math.min(90,tr)} şans`,fn:()=>{if(ch(Math.min(.9,tr/100))){S.state.trust=clamp(tr-10);add('heat',-10);log('Ankara\'dan bir telefon geldi, dosya kapandı. Devlet seni koruyor.','gold')}else jailFor(yrs,`Telefonu kimse açmadı. ${yrs} yıl hapis.`)}});showEv()}
@@ -1661,10 +1663,11 @@ const ACH=[
   ['bakan','Ekselansları','Bakan ol',()=>S.pol&&S.pol.office==='bakan'],['diploma','Diplomalı','Üniversiteden mezun ol',()=>(S.grads||[]).length>=1],
   ['kumar','Şanslı gece','Kumarda tek seferde ₺1 milyon kazan',()=>S.stats.bigwin>=1],['manset','Manşetlerin adamı','10 kez gazeteye çık',()=>S.papers.filter(p=>p.me).length>=10],
   ['borsa','Borsa kurdu','Portföyün ₺10 milyonu geçsin',()=>portVal()>=1e7],['yuz','Asırlık çınar','100 yaşına gir',()=>S.age>=100],['sampiyon','Şampiyon','Kulübünle lig şampiyonu ol',()=>(S.stats.titles||0)>=1],['muteahhit','Müteahhit','5 inşaat projesini tamamla',()=>S.co&&S.co.done>=5]];
+if(!POL)for(let i=ACH.length-1;i>=0;i--)if(['secim','bakan'].includes(ACH[i][0]))ACH.splice(i,1);
 function checkAch(){if(!S||!S.ach)return;ACH.forEach(([id,n,,f])=>{try{if(!S.ach[id]&&f()){S.ach[id]=S.age;const rw=Math.round(wkRew()/2/1e4)*1e4;S.money+=rw;tixSet(tix()+1);log(`🏆 Başarım: ${n} · Ödül ${fmt(rw)} ve 1 🎟 bilet`,'gold');toast('🏆 '+n)}}catch(e){}})}
 EXTRA.basarim=()=>{const got=ACH.filter(a=>S.ach[a[0]]).length;let h=`<p class="note">${got}/${ACH.length} başarım. Başarımlar kuşaktan kuşağa geçer.</p><div class="grid">`;
   ACH.forEach(([id,n,d])=>{const ok=S.ach[id]!==undefined;h+=`<div class="it ${ok?'on':''}" style="opacity:${ok?1:.55}"><span style="font-size:30px">${ok?'🏆':'🔒'}</span><b>${n}</b><em>${d}</em></div>`});
-  h+='</div><div class="sec">İstatistikler</div><div class="sum">'+[['İşlenen suç',S.stats.crimes],['Hapse giriş',S.stats.jailed],['Ele geçirilen mekân',S.stats.venues],['Kazanılan seçim',S.stats.elections],['Kumar galibiyeti',S.stats.wins],['Gazete manşeti',S.papers.filter(p=>p.me).length],['En yüksek kasa',fmt(S.peak)],['Kuşak',S.gen||1]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('')+'</div>';
+  h+='</div><div class="sec">İstatistikler</div><div class="sum">'+[['İşlenen suç',S.stats.crimes],['Hapse giriş',S.stats.jailed],['Ele geçirilen mekân',S.stats.venues],...(POL?[['Kazanılan seçim',S.stats.elections]]:[]),['Kumar galibiyeti',S.stats.wins],['Gazete manşeti',S.papers.filter(p=>p.me).length],['En yüksek kasa',fmt(S.peak)],['Kuşak',S.gen||1]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('')+'</div>';
   return['Başarımlar',h]};
 
 /* ============ Eğitim ve meslek ============ */
@@ -1706,7 +1709,7 @@ const OFFICES=[
   {id:'bakan',n:'Bakan',age:35,sal:1500000,need:'mv',appoint:true},
   {id:'baskan',n:'Cumhurbaşkanı',age:40,sal:8000000,appoint:true}];
 const OF=id=>OFFICES.find(o=>o.id===id);
-function polQuarter(){const P=S.pol;if(!P.office)return;
+function polQuarter(){const P=S.pol;if(!POL||!P.office)return;
   const o=OF(P.office);const sal=Math.round(o.sal*.25);S.money+=sal;S.taxInc=(S.taxInc||0)+sal;P.inf=clamp(P.inf+2);P.term--;
   log(`${o.n} maaşı: ${fmt(sal)}.`,'dim');
   if(S.jail&&P.office!=='baskan'){log(`Hapse girdiğin için ${o.n.toLowerCase()} görevinden düştün.`,'bad');news(`${o.n} ${S.first} ${S.last} tutuklandı!`,3);P.office=null;return}
@@ -2939,7 +2942,7 @@ ACT.min=k=>{const P=polP();const C=Math.max(1,S.cpi);
     kar_vergi:()=>minAct('kar_vergi',0,()=>{P.taxCut=QS()+8;P.pop=clamp(P.pop-3);log('Servet vergisi kaldırıldı. İki yıl boyunca vergin yarı yarıya.','gold')}),
     zirve:()=>minAct('zirve',5e6,()=>{P.pop=clamp(P.pop+7);S.fame=clamp((S.fame||0)+8);if(S.friends.length<MAXF)S.friends.push({id:'z'+R(0,9999),name:pick(['Başkan ','Prens ','Şeyh ','Başbakan '])+pick(['Al-Rashid','Volkov','Moretti','Delacroix','Tanaka']),job:'isinsani',rel:75});log('Uluslararası zirveye ev sahipliği yaptın. Dünya liderleriyle tokalaştın, yeni bir dost edindin.','gold');news('Dünya liderleri İstanbul\'da',3)})};
   if(A[k])A[k]()};
-function polQ2(){const P=S.pol;if(!P||!P.office)return;polP();
+function polQ2(){const P=S.pol;if(!POL||!P||!P.office)return;polP();
   if(P.office==='bakan'&&P.min==='icisleri')add('heat',-5);
   if(P.office==='baskan'){add('heat',-15);if(P.garanti)S.money+=P.garanti}
   if(P.garanti&&P.office==='bakan')S.money+=P.garanti;
@@ -3393,7 +3396,7 @@ EV(1,()=>okE()&&S.age>=20,()=>({title:'Deprem',text:'Şehri sallayan depremde ma
   {t:'Yardım kampanyası başlat',sub:fmt(M(1e6))+' · Ün +++',dis:!canPay(M(1e6)),fn:()=>{pay(M(1e6));S.fame=clamp((S.fame||0)+12);gainResp(8);add('happy',5);log('Çadırlar, yemek, battaniye... Mahalle seni unutmayacak.','gold');news(`${S.first} ${S.last}'den depremzedelere dev yardım`,2)}},
   ...(S.co?[{t:'Yeniden yapım ihalelerini kap',sub:'Büyük para · Dikkat +',fn:()=>{const m=M(R(5,20)*1e6);S.money+=m;add('heat',12);log(`Deprem konutları ihalesinden ${fmt(m)} kazandın.`,'gold')}}]:[]),
   {t:'Ailene sahip çık',fn:()=>{add('happy',2);log('Aileni güvenli bir yere taşıdın.','dim')}}]}));
-EV(2,()=>okE()&&S.age>=25&&!(S.pol&&S.pol.office),()=>{const n=`${pick(NAMES)} ${pick(SURN)}`;return{title:'Seçim kampanyası',text:`Belediye başkan adayı ${n} kampanyası için senden destek istiyor.`,choices:[
+EV(2,()=>POL&&okE()&&S.age>=25&&!(S.pol&&S.pol.office),()=>{const n=`${pick(NAMES)} ${pick(SURN)}`;return{title:'Seçim kampanyası',text:`Belediye başkan adayı ${n} kampanyası için senden destek istiyor.`,choices:[
   {t:'Kampanyaya bağış yap',sub:fmt(M(2e6))+' · %55 kazanır',dis:!canPay(M(2e6)),fn:()=>{pay(M(2e6));if(ch(.55))later('secim',R(2,4),{n});else log(`${n} seçimi kaybetti. Paran boşa gitti.`,'bad');log(`${n}'in kampanyasına destek verdin.`,'dim')}},
   {t:'Mahalleyi oy vermeye ikna et',sub:'Ücretsiz · %35 kazanır',fn:()=>{if(ch(.35))later('secim',R(2,4),{n});log('Mahallenin oyları senden sorulur.','dim')}},
   {t:'Siyasete bulaşma',fn:()=>{}}]}});
@@ -3555,7 +3558,7 @@ function hubTiles(){return [
       ['sosyal','📱','Sosyal medya',`${fmtF(S.sm.f)} takipçi`,S.age>=13&&!S.jail],
       ['harita','🗺','Mafya savaşı haritası',S.org?`${S.org.turf.length} mekân senin`:'Kim nereyi tutuyor',true],
       ['gazete','📰','Gazete',`Ün %${Math.round(S.fame||0)}`,true],
-      ['siyaset','🏛','Siyaset',S.pol.office?OF(S.pol.office).n:'Seçimlere gir',S.age>=21],
+      ...(POL?[['siyaset','🏛','Siyaset',S.pol.office?OF(S.pol.office).n:'Seçimlere gir',S.age>=21]]:[]),
       ['kumar','🎰','Kumarhane','Rulet, blackjack, barbut',S.age>=18&&!S.jail],
       ['luks','🛥','Lüks oyuncaklar',S.lux.length?`${S.lux.length} parça`:'Yat, jet, helikopter',S.age>=18&&!S.jail],
       ['basarim','🏆','Başarımlar',`${Object.keys(S.ach).length}/${ACH.length}`,true],
@@ -3564,8 +3567,8 @@ function hubTiles(){return [
       ['vergi','🧾','Vergi dairesi',S.taxDebt>0?`Vergi borcu ${fmtS(S.taxDebt)}`:'Vergiler ve giderler',S.age>=18],
       ['borsa','📈','Borsa',portVal()?`Portföy ${fmtS(portVal())}`:'Hisse al, sat',!S.jail&&S.age>=18],
       ['karakol','🚓','Polis karakolu',`Dikkat %${S.heat}`,!S.jail&&S.age>=14],
-      ...(S.pol&&S.pol.office==='bakan'?[['bakanlik','🏛','Bakanlık',S.pol.min?MINS[S.pol.min].n:'Bakanlığını seç',true]]:[]),
-      ...(S.pol&&S.pol.office==='baskan'?[['baskanlik','🇹🇷','Cumhurbaşkanlığı',`Halk desteği %${polP().pop}`,true]]:[]),
+      ...(POL&&S.pol&&S.pol.office==='bakan'?[['bakanlik','🏛','Bakanlık',S.pol.min?MINS[S.pol.min].n:'Bakanlığını seç',true]]:[]),
+      ...(POL&&S.pol&&S.pol.office==='baskan'?[['baskanlik','🇹🇷','Cumhurbaşkanlığı',`Halk desteği %${polP().pop}`,true]]:[]),
       ['mit','🏛','İstihbarat binası',S.state.rec?`Devlet güveni %${S.state.trust}`:'21 yaşından itibaren',!S.jail&&S.age>=21]]}
 const tileHTML=([id,ic,n,d,ok])=>`<button class="tile" data-go="${id}" ${ok?'':'disabled'}><span class="ti">${ic}</span><b>${n}</b><span>${d}</span></button>`;
 const HCATS=[
@@ -3574,7 +3577,7 @@ const HCATS=[
   ['para','💰','Para ve finans','Banka, borsa, döviz, kara para, varlık yönetimi, vergi',['banka','borsa','doviz','kara','varlikyon','vergi','kumar']],
   ['is','🏢','İş dünyası','Şirketler, müzik, futbol kulübü, inşaat, oto galeri',['sirket','muzik','kulup','insaat','ogaleri']],
   ['alisveris','🛍','Alışveriş','Emlak, araba, kuyumcu ve saat, AVM, lüks oyuncaklar',['emlak','galeri','kuyumcu','avm','luks']],
-  ['sehir','🏙','Şehir, dünya ve devlet','Siyaset, bakanlık, yaşadığın şehir, yurt dışı, karakol, istihbarat',['baskanlik','bakanlik','siyaset','dunya','karakol','mit','gazete']]];
+  ['sehir','🏙','Şehir, dünya ve devlet',POL?'Siyaset, bakanlık, yaşadığın şehir, yurt dışı, karakol, istihbarat':'Yaşadığın şehir, yurt dışı, karakol, istihbarat',['baskanlik','bakanlik','siyaset','dunya','karakol','mit','gazete']]];
 HCATS.forEach(([cid,ic,n,d,ids])=>{EXTRA['cat_'+cid]=()=>{const T=hubTiles();let h=`<p class="note">${d}.</p>`;h+='<div class="tiles">'+ids.map(id=>T.find(t=>t[0]===id)).filter(Boolean).map(tileHTML).join('')+'</div>';return[`${ic} ${n}`,h]}});
 function hubAlerts(){const a=[];
   if(S.rivals&&S.rivals.some(r=>r.war&&!r.dead))a.push(['rakip','⚔️','Savaştasın! Rakip çetelere bak']);
@@ -3583,7 +3586,7 @@ function hubAlerts(){const a=[];
   if(S.taxDebt>0)a.push(['vergi','🧾',`Vergi borcun var: ${fmtS(S.taxDebt)}`]);
   if(S.heat>=60)a.push(['karakol','🚨',`Polis dikkati %${S.heat}, baskın gelebilir`]);
   if(S.nl&&(S.nl.addict||S.nl.liver>=60))a.push(['gece','🏥','Sağlığın içkiden zarar görüyor']);
-  if(S.pol&&S.pol.office==='bakan'&&!S.pol.min)a.push(['bakanlik','🏛','Bakanlığını seçmedin']);
+  if(POL&&S.pol&&S.pol.office==='bakan'&&!S.pol.min)a.push(['bakanlik','🏛','Bakanlığını seçmedin']);
   if((S.loans||[]).some(l=>l.late))a.push(['banka','⚠️','Gecikmiş kredi taksitin var']);
   return a}
 const DYNP={};
@@ -3861,6 +3864,7 @@ const LAKAP=[
   ['cinar',()=>'Çınar','🌳','Herkesi gömdü, kendisi en son gitti.','95 yaşını gör',()=>S.age>=95],
   ['genc',()=>'Genç Giden','🥀','Hızlı yaşadı, erken gitti.','30 yaşından önce öl',()=>S.age<30],
   ['siradan',()=>'Sıradan','🍵','Ne iz bıraktı ne leke.','Hiçbir lakaba uymayan bir hayat yaşa',()=>true]];
+if(!POL){const _i=LAKAP.findIndex(L=>L[0]==='halkin');if(_i>=0)LAKAP.splice(_i,1)}
 const LKG=()=>{try{return JSON.parse(localStorage.getItem('mafya-lakap')||'{}')}catch(e){return {}}};
 function lakapPick(){for(const L of LAKAP){try{if(L[5]())return L}catch(e){}}return LAKAP[LAKAP.length-1]}
 function lakapAward(){if(S.lakap)return;const L=lakapPick();S.lakap=L[0];S.lakapN=L[1]();const c=LKG(),fresh=!c[L[0]];
