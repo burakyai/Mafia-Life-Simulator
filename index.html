@@ -316,7 +316,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-1045';
+const APPV='2026.11.09-1100';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1583,7 +1583,7 @@ const FJOBS=[
   ['kuyumcu','💍','Kuyumcu soygunu',3,1.2e6,.4,12],
   ['liman','⚓','Liman sevkiyatı',3,2.5e6,.35,10]];
 const FJ=id=>FJOBS.find(j=>j[0]===id);
-const fjCut=()=>S.boss?.4:[.1,.1,.2,.3,.3,.4][rank()];
+const fjCut=()=>S.boss?.5:[.1,.1,.2,.3,.3,.5][rank()];
 const fjCom=()=>S.boss?.2:[0,0,0,.1,.15,.2][rank()];
 const fjAmt=j=>Math.round(j[4]*(S.cpi||1)*(.7+Math.random()*.6)/1e3)*1e3;
 const fjEst=j=>Math.round(j[4]*(S.cpi||1)/1e3)*1e3;
@@ -1646,7 +1646,7 @@ function fjLeave(hit){const was=S.family;S.exFamily=was;S.family=null;S.boss=fal
 function fjSheet(){const F=fjEnsure(),rk=rank(),now=QS();
   let h=`<div class="sum"><div><span>Aile</span><b>${S.family}</b></div><div><span>Baba</span><b>${S.boss?'Sensin':(fam()?fam().b:'—')}</b></div><div><span>Rütben</span><b style="color:var(--gold)">${RANKS[rk].n}</b></div><div><span>İşlerden payın</span><b>%${Math.round(fjCut()*100)}</b></div><div><span>Sadakat</span><b style="color:${F.lo<30?'var(--bad)':'var(--good)'}">%${F.lo}</b></div><div><span>Aileye getirdiğin</span><b>${fmtS(F.brought)}</b></div></div>`;
   if(F.debt)h+=`<div class="sec">⚠️ Aileye borcun var</div>`+row('data-x="fjpay:"','🗡',`${fmt(F.debt)} cebe attın`,`Ödemezsen suikastçı gelir · ${Math.max(0,F.due-now)} çeyrek kaldı`,fmtS(Math.round(F.debt*1.2)),!canPayB(Math.round(F.debt*1.2)));
-  if(S.boss)h+='<div class="sec">Aile senin</div><p class="note">Bu ailenin Babası sensin. Kimse sana emir veremez; işlerden gelen paranın %40\'ı senin, kalanı ailenin kasasına, ailenin kasası ve adamları emrinde.</p>';
+  if(S.boss)h+='<div class="sec">Aile senin</div><p class="note">Bu ailenin Babası sensin. Kimse sana emir veremez; işlerden gelen paranın yarısı senin, yarısı ailenin kasasına, ailenin kasası ve adamları emrinde.</p>';
   else h+='<div class="sec">Babanın isteği</div>';
   if(S.boss){}else if(F.req){const q=F.req;h+=q.k==='para'?row('data-x="fjreq:"','🌹',fjReqText(q),`Süre: ${Math.max(0,q.due-now)} çeyrek`,fmtS(q.n),!canPay(q.n)):row('data-x="nop:"','🌹',fjReqText(q),`Süre: ${Math.max(0,q.due-now)} çeyrek · Aşağıdaki işlerden yap`,'',true)}
   else h+='<p class="note">Şu an Baba\'nın senden özel bir isteği yok. Aile işlerine devam et.</p>';
