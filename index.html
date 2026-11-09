@@ -316,7 +316,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-1000';
+const APPV='2026.11.09-1030';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -854,7 +854,7 @@ const EVENTS=[
   {w:1,c:()=>!S.jail&&S.family&&rank()>=3&&!S.boss,e:()=>({title:'İhanet teklifi',prem:{t:'Parayı al, rakibi ifşa et',sub:'Para ++ · Sıfır risk',fn:()=>{dirty(750000);gainResp(10);log('Rakibin parasını alıp planı Babaya anlattın. Hem zengin hem kahraman oldun.','gold')}},text:`${rival()} gizlice buluşma istedi: "Babanı bize ver, ${fmt(750000)} senin."`,choices:[
     {t:'Kabul et',sub:'Para ++ · Büyük risk',fn:()=>{dirty(750000);if(ch(.35)){S.cause='İhaneti ortaya çıktı. Aile affetmedi.';S.health=0;log('İhanetin ortaya çıktı.','bad')}else{log('Parayı aldın, kimse bir şey anlamadı. Şimdilik.','bad');add('happy',-8)}}},
     {t:'Reddet ve Babaya haber ver',sub:'Saygı +8',fn:()=>{gainResp(8);log('Sadakatin ailede dilden dile dolaşıyor.','good')}}]})},
-  {w:5,c:()=>!S.jail&&S.family&&!S.boss&&S.respect>=86,e:()=>({title:'Taht boşalıyor',prem:{t:'Tahta kansız otur',sub:'Garantili',fn:()=>{S.boss=true;gainResp(6);log(`${S.family}'nin yeni Babası sensin. Tek bir kurşun atılmadı.`,'gold')}},text:`${boss()} yaşlandı. Aile yeni bir lider arıyor ve herkes sana bakıyor.`,choices:[
+  {w:5,c:()=>!S.jail&&S.family&&!S.boss&&S.respect>=86&&S.age>=45,e:()=>({title:'Taht boşalıyor',prem:{t:'Tahta kansız otur',sub:'Garantili',fn:()=>{S.boss=true;gainResp(6);log(`${S.family}'nin yeni Babası sensin. Tek bir kurşun atılmadı.`,'gold')}},text:`${boss()} yaşlandı. Aile yeni bir lider arıyor ve herkes sana bakıyor.`,choices:[
     {t:'Tahta otur',sub:'Şans %75',fn:()=>{if(ch(.75)){S.boss=true;log(`${S.family}'nin yeni Babası sensin. Eller öpülüyor.`,'gold');gainResp(4)}else{hurt(R(30,55),'Taht kavgası');add('respect',-6);log('Kaptanlardan biri sana kafa tuttu. Kanlı bir gece oldu.','bad')}}},
     {t:'Sadık kal',sub:'Saygı +',fn:()=>{gainResp(3);log('Şimdilik sadakat. Zamanın gelecek.','dim')}}]})},
   {w:1,c:()=>!S.jail&&S.heat>=35,e:()=>({title:'Meraklı gazeteci',prem:{t:'Gazeteyi satın al',sub:'Dikkat −20',fn:()=>{add('heat',-20);gainResp(3);log('Gazetenin sahibi artık dayının ortağı. Haber çöpe gitti.','gold')}},text:'Bir gazeteci yeraltı dünyası hakkında dizi haber hazırlıyor. Adın da geçiyor.',choices:[
@@ -1070,7 +1070,7 @@ function ensure(){
   if(S.taxInc===undefined)S.taxInc=0;if(S.taxDebt===undefined)S.taxDebt=0;if(S.taxLast===undefined)S.taxLast=null;
   ensureOrg();
   if(!S.accts)S.accts=[];
-  if(!S.econ)S.econ={ph:'yuksek',left:R(3,6)};if(!S.cpi)S.cpi=1;if(!S.infl)S.infl=.14;if(S.infl>.25)S.infl=.25;if(!S.fx)S.fx={usd:42.5,eur:49.3};if(!S.fxh)S.fxh={usd:[S.fx.usd],eur:[S.fx.eur]};if(!S.fxw)S.fxw={usd:0,eur:0};if(!S.council)S.council={rel:{},chair:false,rules:[],chairEnd:0};applyCPI();
+  if(!S.econ)S.econ={ph:'yuksek',left:R(3,6)};if(!S.cpi)S.cpi=1;if(S.boss&&S.family&&!S.org&&S.age<45){S.boss=false;S.respect=Math.min(S.respect,85);setTimeout(()=>{try{log(`Aile meclisi ${S.age} yaşında bir Babayı kabul etmedi. Tahta tecrübeli biri geçti; sen Sağ Kol olarak devam ediyorsun.`,'bad')}catch(e){}},0)}if(!S.infl)S.infl=.14;if(S.infl>.25)S.infl=.25;if(!S.fx)S.fx={usd:42.5,eur:49.3};if(!S.fxh)S.fxh={usd:[S.fx.usd],eur:[S.fx.eur]};if(!S.fxw)S.fxw={usd:0,eur:0};if(!S.council)S.council={rel:{},chair:false,rules:[],chairEnd:0};applyCPI();
   if(S.club===undefined)S.club=null;if(S.co===undefined)S.co=null;if(S.label===undefined)S.label=null;if(S.gal===undefined)S.gal=null;if(S.black===undefined)S.black=0;if(!S.watches)S.watches=[];if(!S.firms)S.firms=[];try{migrateArtists()}catch(e){}if(!S.loans)S.loans=[];if(!S.city)S.city='istanbul';if(S.gender!=='k'&&['uzun','atkuyrugu','topuz','dalgali'].includes(S.look.hair))S.look.hair='italyan';if(S.goldKg===undefined)S.goldKg=0;if(!S.goldUsd)S.goldUsd=124000;if(S.jewels.some(j=>j.id==='kulce')){const n=S.jewels.filter(j=>j.id==='kulce').length;S.jewels=S.jewels.filter(j=>j.id!=='kulce');S.goldKg+=n;S.goldCost=(S.goldCost||0)+n*GKG()}if(!S.orders)S.orders={};if(!S.origin)S.origin='istanbul';if(!S.famBg)S.famBg='orta';
   ensureBosses();if(!S.artists)S.artists=[];if(!S.sm)S.sm={f:0,ver:false};if(!S.offs)S.offs={};if(S.abroad===undefined)S.abroad=null;
   migrateCars();
@@ -1600,6 +1600,7 @@ const FJMAX=3;const fjLeft=()=>{if(!S.fjq||S.fjq.q!==QS())S.fjq={q:QS(),n:0};ret
 ACT.fjob=id=>{const F=fjEnsure();const j=FJ(id);if(!F||!j||S.jail||j[3]>rank())return;if(!S.premium&&fjLeft()<=0){toast(`Bu çeyrek aile için ${FJMAX} iş yaptın. Sonraki çeyreği bekle.`);return}if(!useAct())return;fjLeft();S.fjq.n++;closeSheet();
   if(Math.random()<fjRisk(j)){add('heat',j[6]);if(ch(.4)){jailFor(.5,`${j[2]} sırasında yakalandın. Aile avukat gönderdi ama 6 ay yatacaksın.`)}else{hurt(R(10,30),j[2]);log(`${j[2]} ters gitti. Yaralı kurtuldun, eli boş döndün.`,'bad')}F.lo=Math.max(0,F.lo-3);done();return}
   add('heat',Math.ceil(j[6]/2));const amt=fjAmt(j),cut=Math.round(amt*fjCut());
+  if(S.boss){dirty(cut);gainResp(1);fjDeliver(amt,id);log(`${j[2]}: ${fmt(amt)} ailenin kasasına girdi, Baba olarak payın ${fmt(cut)}.`,'good');done();return}
   queue({title:j[1]+' '+j[2],text:`İş temiz bitti. Elinde ailenin ${fmt(amt)} parası var. Kural belli: para önce Baba'ya gider, payını o verir.`,choices:[
     {t:'Parayı Baba\'ya teslim et',sub:`Payın ${fmt(cut)} · Sadakat +`,fn:()=>{dirty(cut);F.lo=Math.min(100,F.lo+4);gainResp(2);fjDeliver(amt,id);log(`${j[2]}: ${fmt(amt)} aileye teslim edildi, payın ${fmt(cut)}.`,'good')}},
     {t:'Parayı cebe at',sub:`${fmt(amt)} senin · Aile peşine düşer`,fn:()=>{dirty(amt);F.debt+=amt;F.due=QS()+2;F.dfam=S.family;F.lo=Math.max(0,F.lo-35);log(`${fmt(amt)} aileye gitmedi. ${S.family} parasını iki çeyrek içinde istiyor, yoksa peşine adam takılacak.`,'bad')}}]});
@@ -1627,7 +1628,8 @@ function fjQuarter(){const F=S.family?fjEnsure():(S.fj&&S.fj.debt?S.fj:null);if(
   (F.sqs||[]).forEach(m=>{const cap=12+m.str*5;if(m.jail&&ch(.3))m.jail=0;if(typeof m.hurt==='number'&&m.hurt>0)m.hurt--;m.sq=Math.min(cap,(m.sq||0)+Math.ceil(cap*.3));m.ar=Math.min(100,(m.ar||0)+15)});
   // istekler
   if(F.req&&now>=F.req.due){F.lo=Math.max(0,F.lo-20);add('respect',-5);log(`Babanın isteğini yerine getirmedin: ${fjReqText(F.req)}. Ailede adın kötüye çıktı.`,'bad');F.req=null}
-  if(!F.req&&!S.jail&&ch(.3)){const r=Math.random(),ok=FJOBS.filter(j=>j[3]<=rank());
+  if(S.boss)F.req=null;
+  if(!S.boss&&!F.req&&!S.jail&&ch(.3)){const r=Math.random(),ok=FJOBS.filter(j=>j[3]<=rank());
     F.req=r<.35?{k:'para',n:Math.round(fjEst(ok[ok.length-1])*1.2/1e3)*1e3}:r<.7?{k:'is',n:R(2,3),got:0}:{k:'job',j:pick(ok)[0],got:0};F.req.due=now+2;
     queue({title:'🌹 Babadan haber var',text:`${fam()?fam().b:'Baba'} seni çağırttı: "${fjReqText(F.req)}. İki çeyrek süren var."`,choices:[{t:'Emredersin Baba',fn:()=>log(`Babanın isteği: ${fjReqText(F.req)}.`,'gold')}]})}
   // sadakat çöktüyse
@@ -1644,8 +1646,9 @@ function fjLeave(hit){const was=S.family;S.exFamily=was;S.family=null;S.boss=fal
 function fjSheet(){const F=fjEnsure(),rk=rank(),now=QS();
   let h=`<div class="sum"><div><span>Aile</span><b>${S.family}</b></div><div><span>Baba</span><b>${S.boss?'Sensin':(fam()?fam().b:'—')}</b></div><div><span>Rütben</span><b style="color:var(--gold)">${RANKS[rk].n}</b></div><div><span>İşlerden payın</span><b>%${Math.round(fjCut()*100)}</b></div><div><span>Sadakat</span><b style="color:${F.lo<30?'var(--bad)':'var(--good)'}">%${F.lo}</b></div><div><span>Aileye getirdiğin</span><b>${fmtS(F.brought)}</b></div></div>`;
   if(F.debt)h+=`<div class="sec">⚠️ Aileye borcun var</div>`+row('data-x="fjpay:"','🗡',`${fmt(F.debt)} cebe attın`,`Ödemezsen suikastçı gelir · ${Math.max(0,F.due-now)} çeyrek kaldı`,fmtS(Math.round(F.debt*1.2)),!canPayB(Math.round(F.debt*1.2)));
-  h+='<div class="sec">Babanın isteği</div>';
-  if(F.req){const q=F.req;h+=q.k==='para'?row('data-x="fjreq:"','🌹',fjReqText(q),`Süre: ${Math.max(0,q.due-now)} çeyrek`,fmtS(q.n),!canPay(q.n)):row('data-x="nop:"','🌹',fjReqText(q),`Süre: ${Math.max(0,q.due-now)} çeyrek · Aşağıdaki işlerden yap`,'',true)}
+  if(S.boss)h+='<div class="sec">Aile senin</div><p class="note">Bu ailenin Babası sensin. Kimse sana emir veremez; işlerden gelen paranın %60\'ı senin, ailenin kasası ve adamları emrinde.</p>';
+  else h+='<div class="sec">Babanın isteği</div>';
+  if(S.boss){}else if(F.req){const q=F.req;h+=q.k==='para'?row('data-x="fjreq:"','🌹',fjReqText(q),`Süre: ${Math.max(0,q.due-now)} çeyrek`,fmtS(q.n),!canPay(q.n)):row('data-x="nop:"','🌹',fjReqText(q),`Süre: ${Math.max(0,q.due-now)} çeyrek · Aşağıdaki işlerden yap`,'',true)}
   else h+='<p class="note">Şu an Baba\'nın senden özel bir isteği yok. Aile işlerine devam et.</p>';
   h+=`<div class="sec">Aile işleri</div><p class="note">Ailenin adına iş çevir. Para önce Baba'ya gider, payını o verir. Parayı teslim etmezsen peşine suikastçı takılır.${!S.premium&&fjLeft()<=0?' <b>Bu çeyrek aile için yeterince iş çevirdin.</b>':''}</p>`;
   FJOBS.forEach(j=>{const lock=j[3]>rk;h+=row(`data-x="fjob:${j[0]}"`,j[1],j[2],lock?`${RANKS[j[3]].n} rütbesinde açılır`:`Aileye ~${fmtS(fjEst(j))} · Payın ~${fmtS(fjEst(j)*fjCut())} · Risk %${Math.round(fjRisk(j)*100)}`,'',lock||!!S.jail||(!S.premium&&fjLeft()<=0))});
@@ -3426,14 +3429,14 @@ const EVP=[
 [18,60,"street","İntikam","Yıllar önce seni döven çocuk şimdi mahallede esnaf.",[["Hesap sor","",1,"r+3 x+3","Gözlerine baktı, tanıdı, özür diledi."],["Geçmişte kaldı","",1,"p+3",""]]],
 [18,60,"street","Rakip lider","Rakip çetenin lideri gizlice buluşma istiyor.",[["Git","",.6,"r+4","Toprak paylaşımında anlaştınız.","h-15","Tuzakmış."],["Adam gönder","",1,"",""]]],
 // ---- AİLE (S.family)
-[18,70,"fam","Babanın düğünü","Babanın kızı evleniyor. Herkes takı takacak.",[["Ağır takı tak","",1,"m-30000 r+4","Baba boynuna takılan bileziği görüp gülümsedi."],["Sembolik tak","",1,"m-3000 r-2",""]]],
-[18,70,"fam","Ailede ihanet","Ailedeki bir adamın rakiplere bilgi sattığını öğrendin.",[["Babaya söyle","",1,"r+5","Hain ortadan kayboldu, Baba sana güveniyor."],["Kendin hallet","",.6,"r+7 x+5","Haini kendin cezalandırdın.","x+12","İz bıraktın."]]],
-[18,70,"fam","Aile yemeği","Baba bütün aileyi pazar yemeğine çağırdı.",[["Git","",1,"r+2 p+3","Babanın sağ tarafına oturttular."],["Mazeret uydur","",1,"r-3",""]]],
-[18,70,"fam","Aile içi kavga","İki kaptan arasında kavga çıktı, senden taraf tutman isteniyor.",[["Büyüğün tarafını tut","",.6,"r+3","Kazanan taraftaydın.","r-4","Yanlış atı seçtin."],["Arabulucu ol","",.5,"r+5","İkisi de el sıkıştı.","r-2","İkisi de sana küstü."]]],
-[18,70,"fam","Babanın hastalığı","Baba hastanede. Ailede kimin yükseleceği konuşuluyor.",[["Başında bekle","",1,"r+4 p-2","Gözünü açtığında seni gördü."],["Koltuğa göz dik","",.4,"r+6","Destekçi topladın.","r-6","Baba iyileşti ve her şeyi duydu."]]],
-[18,70,"fam","Rakip ailenin elçisi","Rakip aile sana gizlice kendi saflarına geçmeyi teklif ediyor.",[["Reddet ve Babaya anlat","",1,"r+5",""],["Düşüneceğim de","",1,"r-2",""]]],
-[18,70,"fam","Silah teslimatı","Aile seni bir silah teslimatını korumaya gönderdi.",[["Görevi yap","",.7,"r+4 x+4","Teslimat sorunsuz.","h-12 x+8","Çatışma çıktı."],["Hastayım de","",1,"r-4",""]]],
-[18,70,"fam","Babanın oğlu","Babanın şımarık oğlu senin adamlarına kafa tutuyor.",[["Sabret","",1,"r-1",""],["Haddini bildir","",.5,"r+4","Oğlan bir daha sesini çıkarmadı.","r-8","Baba olayı duydu ve sinirlendi."]]],
+[18,70,"fam noboss","Babanın düğünü","Babanın kızı evleniyor. Herkes takı takacak.",[["Ağır takı tak","",1,"m-30000 r+4","Baba boynuna takılan bileziği görüp gülümsedi."],["Sembolik tak","",1,"m-3000 r-2",""]]],
+[18,70,"fam noboss","Ailede ihanet","Ailedeki bir adamın rakiplere bilgi sattığını öğrendin.",[["Babaya söyle","",1,"r+5","Hain ortadan kayboldu, Baba sana güveniyor."],["Kendin hallet","",.6,"r+7 x+5","Haini kendin cezalandırdın.","x+12","İz bıraktın."]]],
+[18,70,"fam noboss","Aile yemeği","Baba bütün aileyi pazar yemeğine çağırdı.",[["Git","",1,"r+2 p+3","Babanın sağ tarafına oturttular."],["Mazeret uydur","",1,"r-3",""]]],
+[18,70,"fam noboss","Aile içi kavga","İki kaptan arasında kavga çıktı, senden taraf tutman isteniyor.",[["Büyüğün tarafını tut","",.6,"r+3","Kazanan taraftaydın.","r-4","Yanlış atı seçtin."],["Arabulucu ol","",.5,"r+5","İkisi de el sıkıştı.","r-2","İkisi de sana küstü."]]],
+[18,70,"fam noboss","Babanın hastalığı","Baba hastanede. Ailede kimin yükseleceği konuşuluyor.",[["Başında bekle","",1,"r+4 p-2","Gözünü açtığında seni gördü."],["Koltuğa göz dik","",.4,"r+6","Destekçi topladın.","r-6","Baba iyileşti ve her şeyi duydu."]]],
+[18,70,"fam noboss","Rakip ailenin elçisi","Rakip aile sana gizlice kendi saflarına geçmeyi teklif ediyor.",[["Reddet ve Babaya anlat","",1,"r+5",""],["Düşüneceğim de","",1,"r-2",""]]],
+[18,70,"fam noboss","Silah teslimatı","Aile seni bir silah teslimatını korumaya gönderdi.",[["Görevi yap","",.7,"r+4 x+4","Teslimat sorunsuz.","h-12 x+8","Çatışma çıktı."],["Hastayım de","",1,"r-4",""]]],
+[18,70,"fam noboss","Babanın oğlu","Babanın şımarık oğlu senin adamlarına kafa tutuyor.",[["Sabret","",1,"r-1",""],["Haddini bildir","",.5,"r+4","Oğlan bir daha sesini çıkarmadı.","r-8","Baba olayı duydu ve sinirlendi."]]],
 // ---- ÖRGÜT (S.org)
 [18,70,"org","Yeni eleman","Mahalleden genç biri örgütüne katılmak için yalvarıyor.",[["Sına","",.6,"r+2","İlk işi kusursuz yaptı.","x+4","İlk işte yakalandı."],["Geri çevir","",1,"",""]]],
 [18,70,"org","Adamın düğünü","En güvendiğin adamın evleniyor.",[["Düğünü sen yap","",1,"m-40000 r+5","Bütün mahalle davetliydi."],["Takı tak","",1,"m-5000 r+1",""]]],
@@ -3531,7 +3534,7 @@ function evFx(str,tt){if(!str)return;str.split(' ').forEach(tok=>{const m=tok.ma
   else if(k==='m'){const c=M(Math.abs(v));S.money=Math.max(0,S.money-c)}else if(k==='d')dirty(M(v));else if(k==='w')S.money+=M(v)})}
 const evCost=str=>{let c=0;(str||'').split(' ').forEach(t=>{const m=t.match(/^m-(\d+)$/);if(m)c+=M(+m[1])});return c};
 function evSub(c){const cost=evCost(c[3]);const parts=[];if(cost)parts.push(fmt(cost));if(c[2]<1)parts.push(`Şans %${Math.round(c[2]*100)}`);return c[1]||parts.join(' · ')}
-const EVT={fam:()=>!!S.family,nofam:()=>!S.family,org:()=>!!S.org,job:()=>!!S.job,nojob:()=>!S.job,part:()=>!!S.partner,nopart:()=>!S.partner,mar:()=>!!S.married,kids:()=>S.kids&&S.kids.length>0,car:()=>!!S.car||(S.cars&&S.cars.length>0),rich:()=>S.money>=M(5e5),poor:()=>S.money<M(2e4),street:()=>rank()>=1,boss:()=>!!S.boss};
+const EVT={fam:()=>!!S.family,nofam:()=>!S.family,org:()=>!!S.org,job:()=>!!S.job,nojob:()=>!S.job,part:()=>!!S.partner,nopart:()=>!S.partner,mar:()=>!!S.married,kids:()=>S.kids&&S.kids.length>0,car:()=>!!S.car||(S.cars&&S.cars.length>0),rich:()=>S.money>=M(5e5),poor:()=>S.money<M(2e4),street:()=>rank()>=1,boss:()=>!!S.boss,noboss:()=>!S.boss};
 EVP.forEach((e,i)=>{const[a0,a1,tags,title,text,chs]=e;const tl=tags?tags.split(' '):[];const jail=tl.includes('jail');
   EV(1,()=>{if(jail?!(S.jail>0&&!S.abroad):!okE())return false;if(S.age<a0||S.age>a1)return false;if((S.evs||[]).includes(i))return false;return tl.every(t=>t==='jail'||(EVT[t]?EVT[t]():true))},
     ()=>{S.evs=[...(S.evs||[]),i];return{title,text,choices:chs.map(c=>({t:c[0],sub:evSub(c),dis:evCost(c[3])>0&&!canPay(evCost(c[3])),fn:()=>{if(Math.random()<c[2]){evFx(c[3],title);if(c[4])log(c[4],/[+]/.test(c[3]||'')&&!/-/.test(c[3]||'')?'good':'dim')}else{evFx(c[5],title);if(c[6])log(c[6],'bad')}}}))}})});
@@ -3698,7 +3701,7 @@ EV(2,()=>okE()&&S.age>=18&&S.friends.length>0,()=>{const f=pick(S.friends);retur
 EV(1,()=>okE()&&S.age>=25&&S.respect>=50,()=>({title:'Belgesel teklifi',text:'Ünlü bir yayın platformu hayatını belgesel yapmak istiyor.',choices:[
   {t:'Kabul et',sub:fmt(M(3e6))+' · Ün +++ · Dikkat ++',fn:()=>{S.money+=M(3e6);S.fame=clamp((S.fame||0)+15);add('heat',15);log('Belgeselin dünya çapında izlenme rekoru kırdı.','gold');news(`"${S.last}": Bir efsanenin hikâyesi yayında`,3)}},
   {t:'Reddet',sub:'Gölgede kalmak iyidir',fn:()=>{add('heat',-5)}}]}));
-EV(2,()=>okE()&&S.age>=18&&!S.org&&!!S.family,()=>({title:'Babanın sınavı',text:`${S.family} babası seni çağırdı. "Bu gece bir paket teslim edeceksin. Sorma, açma."`,choices:[
+EV(2,()=>okE()&&S.age>=18&&!S.org&&!!S.family&&!S.boss,()=>({title:'Babanın sınavı',text:`${S.family} babası seni çağırdı. "Bu gece bir paket teslim edeceksin. Sorma, açma."`,choices:[
   {t:'Teslim et',sub:'Saygı ++ · Risk',fn:()=>{if(ch(.8)){gainResp(10);dirty(M(100000));log('Paket yerine ulaştı. Baba omzuna dokundu.','gold')}else{add('heat',20);log('Yolda çevirmeye takıldın, paketi atmak zorunda kaldın!','bad');gainResp(-5)}}},
   {t:'Paketi aç',sub:'Merak kediyi öldürür',fn:()=>{if(ch(.5)){log('İçinde bir defter vardı: rüşvet listesi. Kopyasını aldın.','gold');gainResp(3)}else{add('respect',-10);log('Açtığın anlaşıldı. Baba güvenini kaybetti.','bad')}}}]}));
 EV(1,()=>okE()&&S.age>=30&&S.respect>=40,()=>{const n=`${pick(NICK)} ${pick(NAMES)}`;return{title:'Hapisteki düşman',text:`Seni yıllar önce satan ${n} hapiste. Bir gardiyan, "istersen hayatını zorlaştırırız" diyor.`,choices:[
