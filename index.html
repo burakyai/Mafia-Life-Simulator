@@ -316,7 +316,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0930';
+const APPV='2026.11.09-1000';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -902,7 +902,7 @@ function doCrime(id,forced){
     if(ch(.65)){log(`${c.n} girişimin polise takıldı.`,'bad');closeSheet();arrest(c.n,c.sev)}
     else{log(`${c.n} işi ters gitti, eli boş döndün.`,'bad');if(c.hurt&&ch(.5))hurt(R(8,22),c.n+' sırasında aldığı yaralar');add('respect',-1)}
   }else{
-    const m=R(c.m[0],c.m[1]);dirty(m);gainResp(R(c.r[0],c.r[1]));add('heat',c.h);
+    const m=R(c.m[0],c.m[1]);dirty(m);gainResp(R(c.r[0],c.r[1]));add('heat',wk('gece')?Math.ceil(c.h/2):c.h);
     log(`${c.n}: ${fmt(m)} kazandın.`,'good');S.stats.crimes++;if(c.id==='silah')news(`Sınırda dev sevkiyat: ${fmt(m)}'lik kaçakçılık ağı konuşuluyor`,4);else if(c.id==='altin')news(`Asrın soygunu: havalimanından ${fmt(m)}'lik altın buhar oldu!`,4);else if(['kuyumcu','zirhli','ihale'].includes(c.id))news(c.id==='zirhli'?`Zırhlı araç soygunu! ${fmt(m)} buhar oldu`:c.id==='kuyumcu'?`Kapalıçarşı'da kuyumcu soygunu`:`İhalede şaibe: ${fmt(m)}'lik iş kimde?`,c.id==='ihale'?2:3);
     if(c.hurt&&ch(c.hurt*.4)){hurt(R(5,15),c.n+' sırasında aldığı yaralar');log('Çatışmada hafif yaralandın.','bad')}
   }
@@ -2533,7 +2533,7 @@ EXTRA.insaat=()=>{const co=S.co;let h='';
 const MIN=60e3,HOUR=36e5;
 function fmtT(ms){if(ms<=0)return 'Hazır';const s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?`${h} sa ${m} dk`:m?`${m} dk ${String(x).padStart(2,'0')} sn`:`${x} sn`}
 function fmtDur(ms){const m=Math.round(ms/MIN);return m>=60?`${Math.floor(m/60)} saat${m%60?' '+m%60+' dakika':''}`:`${m} dakika`}
-const WEEKEV=[{id:'liman',n:'⚓ Liman haftası',d:'Kaçakçılık seferleri %50 fazla kazandırır'},{id:'harac',n:'💼 Haraç haftası',d:'Haraç gelirleri %50 fazla'},{id:'insaat',n:'🏗 Beton haftası',d:'Yeni inşaatlar yarı sürede biter'},{id:'savas',n:'⚔️ Kan haftası',d:'Çete savaşı ganimetleri 2 kat'},{id:'gece',n:'🌙 Gece haftası',d:'Yokluğunda biriken kazanç 2 kat'}];
+const WEEKEV=[{id:'liman',n:'⚓ Liman haftası',d:'Kaçakçılık seferleri %50 fazla kazandırır'},{id:'harac',n:'💼 Haraç haftası',d:'Haraç gelirleri %50 fazla'},{id:'insaat',n:'🏗 Beton haftası',d:'Yeni inşaatlar yarı sürede biter'},{id:'savas',n:'⚔️ Kan haftası',d:'Çete savaşı ganimetleri 2 kat'},{id:'gece',n:'🌙 Gece haftası',d:'Suç işlerinde polis dikkati yarı yarıya artar'}];
 const weekNo=()=>{const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5+3)/7)};
 const WEV=()=>WEEKEV[weekNo()%WEEKEV.length];
 const wk=id=>WEV().id===id;
@@ -2554,7 +2554,7 @@ function pjTick(){if(!S||!S.co)return false;let c=false;S.co.projects.forEach(p=
 function passiveParts(){let dirtyQ=0,clean=0;try{if(S.st)S.st.shops.forEach(o=>{if(o.st==='odeyor'&&shopT(o).il)dirtyQ+=shopFee(o)})}catch(e){}
   if(S.org)dirtyQ+=S.org.turf.reduce((a,v)=>a+v.inc,0)/4;clean+=propIncome();S.houses.forEach(o=>{if(o.ten)clean+=o.ten.rent});return{clean,dirty:dirtyQ}}
 function welcomeBack(){if(!S||!S.alive)return;if(S.ops&&S.ops.length){const c=S.ops.reduce((a,o)=>a+o.cost,0);S.money+=c;S.ops=[];log(`Bekleyen sevkiyatlar kaçakçılık hatlarına devredildi, yatırımın ${fmt(c)} iade edildi.`,'dim')}const now=Date.now();const last=Math.max(S.savedAt||now,S.offT||0);S.offT=now;const away=now-last;const msgs=[];
-  if(away>=10*MIN&&S.age>=16&&!S.jail){const hrs=Math.min(8,away/HOUR);const q=hrs/2*(wk('gece')?2:1)*(S.premium?2:1);const pr=passiveParts();const c=Math.round(pr.clean*q),d=Math.round(pr.dirty*q);
+  if(false&&away>=10*MIN&&S.age>=16&&!S.jail){const hrs=Math.min(8,away/HOUR);const q=hrs/2*(wk('gece')?2:1)*(S.premium?2:1);const pr=passiveParts();const c=Math.round(pr.clean*q),d=Math.round(pr.dirty*q);
     if(c+d>0){S.money+=c;if(d)dirty(d);log(`💼 Yokluğunda (${fmtDur(away)}) işlerin ${fmt(c+d)} getirdi.`,'good');msgs.push(`💼 <b>${fmtDur(away)}</b> yoktun. Bu sürede işletmelerin, haraçların ve kiraların <b>${fmt(c+d)}</b> getirdi${d?` (${fmt(d)}'si kara para)`:''}.${away>8*HOUR?'<br><small>En fazla 8 saatlik kazanç birikir; sık uğra.</small>':''}${S.premium?'<br><small>👑 Dayı Paketi: 2 kat</small>':''}`)}}
   pjTick();routesTick();const rd=(S.routes||[]).reduce((a,r)=>a+(r.ready||0),0);if(rd)msgs.push(`📦 Kaçakçılık hatlarında <b>${rd}</b> yük teslim alınmayı bekliyor.`);
   if(S.co){const b=S.co.projects.filter(p=>p.state==='build');if(b.length)msgs.push(`🏗 ${b.length} inşaatın sürüyor. En yakını: ${fmtT(Math.min(...b.map(p=>p.endT))-now)}.`)}
@@ -3768,7 +3768,7 @@ const DAYI_H=["d58c78a13b5658ee1b4b3c04", "3c0174a5246b1735da21db71", "16482db62
 function dayiOK(){try{return localStorage.getItem('mafya-dayi')==='1'}catch(e){return false}}
 async function dayiTry(code){code=String(code||'').trim().toUpperCase().replace(/\s+/g,'');if(!code)return false;try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(code));const hx=[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,24);if(DAYI_H.includes(hx)){localStorage.setItem('mafya-dayi','1');return true}}catch(e){}return false}
 function dayiShop(){closeSheet();window._nm='';const pr=iapPrice(IAP.dayi,DAYI_PRICE);
-  queue({back:'ayar',title:'👑 Dayı Paketi + Reklamsız',text:`<b style="color:var(--gold);font-size:20px">${pr}</b> · tek seferlik, bu cihazdaki bütün kayıtlarda geçerli.<br><br>• 🚫 Reklamsız oyun<br>• ↩️ Sınırsız ve ücretsiz geri alma<br>• Her zor anda dayının tanıdıkları: hapisten, pusudan, iflastan kurtulma<br>• Kendini ve herkesi düzenleme (yetenek, özellik, ün)<br>• Kadroyu tek tuşla fulleme, seferleri ve inşaatları beklemeden bitirme<br>• Yokluğunda biriken kazanç 2 kat${isApp()?'<br><br><small>Ödeme Apple hesabından alınır. Telefon değiştirirsen "Satın alımları geri yükle" ile geri gelir.</small>':''}`,
+  queue({back:'ayar',title:'👑 Dayı Paketi + Reklamsız',text:`<b style="color:var(--gold);font-size:20px">${pr}</b> · tek seferlik, bu cihazdaki bütün kayıtlarda geçerli.<br><br>• 🚫 Reklamsız oyun<br>• ↩️ Sınırsız ve ücretsiz geri alma<br>• Her zor anda dayının tanıdıkları: hapisten, pusudan, iflastan kurtulma<br>• Kendini ve herkesi düzenleme (yetenek, özellik, ün)<br>• Kadroyu tek tuşla fulleme, seferleri ve inşaatları beklemeden bitirme${isApp()?'<br><br><small>Ödeme Apple hesabından alınır. Telefon değiştirirsen "Satın alımları geri yükle" ile geri gelir.</small>':''}`,
     choices:[{t:`💳 ${pr} ile satın al`,sub:'Dayı Paketi hemen açılır',fn:async()=>{if(isApp()){const t=await iapBuy(IAP.dayi);if(!t)return}dayiGrant();setTimeout(()=>queue({title:'✅ Ödeme alındı',text:'<div style="text-align:center;font-size:44px">👑</div><div style="text-align:center"><b>Dayı Paketi açıldı</b><br>Dayının tanıdıkları artık hep yanında.</div>',choices:[{t:'Tamam',fn:()=>{}}]}),80)}},
       ...(isApp()?[{t:'🔄 Satın alımları geri yükle',sub:'Daha önce aldıysan',fn:()=>iapRestore()}]:[{t:'🔑 Kodum var',sub:'Hediye kodu',fn:()=>setTimeout(dayiCode,50)}]),
       ...(isTestBuild()?[{t:'🧪 Test: ücretsiz aç',sub:'Sadece TestFlight sürümünde görünür',fn:()=>dayiGrant()}]:[]),
