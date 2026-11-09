@@ -316,7 +316,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0700';
+const APPV='2026.11.09-0730';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -886,8 +886,8 @@ const EVENTS=[
 ];
 
 /* ============ İşler ============ */
-const ALIM={yanke:3,araba:3,harac:3,kacak:1,baskin:1,kuyumcu:1,zirhli:1,altin:1,ihale:1,silah:1,vakit:2};
-const AMSG={yanke:'Bu çeyrek kalabalıkta cebine el atılacak kimse kalmadı.',araba:'Bu çeyrek mahallede çalınacak araba kalmadı.',harac:'Bu çeyrek haraç toplanacak esnaf kalmadı.',vakit:()=>`${S.partner||'Sevgilin'} bu çeyrek biraz yalnız kalmak istiyor.`};
+const ALIM={basvuru:2,calis:1,zam:1,yanke:3,araba:3,harac:3,kacak:1,baskin:1,kuyumcu:1,zirhli:1,altin:1,ihale:1,silah:1,vakit:2};
+const AMSG={calis:'Bu çeyrek zaten fazla mesai yaptın. Biraz dinlen.',zam:'Patronla bu çeyrek zaten konuştun. Sonraki çeyreği bekle.',basvuru:'Bu çeyrek yeterince iş başvurusu yaptın.',yanke:'Bu çeyrek kalabalıkta cebine el atılacak kimse kalmadı.',araba:'Bu çeyrek mahallede çalınacak araba kalmadı.',harac:'Bu çeyrek haraç toplanacak esnaf kalmadı.',vakit:()=>`${S.partner||'Sevgilin'} bu çeyrek biraz yalnız kalmak istiyor.`};
 function actLeft(k){if(!S.aq||S.aq.q!==QS()||!S.aq.m)S.aq={q:QS(),m:{}};return (ALIM[k]||3)-(S.aq.m[k]||0)}
 function useAct(k,n){if(!k||S.premium)return true;if(actLeft(k)<=0){const m=AMSG[k];toast(typeof m==='function'?m():m||(ALIM[k]===1?`${n}: bu çeyrek uygun fırsat yok. Ortalığın sakinleşmesini bekle.`:`${n}: bu çeyreklik yeterince yaptın. Sonraki çeyreği bekle.`));return false}S.aq.m[k]=(S.aq.m[k]||0)+1;return true}
 const actDone=k=>!S.premium&&actLeft(k)<=0;
@@ -1593,7 +1593,7 @@ function fjDeliver(amt,who){const F=S.fj;F.brought+=amt;F.jobs++;if(F.req&&F.req
 function fjReqCheck(){const F=S.fj;if(!F||!F.req)return;const q=F.req;if((q.k==='is'&&(q.got||0)>=q.n)||(q.k==='job'&&q.got)){F.req=null;F.lo=Math.min(100,F.lo+12);gainResp(4);log(`🌹 Babanın isteğini yerine getirdin. ${S.family} sana güveniyor.`,'gold');toast('🌹 İstek tamamlandı')}}
 function fjReqText(q){if(q.k==='para')return`Aileye ${fmt(q.n)} getir`;if(q.k==='is')return`Aile adına ${q.n} iş çevir (${q.got||0}/${q.n})`;return`${FJ(q.j)[2]} işini hallet`}
 const FJMAX=3;const fjLeft=()=>{if(!S.fjq||S.fjq.q!==QS())S.fjq={q:QS(),n:0};return FJMAX-S.fjq.n};
-ACT.fjob=id=>{const F=fjEnsure();const j=FJ(id);if(!F||!j||S.jail||j[3]>rank())return;if(!S.premium&&fjLeft()<=0){toast(`Bu çeyrek aile için ${FJMAX} iş yaptın. Sonraki çeyreği bekle.`);return}if(!useAct())return;S.fjq.n++;closeSheet();
+ACT.fjob=id=>{const F=fjEnsure();const j=FJ(id);if(!F||!j||S.jail||j[3]>rank())return;if(!S.premium&&fjLeft()<=0){toast(`Bu çeyrek aile için ${FJMAX} iş yaptın. Sonraki çeyreği bekle.`);return}if(!useAct())return;fjLeft();S.fjq.n++;closeSheet();
   if(Math.random()<fjRisk(j)){add('heat',j[6]);if(ch(.4)){jailFor(.5,`${j[2]} sırasında yakalandın. Aile avukat gönderdi ama 6 ay yatacaksın.`)}else{hurt(R(10,30),j[2]);log(`${j[2]} ters gitti. Yaralı kurtuldun, eli boş döndün.`,'bad')}F.lo=Math.max(0,F.lo-3);done();return}
   add('heat',Math.ceil(j[6]/2));const amt=fjAmt(j),cut=Math.round(amt*fjCut());
   queue({title:j[1]+' '+j[2],text:`İş temiz bitti. Elinde ailenin ${fmt(amt)} parası var. Kural belli: para önce Baba'ya gider, payını o verir.`,choices:[
@@ -1740,7 +1740,7 @@ function eduQuarter(){
     if(S.edu.left<=0){S.grads=[...(S.grads||[]),d.id];log(`${d.n} bitti! Artık diplomalı bir ${d.jn.toLowerCase()}sın... en azından kâğıt üstünde.`,'gold');news(`Yeraltının adamı ${d.n} mezunu oldu`,1);S.edu=null}}
   if(S.lise&&!S.jail){S.lise--;if(S.lise<=0){S.lise=0;S.school=true;log('Açık liseyi bitirdin. Diploman elinde.','good')}}
   if(S.job){if(S.jail){log(`Hapse girdiğin için ${S.job.n} işinden atıldın.`,'bad');S.job=null}
-    else{const sal=Math.round(S.job.sal*.25*(1+Math.min(.5,(S.job.q||0)*.01)));S.job.q=(S.job.q||0)+1;S.money+=sal;S.taxInc=(S.taxInc||0)+sal;log(`${S.job.n} maaşı: ${fmt(sal)}.`,'good');if(S.job.id==='doktor')add('health',1)}}
+    else{try{svcQuarter()}catch(e){console.error(e)}if(!S.job)return;const sal=Math.round(S.job.sal*.25*(1+Math.min(.5,(S.job.q||0)*.01)));S.job.q=(S.job.q||0)+1;S.money+=sal;S.taxInc=(S.taxInc||0)+sal;log(`${S.job.n} maaşı: ${fmt(sal)}.`,'good');if(S.job.id==='doktor')add('health',1)}}
 }
 ACT.lise=()=>{if(S.lise||S.school)return;S.lise=4;log('Açık liseye kaydoldun. Bir yıl sürecek.','dim');done()};
 ACT.uni=id=>{const d=DEPTS.find(x=>x.id===id);closeSheet();
@@ -1749,7 +1749,53 @@ ACT.uni=id=>{const d=DEPTS.find(x=>x.id===id);closeSheet();
     {t:'Vazgeç',fn:()=>{}}]})};
 ACT.unidrop=()=>{log('Okulu bıraktın.','dim');S.edu=null;done()};
 ACT.job=id=>{const d=DEPTS.find(x=>x.id===id);S.job={id:d.job,n:d.jn,sal:d.sal,q:0};log(`${d.jn} olarak işe başladın. Gündüz ${d.jn.toLowerCase()}, gece başka biri.`,'gold');done()};
-ACT.quit=()=>{log(`${S.job.n} işinden istifa ettin.`,'dim');S.job=null;done()};
+ACT.quit=()=>{if(!S.job)return;log(`${S.job.n} işinden istifa ettin.`,'dim');S.job=null;done()};
+/* ============ Hizmet sektörü ve iş ilanları ============ */
+const SVC=[
+  ['garson','🍽','Restoran',['Garson','Şef garson','Restoran müdürü'],180e3,16,false],
+  ['yikama','🧽','Oto yıkama',['Oto yıkamacı','Yıkama ustası','Yıkama işletme sorumlusu'],150e3,16,false],
+  ['tamirci','🔧','Oto sanayi',['Tamirci çırağı','Oto tamircisi','Usta başı'],200e3,16,false],
+  ['kurye','🛵','Kurye firması',['Moto kurye','Kıdemli kurye','Bölge sorumlusu'],170e3,18,false],
+  ['kasiyer','🛒','Market zinciri',['Kasiyer','Reyon şefi','Mağaza müdürü'],160e3,16,false],
+  ['berberk','💈','Berber salonu',['Berber çırağı','Berber kalfası','Berber ustası'],190e3,16,false],
+  ['insaat','🏗','İnşaat şirketi',['İnşaat işçisi','Kalıpçı ustası','Şantiye şefi'],210e3,18,false],
+  ['vale','🔑','Otel',['Vale','Kapı şefi','Ön büro müdürü'],170e3,18,false],
+  ['barmen','🍸','Gece kulübü',['Bar yardımcısı','Barmen','Bar şefi'],220e3,18,false],
+  ['asci','👨‍🍳','Lokanta',['Aşçı yardımcısı','Aşçı','Mutfak şefi'],200e3,16,false],
+  ['taksi','🚕','Taksi durağı',['Taksi şoförü','Durak kâhyası','Durak sahibi ortağı'],230e3,21,false],
+  ['guvenlik','🛡','Güvenlik şirketi',['Güvenlik görevlisi','Vardiya amiri','Güvenlik müdürü'],200e3,18,false],
+  ['depo','📦','Lojistik firması',['Depo görevlisi','Forklift operatörü','Depo şefi'],185e3,18,false],
+  ['banka','🏦','Banka şubesi',['Banka gişe memuru','Müşteri temsilcisi','Şube müdür yardımcısı'],260e3,18,true],
+  ['emlakci','🏠','Emlak ofisi',['Emlak danışmanı','Kıdemli danışman','Ofis müdürü'],240e3,18,true],
+  ['muhasebe','🧾','Muhasebe bürosu',['Muhasebe elemanı','Muhasebeci','Mali müşavir yardımcısı'],250e3,18,true]];
+const SV=id=>SVC.find(x=>x[0]===id);
+const svcSal=(v,lv)=>Math.round(v[4]*[1,1.5,2.3][lv]*(S.cpi||1)/1e3)*1e3;
+function svcHire(id){const v=SV(id);if(!v)return;if(S.job){toast('Önce şu anki işinden istifa et.');return}if(S.age<v[5]||S.jail)return;if(v[6]&&!S.school){toast('Bu iş için lise diploması istiyorlar.');return}
+  if(!useAct('basvuru','İş başvurusu'))return;closeSheet();
+  const p=Math.min(.95,.55+(S.school?.12:0)+karizma()*.004-(S.heat>=60?.25:0)-(S.snitch?.1:0));
+  queue({back:'meslek',title:`${v[1]} ${v[2]} · İş görüşmesi`,text:`${v[3][0]} pozisyonu için görüşmeye girdin. Yıllık maaş ${fmt(svcSal(v,0))}, her çeyrek ${fmt(Math.round(svcSal(v,0)/4))} eline geçer.`,choices:[
+    {t:'Kendini iyi anlat',sub:`Şans %${Math.round(p*100)}`,fn:()=>{if(ch(p)){S.job={id:v[0],n:v[3][0],sal:svcSal(v,0),q:0,svc:1,lv:0,perf:55,lq:QS()};log(`${v[2]}'nda ${v[3][0]} olarak işe başladın.`,'gold')}else log(`${v[2]} seni işe almadı. ${S.heat>=60?'Sicilin konuşuldu galiba.':'Başka ilanlara bak.'}`,'bad')}},
+    {t:'Vazgeç',fn:()=>{}}]})}
+ACT.svc=id=>svcHire(id);
+ACT.svcwork=()=>{const J=S.job;if(!J||!J.svc)return;if(!useAct('calis','Daha çok çalış'))return;J.perf=Math.min(100,J.perf+R(8,15));add('happy',-R(1,4));log(`${J.n} olarak mesaiye kaldın. Patronun fark etti.`,'good');done()};
+ACT.svcask=()=>{const J=S.job;if(!J||!J.svc)return;if(!useAct('zam','Zam iste'))return;const v=SV(J.id);
+  if(J.lv>=2){if(ch(J.perf/150)){J.sal=Math.round(J.sal*1.1/1e3)*1e3;log(`Patron maaşına %10 zam yaptı. Yıllık ${fmt(J.sal)}.`,'good')}else{J.perf=Math.max(0,J.perf-8);log('Patron zam talebini geri çevirdi.','bad')}return done()}
+  if(J.perf>=70&&QS()-J.lq>=4&&ch(.4+J.perf/250)){J.lv++;J.n=v[3][J.lv];J.sal=svcSal(v,J.lv);J.lq=QS();J.perf=55;gainResp(1);log(`🎉 Terfi! Artık ${J.n}sın. Yıllık maaş ${fmt(J.sal)}.`,'gold')}
+  else{J.perf=Math.max(0,J.perf-6);log(J.perf<70?'Patron "önce performansını göster" dedi.':QS()-J.lq<4?'Patron "daha yeni başladın, sabret" dedi.':'Terfi talebin bu sefer kabul edilmedi.','bad')}
+  done()};
+function svcQuarter(){const J=S.job;if(!J||!J.svc||S.jail)return;J.perf=Math.max(0,Math.min(100,J.perf+R(-6,3)+(S.heat>=70?-4:0)));
+  if(J.perf<15&&ch(.5)){log(`${J.n} işinden kovuldun. Patron performansından memnun değildi.`,'bad');S.job=null;return}
+  if(ch(.04)){const e=pick(['Bir müşteri bahşiş olarak '+fmt(Math.round(5e3*(S.cpi||1)))+' bıraktı.','Patron bayram ikramiyesi dağıttı.']);S.money+=Math.round(5e3*(S.cpi||1));log(e,'good')}}
+EXTRA.meslek=()=>{let h='';const J=S.job;
+  if(J){h+=`<div class="sum"><div><span>İşin</span><b>${J.n}</b></div>${J.svc?`<div><span>İşyeri</span><b>${SV(J.id)[2]}</b></div>`:''}<div><span>Yıllık maaş</span><b>${fmt(Math.round(J.sal*(1+Math.min(.5,(J.q||0)*.01))))}</b></div><div><span>Çeyreklik maaş</span><b style="color:var(--good)">${fmt(Math.round(J.sal*.25*(1+Math.min(.5,(J.q||0)*.01))))}</b></div><div><span>Kıdem</span><b>${fmtJ((J.q||0)/4)}</b></div>${J.svc?`<div><span>Performans</span><b style="color:${J.perf<30?'var(--bad)':'var(--gold)'}">%${J.perf}</b></div>`:''}</div>`;
+    if(J.svc){h+=row('data-x="svcwork:"','💪','Daha çok çalış','Performans artar · Mutluluk biraz düşer',actDone('calis')?'Bitti':'',actDone('calis')||!!S.jail);
+      h+=row('data-x="svcask:"','📈',J.lv>=2?'Zam iste':'Terfi iste',J.lv>=2?'En üst kademedesin':`Sıradaki: ${SV(J.id)[3][J.lv+1]} · %70 performans ve 1 yıl kıdem gerekir`,actDone('zam')?'Bitti':'',actDone('zam')||!!S.jail)}
+    h+=row('data-x="quit:"','📤','İstifa et','','',false)}
+  else h+='<p class="note">Şu an bir işin yok. Maaşın her çeyrek otomatik olarak kasana girer. Performansın düşerse kovulabilirsin; hapse girersen işten atılırsın.</p>';
+  h+='<div class="sec">İş ilanları</div>';
+  SVC.forEach(v=>{const lock=S.age<v[5]?`${v[5]} yaşından itibaren`:v[6]&&!S.school?'Lise diploması gerekir':'';h+=row(`data-x="svc:${v[0]}"`,v[1],`${v[3][0]} (${v[2]})`,lock||`Yıllık ${fmtS(svcSal(v,0))} · Çeyreklik ${fmtS(svcSal(v,0)/4)}`,'',!!lock||!!J||!!S.jail||actDone('basvuru'))});
+  h+='<div class="sec">Diplomalı meslekler</div>'+row('data-go="egitim"','🎓','Eğitim ve meslek','Üniversite oku; avukat, doktor, iş insanı, komiser ol','›',false);
+  return['💼 İş hayatı',h]};
 EXTRA.egitim=()=>{let h='';
   if(S.age<17)return['Eğitim',h+'<p class="note">Üniversite 17 yaşından itibaren.</p>'];
   if(!S.school){h+='<p class="note">Lise diploman yok. Üniversiteye girmek için önce açık liseyi bitirmelisin.</p>'+row('data-x="lise:"','📚','Açık liseye kaydol',S.lise?`Devam ediyor · ${S.lise*3} ay kaldı`:'1 yıl sürer, ücretsiz','',!!S.lise||!!S.jail);return['Eğitim',h]}
@@ -3581,7 +3627,7 @@ let LASTSH=null,LASTT='';
 function closeSheet(){if(curSheet){LASTSH=curSheet;LASTT=(($('shT')&&$('shT').textContent)||'').replace(/^[^\wÇĞİÖŞÜçğıöşü]+/,'').trim()}$('ov').classList.remove('on');curSheet=null;try{qbar()}catch(e){}}
 function qbar(){const l=$('qLeft'),b=$('qBack');if(!l||!S)return;l.innerHTML='';if(LASTSH&&S.alive){b.style.display='';b.textContent='↩ '+(LASTT||'Son menü')}else b.style.display='none'}
 document.addEventListener('click',e=>{if(e.target.closest('#qBack')&&LASTSH){openSheet(LASTSH)}});
-const PARENT={berber:'cat_kisisel',ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
+const PARENT={berber:'cat_kisisel',meslek:'is',egitim:'meslek',ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
 $('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeSheet()});
@@ -3602,6 +3648,7 @@ function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';
     if(S.abroad)h+='<p class="note">Yurt dışındasın. Suç işleri Türkiye\'ye dönünce açılır.</p>';
     if(S.jail){h+='<div class="sec">Koğuş</div>';JAIL.filter(a=>!a.prem||S.premium).forEach(a=>{const c=a.dyn?Math.round(a.dyn()):0;h+=row(`data-j="${a.id}"`,a.ic,a.n,a.d,c?fmtS(c):'',(c&&S.money<c)||(!S.premium&&HEALIDS.includes(a.id)&&healLeft()<=0))})}
     else{
+      if(S.age>=16)h+='<div class="sec">İş hayatı</div>'+row('data-go="meslek"','💼',S.job?S.job.n:'İş ilanları',S.job?`Çeyreklik maaş ${fmtS(Math.round(S.job.sal*.25*(1+Math.min(.5,(S.job.q||0)*.01))))}${S.job.svc?' · Performans %'+S.job.perf:''}`:'Garson, tamirci, kurye, kasiyer… Maaşlı bir işe gir','›',false);
       if(S.age>=14){        h+='<div class="sec">Suç dünyası</div>';
         CRIMES.forEach(c=>{const lockA=S.age<c.age,lockR=rank()<c.rank;
           const d=lockA?`${c.age} yaşında açılır`:lockR?`${RANKS[c.rank].n} rütbesi gerekir`:c.d;
