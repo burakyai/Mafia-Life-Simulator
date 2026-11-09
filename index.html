@@ -314,7 +314,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0440';
+const APPV='2026.11.09-0500';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -3125,14 +3125,14 @@ const WKT=[
   ['gal',n=>`Galeride ${n} araç sat`,()=>pick([2,3]),()=>!!S.gal],
   ['rt',n=>`${n} başarılı kaçakçılık seferi`,()=>pick([3,5]),()=>(S.routes||[]).length>0],
   ['resp',n=>`${n} saygı kazan`,()=>pick([8,12]),()=>S.respect<85]];
-function wkEnsure(){if(!S)return;if(S.wk&&S.wk.key===wkKey())return;const b=wkM();const pool=WKT.filter(t=>t[3]());const pickd=[];while(pickd.length<3&&pool.length){pickd.push(pool.splice(R(0,pool.length-1),1)[0])}
+function wkEnsure(){if(!S)return;if(S.wk)delete S.wk;return;if(S.wk&&S.wk.key===wkKey())return;const b=wkM();const pool=WKT.filter(t=>t[3]());const pickd=[];while(pickd.length<3&&pool.length){pickd.push(pool.splice(R(0,pool.length-1),1)[0])}
   S.wk={key:wkKey(),base:b,chest:false,goals:pickd.map(([k,,tg])=>{const n=tg(b);return{k,n,done:false,got:false}})}}
 function wkProg(g){const now=wkM();return Math.max(0,now[g.k]-S.wk.base[g.k])}
 function wkRew(){return Math.round([100000,250000,600000,1500000,4000000,10000000][rank()]*S.cpi/1e4)*1e4}
-function wkCheck(){if(!S||!S.wk)return;S.wk.goals.forEach(g=>{if(!g.done&&wkProg(g)>=g.n){g.done=true;log(`🎯 Haftalık görev tamamlandı: ${WKT.find(t=>t[0]===g.k)[1](g.k==='nw'?g.n:g.n)}. Ödülünü al!`,'gold');toast('🎯 Görev tamamlandı')}})}
-ACT.wkclaim=i=>{const g=S.wk.goals[+i];if(!g||!g.done||g.got)return;g.got=true;const m=wkRew();S.money+=m;tixSet(tix()+2);gainResp(2);log(`🎁 Görev ödülü: ${fmt(m)}, 2 🎟 bilet ve saygı.`,'gold');done()};
-ACT.wkchest=()=>{if(S.wk.chest||!S.wk.goals.every(g=>g.got))return;S.wk.chest=true;const m=wkRew()*2;S.money+=m;tixSet(tix()+5);S.kb=(S.kb||0)+1;add('happy',8);log(`💎 Haftalık sandık açıldı: ${fmt(m)}, 5 🎟 bilet ve kalıcı +1 karizma!`,'gold');done()};
-EXTRA.gorev=()=>{wkEnsure();const w=S.wk;const left=7-Math.floor((Date.now()/864e5+3)%7);let h=`<p class="note">Her pazartesi 3 yeni görev gelir. Hepsini bitirirsen haftalık sandık açılır. Yenilenmeye ${left} gün.</p>`;
+function wkCheck(){return;S.wk.goals.forEach(g=>{if(!g.done&&wkProg(g)>=g.n){g.done=true;log(`🎯 Haftalık görev tamamlandı: ${WKT.find(t=>t[0]===g.k)[1](g.k==='nw'?g.n:g.n)}. Ödülünü al!`,'gold');toast('🎯 Görev tamamlandı')}})}
+ACT.wkclaim=i=>{return;const g=S.wk.goals[+i];if(!g||!g.done||g.got)return;g.got=true;const m=wkRew();S.money+=m;tixSet(tix()+2);gainResp(2);log(`🎁 Görev ödülü: ${fmt(m)}, 2 🎟 bilet ve saygı.`,'gold');done()};
+ACT.wkchest=()=>{return;if(S.wk.chest||!S.wk.goals.every(g=>g.got))return;S.wk.chest=true;const m=wkRew()*2;S.money+=m;tixSet(tix()+5);S.kb=(S.kb||0)+1;add('happy',8);log(`💎 Haftalık sandık açıldı: ${fmt(m)}, 5 🎟 bilet ve kalıcı +1 karizma!`,'gold');done()};
+EXTRA.gorev=()=>EXTRA.basarim();const _oldGorev=()=>{wkEnsure();const w=S.wk;const left=7-Math.floor((Date.now()/864e5+3)%7);let h=`<p class="note">Her pazartesi 3 yeni görev gelir. Hepsini bitirirsen haftalık sandık açılır. Yenilenmeye ${left} gün.</p>`;
   w.goals.forEach((g,i)=>{const t=WKT.find(x=>x[0]===g.k);const p=Math.min(g.n,wkProg(g));const pct=Math.round(p/g.n*100);
     h+=`<div class="card" style="padding:12px;margin-bottom:8px"><b>${g.got?'✅':g.done?'🎁':'🎯'} ${t[1](g.n)}</b><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="flex:1;height:7px;border-radius:4px;background:#ffffff1a;overflow:hidden"><span style="display:block;height:100%;width:${pct}%;background:var(--gold)"></span></span><small>${g.k==='nw'?fmtS(p)+' / '+fmtS(g.n):p+' / '+g.n}</small></div>${g.done&&!g.got?`<button class="btn" style="margin-top:10px" data-x="wkclaim:${i}">Ödülü al · ${fmtS(wkRew())} + 2 🎟</button>`:''}</div>`});
   const all=w.goals.every(g=>g.got);h+=`<div class="sec">Haftalık sandık</div>`+row('data-x="wkchest:"','💎','Haftalık sandık',w.chest?'Bu hafta açıldı':all?'Hazır! Dokun ve aç':'3 görevin ödülünü alınca açılır',w.chest?'✓':fmtS(wkRew()*2)+' + 5 🎟',w.chest||!all);
@@ -3170,9 +3170,9 @@ LATER.yasak=d=>{if(S.partner!==d.n)return null;const r=S.rivals.find(x=>x.n===d.
   {t:'Kaçıp evlenin',sub:'Savaş çıkar',fn:()=>{S.married=true;add('happy',15);if(r){r.war=true;r.ally=false}log(`${d.n} ile kaçıp evlendiniz. ${d.r} kan davası ilan etti!`,'bad')}},
   {t:'Babasından elini iste',sub:`Şans %${Math.round((.3+karizma()/80)*100)}`,fn:()=>{if(ch(.3+karizma()/80)){S.married=true;if(r){r.war=false;r.ally=true}gainResp(10);log(`Baban gibi konuştun. ${d.r} kızını verdi, aileler birleşti.`,'gold')}else{S.partner=null;add('happy',-15);log('Kapıdan kovuldun. İlişki bitti.','bad')}}},
   {t:'Ayrıl',fn:()=>{S.partner=null;add('happy',-12);log(`${d.n} ile ayrıldınız.`,'bad')}}]}};
-EV(1,()=>okE()&&S.age>=16,()=>({title:'Dedenin haritası',text:'Eski bir sandıkta dedenin el çizimi bir harita buldun. Belgrad Ormanı\'nda bir çarpı işareti ve "Osmanlı altını" notu.',choices:[
+EV(1,()=>{if(!okE()||S.age<16)return false;if(S.dedeMap===undefined)S.dedeMap=Math.random()<.05?1:0;return S.dedeMap===1},()=>{S.dedeMap=2;return{title:'Dedenin haritası',text:'Eski bir sandıkta dedenin el çizimi bir harita buldun. Belgrad Ormanı\'nda bir çarpı işareti ve "Osmanlı altını" notu.',choices:[
   {t:'Kazmaya git',sub:'Bir çeyrek sürer',fn:()=>{later('hazine',1);log('Gece yarısı kürekle ormana gittin.','dim')}},
-  {t:'Haritayı sat',sub:fmt(Math.round(5e4*S.cpi)),fn:()=>{S.money+=Math.round(5e4*S.cpi);log('Bir koleksiyoncu haritayı satın aldı.','dim')}}]}));
+  {t:'Haritayı sat',sub:fmt(Math.round(5e4*S.cpi)),fn:()=>{S.money+=Math.round(5e4*S.cpi);log('Bir koleksiyoncu haritayı satın aldı.','dim')}}]}});
 LATER.hazine=()=>{const r=Math.random();const g=Math.round(R(20,120)*1e5*S.cpi);return{title:'Kazının sonu',text:r<.45?`Kürek metale çarptı. Paslı bir sandık dolusu altın! Değeri ${fmt(g)}.`:r<.75?'Sadece eski bir tüfek ve birkaç sikke çıktı.':'Orman bekçisi seni kazarken yakaladı!',choices:[{t:'Tamam',fn:()=>{if(r<.45){S.money+=g;add('happy',15);log(`Dedenin altınları: ${fmt(g)}!`,'gold');news('Belgrad Ormanı\'nda gizemli kazı',1)}else if(r<.75){S.money+=Math.round(g*.05);log('Birkaç sikke kurtardın.','dim')}else{add('heat',8);S.money=Math.max(0,S.money-Math.round(2e4*S.cpi));log('Para cezası yedin.','bad')}}}]}};
 EV(2,()=>okE()&&(S.fame||0)>=15,()=>({title:'Araştırmacı gazeteci',text:'Bir gazeteci hakkında dosya hazırlıyor. Yarın manşet olacak: "Şehrin gölgedeki patronu".',choices:[
   {t:'Gazeteyi satın al',sub:fmt(Math.round(BIG()*.8)),dis:!canPay(Math.round(BIG()*.8)),fn:()=>{pay(Math.round(BIG()*.8));add('heat',-12);log('Gazetenin sahibi değişti. Haber hiç çıkmadı.','gold')}},
@@ -3398,7 +3398,6 @@ function hubTiles(){return [
       ['dunya','🌍','Dünya',`${CITY().fl} ${CITY().n} · Yurt dışı işler`,S.age>=18],
       ['varlikyon','💼','Varlık yönetimi',has('portfoy')?`Portföy ${fmtS((S.wm&&S.wm.pool)||0)}`:'Paranı yönetecek birini tut',S.age>=18],
       ['kara','🖤','Kara para kasası',S.black?`${fmtS(S.black)} aklanmayı bekliyor`:'Kara para ve aklama yolları',true],
-      ['gorev','🎯','Haftalık görevler',(()=>{wkEnsure();const d=S.wk.goals.filter(g=>g.got).length;return `${d}/3 tamamlandı${S.wk.goals.some(g=>g.done&&!g.got)?' · Ödül hazır!':''}`})(),true],
       ['sokak','🏴','Sokak: haraç ve kadro',(()=>{try{const st=stEnsure();return `${totSq()} adam · ${st.shops.filter(o=>o.st==='odeyor'&&shopT(o).il).length} işletme haraç veriyor${st.gw?' · ⚔️ savaşta':''}${S.threat?' · ⚠️ tehdit':''}`}catch(e){return 'Haraç, sokak kadrosu, çeteler'}})(),S.age>=16],
       ['kacak','🚚','Kaçakçılık rotaları',(S.routes||[]).length?`${S.routes.length} hat aktif`:'Sınır kapılarında hat kur',S.age>=18],
       ['ogaleri','🏪','Oto galeri',S.gal?`${GTIER[S.gal.tier].n} · ${S.gal.stock.length} araç`:'Hasarlı al, tamir et, kârla sat',S.age>=18],
@@ -3422,7 +3421,7 @@ const icoSrc=id=>ICO[id]||ICO[ICA[id]]||(ICT[id]&&typeof RICO!=='undefined'?RICO
 const icoImg=(id,cls)=>icoSrc(id)?`<img class="${cls||'icimg'}" src="${icoSrc(id)}" alt="">`:'';
 const tileHTML=([id,ic,n,d,ok])=>`<button class="tile" data-go="${id}" ${ok?'':'disabled'}><span class="ti">${icoImg(id,'tiimg')||ic}</span><b>${n}</b><span>${d}</span></button>`;
 const HCATS=[
-  ['kisisel','👤','Kişisel hayat','İnsanlar, aile ağacı, berber, gece hayatı, sosyal medya, yadigârlar, lakaplar',['insan','agac','berber','gece','sosyal','gorev','basarim','yadigar','lakap']],
+  ['kisisel','👤','Kişisel hayat','İnsanlar, aile ağacı, berber, gece hayatı, sosyal medya, yadigârlar, lakaplar',['insan','agac','berber','gece','sosyal','basarim','yadigar','lakap']],
   ['yeralti','🔫','Yeraltı dünyası','Ailen, rakip aileler, harita, konsey, sokak kadrosu, haraç, kaçakçılık',['org','rakip','harita','konsey','sokak','kacak']],
   ['para','💰','Para ve finans','Banka, borsa, döviz, kara para, varlık yönetimi, vergi',['banka','borsa','doviz','kara','varlikyon','vergi','kumar']],
   ['is','🏢','İş dünyası','Şirketler, müzik, futbol kulübü, inşaat, oto galeri',['sirket','muzik','kulup','insaat','ogaleri']],
@@ -3431,7 +3430,6 @@ const HCATS=[
 HCATS.forEach(([cid,ic,n,d,ids])=>{EXTRA['cat_'+cid]=()=>{const T=hubTiles();let h=`<p class="note">${d}.</p>`;h+='<div class="tiles">'+ids.map(id=>T.find(t=>t[0]===id)).filter(Boolean).map(tileHTML).join('')+'</div>';return[`${ic} ${n}`,h]}});
 function hubAlerts(){const a=[];
   if(S.rivals&&S.rivals.some(r=>r.war&&!r.dead))a.push(['rakip','⚔️','Savaştasın! Rakip çetelere bak']);
-  if(S.wk&&S.wk.goals&&S.wk.goals.some(g=>g.done&&!g.got))a.push(['gorev','🎁','Haftalık görev ödülün hazır']);
   if((S.black||0)>=1e6)a.push(['kara','🖤',`${fmtS(S.black)} kara para aklanmayı bekliyor`]);
   if(S.taxDebt>0)a.push(['vergi','🧾',`Vergi borcun var: ${fmtS(S.taxDebt)}`]);
   if(S.heat>=60)a.push(['karakol','🚨',`Polis dikkati %${S.heat}, baskın gelebilir`]);
