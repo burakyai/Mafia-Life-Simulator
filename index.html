@@ -316,7 +316,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0800';
+const APPV='2026.11.09-0830';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1630,6 +1630,13 @@ function fjQuarter(){const F=S.family?fjEnsure():(S.fj&&S.fj.debt?S.fj:null);if(
   if(F.lo<=0&&!S.boss){log(`${S.family} sana artık güvenmiyor. Seni aileden attılar.`,'bad');add('respect',-15);S.exFamily=S.family;S.family=null;S.boss=false}
   F.lo=Math.min(100,F.lo+1)}
 const fjFight=()=>Math.max(.15,Math.min(.8,.35+(S.health-50)*.004+(has('tetikci')?.15:0)+karizma()*.003));
+ACT.fjleave=()=>{if(!S.family||S.boss&&false)return;const fee=M([5e4,1e5,3e5,8e5,2e6,5e6][rank()]);closeSheet();
+  queue({back:'org',title:'Aileden ayrılmak',text:`${S.family}'nden ayrılmak kolay değil. Bu ailede çok şey gördün, çok şey biliyorsun. Baba ${fam()?fam().b:''} bunu nasıl karşılayacak?${S.fj&&S.fj.debt?' Üstelik aileye borcun var; ayrılsan da peşini bırakmazlar.':''}`,choices:[
+    {t:'Babadan izin iste, hakkını helal ettir',sub:`${fmt(fee)} · Temiz ayrılık`,dis:!canPay(fee),fn:()=>{pay(fee);fjLeave(.05);log(`Babanın elini öptün, ${fmt(fee)} bırakıp helallik aldın. Artık ailenin adamı değilsin.`,'dim')}},
+    {t:'Sessizce çek git',sub:'Bedava · Peşine adam takılabilir',fn:()=>{fjLeave(Math.min(.8,.3+rank()*.1));log(`Kimseye bir şey demeden ${S.family} ile bağlarını kopardın.`,'bad')}},
+    {t:'Vazgeç',fn:()=>{}}]})};
+function fjLeave(hit){const was=S.family;S.exFamily=was;S.family=null;S.boss=false;add('respect',-8);if(S.fj)S.fj.req=null;
+  if(ch(hit))later('fjhunt',R(1,3),{fam:was})}
 function fjSheet(){const F=fjEnsure(),rk=rank(),now=QS();
   let h=`<div class="sum"><div><span>Aile</span><b>${S.family}</b></div><div><span>Baba</span><b>${S.boss?'Sensin':(fam()?fam().b:'—')}</b></div><div><span>Rütben</span><b style="color:var(--gold)">${RANKS[rk].n}</b></div><div><span>İşlerden payın</span><b>%${Math.round(fjCut()*100)}</b></div><div><span>Sadakat</span><b style="color:${F.lo<30?'var(--bad)':'var(--good)'}">%${F.lo}</b></div><div><span>Aileye getirdiğin</span><b>${fmtS(F.brought)}</b></div></div>`;
   if(F.debt)h+=`<div class="sec">⚠️ Aileye borcun var</div>`+row('data-x="fjpay:"','🗡',`${fmt(F.debt)} cebe attın`,`Ödemezsen suikastçı gelir · ${Math.max(0,F.due-now)} çeyrek kaldı`,fmtS(Math.round(F.debt*1.2)),!canPay(Math.round(F.debt*1.2)));
@@ -1642,7 +1649,7 @@ function fjSheet(){const F=fjEnsure(),rk=rank(),now=QS();
   if(!F.crew.length)h+=`<p class="note">Kaptan rütbesine çıkınca ailenin alt rütbeli adamları emrine verilir. Onlara iş dağıtıp aileye para getirtirsin, komisyonun sana kalır.</p>`;
   else{h+=row('data-x="fjall:"','📣','Hepsine iş dağıt',`Boştaki herkes gücüne göre bir işe çıkar · Komisyonun %${Math.round(fjCom()*100)}`,'',!F.crew.some(m=>!m.task&&m.jail<=now&&m.hurt<=now));
     F.crew.forEach(m=>{const st=m.jail>now?`🔒 Cezaevinde (${m.jail-now} çeyrek)`:m.hurt>now?'🩹 Yaralı':m.task?`Görevde: ${FJ(m.task)[2]}`:'Emrini bekliyor';h+=row(`data-x="fjm:${m.id}"`,'🕶',m.name,`${rk>=4?'Tetikçi':'Ayakçı'} · Güç ${m.str}/10 · ${st}`,m.task||m.jail>now||m.hurt>now?'':'Emir ver',!!(m.task||m.jail>now||m.hurt>now))})}
-  h+='<div class="sec">Kendi yolun</div>'+row('data-x="found:"','👑','Kendi aileni kur',S.age<18?'18 yaşından itibaren':`Aileden ayrılırsın · Kuruluş ${fmt(100000)}`,'',S.age<18||!!S.jail);
+  h+='<div class="sec">Kendi yolun</div>'+(S.boss?'':row('data-x="fjleave:"','🚪','Aileden ayrıl','Babadan helallik al ya da sessizce çek git · Peşine adam takılabilir','',!!S.jail))+row('data-x="found:"','👑','Kendi aileni kur',S.age<18?'18 yaşından itibaren':`Aileden ayrılırsın · Kuruluş ${fmt(100000)}`,'',S.age<18||!!S.jail);
   return[S.family,h]}
 EXTRA.org=()=>{
   if(!S.org&&S.family)return fjSheet();
@@ -3276,6 +3283,251 @@ EXTRA.gorev=()=>EXTRA.basarim();const _oldGorev=()=>{wkEnsure();const w=S.wk;con
   const all=w.goals.every(g=>g.got);h+=`<div class="sec">Haftalık sandık</div>`+row('data-x="wkchest:"','💎','Haftalık sandık',w.chest?'Bu hafta açıldı':all?'Hazır! Dokun ve aç':'3 görevin ödülünü alınca açılır',w.chest?'✓':fmtS(wkRew()*2)+' + 5 🎟',w.chest||!all);
   const got=ACH.filter(a=>S.ach[a[0]]).length;h+=`<div class="sec">Başarımlar</div><p class="note">${got}/${ACH.length} başarım açık. Başarımlar koleksiyondur, ödül vermez.</p>`+row('data-go="basarim"','🏆','Başarımlar','Hepsini gör','›',false);
   return['Haftalık görevler',h]};
+LATER.fjhunt=d=>({title:'🗡 Eski ailen unutmadı',text:`${d.fam} "çok şey bilen adam ortada dolaşmaz" diye düşünmüş. Bir gece arabanın yanında iki adam bekliyordu.`,choices:[
+  {t:'Karşı koy',sub:`Şans %${Math.round(fjFight()*100)}`,fn:()=>{if(Math.random()<fjFight()){gainResp(4);log('İki adamı da alt ettin. Mesaj alındı.','gold')}else{hurt(R(30,55),'Eski ailenin infazcıları');log('Ağır yaralandın ama hayattasın.','bad')}}},
+  {t:'Kaç',sub:'Şans %55',fn:()=>{if(ch(.55))log('Karanlık sokaklarda izini kaybettirdin.','dim');else{hurt(R(20,40),'Eski ailenin infazcıları');log('Kaçarken vuruldun.','bad')}}},
+  {t:'Eski ailene haraç öde, barış',sub:fmt(M(3e5)),dis:!canPay(M(3e5)),fn:()=>{pay(M(3e5));log('Eski ailene yüklü bir zarf gönderdin. Artık seni rahat bırakacaklar.','dim')}}]});
+/* ============ Olay paketi: hayatın akışı ============ */
+const EVP=[
+// ---- ÇOCUKLUK (0-12)
+[3,8,"","Kayıp kedi","Sokakta miyavlayan, ıslanmış bir kedi yavrusu buldun.",[["Eve götür","",1,"p+6","Kediyi eve getirdin. Annen önce kızdı, sonra adını o koydu."],["Bırak","",1,"p-2","Kediyi bıraktın. Gece aklından çıkmadı."]]],
+[4,9,"","Bisiklet","Mahalledeki çocuklar bisikletle yarışıyor. Seninki yok.",[["Arkadaşınınkini ödünç iste","",.6,"p+5","Bir tur verdiler, rüzgârı yüzünde hissettin.","p-3","Vermediler, kenarda izledin."],["Eve dön","",1,"p-2","Eve dönüp pencereden izledin."]]],
+[5,10,"","Okulda kavga","Teneffüste büyük bir çocuk beslenmeni almaya çalıştı.",[["Karşılık ver","",.5,"r+3 h-3","Burnu kanadı ama beslenmen sende kaldı. Mahalle konuştu.","h-8 p-4","Dayak yedin, beslenme de gitti."],["Öğretmene söyle","",1,"r-2","Öğretmen çocuğu cezalandırdı. Ama sana ‘ispiyoncu’ dediler."],["Ver gitsin","",1,"p-4","Aç kaldın ama dayak yemedin."]]],
+[6,11,"","Karne günü","Karneni aldın. Notların...",[["Babana göster","",.5,"p+6","Baban başını okşadı: ‘Aferin aslanım.’","p-6","Babanın yüzü düştü. Bütün yaz ders çalıştırdı."],["Sakla","",.5,"p+1","Kimse sormadı, yırttın.","p-8","Annen çantanda buldu. Ev karıştı."]]],
+[4,9,"","Dondurmacı","Dondurmacının arabası mahalleye girdi. Cebinde para yok.",[["Annenden iste","",.7,"p+4","Çikolatalı aldın, yüzüne gözüne bulaştırdın.","p-2","‘Akşam yemeği var’ dedi."],["Dondurmacıya yardım et","",1,"p+3","Arabayı ittin, bir külah bedava verdi."]]],
+[7,12,"","Cami avlusu","Bayram sabahı amcalar el öptürüyor, harçlık dağıtıyor.",[["Herkesin elini öp","",1,"p+5 w+200","Cepler doldu: bayram harçlığı."],["Utanıp kaç","",1,"p-1","Arkadaşların harçlıkları sayarken sen izledin."]]],
+[6,12,"","Kırık cam","Topla oynarken Hacı Amca'nın camını kırdın.",[["Kapıyı çal, özür dile","",1,"r+2 p-2","Hacı Amca kızdı ama dürüstlüğünü takdir etti."],["Kaç","",.6,"p+1","Kimse görmedi.","p-6 r-2","Baban öğrendi, harçlığını kesti."]]],
+[8,12,"","Mahalle maçı","Karşı mahalleyle maç var. Kaleye geç diyorlar.",[["Kaleye geç","",.5,"r+3 p+6","Penaltı kurtardın! Omuzlarda taşındın.","p-4","Beş gol yedin. Bir hafta dalga geçtiler."],["Forvete geç","",.5,"r+2 p+5","Galibiyet golünü attın.","p-2","Top hiç ayağına gelmedi."]]],
+[5,10,"","Dedenin hikâyeleri","Deden seni dizine oturtup gençliğini anlatıyor.",[["Dinle","",1,"p+4","Dedenin anlattığı eski İstanbul gözünün önünde canlandı."],["Oyuna kaç","",1,"p+1","Dışarıda oynadın. Deden arkandan gülümsedi."]]],
+[9,12,"","Bakkaldan şeker","Bakkal arkasını döndü. Şeker kavanozu önünde.",[["Bir avuç al","",.7,"p+3 x+1","Kimse görmedi. Kalbin küt küt attı.","r-2 p-5","Bakkal yakaladı, kulağını çekti, babana söyledi."],["Alma","",1,"","Elini cebine soktun, geçtin."]]],
+[3,7,"","Kâbus","Gece kâbusla uyandın. Karanlıktan korkuyorsun.",[["Annenin yanına git","",1,"p+3","Annenin koynunda uyudun."],["Yorganı başına çek","",1,"p-2 r+1","Sabaha kadar gözünü kırpmadın ama ağlamadın."]]],
+[8,12,"","Sünnet düğünü","Sünnet olacağını öğrendin. Herkes ‘acımaz’ diyor.",[["Kahraman gibi dayan","",1,"r+2 p+3 h-2","Prens kıyafetiyle dolaştın, cebine paralar takıldı."],["Ağla","",1,"p-2","Ağladın ama düğünde en çok sen oynadın."]]],
+[7,12,"","Yaz tatili","Köydeki büyükannenin yanına gönderileceksin.",[["Sevinçle git","",1,"h+5 p+5","Ağaçlara tırmandın, dereye girdin, kapkara oldun."],["Mahallede kalmak için yalvar","",.4,"p+2","İkna ettin, yaz boyu sokaktaydın.","p-3","Yine de gönderildin, ilk hafta surat astın."]]],
+[6,12,"","Su tabancası","Mahallede büyük su savaşı başladı.",[["Katıl","",1,"p+6","Sırılsıklam oldun, akşam annen söylendi."],["Pencereden izle","",1,"p-1",""]]],
+[9,12,"","Atari salonu","Abiler atari salonuna gidiyor, ‘gel’ dediler.",[["Git","",.6,"p+5","Jeton jeton oynadın, rekoru kırdın.","p-3 r-1","Baban kapıda yakaladı."],["Gitme","",1,"",""]]],
+[10,12,"","Pazarda iş","Pazarcı ‘Poşet taşırsan haftalık veririm’ diyor.",[["Çalış","",1,"w+300 h-2 r+1","Sabahtan akşama poşet taşıdın, ilk paranı kazandın."],["Uğraşamam","",1,"",""]]],
+[5,9,"","Hastalık","Ateşin çıktı, okula gidemiyorsun.",[["Doktora git","",1,"h+4","Şurup içtin, iki günde toparladın."],["Ev ilacı","",.6,"h+2","Annenin ıhlamuru işe yaradı.","h-6","Ateş düşmedi, hastanelik oldun."]]],
+[8,12,"","Mahallenin abisi","Mahallenin kabadayısı Kara Selim sana sigara uzattı.",[["Al, iç","",1,"r+3 h-2","Öksürdün ama abiler güldü, artık onlardansın."],["Reddet","",1,"r-1","‘Daha çocuksun’ deyip güldüler."]]],
+[6,11,"","Kayıp cüzdan","Okul yolunda bir cüzdan buldun.",[["Polise götür","",1,"r+2 p+3","Polis amca sırtını sıvazladı, sahibi teşekküre geldi."],["Sakla","",.8,"p+2 x+1","İçinde biraz bozukluk vardı, şeker aldın.","p-4","Sahibi mahallede soruşturdu, yakalandın."]]],
+[7,12,"","Kardeş kavgası","Kuzeninle kavga ettiniz, oyuncağını kırdın.",[["Özür dile","",1,"p+2","Barıştınız, yine en iyi arkadaşsınız."],["Haklıyım de","",1,"r+1 p-3","Bir ay konuşmadınız."]]],
+[8,12,"","Okul müsameresi","Okul müsameresinde rol verdiler.",[["Başrolü iste","",.5,"p+6 f+1","Salon ayağa kalktı, annen ağladı.","p-4","Sahnede repliğini unuttun."],["Ağaç ol","",1,"p+1","Bütün oyun boyunca kımıldamadan durdun."]]],
+[9,12,"","Uçurtma","Uçurtma yapmak için kamış ve gazete kâğıdı buldun.",[["Yap ve uçur","",.7,"p+6","Uçurtman mahallenin en yükseğindeydi.","p-2","Elektrik teline takıldı."],["Hazırını al","",1,"m-50 p+3",""]]],
+[10,12,"","Sinemaya kaçak giriş","Arkadaşlar arka kapıdan sinemaya kaçak girmeyi planlıyor.",[["Katıl","",.6,"p+5 r+1","Filmi bedava izlediniz.","p-4 r-1","Bekçi yakaladı, kulağınızdan tutup çıkardı."],["Bilet al","",1,"m-100 p+3",""]]],
+[4,8,"","Yeni ayakkabı","Bayramlık ayakkabı aldılar. Yatağına koyup uyudun.",[["Bayramı bekle","",1,"p+5",""],["Hemen giy, sokağa çık","",1,"p+3","Çamura bastın, annen saçını yoldu."]]],
+[11,12,"","İlk aşk","Sıra arkadaşın sana mektup yazdı.",[["Cevap yaz","",.6,"p+7","Teneffüslerde el ele tutuştunuz.","p-4","Mektup elden ele dolaştı, rezil oldun."],["Görmezden gel","",1,"p-1",""]]],
+// ---- GENÇLİK (13-17)
+[13,17,"","İlk sigara","Okulun arkasında arkadaşlar sigara içiyor.",[["Sen de iç","",1,"r+1 h-2","Başın döndü ama havalı göründün."],["İçme","",1,"h+1",""]]],
+[13,17,"","Kopya","Sınavda yanındaki çocuk kâğıdını uzattı.",[["Kopya çek","",.6,"p+3","Geçtin.","p-5 r-1","Öğretmen yakaladı, sıfır verdi."],["Kendi bildiğini yaz","",.5,"p+2","Kıl payı geçtin.","p-2","Bütünlemeye kaldın."]]],
+[14,17,"","Disko","Arkadaşlar gizlice diskoya gidiyor. Kapıda yaş soruyorlar.",[["Kimliği oynat","",.5,"p+7","Sabaha kadar dans ettin.","p-4","Kapıdan çevrildin."],["Gitme","",1,"",""]]],
+[14,17,"","Motor","Mahallede biri eski bir motosiklet satıyor.",[["Al","",1,"m-3000 p+6","Arka sokaklarda tozu dumana kattın."],["Geç","",1,"",""]]],
+[13,17,"","Okul kavgası","Diğer okulun çocukları okul çıkışı sizi bekliyor.",[["Kavgaya gir","",.5,"r+4 h-4","Kazandınız, adın duyuldu.","h-10 r-1","Hastanelik oldun."],["Arka kapıdan çık","",1,"r-2","Ödlek dediler."]]],
+[15,17,"","Gizli sevgili","Sevdiğin kızın abisi sizi gördü.",[["Abisiyle konuş","",.5,"r+3 p+4","Abi ‘adam gibi çocuk’ dedi.","h-6","Abi konuşmadı, vurdu."],["Kaç","",1,"p-3","Bir süre o sokaktan geçemedin."]]],
+[14,17,"","Yaz işi","Bir oto sanayide yaz için çırak arıyorlar.",[["Çalış","",1,"w+1500 h-3 r+1","Elin yağa bulandı ama yazın sonunda cebin doldu."],["Tatil yap","",1,"p+4",""]]],
+[13,16,"","Gitar","Bir arkadaşın gitar çalmayı öğretmeyi teklif etti.",[["Öğren","",.6,"p+5 f+1","Birkaç parça çalabiliyorsun, kızlar etrafında.","p-2","Parmakların acıdı, bıraktın."],["İlgilenmiyorum","",1,"",""]]],
+[15,17,"","Ehliyetsiz direksiyon","Babanın arabasının anahtarı masada duruyor.",[["Gizlice tur at","",.6,"p+6","Sahil yolunda bir tur attın, kimse fark etmedi.","x+5 p-6","Polis çevirdi, baban karakoldan aldı."],["Dokunma","",1,"",""]]],
+[14,17,"","Torbacı","Okul önünde biri ‘mal ister misin’ dedi.",[["Uzak dur","",1,"r+1","Yürüyüp geçtin."],["Polise ihbar et","",.7,"x-3","Adam ertesi gün ortadan kayboldu.","h-8","Ertesi gün adamın abileri seni buldu."]]],
+[13,17,"","Futbol seçmesi","Mahallenin amatör takımı seçme yapıyor.",[["Seçmeye katıl","",.5,"p+6 h+3","Takıma girdin, haftada üç antrenman.","p-3","Alınmadın."],["İzle","",1,"",""]]],
+[15,17,"","Okulu asmak","Arkadaşlar okulu asıp Boğaz'a inmeyi teklif ediyor.",[["Git","",.6,"p+6","Martılara simit attınız.","p-5","Müdür veliyi aradı."],["Derse gir","",1,"",""]]],
+[16,17,"","Kahvehane","Mahallenin kahvehanesinde okey masasına çağırdılar.",[["Otur","",.5,"w+500 r+1","Abileri yendin.","m-500","Elindeki harçlığı kaptırdın."],["Çay içip kalk","",1,"",""]]],
+[13,17,"","Dövme","Arkadaşın evde dövme makinesi yapmış.",[["Koluna dövme yaptır","",.6,"r+2 p+3","Koluna küçük bir kurt dövmesi yaptırdın.","h-5","Mikrop kaptı, kolun şişti."],["Hayır","",1,"",""]]],
+[14,17,"","Sınıf başkanlığı","Sınıf başkanlığına aday ol diyorlar.",[["Aday ol","",.5,"r+3 p+4","Seçildin, ilk vaadin: kantin indirimi.","p-3","Kaybettin."],["Uğraşamam","",1,"",""]]],
+[15,17,"","İlk kalp kırıklığı","Sevdiğin kız başka biriyle görülmüş.",[["Yüzleş","",1,"p-6 r+1","Gerçek acıttı ama artık biliyorsun."],["Sustur kendini, spora git","",1,"h+3 p-2",""]]],
+[16,17,"","Gece bekçisi","Gece eve geç döndün. Kapıyı baban açtı.",[["Doğruyu söyle","",.6,"","Baban sadece ‘bir daha olmasın’ dedi.","p-4","Bir ay ev hapsi."],["Yalan söyle","",.5,"","Yemedi ama sesini çıkarmadı.","p-6","Yalanı ortaya çıktı."]]],
+[13,17,"","Mahalle düğünü","Mahallede düğün var, davul zurna çalıyor.",[["Halaya katıl","",1,"p+5",""],["Kenarda dur","",1,"",""]]],
+[14,17,"","Çalıntı telefon","Bir arkadaş sana ucuza telefon satmak istiyor. Belli ki çalıntı.",[["Al","",.7,"m-500 p+3 x+2","Ucuza son model telefonun oldu.","x+6 p-4","Polis telefonun izini sürdü, karakola çağrıldın."],["Alma","",1,"",""]]],
+[15,17,"","Dershane","Annen dershaneye yazdırmak istiyor.",[["Kabul et","",1,"m-2000 p-2","Hafta sonların gitti ama kafan açıldı."],["Reddet","",1,"p+2",""]]],
+// ---- YETİŞKİN GENEL (18+)
+[18,70,"","Trafik kazası","Kavşakta biri arabana arkadan vurdu.",[["Sakin konuş, tutanak tut","",1,"p-2","Sigorta işi halletti."],["İndir, dersini ver","",.6,"r+3 x+3","Adam özür dileyip kaçtı.","x+8 h-4","Kavga büyüdü, polis geldi."]]],
+[18,70,"","Komşu gürültüsü","Üst kattaki komşu her gece müzik açıyor.",[["Kibarca uyar","",.6,"p+2","Komşu özür diledi.","p-3","Daha da açtı."],["Kapısına dayan","",1,"r+2 x+1","Bir daha ses çıkmadı."]]],
+[18,60,"","Eski dost","Çocukluk arkadaşın yıllar sonra aradı, buluşmak istiyor.",[["Buluş","",1,"p+5","Saatlerce eski günleri konuştunuz."],["Bahane uydur","",1,"p-1",""]]],
+[20,70,"","Diş ağrısı","Dişin zonkluyor, gece uyuyamıyorsun.",[["Dişçiye git","",1,"m-3000 h+3","Kanal tedavisi yapıldı."],["Ağrı kesiciyle idare et","",.5,"","Geçti gibi.","h-6 p-4","Yüzün şişti, apse oldu."]]],
+[18,60,"","Maç bileti","Derbi bileti karaborsada satılıyor.",[["Al","",1,"m-5000 p+7","Tribünde sesin kısılana kadar bağırdın."],["Evde izle","",1,"p+2",""]]],
+[18,70,"","Askerlik daveti","Askerlik şubesinden yazı geldi.",[["Git","",1,"h+5 r+3 p-3","Bedelli değil, gerçek askerlik. Döndüğünde başka biriydin."],["Bedelli öde","",1,"m-50000","Bedelliyi ödedin, üç haftada döndün."]]],
+[18,60,"","Kiralık daire","Ev sahibin kirayı yüzde elli artırmak istiyor.",[["Pazarlık yap","",.5,"m-2000","Yüzde yirmide anlaştınız.","m-6000","Pazarlık tutmadı."],["Gözdağı ver","",.7,"r+2 x+2","Ev sahibi fikrini değiştirdi.","x+6","Ev sahibi polise gitti."]]],
+[18,70,"","Sahte polis","Telefonda biri kendini polis diye tanıtıp hesabını soruyor.",[["Kapat","",1,"p+1","Dolandırıcı olduğunu anladın."],["Dolandırıcıyı oyala","",1,"p+3 r+1","Yarım saat oyaladın, sonra küfrettin."]]],
+[18,70,"","Yangın","Mahallede bir ev yanıyor, içeride çocuk sesi var.",[["İçeri gir","",.6,"r+8 f+3 h-8","Çocuğu kucağında çıkardın. Gazeteler yazdı.","h-25","Dumandan bayıldın, itfaiye seni çıkardı."],["İtfaiyeyi ara","",1,"r+1",""]]],
+[18,60,"","Spor salonu teklifi","Bir boks hocası ‘sende yetenek var’ dedi.",[["Antrenmana başla","",1,"m-1500 h+6 r+2","Kollar şişti, adımın önünde herkes kenara çekiliyor."],["Zamanım yok","",1,"",""]]],
+[25,70,"","Vergi incelemesi","Maliye'den inceleme yazısı geldi.",[["Muhasebeciye ver","",1,"m-8000","Muhasebeci her şeyi düzeltti."],["Görmezden gel","",.5,"","Bir şey çıkmadı.","m-20000 x+4","Ceza kestiler."]]],
+[18,70,"","Lüks restoran","Bir arkadaşın seni şehrin en pahalı restoranına davet etti, hesabı bölüşeceksiniz.",[["Git","",1,"m-4000 p+5","Ömründe yemediğin tatları yedin."],["Bahane bul","",1,"",""]]],
+[18,70,"","Hırsız","Gece eve hırsız girmiş, salonda ses var.",[["Üstüne yürü","",.6,"r+4","Hırsız pencereden atlayıp kaçtı.","h-12","Hırsız bıçak çekti."],["Polisi ara","",1,"m-1000","Polis geldiğinde televizyon gitmişti."]]],
+[30,70,"","Okul arkadaşı","Lise arkadaşın milletvekili olmuş, televizyonda gördün.",[["Ara, tebrik et","",.5,"r+2","Seni hatırladı, ‘bir şey olursa ara’ dedi.","p-2","Tanımadı bile."],["Boş ver","",1,"",""]]],
+[18,70,"","Bayram ziyareti","Bayramda akrabalar toplanıyor.",[["Git, el öp","",1,"p+4 r+1","Herkes ‘ne iş yapıyorsun’ diye sordu."],["Gitme","",1,"p-2",""]]],
+[20,70,"","Sağlık kontrolü","Doktor kolesterolünün yüksek olduğunu söyledi.",[["Diyet yap","",.6,"h+5 p-2","Değerlerin düştü.","p-3","Diyet üç gün sürdü."],["Boş ver","",1,"h-3",""]]],
+[18,60,"","Kayıp köpek","Sokakta tasması olan bir köpek seni takip ediyor.",[["Sahibini bul","",1,"p+4 r+1","Sahibi gözyaşlarıyla teşekkür etti."],["Sahiplen","",1,"p+6","Artık bir bekçin var."]]],
+[18,70,"","Kumarhane gecesi","Bir tanıdık seni yeraltı kumarhanesine çağırdı.",[["Masaya otur","",.4,"d+20000 p+5","Şans yüzüne güldü.","m-20000 p-5","Cebindekileri bıraktın."],["İçki iç, izle","",1,"p+2",""]]],
+[18,60,"","Gece kulübü kavgası","Kulüpte biri sevgiline laf attı.",[["Hesap sor","",.6,"r+4 x+3","Adam yere serildi, kimse sesini çıkarmadı.","h-10 x+5","Korumalar seni dışarı attı."],["Görmezden gel","",1,"r-2",""]]],
+[18,70,"","Su baskını","Sağanak yağmurda bodrum kat su bastı.",[["Tamir ettir","",1,"m-6000","Usta pompayla suyu çekti."],["Kendin uğraş","",1,"h-3 p-3","Sabaha kadar kova taşıdın."]]],
+[18,70,"","Sokak kedileri","Kapının önünde kedilere mama koyuyorsun, komşu şikâyetçi.",[["Devam et","",1,"p+3 r-1",""],["Komşuyu dinle","",1,"p-2",""]]],
+[20,70,"","Akraba borcu","Kuzenin borç istiyor, ‘ay sonu veririm’ diyor.",[["Ver","",.5,"m-10000","Kuzen sözünü tuttu, parayı geri getirdi; aranız iyi.","m-10000 p-3","Para hiç dönmedi."],["Verme","",1,"p-2","Kuzen trip attı."]]],
+[25,70,"","Taziye","Mahallenin eski muhtarı vefat etti.",[["Cenazeye katıl","",1,"r+2 p-2","Bütün mahalle oradaydı."],["Gitme","",1,"r-1",""]]],
+[18,70,"","Balık tutma","Bir arkadaş sabah ezanında balığa davet etti.",[["Git","",1,"p+5 h+2","Üç lüfer, bir çay, bir sigara."],["Uyu","",1,"h+1",""]]],
+[18,60,"","Sosyal medya kavgası","İnternette biri hakkında yalan yazıyor.",[["Cevap yaz","",1,"p-3 f+1","Tartışma büyüdü."],["Kim olduğunu bul","",.6,"r+3","Adamı buldun, gönderiyi sildi.","x+4","Adam şikâyet etti."]]],
+[30,70,"","Eski fotoğraflar","Annenin evinde eski fotoğraf albümü buldun.",[["Saatlerce bak","",1,"p+4",""],["Kaldır","",1,"",""]]],
+[18,70,"","Ehliyet sınavı","Ehliyet sınavına gireceksin.",[["Çalış","",.7,"p+4","Tek seferde geçtin.","p-3","Park ederken yandın."],["Torpil bul","",.8,"m-5000 p+3","Ehliyet cebinde.","m-5000 x+3","Torpil yakalandı."]]],
+[18,70,"","Tatil","Bir hafta Ege'de tatil fırsatı çıktı.",[["Git","",1,"m-15000 p+8 h+4","Güneşte yandın, denizde uyudun."],["Çalışmaya devam","",1,"",""]]],
+[18,60,"","Gece yarısı mesajı","Eski sevgilin gece yarısı ‘uyudun mu’ yazdı.",[["Cevap ver","",.5,"p+3","Eski günleri konuştunuz.","p-5","Eski yaralar açıldı."],["Engelle","",1,"p+1",""]]],
+[40,80,"","Göbek","Aynaya baktın, göbek çıkmış.",[["Spora başla","",.6,"h+5 p+2","Üç kilo verdin.","p-2","Spor üye kartı çekmecede kaldı."],["Kabullen","",1,"p+1",""]]],
+[18,70,"","Meyhane","Arkadaşlarla Kumkapı'da meyhane gecesi.",[["Git","",1,"m-2000 p+6 h-1","Fasıl, rakı, hüzün."],["Evde kal","",1,"",""]]],
+[18,70,"","Bağış","Mahalledeki yetimhane için bağış toplanıyor.",[["Büyük bağış yap","",1,"m-20000 r+4 f+1 p+3","Adın yetimhanenin duvarına yazıldı."],["Bir şey verme","",1,"",""]]],
+[18,70,"","Elektrik kesintisi","Bütün mahallede elektrik kesildi.",[["Mumla idare et","",1,"p+1",""],["Jeneratör al","",1,"m-8000 p+2",""]]],
+[18,60,"","Konser","Sevdiğin sanatçının konserine bilet var.",[["Git","",1,"m-3000 p+6",""],["Gitme","",1,"",""]]],
+[50,90,"","Torun","Kucağına bir bebek verdiler, ‘dedesi gibi olacak’ diyorlar.",[["Sev","",1,"p+8","Gözlerin doldu."]]],
+[55,90,"","Romatizma","Dizlerin ağrıyor, merdiven çıkamıyorsun.",[["Fizik tedavi","",1,"m-10000 h+5",""],["Kaplıcaya git","",1,"m-6000 h+3 p+3",""],["Sabret","",1,"h-3",""]]],
+[55,90,"","Hatırat","Bir gazeteci hayatını kitap yapmak istiyor.",[["Anlat","",.6,"f+5 p+4","Kitap çok sattı.","x+6","Kitapta fazla şey anlattın."],["Reddet","",1,"",""]]],
+[60,95,"","Vasiyet","Avukatın vasiyet hazırlamanı öneriyor.",[["Vasiyetini yaz","",1,"m-5000 p+2","Kimin neyi alacağı belli."],["Ölmeyeceğim","",1,"",""]]],
+[55,90,"","Kahvehane sohbeti","Eski kahvehanede yaşıtlarınla tavla oynuyorsun.",[["Mahallenin efsanesi gibi anlat","",1,"r+2 p+4","Gençler dinledi."],["Sessizce oyna","",1,"p+3",""]]],
+// ---- İLİŞKİ / EVLİLİK / ÇOCUK
+[18,60,"part","Yıldönümü","Sevgilinle yıldönümünüz. Unuttun mu?",[["Sürpriz yap","",1,"m-5000 p+6","Gözleri parladı."],["Unuttum de","",1,"p-6","Bir hafta küs kaldınız."]]],
+[18,60,"part","Kıskançlık","Sevgilin telefonuna gelen mesajları soruyor.",[["Göster","",1,"p+2","Rahatladı."],["Özel hayatım de","",1,"p-5","Kavga büyüdü."]]],
+[18,60,"part","Aile tanışması","Sevgilin ailesiyle tanıştırmak istiyor.",[["Git, iyi görün","",.6,"p+5 r+1","Kayınpeder seni sevdi.","p-4","Babası ‘ne iş yaparsın’ diye sorunca ortam gerildi."],["Daha erken","",1,"p-3",""]]],
+[20,60,"mar","Ev işleri","Eşin ev işlerinden yorulduğunu söylüyor.",[["Yardımcı tut","",1,"m-8000 p+4",""],["Sen de yardım et","",1,"p+3 h-1",""],["Kadın işi de","",1,"p-6",""]]],
+[20,60,"mar","Evlilik yıldönümü","Evlilik yıldönümünüz yaklaşıyor.",[["Kapadokya'ya götür","",1,"m-25000 p+8","Balonla gün doğumu."],["Evde yemek","",1,"p+3",""]]],
+[20,60,"mar","Kayınvalide","Kayınvalide bir aylığına size taşınıyor.",[["Kabul et","",1,"p-4 r+1","Yemekler güzel ama her şeye karışıyor."],["Otel ayarla","",1,"m-12000 p+1",""]]],
+[20,60,"kids","Veli toplantısı","Çocuğun öğretmeni seni okula çağırdı.",[["Git","",1,"p+2","Çocuğun matematikte çok iyiymiş."],["Gitme","",1,"p-3",""]]],
+[20,70,"kids","Çocuk hastalandı","Çocuğun yüksek ateşle hastaneye kaldırıldı.",[["Özel hastane","",1,"m-15000 p-2","Çabuk iyileşti."],["Devlet hastanesi","",.7,"p-4","Kuyrukta bekledin ama iyileşti.","p-8","Uzun sürdü."]]],
+[25,70,"kids","Doğum günü","Çocuğunun doğum günü var.",[["Büyük parti","",1,"m-10000 p+6",""],["Pasta, mum","",1,"m-500 p+4",""]]],
+[30,70,"kids","Çocuğun kavgası","Çocuğun okulda kavga etmiş, karşı tarafın babası arıyor.",[["Özür dile","",1,"r-1 p-2",""],["Adamı uyar","",1,"r+2 x+1",""]]],
+[30,75,"kids","Çocuğun sorusu","Çocuğun ‘baba sen ne iş yapıyorsun’ diye soruyor.",[["Doğruyu söyle","",1,"p-3","Gözleri büyüdü."],["İş insanıyım de","",1,"p+1",""]]],
+[35,80,"kids","Üniversite","Çocuğun üniversiteyi kazandı.",[["Okul masrafını karşıla","",1,"m-30000 p+8","Gurur duydun."],["Kendi çalışsın","",1,"p-2",""]]],
+[18,60,"nopart","Tanışma","Bir kafede gözünüz göz göze geldi.",[["Masasına git","",.5,"p+5","Numarasını aldın.","p-3","Kibarca reddetti."],["Sadece gülümse","",1,"p+1",""]]],
+[18,60,"nopart","Görücü","Teyzen seni biriyle tanıştırmak istiyor.",[["Kabul et","",.5,"p+4","Hoş biriymiş.","p-3","Sohbet tıkandı."],["Hayır","",1,"",""]]],
+// ---- SOKAK / SUÇ (rank>=1)
+[16,60,"street","Bıçaklı tehdit","Gece dar sokakta biri bıçak çekti: ‘Ne varsa çıkar!’",[["Silahını çıkar","",.7,"r+4","Adam bıçağı atıp kaçtı.","h-15","Bıçak koluna saplandı."],["Cüzdanı ver","",1,"m-2000 r-3",""]]],
+[16,60,"street","Kaçak sigara","Bir tır dolusu kaçak sigara düşük fiyata elinde kalmış birinin.",[["Satın al, dağıt","",.7,"m-30000 d+70000 x+4","Bir haftada eritildi.","m-30000 x+10","Jandarma depoya bastı."],["Bulaşma","",1,"",""]]],
+[17,60,"street","Muhbir şüphesi","Adamlarından biri polisle görülmüş.",[["Konuştur","",.6,"r+3","Masum çıktı, sadakati arttı.","x+5","Gerçekten muhbirmiş ve kaçtı."],["Gözünü dört aç","",1,"",""]]],
+[18,60,"street","Otopark","Mahallenin otoparkını kimse işletmiyor.",[["El koy, park ücreti al","",.8,"d+15000 r+2 x+2","Artık otopark senin.","x+6 h-4","Belediye zabıtası ve diğer çete aynı gün geldi."],["Bırak","",1,"",""]]],
+[18,60,"street","Kaçak hafriyat","Bir müteahhit hafriyatını ormana döktürmek istiyor.",[["Kamyonları ayarla","",.7,"d+40000 x+4","İş temiz bitti.","x+12","Orman bekçisi plaka aldı."],["Reddet","",1,"",""]]],
+[18,60,"street","Gece kulübü koruması","Bir kulüp sahibi korumalık teklif ediyor.",[["Kabul et","",.8,"d+20000 r+2 h-2","Bir ay kapıda durdun.","h-12","Kapıda silahlı kavga çıktı."],["Reddet","",1,"",""]]],
+[18,60,"street","Rakip kurye","Rakibin kuryesinin rotasını öğrendin.",[["Pusu kur","",.5,"d+60000 r+4 x+6","Para çantası artık sende.","h-18 x+8","Kurye silahlıydı."],["Bırak","",1,"",""]]],
+[16,60,"street","Yanlış adam","Adamların yanlış bir esnafı dövmüş, adam belediye başkanının akrabası.",[["Özür dilet, masrafı karşıla","",1,"m-15000 x-2",""],["Arkalarında dur","",1,"r+3 x+8",""]]],
+[18,60,"street","Kayıp silah","Depodaki silahlardan biri eksik.",[["Herkesi sorgula","",.5,"r+2","Çaylak satmış, cezasını verdin.","p-3","Bulamadın."],["Sessiz kal","",1,"",""]]],
+[18,60,"street","Kaçak yarış","Sahil yolunda gece kaçak yarış var, bahis yüksek.",[["Yarış","",.5,"d+25000 r+3","Bitiş çizgisini ilk geçtin.","m-25000 h-8","Bariyere vurdun."],["İzle","",1,"p+2",""]]],
+[18,60,"street","Polis çevirmesi","Bagajda yasak bir şey varken polis çevirdi.",[["Sakin ol","",.6,"","Polis bakmadan geçirdi.","x+10","Bagajı açtılar, ifade verdin."],["Rüşvet uzat","",.7,"m-5000","Polis görmedi.","x+15","Rüşveti kabul etmedi."]]],
+[18,60,"street","Sahte para","Biri piyasaya sahte para sürmek için ortak arıyor.",[["Ortak ol","",.5,"d+50000 x+6","Sahte paralar elden çıktı.","x+15 r-2","Banka sahteleri yakaladı, iz sana çıktı."],["Bulaşma","",1,"",""]]],
+[18,60,"street","Tefecinin borçlusu","Bir tefeci borç tahsili için adam arıyor.",[["Borcu tahsil et","",.7,"d+10000 x+3","Borçlu ödedi.","h-6","Borçlunun oğulları seni bekliyordu."],["Reddet","",1,"",""]]],
+[18,60,"street","Gece baskını","Rakip çete mekânına molotof attı.",[["Hemen misilleme","",.5,"r+5 x+8","Karşı mekân da yandı.","h-15","Pusuya düştün."],["Sigortayı ara","",1,"m-10000",""]]],
+[18,60,"street","Liman işçileri","Limanda bir konteyner kayıtlardan silinebilir, ama işçilere para lazım.",[["Öde","",.7,"m-20000 d+80000 x+4","Konteyner kayıtsız çıktı.","m-20000 x+10","Gümrük denetimine takıldı."],["Bırak","",1,"",""]]],
+[17,60,"street","Çaylak","Mahalleden bir çocuk ‘yanında çalışayım’ diyor.",[["Al yanına","",1,"r+2","Getir götür işlerine başladı."],["Okula dön de","",1,"r+1 p+2",""]]],
+[18,60,"street","Mekân sahibi","Bir meyhane sahibi haraç ödemeyi reddediyor.",[["Camlarını indir","",.7,"d+12000 r+3 x+5","Ertesi gün ödedi.","x+10","Mekân sahibi polise gitti."],["İkna et","",.5,"d+8000 r+2","Dostça anlaştınız.","r-2","Güldü geçti."]]],
+[18,60,"street","Kumar borcu","Bir iş adamı kumarda sana büyük borçlandı ve ödemiyor.",[["Arabasına el koy","",.7,"d+40000 r+3 x+4","Arabanın anahtarı masanda.","x+8","Adam şikâyetçi oldu."],["Vade ver","",.5,"d+30000","Ödedi.","p-3","Kaçtı."]]],
+[18,60,"street","Gümrükçü","Gümrükte bir memur ‘ayda bir zarf, her şey geçer’ diyor.",[["Anlaş","",.8,"m-15000 x-5","Mallar sorunsuz geçiyor.","x+12","Memur içeriden yakalandı, adını verdi."],["Reddet","",1,"",""]]],
+[18,60,"street","Çalıntı mücevher","Biri sıcak mücevher satıyor, değerinin çok altında.",[["Al","",.7,"m-25000 d+60000 x+3","Kuyumcuya ayrı ayrı sattın.","m-25000 x+10","Mücevherin sahibi tanınmış biri çıktı."],["Alma","",1,"",""]]],
+[18,60,"street","Yeraltı dövüşü","Depoda yasa dışı dövüş var, dövüşçü arıyorlar.",[["Dövüş","",.5,"d+30000 r+5 h-8","Rakibini üçüncü rauntta yere serdin.","h-25","Ağır nakavt oldun."],["Bahis oyna","",.5,"d+15000","Kazandın.","m-15000","Kaybettin."]]],
+[18,60,"street","Otel odası","Polisin aradığı bir adamın saklanmaya ihtiyacı var.",[["Sakla","",.6,"d+25000 r+3","Adam bir ay sonra yurt dışına çıktı.","x+15","Polis evini bastı."],["Kapıyı kapat","",1,"r-1",""]]],
+[18,60,"street","Kaçak akaryakıt","Bir istasyon kaçak mazot almak istiyor.",[["Tanker ayarla","",.7,"d+45000 x+5","Tanker boşaltıldı.","x+12","Tanker jandarmaya takıldı."],["Hayır","",1,"",""]]],
+[18,60,"street","İntikam","Yıllar önce seni döven çocuk şimdi mahallede esnaf.",[["Hesap sor","",1,"r+3 x+3","Gözlerine baktı, tanıdı, özür diledi."],["Geçmişte kaldı","",1,"p+3",""]]],
+[18,60,"street","Rakip lider","Rakip çetenin lideri gizlice buluşma istiyor.",[["Git","",.6,"r+4","Toprak paylaşımında anlaştınız.","h-15","Tuzakmış."],["Adam gönder","",1,"",""]]],
+// ---- AİLE (S.family)
+[18,70,"fam","Babanın düğünü","Babanın kızı evleniyor. Herkes takı takacak.",[["Ağır takı tak","",1,"m-30000 r+4","Baba boynuna takılan bileziği görüp gülümsedi."],["Sembolik tak","",1,"m-3000 r-2",""]]],
+[18,70,"fam","Ailede ihanet","Ailedeki bir adamın rakiplere bilgi sattığını öğrendin.",[["Babaya söyle","",1,"r+5","Hain ortadan kayboldu, Baba sana güveniyor."],["Kendin hallet","",.6,"r+7 x+5","Haini kendin cezalandırdın.","x+12","İz bıraktın."]]],
+[18,70,"fam","Aile yemeği","Baba bütün aileyi pazar yemeğine çağırdı.",[["Git","",1,"r+2 p+3","Babanın sağ tarafına oturttular."],["Mazeret uydur","",1,"r-3",""]]],
+[18,70,"fam","Aile içi kavga","İki kaptan arasında kavga çıktı, senden taraf tutman isteniyor.",[["Büyüğün tarafını tut","",.6,"r+3","Kazanan taraftaydın.","r-4","Yanlış atı seçtin."],["Arabulucu ol","",.5,"r+5","İkisi de el sıkıştı.","r-2","İkisi de sana küstü."]]],
+[18,70,"fam","Babanın hastalığı","Baba hastanede. Ailede kimin yükseleceği konuşuluyor.",[["Başında bekle","",1,"r+4 p-2","Gözünü açtığında seni gördü."],["Koltuğa göz dik","",.4,"r+6","Destekçi topladın.","r-6","Baba iyileşti ve her şeyi duydu."]]],
+[18,70,"fam","Rakip ailenin elçisi","Rakip aile sana gizlice kendi saflarına geçmeyi teklif ediyor.",[["Reddet ve Babaya anlat","",1,"r+5",""],["Düşüneceğim de","",1,"r-2",""]]],
+[18,70,"fam","Silah teslimatı","Aile seni bir silah teslimatını korumaya gönderdi.",[["Görevi yap","",.7,"r+4 x+4","Teslimat sorunsuz.","h-12 x+8","Çatışma çıktı."],["Hastayım de","",1,"r-4",""]]],
+[18,70,"fam","Babanın oğlu","Babanın şımarık oğlu senin adamlarına kafa tutuyor.",[["Sabret","",1,"r-1",""],["Haddini bildir","",.5,"r+4","Oğlan bir daha sesini çıkarmadı.","r-8","Baba olayı duydu ve sinirlendi."]]],
+// ---- ÖRGÜT (S.org)
+[18,70,"org","Yeni eleman","Mahalleden genç biri örgütüne katılmak için yalvarıyor.",[["Sına","",.6,"r+2","İlk işi kusursuz yaptı.","x+4","İlk işte yakalandı."],["Geri çevir","",1,"",""]]],
+[18,70,"org","Adamın düğünü","En güvendiğin adamın evleniyor.",[["Düğünü sen yap","",1,"m-40000 r+5","Bütün mahalle davetliydi."],["Takı tak","",1,"m-5000 r+1",""]]],
+[18,70,"org","Ekip içi rekabet","İki adamın aynı bölgenin sorumluluğu için kavgalı.",[["Birini seç","",1,"r+2","Diğeri küskün."],["Bölgeyi böl","",.6,"r+3","İkisi de razı.","r-2","İkisi de memnun değil."]]],
+[18,70,"org","Hapisteki adam","Adamlarından biri içeride, ailesi zor durumda.",[["Ailesine bak","",1,"m-15000 r+4","Adamın sadakati ölene kadar seninle."],["Kendi başlarının çaresine baksınlar","",1,"r-4",""]]],
+// ---- İŞ HAYATI (S.job)
+[16,70,"job","Mesai","Patron hafta sonu mesaiye kalmanı istiyor.",[["Kal","",1,"w+1000 p-3","Mesai ücreti aldın."],["Reddet","",.6,"p+2","Patron sesini çıkarmadı.","p-3","Patron surat astı."]]],
+[16,70,"job","İş arkadaşı","Bir iş arkadaşın senin yaptığın işi kendisi yapmış gibi patrona anlatmış.",[["Patrona doğruyu söyle","",.6,"r+2","Patron gerçeği öğrendi.","p-3","Patron inanmadı."],["Arkadaşla dışarıda konuş","",1,"r+2 x+1",""]]],
+[16,70,"job","Zor müşteri","Bir müşteri sana bağırıp çağırıyor.",[["Sabırla dinle","",1,"p-2","Müşteri sakinleşip özür diledi."],["Haddini bildir","",.5,"r+2","Müşteri sustu.","p-4","Patron seni uyardı."]]],
+[16,70,"job","Bahşiş","Bir müşteri yüklü bahşiş bıraktı.",[["Teşekkür et","",1,"w+500 p+3",""]]],
+[16,70,"job","İş kazası","İşte ayağın kaydı, düştün.",[["Rapor al","",1,"h-5 p+1","Bir hafta evde dinlendin."],["Çalışmaya devam","",1,"h-8 r+1",""]]],
+[16,70,"job","Patronun sırrı","Patronun vergi kaçırdığını öğrendin.",[["Sus","",1,"",""],["Zam iste, imalı konuş","",.5,"w+3000 x+2","Patron anladı, maaşına zam yaptı.","p-4","Patron seni kovmakla tehdit etti."]]],
+[16,70,"job","Yılbaşı partisi","İş yerinin yılbaşı partisi var.",[["Git, eğlen","",1,"p+5",""],["Gitme","",1,"",""]]],
+// ---- CEZAEVİ
+[16,90,"jail","Koğuş ağası","Koğuşun ağası seni çağırdı: ‘Burada kurallar var.’",[["Saygı göster","",1,"r-1 h+2",""],["Kafa tut","",.4,"r+6","Ağa seni tanıdı, artık sağ kolusun.","h-15","Revire kaldırıldın."]]],
+[16,90,"jail","Kantin","Kantinde biri senin sırana kaynak yaptı.",[["Uyar","",.6,"r+2","Geri çekildi.","h-6","Kavga çıktı."],["Sus","",1,"r-1",""]]],
+[16,90,"jail","Ziyaret günü","Ziyaret günü. Kimse gelmedi.",[["Mektup yaz","",1,"p+2",""],["Ranzaya uzan","",1,"p-4",""]]],
+[16,90,"jail","Firar planı","Hücre arkadaşın firar planı yapıyor, seni de çağırıyor.",[["Katıl","",.15,"","Plan işledi ama kaçmadan son anda vazgeçtin.","h-10","Gardiyanlar planı öğrendi, hücre hapsi."],["İhbar et","",1,"r-6",""],["Karışma","",1,"",""]]],
+[16,90,"jail","Cezaevi kütüphanesi","Kütüphanede tozlu bir hukuk kitabı buldun.",[["Oku","",1,"p+3","Kendi davana dair açıklar buldun."],["Bırak","",1,"",""]]],
+[16,90,"jail","Koğuş kumarı","Koğuşta sigarasına iskambil oynanıyor.",[["Otur","",.5,"r+1 p+3","Kazandın, koğuşun zengini oldun.","p-3","Bütün sigaraları kaybettin."],["İzle","",1,"",""]]],
+[16,90,"jail","Gardiyan","Bir gardiyan dışarıdan bir şey getirmeyi teklif ediyor.",[["Telefon iste","",.7,"m-5000 p+5","Ailenle konuştun.","m-5000 r-2","Arama sırasında telefon bulundu."],["Reddet","",1,"",""]]],
+[16,90,"jail","Cezaevi spor","Havalandırmada barfiks yarışması var.",[["Katıl","",.5,"r+3 h+3","Kazandın.","h+1","Kaybettin ama güçlendin."],["Seyret","",1,"",""]]],
+[16,90,"jail","Yeni gelen","Koğuşa korkmuş bir çocuk geldi.",[["Koru","",1,"r+2 p+2","Çocuk sana ömür boyu minnettar."],["Kendi derdine yan","",1,"",""]]],
+// ---- ZENGİN / FAKİR
+[18,90,"rich","Hayır kurumu","Bir vakıf seni şeref üyesi yapmak istiyor.",[["Kabul et, bağış yap","",1,"m-100000 f+4 r+3","Adın gazetelere geçti."],["Hayır","",1,"",""]]],
+[18,90,"rich","Yat daveti","Bir iş insanı seni yatına davet etti.",[["Git","",1,"p+6 r+2","Boğaz'da şampanya patlattınız."],["Gitme","",1,"",""]]],
+[18,90,"rich","Dolandırıcı","Bir ‘yatırım danışmanı’ yüzde yüz kâr vaat ediyor.",[["Yatır","",.15,"w+50000","İnanılmaz ama kazandın.","m-50000 p-6","Danışman parayla kayboldu."],["Kov","",1,"",""]]],
+[18,90,"rich","Akraba ziyareti","Yıllardır görmediğin akrabalar zenginleştiğini duyup kapına geldi.",[["Yardım et","",1,"m-30000 p+2 r+1",""],["Kapıyı açma","",1,"p-2",""]]],
+[18,90,"poor","Fatura","Elektrik faturası geldi, ödeyemiyorsun.",[["Komşudan borç iste","",.6,"p-2","Komşu yardım etti.","p-5","Elektrik kesildi."],["Kaçak hat çek","",.7,"x+2","Işıklar yandı.","x+6 h-5","Çarpıldın."]]],
+[18,90,"poor","Aşevi","Mahalledeki aşevi sıcak çorba dağıtıyor.",[["Git","",1,"h+3 p-2",""],["Gururun izin vermez","",1,"h-2",""]]],
+[18,90,"poor","Günlük iş","İnşaatta günlük işçi arıyorlar.",[["Çalış","",1,"w+800 h-4","Akşam yorgun ama cebinde para."],["Gitme","",1,"",""]]],
+[18,90,"poor","Hurdacı","Sokaktaki hurdaları toplayıp satabilirsin.",[["Topla","",1,"w+400 p-2 h-2",""],["Gerek yok","",1,"",""]]],
+// ---- ARABA
+[18,80,"car","Benzin","Benzin istasyonunda pompacı ‘depoyu fullersek’ diyor.",[["Fulle","",1,"m-3000",""],["Az al","",1,"m-800",""]]],
+[18,80,"car","Kaporta","Arabanı park ettiğin yerde çizmişler.",[["Boyat","",1,"m-6000",""],["Bırak öyle kalsın","",1,"p-2",""]]],
+[18,80,"car","Ceza","Hız kamerası seni çekmiş.",[["Öde","",1,"m-2500",""],["İtiraz et","",.3,"","İtiraz kabul edildi.","m-3500","İtiraz reddedildi, faiziyle ödedin."]]],
+[18,80,"car","Otostopçu","Yol kenarında otostop çeken biri var.",[["Al","",.8,"p+3","Sohbet güzeldi.","m-3000 h-5","Silah çekip cüzdanını aldı."],["Geç","",1,"",""]]],
+// ---- GENEL EK
+[18,80,"","Deprem","Gece yer sarsıldı. Herkes sokağa döküldü.",[["Komşulara yardım et","",1,"r+3 p-2 h-2","Sabaha kadar enkazda çalıştın."],["Ailenle güvenli yere git","",1,"p-3",""]]],
+[18,80,"","Kar yağışı","İstanbul'a kar yağdı, şehir durdu.",[["Kartopu oyna","",1,"p+5 h-1",""],["Evde kal","",1,"p+1",""]]],
+[18,80,"","Maç sonrası","Takımın şampiyon oldu, sokaklar dolu.",[["Kutlamaya katıl","",1,"p+8 x+1","Taksim'de sabahladın."],["Evden izle","",1,"p+3",""]]],
+[18,80,"","Seçim","Yerel seçim var.",[["Oy kullan","",1,"p+1",""],["Gitme","",1,"",""]]],
+[18,80,"","Ramazan","Ramazan ayı geldi.",[["Oruç tut","",1,"h+1 p+2 r+1",""],["İftar ver","",1,"m-8000 r+3 p+3","Mahallenin yarısını doyurdun."],["Normal devam","",1,"",""]]],
+[18,80,"","Kurban","Kurban bayramı yaklaşıyor.",[["Kurban kes, dağıt","",1,"m-12000 r+3",""],["Bağış yap","",1,"m-4000 r+1",""],["Geç","",1,"",""]]],
+[18,80,"","Hediye","Yakın bir dostunun doğum günü.",[["Pahalı hediye al","",1,"m-5000 p+3 r+1",""],["Mesaj at","",1,"",""]]],
+[18,80,"","Grip salgını","Şehirde grip salgını var.",[["Aşı ol","",1,"m-500 h+2",""],["Boş ver","",.6,"","Kurtuldun.","h-8","Bir hafta yattın."]]],
+[18,80,"","Kitap","Bir dostun sana bir kitap hediye etti.",[["Oku","",1,"p+3",""],["Rafa koy","",1,"",""]]],
+[18,80,"","Sahil yürüyüşü","Güzel bir gün, sahil yürüyüşü için ideal.",[["Yürü","",1,"h+3 p+3",""],["Uyu","",1,"h+1",""]]],
+[18,80,"","Mahalle muhtarı","Muhtar mahallenin sorunları için seninle konuşmak istiyor.",[["Destek ol","",1,"m-5000 r+3","Parkın aydınlatması senin sayende yenilendi."],["Meşgulüm","",1,"",""]]],
+[18,80,"","Sokak müzisyeni","İstiklal'de bir sokak müzisyeni senin sevdiğin şarkıyı çalıyor.",[["Para at","",1,"m-200 p+3",""],["Geç","",1,"",""]]],
+[18,80,"","Ayakkabı boyacısı","Yaşlı bir ayakkabı boyacısı ‘boyayalım abi’ diyor.",[["Boyat, bahşiş ver","",1,"m-300 p+2 r+1",""],["Gerek yok","",1,"",""]]],
+[18,80,"","Kayıp turist","Kaybolmuş bir turist yol soruyor.",[["Gezdir","",1,"p+3","Ülkesine dönünce teşekkür kartı yolladı."],["Tarif et","",1,"p+1",""]]],
+[18,80,"","Sokak satıcısı","Bir çocuk trafikte mendil satıyor.",[["Hepsini al","",1,"m-300 p+3 r+1",""],["Camı kapat","",1,"",""]]],
+[18,80,"","Rüya","Rüyanda rahmetli büyükanneni gördün.",[["Mezarını ziyaret et","",1,"p+4",""],["Unut","",1,"",""]]],
+[18,80,"","Spor bahsi","Arkadaşın bir maçın şikeli olduğunu fısıldadı.",[["Bahis oyna","",.5,"d+10000","Şike tuttu.","m-10000","Şike değilmiş."],["Bulaşma","",1,"",""]]],
+[18,80,"","Kaybolan anahtar","Evin anahtarını kaybettin.",[["Çilingir çağır","",1,"m-1000",""],["Pencereden gir","",.6,"","İçeri girdin.","h-5","Düştün."]]],
+[18,80,"","Eski borçlu","Yıllar önce borç verdiğin biri seni sokakta görünce yolunu değiştirdi.",[["Peşine düş","",.5,"w+5000 r+1","Borcunu ödedi.","p-2","Kaybettin izini."],["Bırak","",1,"",""]]],
+[18,80,"","Sokak röportajı","Bir televizyon kanalı sokakta röportaj yapıyor.",[["Konuş","",1,"f+1 p+2",""],["Kaç","",1,"",""]]],
+[18,80,"","Bir yabancı","Bir yabancı sana zarf uzatıp ‘Patron selam söyledi’ dedi.",[["Al","",.5,"r+1","İçinde bir adres ve bir isim vardı. Bir başkası için yazılmıştı.","x+4","Polis takipteymiş."],["Reddet","",1,"",""]]],
+[18,80,"","Kuaför","Saçlarına bir şekil vermenin zamanı.",[["Berbere git","",1,"m-500 p+2",""],["Kendin kes","",.4,"p+1","Fena olmadı.","p-4","Herkes güldü."]]],
+[18,80,"","Kitap fuarı","Şehirde kitap fuarı var.",[["Git","",1,"m-500 p+3",""],["Geç","",1,"",""]]],
+[18,80,"","Antika","Bit pazarında eski bir saat gördün.",[["Pazarlıkla al","",1,"m-1000 p+3",""],["Geç","",1,"",""]]],
+[18,80,"","Kiralık katil haberi","Gazetede mahallendeki bir cinayet haberini okudun.",[["Kimin yaptığını araştır","",.5,"r+2","Kimin yaptığını öğrendin; bu bilgi işine yarayacak.","x+4","Fazla soru sordun."],["Gazeteyi kapat","",1,"",""]]],
+[18,80,"","Çay bahçesi","Çamlıca'da çay bahçesinde manzaraya karşı oturuyorsun.",[["Düşüncelere dal","",1,"p+4",""]]],
+[18,80,"","Spor arabası","Galeride hayallerindeki araba duruyor.",[["Test sürüşü yap","",1,"p+4",""],["Bakıp geç","",1,"p-1",""]]],
+[18,80,"","Mahalle kavgası","İki komşu sokakta kavga ediyor.",[["Ayır","",.7,"r+2","Barıştırdın.","h-5","Sana da yumruk geldi."],["İzle","",1,"",""]]],
+[18,80,"","Hırsız çocuk","Bir çocuk cüzdanını çaldı, kaçıyor.",[["Kovala","",.6,"r+2","Yakaladın, cüzdan geri geldi.","m-1500","Kaçtı."],["Bırak","",1,"m-1500",""]]],
+[18,80,"","Ev partisi","Bir arkadaşın evde parti veriyor.",[["Git","",1,"p+5 h-1",""],["Evde kal","",1,"",""]]],
+[18,80,"","Polis arkadaş","Lise arkadaşın polis olmuş, kahve içmeye çağırdı.",[["Git","",1,"x-2 p+2","Eski günleri konuştunuz."],["Mesafeli dur","",1,"",""]]],
+[18,80,"","Kayıp evrak","Nüfus cüzdanını kaybettin.",[["Yenisini çıkar","",1,"m-300 p-1",""]]],
+[18,80,"","Tarihi konak","Eski bir konak satılıyor, yıkılmak üzere.",[["Restorasyon için bağış","",1,"m-20000 r+2 f+1",""],["Geç","",1,"",""]]],
+[18,80,"","Beyaz eşya","Buzdolabı bozuldu.",[["Yenisini al","",1,"m-15000",""],["Tamir ettir","",.6,"m-3000","Tamirci halletti.","m-3000 p-2","Bir ay sonra yine bozuldu."]]],
+[18,80,"","Kayıp yüzük","Annenin yadigârı yüzüğü kaybettin.",[["Her yeri ara","",.5,"p+4","Koltuğun arasından çıktı.","p-6","Bulamadın."]]],
+[18,80,"","Sigara bırakma","Doktor sigarayı bırakmanı söyledi.",[["Bırak","",.5,"h+6 p-2","Bıraktın.","p-3","Üç gün sonra yeniden başladın."],["Bırakmam","",1,"h-2",""]]],
+[18,80,"","Mahalle bakkalı","Mahallenin bakkalı kapanıyor, market zinciri yüzünden.",[["Bakkalın borcunu öde","",1,"m-5000 r+3","Bakkal dükkânını kapatmadı."],["Üzül","",1,"p-2",""]]],
+[18,80,"","Hayvan barınağı","Barınakta uyutulmak üzere köpekler var.",[["Bağış yap","",1,"m-3000 p+3",""],["Bir tane sahiplen","",1,"p+5",""]]],
+[18,80,"","Spor yaralanması","Halı sahada bileğini burktun.",[["Hastaneye git","",1,"m-1000 h+2",""],["Buz koy","",1,"h-3",""]]],
+[18,80,"","Kahve falı","Bir arkadaş kahve falına baktı: ‘Yakında yol görünüyor.’",[["Gül geç","",1,"p+1",""]]],
+[18,80,"","Sabah koşusu","Sabah koşusuna başlamaya karar verdin.",[["Koş","",.6,"h+5 p+2","Bir alışkanlık oldu.","h+1","İkinci gün bıraktın."]]],
+[18,80,"","Kanepe","Yeni bir kanepe gördün.",[["Al","",1,"m-12000 p+3",""],["Eskisi iyi","",1,"",""]]],
+[18,80,"","Kayınbirader","Kayınbiraderin seninle iş yapmak istiyor.",[["Kabul et","",.4,"w+10000","İş tuttu.","m-10000 p-3","Kayınbirader batırdı."],["Reddet","",1,"p-1",""]]],
+[18,80,"","Polis sorgusu","Bir cinayet hakkında tanık olarak ifadeye çağrıldın.",[["Bildiğini söyle","",1,"r-3 x-3",""],["Hiçbir şey görmedim de","",1,"r+2 x+2",""]]],
+[18,80,"","Mahkeme salonu","Bir dostunun davasında kefil olman isteniyor.",[["Kefil ol","",.7,"r+3","Dostun serbest kaldı.","m-20000","Dostun kaçtı, kefalet sana kaldı."],["Olmam","",1,"r-2",""]]],
+[18,80,"","İnternet dolandırıcılığı","Telefonuna ‘kargonuz bekliyor’ mesajı geldi.",[["Linke tıkla","",.2,"","Gerçek kargoymuş.","m-5000","Hesabından para çekildi."],["Sil","",1,"",""]]],
+[18,80,"","Bayram trafiği","Bayram dönüşü yolda 12 saat trafik.",[["Sabret","",1,"p-4",""],["Uçakla dön","",1,"m-4000",""]]],
+[18,80,"","Eski mahalle","Doğduğun mahalleye uğradın, her şey değişmiş.",[["Gez","",1,"p+2","Eski evin yerinde bir rezidans var."]]],
+[18,80,"","Tanıdık yüz","Kalabalıkta seni izleyen biri var.",[["Yanına git","",.5,"","Eski bir okul arkadaşıymış.","x+3","Sivil polismiş."],["Uzaklaş","",1,"",""]]],
+[18,80,"","Sahte ilan","Bir ilanda çok ucuza ev kiralık.",[["Kapora gönder","",.15,"p+3","Gerçekmiş!","m-5000","Dolandırıldın."],["Gerçek değil","",1,"",""]]],
+[18,80,"","Kaplıca","Yalova'da kaplıca hafta sonu.",[["Git","",1,"m-5000 h+4 p+4",""],["Gitme","",1,"",""]]],
+[18,80,"","Hastane ziyareti","Bir dostun hastanede yatıyor.",[["Ziyaret et","",1,"p+1 r+1",""],["Çiçek gönder","",1,"m-300",""]]],
+[18,80,"","Kasap","Kasap sana en iyi etleri ayırmış.",[["Al","",1,"m-1500 p+2 h+1",""],["Gerek yok","",1,"",""]]]
+];
+function evFx(str,tt){if(!str)return;str.split(' ').forEach(tok=>{const m=tok.match(/^([a-zA-Z]+)([+-]?)(\d+)$/);if(!m)return;const k=m[1],v=(m[2]==='-'?-1:1)*+m[3];
+  if(k==='h'){if(v<0)hurt(-v,tt);else add('health',v)}else if(k==='p')add('happy',v);else if(k==='r'){if(v>0)gainResp(v);else add('respect',v)}else if(k==='x')add('heat',v);else if(k==='f')S.fame=clamp((S.fame||0)+v);
+  else if(k==='m'){const c=M(Math.abs(v));S.money=Math.max(0,S.money-c)}else if(k==='d')dirty(M(v));else if(k==='w')S.money+=M(v)})}
+const evCost=str=>{let c=0;(str||'').split(' ').forEach(t=>{const m=t.match(/^m-(\d+)$/);if(m)c+=M(+m[1])});return c};
+function evSub(c){const cost=evCost(c[3]);const parts=[];if(cost)parts.push(fmt(cost));if(c[2]<1)parts.push(`Şans %${Math.round(c[2]*100)}`);return c[1]||parts.join(' · ')}
+const EVT={fam:()=>!!S.family,nofam:()=>!S.family,org:()=>!!S.org,job:()=>!!S.job,nojob:()=>!S.job,part:()=>!!S.partner,nopart:()=>!S.partner,mar:()=>!!S.married,kids:()=>S.kids&&S.kids.length>0,car:()=>!!S.car||(S.cars&&S.cars.length>0),rich:()=>S.money>=M(5e5),poor:()=>S.money<M(2e4),street:()=>rank()>=1,boss:()=>!!S.boss};
+EVP.forEach((e,i)=>{const[a0,a1,tags,title,text,chs]=e;const tl=tags?tags.split(' '):[];const jail=tl.includes('jail');
+  EV(1,()=>{if(jail?!(S.jail>0&&!S.abroad):!okE())return false;if(S.age<a0||S.age>a1)return false;if((S.evs||[]).includes(i))return false;return tl.every(t=>t==='jail'||(EVT[t]?EVT[t]():true))},
+    ()=>{S.evs=[...(S.evs||[]),i];return{title,text,choices:chs.map(c=>({t:c[0],sub:evSub(c),dis:evCost(c[3])>0&&!canPay(evCost(c[3])),fn:()=>{if(Math.random()<c[2]){evFx(c[3],title);if(c[4])log(c[4],/[+]/.test(c[3]||'')&&!/-/.test(c[3]||'')?'good':'dim')}else{evFx(c[5],title);if(c[6])log(c[6],'bad')}}}))}})});
+
 /* ============ Yeni heyecanlı olaylar ============ */
 const BIG=()=>Math.round(Math.max(1e5*S.cpi,Math.min(netWorth()*.04,4e8))/1000)*1000;
 const RVX=()=>pick(S.rivals.filter(r=>!r.dead))||S.rivals[0];
