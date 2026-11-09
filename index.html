@@ -313,7 +313,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.09-0330';
+const APPV='2026.11.09-0400';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -3391,6 +3391,7 @@ function hubTiles(){return [
       ['doviz','💱','Döviz ve ekonomi',`Enflasyon %${Math.round(S.infl*100)} · $${S.fx.usd.toLocaleString('tr-TR',{maximumFractionDigits:1})}`,S.age>=16],
       ['kulup','⚽','Futbol kulübü',S.club?`${S.club.name} · ${LEAGUES[S.club.lv].n}`:'Kulüp al, ligleri tırman',S.age>=18&&!S.jail],
       ['muzik','💿','Müzik şirketi',S.label?`${S.label.name} · ${S.label.roster.length} sanatçı`:'Plak şirketi kur, konser düzenle',S.age>=18],
+      ['berber','💈','Berber','Saç, sakal ve saç rengi',S.age>=20&&!S.jail],
       ['gece','🍸','Gece hayatı',S.nl&&S.nl.addict?'⚠️ Bağımlılık':S.nl&&S.nl.liver>=40?`Karaciğer %${S.nl.liver}`:'Kulüp, bar, VIP masa',S.age>=18],
       ['sirket','🏭','Şirketler ve fabrikalar',(S.firms||[]).length?`${S.firms.length} şirket`:'Fabrika kur, CEO ata, borsaya aç',S.age>=18],
       ['dunya','🌍','Dünya',`${CITY().fl} ${CITY().n} · Yurt dışı işler`,S.age>=18],
@@ -3420,7 +3421,7 @@ const icoSrc=id=>ICO[id]||ICO[ICA[id]]||(ICT[id]&&typeof RICO!=='undefined'?RICO
 const icoImg=(id,cls)=>icoSrc(id)?`<img class="${cls||'icimg'}" src="${icoSrc(id)}" alt="">`:'';
 const tileHTML=([id,ic,n,d,ok])=>`<button class="tile" data-go="${id}" ${ok?'':'disabled'}><span class="ti">${icoImg(id,'tiimg')||ic}</span><b>${n}</b><span>${d}</span></button>`;
 const HCATS=[
-  ['kisisel','👤','Kişisel hayat','İnsanlar, aile ağacı, gece hayatı, sosyal medya, yadigârlar, lakaplar',['insan','agac','gece','sosyal','gorev','basarim','yadigar','lakap']],
+  ['kisisel','👤','Kişisel hayat','İnsanlar, aile ağacı, berber, gece hayatı, sosyal medya, yadigârlar, lakaplar',['insan','agac','berber','gece','sosyal','gorev','basarim','yadigar','lakap']],
   ['yeralti','🔫','Yeraltı dünyası','Ailen, rakip aileler, harita, konsey, sokak kadrosu, haraç, kaçakçılık',['org','rakip','harita','konsey','sokak','kacak']],
   ['para','💰','Para ve finans','Banka, borsa, döviz, kara para, varlık yönetimi, vergi',['banka','borsa','doviz','kara','varlikyon','vergi','kumar']],
   ['is','🏢','İş dünyası','Şirketler, müzik, futbol kulübü, inşaat, oto galeri',['sirket','muzik','kulup','insaat','ogaleri']],
@@ -3487,7 +3488,7 @@ let curSheet=null;const SCR={};
 function goSheet(k){SCR[k]=0;openSheet(k)}
 $('shB').addEventListener('scroll',()=>{if(curSheet)SCR[curSheet]=$('shB').scrollTop},{passive:true});
 function closeSheet(){$('ov').classList.remove('on');curSheet=null}
-const PARENT={berber:'ben',ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
+const PARENT={berber:'cat_kisisel',ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
 $('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeSheet()});
@@ -3641,7 +3642,6 @@ function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';
       <div><span>Araba</span><b>${curCar()?carName(curCar()):'Yok'} · ${S.cars.length} araçlık garaj</b></div>
       <div><span>Mülk / Mücevher</span><b>${S.props.length} / ${S.jewels.length}</b></div>
       <div><span>Ekip / Dost</span><b>${S.staff.length} / ${S.friends.length}</b></div></div>`;
-    h+='<div class="sec">Görünüm</div>'+row('data-x="berbergo:"','💈','Berber','Saç, sakal ve saç rengi','›',S.age<20||S.jail>0);
     h+='<div class="sec">Ayarlar</div>'+row('data-go="ayar"','⚙️','Ayarlar',`Dayı Paketi ${S.premium?'açık':'kapalı'} · Ana menü · Kayıt · Çizim stili`,'›',false);
   }
   if(EXTRA[k]){const r=EXTRA[k]();T=r[0];h=r[1]}
@@ -3671,7 +3671,7 @@ $('shB').addEventListener('click',e=>{
   else if(d.sm)staffMenu(d.sm);
   else if(d.fm)friendMenu(d.fm);
   else if(d.meet)meet(d.meet);
-  else if(d.go){backTo='hayat';if(curSheet&&curSheet.startsWith('cat_')&&!d.go.startsWith('cat_'))DYNP[d.go]=curSheet;else if(d.go.startsWith('cat_'))delete DYNP[d.go];if(!d.go.startsWith('cat_')&&S){S.recent=[d.go,...(S.recent||[]).filter(x=>x!==d.go)].slice(0,6)}if(d.go==='kuyumcu'){vTab='mucevher';goSheet('varlik')}else goSheet(d.go)}
+  else if(d.go){backTo='hayat';if(d.go==='berber')BDRAFT=null;if(curSheet&&curSheet.startsWith('cat_')&&!d.go.startsWith('cat_'))DYNP[d.go]=curSheet;else if(d.go.startsWith('cat_'))delete DYNP[d.go];if(!d.go.startsWith('cat_')&&S){S.recent=[d.go,...(S.recent||[]).filter(x=>x!==d.go)].slice(0,6)}if(d.go==='kuyumcu'){vTab='mucevher';goSheet('varlik')}else goSheet(d.go)}
   else if(d.x){const i=d.x.indexOf(':');const n=i<0?d.x:d.x.slice(0,i),a=i<0?'':d.x.slice(i+1);if(ACT[n])ACT[n](a)}
   else if(d.t){wTab=d.t;openSheet('gard')}
   else if(d.w){const[c,id]=d.w.split(':');wardAct(c,id)}
@@ -3847,11 +3847,11 @@ const ABER=()=>Math.round(1500*(S.cpi||1)/100)*100;
 let BDRAFT=null;
 EXTRA.berber=()=>{if(!S.look.av)Object.assign(S.look,avRand());if(!BDRAFT)BDRAFT={st:S.look.st,hc:S.look.hc};
   const chg=BDRAFT.st!==S.look.st||BDRAFT.hc!==S.look.hc;
-  let h=`<div class="avbig" style="margin:0 auto 6px">${avHTML(BDRAFT,30)}</div><p class="note" style="text-align:center">Berber ${fmt(ABER())}${S.premium?' · 👑 Dayı modunda bedava':''}</p>`+avPicker(BDRAFT,'z');
+  let h=`<div class="avbig" style="margin:0 auto 6px">${avHTML(BDRAFT,30)}</div><p class="note" style="text-align:center">Traş ücreti ${fmt(ABER())} · Kasanda ${fmt(S.money)}</p>`+avPicker(BDRAFT,'z');
   h+=`<button class="btn" data-x="berok:" style="margin-top:14px" ${chg&&(S.premium||canPay(ABER()))?'':'disabled'}>${chg?'Bu görünümü yap':'Değişiklik yok'}</button>`;
   return['💈 Berber',h]};
 ACT.berbergo=()=>{BDRAFT=null;openSheet('berber')};
-ACT.berok=()=>{if(!BDRAFT)return;if(!S.premium){if(!canPay(ABER()))return;pay(ABER())}Object.assign(S.look,BDRAFT,{av:2});BDRAFT=null;log('💈 Berberden yeni bir görünümle çıktın.','dim');add('happy',2);toast('💈 Yeni görünüm');closeSheet();afterChange()};
+ACT.berok=()=>{if(!BDRAFT)return;if(BDRAFT.st===S.look.st&&BDRAFT.hc===S.look.hc&&S.look.av===2){toast('Görünüm aynı, berbere gerek yok');return}if(!canPay(ABER())){toast('💸 Traşa paran yetmiyor');return}pay(ABER());Object.assign(S.look,BDRAFT,{av:2});BDRAFT=null;log(`💈 Berbere ${fmt(ABER())} ödedin, yeni bir görünümle çıktın.`,'dim');add('happy',2);toast('💈 Yeni görünüm');closeSheet();afterChange()};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-zs],[data-zc]');if(!b||!BDRAFT)return;avPick(BDRAFT,b.dataset,'z');const sl=[...document.querySelectorAll('.avrow')].map(e=>e.scrollLeft),sb=document.querySelector('.sh-b'),st=sb?sb.scrollTop:0;openSheet('berber');document.querySelectorAll('.avrow').forEach((e,i)=>{if(sl[i])e.scrollLeft=sl[i]});const sb2=document.querySelector('.sh-b');if(sb2)sb2.scrollTop=st});
 
 /* ============ Karakter oluştur ============ */
@@ -3916,7 +3916,8 @@ $('createIn').addEventListener('click',e=>{
     if(sc.classList.contains('tabs'))return;
     const max=sc.scrollHeight-sc.clientHeight;if(max<=0)return;
     if(sc.scrollTop<=0)sc.scrollTop=1;else if(sc.scrollTop>=max)sc.scrollTop=max-1},{passive:true});
-  document.addEventListener('touchmove',e=>{const sc=scroller(e.target);
+  function hscroll(el){while(el&&el!==document.body){if(el.scrollWidth>el.clientWidth+1){const o=getComputedStyle(el).overflowX;if(o==='auto'||o==='scroll')return el}el=el.parentElement}return null}
+  document.addEventListener('touchmove',e=>{if(hscroll(e.target))return;const sc=scroller(e.target);
     if(!sc){e.preventDefault();return}
     if(sc.classList.contains('tabs'))return;
     if(sc.scrollHeight<=sc.clientHeight+1)e.preventDefault()},{passive:false});
