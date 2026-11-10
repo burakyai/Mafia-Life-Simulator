@@ -19,4 +19,5 @@ html=html.replace(/<link rel="preconnect" href="https:\/\/fonts\.googleapis\.com
   .replace(/<link rel="manifest" href="manifest\.json">\s*/,'');
 if(html.includes('fonts.googleapis.com'))throw new Error('Google Fonts bağlantısı değiştirilemedi');
 fs.writeFileSync(path.join(www,'index.html'),html);
-console.log('www hazır:',(fs.statSync(path.join(www,'index.html')).size/1048576).toFixed(2),'MB +',fs.readdirSync(fdir).length,'yazı tipi dosyası');
+if(fs.existsSync(path.join(root,'img')))fs.cpSync(path.join(root,'img'),path.join(www,'img'),{recursive:true});
+console.log('www hazır:',(fs.existsSync(path.join(www,'img'))?fs.readdirSync(path.join(www,'img')).length:0)+' görsel,',(fs.statSync(path.join(www,'index.html')).size/1048576).toFixed(2),'MB +',fs.readdirSync(fdir).length,'yazı tipi dosyası');
