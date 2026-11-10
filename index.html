@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.10-2100';
+const APPV='2026.11.10-2255';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -611,11 +611,12 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-wl]');if(!
 const picFor=(P,age,card)=>age<17?(card?P.kc:P.k):age<38?(card?(P.yc||P.c):(P.y||P.f)):(card?P.c:P.f);
 const AVK={"ckahve":"img/8001b71240ed.webp","csiyah":"img/ece85e0a68a4.webp","csari":"img/ac60d6a0beb7.webp","ckul":"img/3b2b4a1d2b8a.webp","tkahve":"img/eefff4f62d6f.webp","tsiyah":"img/79184c4e7d2b.webp","tsari":"img/18d9c7271057.webp","tkul":"img/4eb9943b5a9f.webp"};
 const AVI={"kahve0":"img/6469082200a6.webp","kahve1":"img/01dac52ec35b.webp","kahve2":"img/15efeda3fcfb.webp","kahve3":"img/f9d11d0ddc49.webp","kahve4":"img/0b6d04f87552.webp","kahve5":"img/03c78aec871c.webp","kahve6":"img/d987d8710964.webp","kahve7":"img/e9d43acabe05.webp","kahve8":"img/4adf2ccf003c.webp","kahve9":"img/429d24f98ffd.webp","sari0":"img/22a52fff76b5.webp","sari1":"img/2fd8aeec1b6e.webp","sari2":"img/5a14b4555851.webp","sari3":"img/3d1a0665fc49.webp","sari4":"img/0a1632664cfd.webp","sari5":"img/51d5505b0ff7.webp","sari6":"img/2fb455a090d5.webp","sari7":"img/5696b1d15552.webp","sari8":"img/4b972feb66c9.webp","sari9":"img/a5162dd89741.webp","siyah0":"img/b984484dbc0a.webp","siyah1":"img/693e16729a21.webp","siyah2":"img/e1d780619689.webp","siyah3":"img/6e330a9046f2.webp","siyah4":"img/d7abc1790952.webp","siyah5":"img/2b8fd75be638.webp","siyah6":"img/d87c61695605.webp","siyah7":"img/c827e45f86d9.webp","siyah8":"img/2036a1188d10.webp","siyah9":"img/0466515d6224.webp","kul0":"img/185646556c27.webp","kul1":"img/31ae34b1b6f1.webp","kul2":"img/52f823ca58d6.webp","kul3":"img/976ec409acc9.webp","kul4":"img/1674839eab22.webp","kul5":"img/8147b8f83d58.webp","kul6":"img/5c76e09188bd.webp","kul7":"img/620fe3dea350.webp","kul8":"img/cb07ab53a8bc.webp","kul9":"img/d87cb76e0db3.webp","kel":"img/276100c46c6f.webp"};
+const AVIC=AVI; // temiz yüzler gelince ayrı harita olacak
 /* ============ Avatar: hazır saç-sakal stilleri ============ */
 const AHC=[['kahve','Kahverengi','#6b4026'],['sari','Sarı','#d8b46a'],['siyah','Siyah','#1b1513'],['kul','Küllü sarı','#b89a72']];
 const AST=['Dağınık, gür sakal','Kısa, kirli sakal','Yana taralı, uzun sakal','Kazınmış yan, keçi sakal','Kıvırcık, bıyıklı','Kazıma, dolgun sakal','Klasik, sinek kaydı','Kakül, kısa sakal','Uzun geriye, pala bıyık','Bukleli, bıyık'];
-function avSrc(L){if(L&&L.av===3){L.st=L.hair>=0?L.hair:(L.beard>=0?L.beard:-1);L.av=2;delete L.hair;delete L.beard}return L.st<0?AVI.kel:(AVI[(L.hc||'kahve')+L.st]||AVI.kel)}
-function avHTML(L,age,opts){opts=opts||{};const hc=(L&&L.hc)||'kahve';const src=age!=null&&age<10?AVK['c'+hc]:age!=null&&age<20?AVK['t'+hc]:avSrc(L);return `<span class="avs"${opts.jail?' style="filter:grayscale(.7) contrast(1.1)"':''}><img src="${src||avSrc(L)}" alt=""></span>`}
+function avSrc(L,sc){if(L&&L.av===3){L.st=L.hair>=0?L.hair:(L.beard>=0?L.beard:-1);L.av=2;delete L.hair;delete L.beard}const T=sc?AVI:AVIC;return L.st<0?T.kel:(T[(L.hc||'kahve')+L.st]||T.kel)}
+function avHTML(L,age,opts){opts=opts||{};const hc=(L&&L.hc)||'kahve';const src=age!=null&&age<10?AVK['c'+hc]:age!=null&&age<20?AVK['t'+hc]:avSrc(L,opts.yara);return `<span class="avs"${opts.jail?' style="filter:grayscale(.7) contrast(1.1)"':''}><img src="${src||avSrc(L,opts.yara)}" alt=""></span>`}
 function avRand(hc){return {av:2,st:ch(.08)?-1:R(0,9),hc:hc||pick(['kahve','kahve','sari','kul','siyah','siyah']),outfit:'tisort',acc:[]}}
 function avPicker(L,pre){let h=`<div class="sec" style="margin:12px 0 6px">Saç ve sakal</div><div class="avrow">`;
   for(let i=-1;i<10;i++)h+=`<button class="avt ${L.st===i?'on':''}" data-${pre}s="${i}" aria-label="${i<0?'Kel':AST[i]}"><span class="avs"><img src="${avSrc({st:i,hc:L.hc})}" alt=""></span></button>`;
@@ -736,7 +737,7 @@ function ageUp(){
   S.friends.forEach(x=>x.rel=clamp(x.rel-Math.round(R(1,5)*f+(Math.random()<.5?0:0))));
   S.friends.filter(x=>x.rel<=5).forEach(x=>log(`${x.name} ile aranız soğudu, artık görüşmüyorsunuz.`,'dim'));
   S.friends=S.friends.filter(x=>x.rel>5);
-  if(S.autoMeet&&!kid)meetAll(true);
+  if(S.autoMeet&&S.premium&&!kid)meetAll(true);
   S.heat=clamp(S.heat-Math.round((4+propLaund()+(has('muhasebe')?3:0)+(has('kostebek')?5:0)+Math.min(6,friends('polis')*2)+(S.job&&S.job.id==='polis'?12:0)+(S.famBg==='polis'?2:0)+(S.council&&S.council.rules.includes('sessizlik')?2:0))*f));
   if(newYear){
     (S.siblings||[]).forEach(k=>k.age++);
@@ -1064,7 +1065,7 @@ const FEV=[
  {w:1,c:f=>f.best,e:f=>({title:`⭐ ${f.name} yanında`,text:`En yakın dostun ${f.name} kapına geldi: "Son zamanlarda seni düşünüyorum, iyi misin kardeşim?"`,choices:[{t:'İçini dök',fn:()=>{add('happy',8);f.rel=clamp(f.rel+4);log(`${f.name} ile saatlerce konuştunuz. Hafifledin.`,'good')}}]})}
 ];
 function friendQuarter(){if(!S.friends||!S.friends.length)return;const q=QS();
-  S.friends.forEach(f=>{fEns(f);if(S.q===0&&S.age>=14)f.age++;const touched=S.aq&&S.aq.q===q-1&&S.aq.m&&S.aq.m['f_'+f.id];if(!touched&&!S.autoMeet)f.rel=clamp(f.rel-(f.best?1:R(1,3)));
+  S.friends.forEach(f=>{fEns(f);if(S.q===0&&S.age>=14)f.age++;const touched=S.aq&&S.aq.q===q-1&&S.aq.m&&S.aq.m['f_'+f.id];if(!touched&&!(S.autoMeet&&S.premium))f.rel=clamp(f.rel-(f.best?1:R(1,3)));
     if(f.owe>0&&q>=(f.owq||0)){if(ch(.3+trOf(f).tr.sad/250)){S.money+=f.owe;log(`💵 ${f.name} borcunu ödedi: ${fmt(f.owe)}.`,'good');f.owe=0;f.rel=clamp(f.rel+3)}else f.owq=q+R(1,3)}
     if(f.owe<0&&q>=(f.owq||0)+4){f.rel=clamp(f.rel-6);if(ch(.3))log(`${f.name} sana verdiği ${fmt(-f.owe)} borcu soruyor.`,'dim')}});
   // düşük yakınlık: kopuş
@@ -1398,8 +1399,8 @@ const ACT={
     else{let best=null,bv=-1;STOCKS.forEach(st=>{const r=Math.abs(stockR(st,S.px[st.id].n,.25));if(r>bv){bv=r;best=st}});const t=pred(best);S.tips[best.id]=t;S.tips.best=1;
       log(`Ferdi kulağına eğildi: "${best.n} bu çeyrek ${t.up?'uçacak':'çakılacak'}. Hedef ₺${t.tg.toLocaleString('tr-TR')}${t.up?', orada çık':', şimdiden sat'}. Benden söylemesi."`,'gold')}
     done()},
-  meet:()=>{meetAll(false);done()},
-  automeet:()=>{S.autoMeet=!S.autoMeet;toast(S.autoMeet?'Her çeyrekte tanıdıklarınla otomatik görüşeceksin':'Otomatik görüşme kapatıldı');done()},
+  meet:()=>{if(!S.premium)return;meetAll(false);done()},
+  automeet:()=>{if(!S.premium)return;S.autoMeet=!S.autoMeet;toast(S.autoMeet?'Her çeyrekte tanıdıklarınla otomatik görüşeceksin':'Otomatik görüşme kapatıldı');done()},
   save:()=>manualSave(),
   slot:k=>slotMenu(k)
 };
@@ -4044,8 +4045,9 @@ function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';
   }
   if(k==='insan'){
     T='İnsanlar';
-    h+=row('data-x="meet:"','🤝','Herkesle görüş',`Bütün dostların${S.partner?' ve '+S.partner:''} ile tek tuşla vakit geçir`,'',!S.friends.length&&!S.partner);
-    h+=row('data-x="automeet:"','🔁','Otomatik görüşme',S.autoMeet?'Açık · Her ilerleyişte herkesle görüşürsün':'Kapalı · Dokun ve aç',S.autoMeet?'Açık':'Kapalı',false);
+    if(S.premium){h+=row('data-x="meet:"','🤝','Herkesle görüş',`Bütün dostların${S.partner?' ve '+S.partner:''} ile tek tuşla vakit geçir`,'Dayı',!S.friends.length&&!S.partner);
+    h+=row('data-x="automeet:"','🔁','Otomatik görüşme',S.autoMeet?'Açık · Her ilerleyişte herkesle görüşürsün':'Kapalı · Dokun ve aç',S.autoMeet?'Açık':'Kapalı',false);}
+    else h+=row('','🔒','Herkesle görüş · Otomatik görüşme','Dayı moduna özel. Normal oyunda herkesle tek tek ilgilenirsin.','',true);
     {const P=parEnsure(),f=PARF[S.famBg];h+=`<div class="sec">Ailen · ${FAMBG[S.famBg].n}${P.alive?' · Bağ %'+P.rel:''}</div>`;
      if(S.famBg==='yetim')h+='<p class="note">Yetim büyüdün. Arkanda bir aile yok; her kuruşu kendin kazanırsın.</p>';
      else if(!P.alive)h+='<p class="note">Ailenin büyükleri artık hayatta değil.</p>';
@@ -4330,7 +4332,7 @@ function showPic(){const P=PRESETS[S.look.pic-1];let o=$('picBox');if(!o){o=docu
 /* ============ Berber ============ */
 function showAv(){let o=$('picBox');if(!o){o=document.createElement('div');o.id='picBox';document.body.appendChild(o)}
   o.onclick=e=>{o.classList.remove('on');if(e.target.closest('#picEd'))selfEdit();else if(e.target.closest('#picBer'))ACT.berbergo()};
-  o.innerHTML=`<div class="pbIn"><div class="avbig">${avHTML(S.look,S.age,{jail:S.jail>0})}</div><b>${S.first} ${S.last}</b>${S.age>=20&&!S.jail?'<button id="picBer">💈 Berbere git</button>':''}${S.premium?'<button id="picEd">👑 Dayı modu: düzenle</button>':''}<span>Kapatmak için dokun</span></div>`;o.classList.add('on')}
+  o.innerHTML=`<div class="pbIn"><div class="avbig">${avHTML(S.look,S.age,{jail:S.jail>0,yara:S.owned.acc.includes('yara')})}</div><b>${S.first} ${S.last}</b>${S.age>=20&&!S.jail?'<button id="picBer">💈 Berbere git</button>':''}${S.premium?'<button id="picEd">👑 Dayı modu: düzenle</button>':''}<span>Kapatmak için dokun</span></div>`;o.classList.add('on')}
 const ABER=()=>Math.round(1500*(S.cpi||1)/100)*100;
 let BDRAFT=null;
 EXTRA.berber=()=>{if(!S.look.av)Object.assign(S.look,avRand());if(!BDRAFT)BDRAFT={st:S.look.st,hc:S.look.hc};
