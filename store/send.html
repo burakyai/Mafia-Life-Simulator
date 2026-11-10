@@ -1,5 +1,5 @@
 <!DOCTYPE html><meta charset="utf-8"><title>gönderici</title><body>görseller gönderiliyor…<script>
 (async()=>{const names=['ss1','ss2','ss3','ss4','ss5','ss6','ss7','ss8','iap_dayi','iap_bilet'];
-for(const n of names){const b=await (await fetch(n+'.png')).blob();(window.opener||window.parent).postMessage({dd:1,name:n+'.png',blob:b},'https://appstoreconnect.apple.com')}
+for(const n of names){const b=await (await fetch(n+'.png?v='+Date.now(),{cache:'no-store'})).blob();(window.opener||window.parent).postMessage({dd:1,name:n+'.png',blob:b},'https://appstoreconnect.apple.com')}
 document.body.textContent='tamam, bu sekmeyi kapatabilirsin';})();
 </script>
