@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.11-1510';
+const APPV='2026.11.11-1530';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -602,12 +602,12 @@ const HCI={kahve:0,siyah:1,sari:2,kul:2,kizil:3};
 function pFhc(){if(S.pfhc===undefined||S.pfhcN!==S.partner){S.pfhc=R(0,3);S.pfst=R(0,5);S.pfx=-1;if(ch(15/39)){S.pfx=R(0,14);S.pfhc=WXHC[S.pfx]}S.pfhcN=S.partner}return S.pfhc}
 function famHc(k){if(k.fhc===undefined){const me=HCI[(S.look&&S.look.hc)||'kahve'];k.fhc=ch(.5)&&me!==undefined?me:(S.pfhc!==undefined?S.pfhc:R(0,3))}return k.fhc}
 function kidAv(k){if(k.age<3)return EMOH(k.age,k.g);return `<img class="famimg" src="${FAMI[(k.g==='e'?'s':'d')+famHc(k)]}" alt="">`}
-function wifeAv(){/*w*/if(!S.partner||S.gender==='k')return '💞';const c=pFhc(),st=S.pfst||0;if(S.pfx>=0&&FAMI['wx'+S.pfx])return `<img class="famimg" src="${FAMI['wx'+S.pfx]}" alt="">`;return `<img class="famimg" src="${FAMI[st?`w${st}_${c}`:'w'+c]}" alt="">`}
+function wifeAv(){/*w*/if(S.partner&&S.ppic&&S.ppicN===S.partner)return `<img class="famimg" src="${S.ppic}" alt="">`;if(!S.partner||S.gender==='k')return '💞';const c=pFhc(),st=S.pfst||0;if(S.pfx>=0&&FAMI['wx'+S.pfx])return `<img class="famimg" src="${FAMI['wx'+S.pfx]}" alt="">`;return `<img class="famimg" src="${FAMI[st?`w${st}_${c}`:'w'+c]}" alt="">`}
 
 const wKey=(st,c)=>st?`w${st}_${c}`:'w'+c;
 function wlookMenu(){if(!S.premium||!S.partner)return;pFhc();closeSheet();let h='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">';for(let x=0;x<15;x++){const on=S.pfx===x;h+=`<button data-wl="x|${x}" style="padding:0;border-radius:12px;overflow:hidden;border:2px solid ${on?'var(--gold)':'var(--line)'};background:var(--panel2);aspect-ratio:1"><img class="famimg" src="${FAMI['wx'+x]}" alt=""></button>`}for(let st=0;st<6;st++)for(let c=0;c<4;c++){const on=!(S.pfx>=0)&&(S.pfst||0)===st&&S.pfhc===c;h+=`<button data-wl="${st}|${c}" style="padding:0;border-radius:12px;overflow:hidden;border:2px solid ${on?'var(--gold)':'var(--line)'};background:var(--panel2);aspect-ratio:1"><img class="famimg" src="${FAMI[wKey(st,c)]}" alt=""></button>`}h+='</div>';
   queue({back:'insan',title:`👑 ${S.partner} · Görünüm`,text:h,choices:[{t:'Kapat',fn:()=>{}}]})};
-document.addEventListener('click',e=>{const b=e.target.closest('[data-wl]');if(!b||!S)return;const pr=b.dataset.wl.split('|');if(pr[0]==='x'){S.pfx=+pr[1];S.pfhc=WXHC[S.pfx]}else{S.pfx=-1;S.pfst=+pr[0];S.pfhc=+pr[1]}S.pfhcN=S.partner;Q.length=0;$('modal').classList.remove('on');log(`👑 ${S.partner} yeni bir görünüme kavuştu.`,'gold');setTimeout(()=>openSheet('insan'),40)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-wl]');if(!b||!S)return;S.ppic=null;const pr=b.dataset.wl.split('|');if(pr[0]==='x'){S.pfx=+pr[1];S.pfhc=WXHC[S.pfx]}else{S.pfx=-1;S.pfst=+pr[0];S.pfhc=+pr[1]}S.pfhcN=S.partner;Q.length=0;$('modal').classList.remove('on');log(`👑 ${S.partner} yeni bir görünüme kavuştu.`,'gold');setTimeout(()=>openSheet('insan'),40)});
 
 const picFor=(P,age,card)=>age<17?(card?P.kc:P.k):age<38?(card?(P.yc||P.c):(P.y||P.f)):(card?P.c:P.f);
 const AVK={"ckahve":"img/8001b71240ed.webp","csiyah":"img/ece85e0a68a4.webp","csari":"img/ac60d6a0beb7.webp","ckul":"img/3b2b4a1d2b8a.webp","tkahve":"img/eefff4f62d6f.webp","tsiyah":"img/79184c4e7d2b.webp","tsari":"img/18d9c7271057.webp","tkul":"img/4eb9943b5a9f.webp"};
@@ -1053,6 +1053,7 @@ function friendMenu(fid){const f=S.friends.find(x=>x.id===fid);if(!f)return;fEns
     {t:'😜 Şaka yap',sub:'Riskli',dis:busy||S.age<6,fn:()=>{if(!useAct('f_'+f.id,'Bu kişiyle'))return;const ok=ch(f.huy==='Şakacı'?.85:f.huy==='Sinirli'||f.huy==='Asabi'||f.huy==='Mağrur'?.3:.6);if(ok){f.rel=clamp(f.rel+R(4,8));add('happy',3);log(`${f.name}'e ${pick(['tuzlu kahve içirdin','telefonunda alarm kurdun','arabasını yer değiştirdin','sahte piyango bileti verdin'])}. Kahkahalar attınız.`,'good')}else{f.rel=clamp(f.rel-R(6,12));log(`${f.name} şakanı hiç komik bulmadı.`,'bad')}}},
     ...(B||f.rel<85||S.age<8?[]:[{t:'⭐ En yakın dostum ol',sub:'Kardeşlik yemini',fn:()=>{if(ch(.5+f.rel/250)){f.best=true;f.rel=clamp(f.rel+5);add('happy',6);log(`${f.name} ile kardeşlik yemini ettiniz. Artık en yakın dostun.`,'gold')}else{f.rel=clamp(f.rel-3);log(`${f.name} "biz zaten kardeşiz, isme gerek yok" dedi.`,'dim')}}}]),
     ...(f.job==='sokak'&&S.org&&S.org.members.length<10&&f.rel>=60?[{t:'🔫 Örgütüne al',sub:'Ailene katılır',fn:()=>{S.org.members.push({id:'m'+R(0,999999),name:f.name,str:R(4,7),loy:clamp(f.rel),busy:0,wage:Math.round(R(2,5)*1e4*S.cpi),sq:R(5,10),ar:R(40,70)});log(`${f.name} örgütüne katıldı.`,'gold')}}]:[]),
+    ...(!S.partner&&S.age>=16&&f.age>=16&&fG(f)!==(S.gender==='k'?'k':'e')&&Math.abs(f.age-S.age)<=15?[{t:'💘 Duygularını aç',sub:f.rel>=60?`Şans %${Math.round(clamp(.25+(f.rel-60)/80+karizma()/80,.1,.9)*100)} · Olmazsa arkadaşlık zedelenir`:'Yakınlık %60 olmalı',dis:busy||f.rel<60,fn:()=>{if(!useAct('f_'+f.id,'Bu kişiyle'))return;if(ch(clamp(.25+(f.rel-60)/80+karizma()/80,.1,.9))){const n=f.name.split(' ')[0];S.partner=n;S.married=false;S.prel=clamp(f.rel);S.ppic=fPic(f);S.ppicN=n;S.friends=S.friends.filter(x=>x!==f);add('happy',12);log(`💘 ${f.name} da sana karşı boş değilmiş! Artık sevgilisiniz.`,'gold')}else{f.rel=clamp(f.rel-15);add('happy',-4);if(ch(.2)){fLose(f,`${f.name} aranızdaki garipliği kaldıramadı, uzaklaştı.`,'bad')}else log(`${f.name} "Seni hep arkadaşım olarak gördüm" dedi. Ortam biraz garip.`,'dim')}}}]:[]),
     {t:'🗯 Hakaret et',sub:'Yakınlık −−',dis:busy,fn:()=>{if(!useAct('f_'+f.id,'Bu kişiyle'))return;f.rel=clamp(f.rel-R(12,22));add('happy',-1);log(`${f.name}'e ağır laflar ettin.`,'bad');if(f.rel<10||(f.huy==='Sinirli'&&ch(.4)))fEnemy(f,'hakaret')}},
     {t:'👊 Kavga et',sub:'Sağlık riski',dis:busy||S.age<6,fn:()=>{if(!useAct('f_'+f.id,'Bu kişiyle'))return;const w=ch(clamp(.4+S.health/400+karizma()/300-trOf(f).tr.cur/400,.15,.85));if(w){gainResp(2);hurt(R(2,8),'Kavga');log(`${f.name} ile yumruklaştınız, sen kazandın.`,'dim')}else{hurt(R(8,20),'Kavga');log(`${f.name} seni iyi pataklamış.`,'bad')}if(ch(.6))fEnemy(f,'kavga');else{f.rel=clamp(f.rel-25);log(`Sonra barıştınız ama arada bir şey kırıldı.`,'dim')}}},
     {t:'🧬 Özellikleri',sub:trOf(f).huy+(S.premium?' · Dayı modunda düzenlenir':''),fn:()=>setTimeout(()=>pCard('f',f.id,'insan'),40)},
@@ -4113,6 +4114,55 @@ EV(1,()=>packOK('emlak')&&!S.jail&&S.houses.some(o=>!o.ten&&S.home!==o.uid),()=>
 EV(1,()=>packOK('emlak')&&!S.jail&&S.houses.some(o=>o.ten),()=>{const o=pick(S.houses.filter(o=>o.ten));const c=Math.round(HT(o.t).p*S.hidx*.03);return{title:'Su bastı',text:`${HT(o.t).n} evinde boru patladı. Kiracın ${o.ten.name} perişan.`,choices:[{t:'Hemen tamir ettir',sub:`${fmt(c)} · Memnuniyet +10`,fn:()=>{spend(c);o.ten.sat=clamp((o.ten.sat||70)+10)}},{t:'Kiracı halletsin',sub:'Memnuniyet −25 · Bakım −15',fn:()=>{o.ten.sat=clamp((o.ten.sat||70)-25);o.cond=clamp(hCond(o)-15)}}]}});
 EV(1,()=>packOK('emlak')&&!S.jail&&S.houses.some(o=>o.ten&&o.ten.crim),()=>{const o=pick(S.houses.filter(o=>o.ten&&o.ten.crim));const T=o.ten;return{title:'Kiracın iş çeviriyor',text:`${T.name}'ın ${HT(o.t).n} evinde uyuşturucu sattığı söyleniyor. Polis sokağı izlemeye başlamış.`,choices:[{t:'Hemen çıkar',fn:()=>{o.ten=null;log(`${T.name} evden atıldı.`,'good')}},{t:'Kâra ortak ol',sub:'Kara para + · Dikkat +12',fn:()=>{dirty(Math.round(T.rent*1.5));add('heat',12);log(`${T.name} artık sana pay veriyor.`,'gold')}},{t:'Görmezden gel',sub:'Baskın riski',fn:()=>{if(ch(.4)){add('heat',15);o.cond=clamp(hCond(o)-30);o.ten=null;log('Polis eve baskın yaptı. Ev darmadağın.','bad')}}}]}});
 
+/* ============ Eşle / sevgiliyle aktiviteler ============ */
+ALIM.es=4;AMSG.es=()=>`${S.partner||'Sevgilin'} bu çeyrek biraz kendine vakit ayırmak istiyor.`;
+const pAdd=(r,h)=>{prel();S.prel=clamp(S.prel+r);if(h)add('happy',h)};
+const PHANG=[
+ ['yemek','🍽','Romantik akşam yemeği',3000,'Boğaz manzaralı bir restoranda mum ışığında yemek yediniz.',[6,10],4],
+ ['ev','🍝','Evde birlikte yemek yap',300,'Mutfağı birbirine kattınız ama ortaya güzel bir sofra çıktı.',[4,7],3],
+ ['sinema','🎬','Sinemaya git',400,'Film boyunca elini bırakmadı.',[3,6],2],
+ ['konser','🎤','Konsere git',2500,'En sevdiği şarkıda sana sarıldı.',[6,9],4],
+ ['tekne','⛵','Boğaz\'da tekne turu',8000,'Gün batımında teknede, şehir ayaklarınızın altında.',[8,12],5],
+ ['yuruyus','🌳','Sahilde yürüyüş',0,'Moda sahilinde saatlerce yürüyüp konuştunuz.',[3,6],3],
+ ['piknik','🧺','Belgrad Ormanı\'nda piknik',500,'Semaverde çay, sepette börek. Huzurlu bir gün.',[4,7],3],
+ ['spa','💆','Çiftler spa günü',6000,'Hamam, kese, masaj. İkiniz de yeniden doğdunuz.',[6,9],6],
+ ['dans','💃','Dans kursuna yazıl',2000,'Ayaklarına bastın ama çok güldünüz.',[5,8],3],
+ ['alisveris','🛍','Alışverişe çık',5000,'Nişantaşı\'nı baştan sona gezdiniz.',[4,8],2],
+ ['mac','⚽','Birlikte maça git',1500,'Tribünde onun da sesi kısıldı.',[3,7],3],
+ ['kahvalti','🥐','Serpme kahvaltı',800,'Pazar sabahı Rumeli Hisarı\'nda uzun bir kahvaltı.',[4,6],3],
+ ['gece','🪩','Gece kulübüne git',5000,'Sabaha kadar dans ettiniz.',[4,8],3],
+ ['oyun','🎮','Evde oyun gecesi',0,'Tavla, okey, playstation. Kimse kaybetmeye razı değil.',[3,6],2]];
+const PTRIP=[
+ ['kapadokya','🎈','Kapadokya\'da balon turu',4e4,'Gün doğarken balonla peri bacalarının üstündeydiniz.',[12,18],10],
+ ['bodrum','🏖','Bodrum\'da bir hafta',8e4,'Deniz, kum, gece hayatı. Bronzlaşıp döndünüz.',[12,18],10],
+ ['uludag','🎿','Uludağ\'da kayak',5e4,'O kaydı, sen düştün. Şömine başında sıcak şarap.',[10,15],8],
+ ['karadeniz','🌲','Karadeniz yaylaları',3e4,'Ayder\'de sis, kuymak, horon.',[10,14],8],
+ ['paris','🗼','Paris\'te romantik hafta',1.5e5,'Eyfel\'in ışıkları altında öptün onu.',[15,22],12],
+ ['roma','🏛','Roma ve Venedik',1.4e5,'Gondolda şarkı söyleyen gondolcuya bahşişi sen verdin.',[15,22],12],
+ ['maldiv','🏝','Maldivler\'de su üstü villa',5e5,'Turkuaz denizin üstünde, dünyanın geri kalanı yok oldu.',[20,28],15]];
+const PGIFT=[['🌹','Bir buket gül',800,[3,6]],['🍫','Çikolata ve kart',400,[2,4]],['🌸','Parfüm',6000,[6,9]],['👜','Marka çanta',6e4,[10,14]],['💍','Pırlanta yüzük',2.5e5,[14,20]],['⌚','Lüks saat',4e5,[15,22]],['🚗','Kapısına araba',2.5e6,[22,30]]];
+function pDo(a,cost,fn){if(!useAct('es','Bu çeyrek'))return;if(cost&&!pay(cost))return;fn();done()}
+function pMenu(){if(!S.partner)return;closeSheet();const busy=!S.premium&&actLeft('es')<=0;const N=S.partner;
+  queue({back:'insan',title:`💞 ${N}`,text:`${S.married?'Eşin':'Sevgilin'} · İlişki %${prel()}${busy?'<br><small>Bu çeyrek yeterince vakit geçirdiniz.</small>':`<br><small>Bu çeyrek ${S.premium?'sınırsız':actLeft('es')+' etkinlik hakkın'} var.</small>`}`,choices:[
+   {t:'💬 Sohbet et',sub:'İlişki +',dis:busy,fn:()=>pDo('sohbet',0,()=>{if(ch(.12)){pAdd(-4);log(`${N} ile sohbet tartışmaya döndü. Biraz soğuk bir akşam.`,'bad')}else{pAdd(R(3,6),1);log(pick([`${N} ile gece yarısına kadar konuştunuz.`,`${N} sana çocukluğunu anlattı. Daha da yakınlaştınız.`,`${N} ile gelecek planları yaptınız.`]),'good')}})},
+   {t:'😘 İltifat et',sub:'İlişki +',dis:busy,fn:()=>pDo('iltifat',0,()=>{pAdd(R(2,5),1);log(`${N} gülümsedi: "Sen de hiç değişmedin."`,'good')})},
+   {t:'🌙 Birlikte bir şey yap',sub:'Yemek, konser, tekne, spa…',dis:busy,fn:()=>setTimeout(pHang,40)},
+   {t:'🎁 Hediye al',sub:'Gülden pırlantaya',dis:busy,fn:()=>setTimeout(pGift,40)},
+   {t:'✈️ Tatile git',sub:'Kapadokya\'dan Maldivler\'e',dis:busy||!!S.jail,fn:()=>setTimeout(pTrip,40)},
+   {t:'💌 Sürpriz yap',sub:'Evde mum, çiçek, sevdiği yemek',dis:busy,fn:()=>pDo('surpriz',M(4000),()=>{if(ch(.85)){pAdd(R(8,12),3);log(`${N} eve girince donup kaldı. Gözleri doldu.`,'gold')}else{pAdd(2);log(`Sürpriz yarım kaldı: ${N} erken geldi. Yine de çok güldü.`,'dim')}})},
+   ...(prel()<55?[{t:'🛋 Çift terapisine git',sub:`${fmt(M(6000))} · İlişki ++`,dis:busy,fn:()=>pDo('terapi',M(6000),()=>{pAdd(R(8,14));log(`Terapist ikinizi de dinledi. Eve el ele döndünüz.`,'good')})}]:[]),
+   {t:'🗯 Tartış',sub:'İlişki −, içini dökersin',dis:busy,fn:()=>pDo('kavga',0,()=>{pAdd(-R(6,12),-2);log(pick([`${N} ile bağıra çağıra kavga ettiniz. Kapılar çarpıldı.`,`${N} "Sen hep böylesin!" dedi, sen de sustun.`,`Kavga o kadar büyüdü ki komşular kapıyı çaldı.`]),'bad')})},
+   {t:'Geri',fn:()=>{}}]})}
+function pHang(){const N=S.partner;queue({back:'insan',title:`${N} ile ne yapalım?`,text:`İlişki %${prel()}`,choices:[...PHANG.map(a=>{const c=M(a[3]);return{t:`${a[1]} ${a[2]}`,sub:c?fmt(c):'Bedava',dis:c>0&&!canPay(c),fn:()=>pDo(a[0],c,()=>{
+   if(a[0]==='gece'&&ch(.12)){pAdd(-5);log(`Kulüpte biri ${N}'e asıldı. Gece kavgayla bitti.`,'bad');return}
+   if(a[0]==='mac'&&ch(.08)){hurt(R(4,10),'Tribün kavgası');pAdd(4);log('Tribünde kavga çıktı, onu korudun. Kahramanı oldun.','gold');return}
+   if((S.fame||0)>40&&ch(.15)){news(`${S.first} ${S.last} ve ${N} romantik anlarda görüntülendi`,1);S.fame=clamp((S.fame||0)+1)}
+   pAdd(R(a[5][0],a[5][1]),a[6]);log(a[4],'good')})}}),{t:'Geri',fn:()=>setTimeout(pMenu,40)}]})}
+function pGift(){const N=S.partner;queue({back:'insan',title:`${N} için hediye`,text:'Ne alalım?',choices:[...PGIFT.map(([ic,n,p,[a,b]])=>{const c=M(p);return{t:`${ic} ${n}`,sub:fmt(c),dis:!canPay(c),fn:()=>pDo('hediye',c,()=>{pAdd(R(a,b),2);log(`${N}'e ${n.toLowerCase()} aldın. ${p>=2e5?'Herkese gösterdi.':'Çok sevindi.'}`,'good')})}}),{t:'Geri',fn:()=>setTimeout(pMenu,40)}]})}
+function pTrip(){const N=S.partner;queue({back:'insan',title:'✈️ Nereye gidelim?',text:`${N} ile baş başa bir tatil.`,choices:[...PTRIP.map(a=>{const c=M(a[3]);return{t:`${a[1]} ${a[2]}`,sub:fmt(c),dis:!canPay(c),fn:()=>pDo(a[0],c,()=>{pAdd(R(a[5][0],a[5][1]),a[6]);add('health',3);log(a[4],'gold');
+   if(S.married&&S.age<46&&ch(.12)&&typeof ACT.baby==='function')log(`Tatil dönüşü ${N} sana bir haber vermek istiyor gibi…`,'gold')})}}),{t:'Geri',fn:()=>setTimeout(pMenu,40)}]})}
+ACT.pmenu=()=>pMenu();
+
 /* ============ Hayat menüsü: kategoriler ============ */
 function hubTiles(){return [
       ['insan','👥','İnsanlar',`${S.friends.length} dost · ${S.kids.length} çocuk`,true],
@@ -4307,7 +4357,7 @@ function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';
        if(S.age>=18)h+=row('data-x="parsend:"','🎁','Ailene para gönder','Aile bağı +15, mutluluk +',fmtS(Math.max(20000,Math.round(S.money*.01))),cashA()<20000);}}
     if(S.partner){
       h+=`<div class="sec">${S.married?'Eşin':'Sevgilin'} · İlişki %${prel()}</div><div style="display:flex;align-items:center;gap:12px;margin:0 0 10px"><span class="famav">${wifeAv()}</span><b style="font-size:17px">${S.partner}</b></div>`+(S.premium&&S.gender!=='k'?row('data-x="wlook:"','👑','Görünümünü değiştir','Dayı modu · 39 farklı yüz','›',false):'');
-      h+=row('data-r="vakit"','🌙',`${S.partner} ile vakit geçir`,'Mutluluk +','',!!S.jail);
+      h+=row('data-x="pmenu:"','💞',`${S.partner} ile ilgilen`,'Sohbet, yemek, hediye, tatil, sürpriz…','›',!!S.jail);
       if(!S.married)h+=row('data-r="evlen"','💍','Evlenme teklif et','Boğaz\'da düğün','₺80.000',cashA()<80000||S.jail);
       h+=`<div class="bar" style="margin:-2px 0 10px"><i style="width:${prel()}%;background:${prel()>=60?'var(--good)':prel()>=30?'var(--warn)':'var(--blood)'}"></i></div>`;
       h+=S.married?row('data-x="bosan:"','💔','Boşan','Mal paylaşımı ve nafaka','',false):row('data-r="ayril"','💔','Ayrıl','Mutluluk −','',false);
