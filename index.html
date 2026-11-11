@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.11-1545';
+const APPV='2026.11.11-1730';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -616,14 +616,23 @@ const AVIC=AVI; // temiz yüzler gelince ayrı harita olacak
 /* ============ Avatar: hazır saç-sakal stilleri ============ */
 const AHC=[['kahve','Kahverengi','#6b4026'],['sari','Sarı','#d8b46a'],['siyah','Siyah','#1b1513'],['kul','Küllü sarı','#b89a72']];
 const AST=['Dağınık, gür sakal','Kısa, kirli sakal','Yana taralı, uzun sakal','Kazınmış yan, keçi sakal','Kıvırcık, bıyıklı','Kazıma, dolgun sakal','Klasik, sinek kaydı','Kakül, kısa sakal','Uzun geriye, pala bıyık','Bukleli, bıyık'];
-function avSrc(L,sc){if(L&&L.av===3){L.st=L.hair>=0?L.hair:(L.beard>=0?L.beard:-1);L.av=2;delete L.hair;delete L.beard}const T=sc?AVI:AVIC;return L.st<0?T.kel:(T[(L.hc||'kahve')+L.st]||T.kel)}
+const AVN={1:["img/c1df1d6e424a.webp", "img/e94bac286920.webp", "img/ca70ec05b1e8.webp", "img/62226b303fb7.webp", "img/9f0af0751f97.webp", "img/17cda5593fb5.webp", "img/7ba3c3975bdd.webp", "img/9cb63eb457de.webp", "img/bc21985d67bf.webp", "img/7162214b50af.webp", "img/3a9c0ed0c02f.webp", "img/21267a75ebb7.webp"],2:["img/86c33bf2c585.webp", "img/95e8ff75346d.webp", "img/cf85d9a284f6.webp", "img/08999f0cc022.webp", "img/bd357a9e786a.webp", "img/28e62f714a9b.webp", "img/409c030a334d.webp", "img/abf6e71fa1ed.webp", "img/888632dbd042.webp", "img/67fedac644bc.webp", "img/e0f319243f79.webp", "img/2c3c48ca337c.webp"],3:["img/d788061a6306.webp", "img/2056ec3bc2ba.webp", "img/a4fedd89cc9b.webp", "img/4ba37e09cb75.webp", "img/3607bfef6afc.webp", "img/eb287997ab7f.webp", "img/585968401911.webp", "img/a303434276a1.webp", "img/01b238d67ed7.webp", "img/331ccf6b772f.webp", "img/25a031cdd54e.webp", "img/04c7d92b9346.webp"]};
+const AVCH=[['Klasik','kahve'],['Dövmeli','kahve'],['Olgun','kahve'],['Genç','siyah']];
+const AVNS={1:['Kıvırcık, dolgun sakal','Kısa kazıma, kirli sakal','Geriye taralı, bıyık','Kazıma, keçi sakal','Yana taralı, sinek kaydı','Dalgalı, gür sakal','Kel, dolgun sakal','Kısa saç, pala bıyık','Kıvırcık, kısa sakal','Kırçıl saç, kirli sakal','Uzun dalgalı, sinek kaydı','Kısa saç, keçi sakal'],
+2:['Kısa, sinek kaydı','Kısa, kırçıl sakal','Geriye taralı, sinek kaydı','Yana taralı, sinek kaydı','Dalgalı, dolgun sakal','Kısa, bıyık','Kırçıl, gür sakal','Kısa, keçi sakal','Dalgalı, pala bıyık','Kel, kırçıl sakal','Kısa, kirli sakal','Uzun dalgalı, sinek kaydı'],
+3:['Kakül, sinek kaydı','Yukarı taralı, ince bıyık','Kazıma, kısa sakal','Geriye dalgalı, sinek kaydı','Yana taralı, bıyık','Kıvırcık, keçi sakal','Düz kesim, sinek kaydı','Uzun dalgalı, sakal','Kel, bıyık','Kıvırcık kısa, sinek kaydı','Uzun, ortadan ayrık','Kısa, keçi sakal']};
+function avSrc(L,sc){if(L&&L.av===3){L.st=L.hair>=0?L.hair:(L.beard>=0?L.beard:-1);L.av=2;delete L.hair;delete L.beard}if(L&&L.ch>0&&AVN[L.ch])return AVN[L.ch][L.st>=0&&L.st<12?L.st:0];const T=sc?AVI:AVIC;return L.st<0?T.kel:(T[(L.hc||'kahve')+L.st]||T.kel)}
 function avHTML(L,age,opts){opts=opts||{};const hc=(L&&L.hc)||'kahve';const src=age!=null&&age<10?AVK['c'+hc]:age!=null&&age<20?AVK['t'+hc]:avSrc(L,opts.yara);return `<span class="avs"${opts.jail?' style="filter:grayscale(.7) contrast(1.1)"':''}><img src="${src||avSrc(L,opts.yara)}" alt=""></span>`}
-function avRand(hc){return {av:2,st:ch(.08)?-1:R(0,9),hc:hc||pick(['kahve','kahve','sari','kul','siyah','siyah']),outfit:'tisort',acc:[]}}
-function avPicker(L,pre){let h=`<div class="sec" style="margin:12px 0 6px">Saç ve sakal</div><div class="avrow">`;
+function avRand(hc){if(!hc&&ch(.6)){const c=R(1,3);return {av:2,ch:c,st:R(0,11),hc:AVCH[c][1],outfit:'tisort',acc:[]}}return {av:2,ch:0,st:ch(.08)?-1:R(0,9),hc:hc||pick(['kahve','kahve','sari','kul','siyah','siyah']),outfit:'tisort',acc:[]}}
+function avPicker(L,pre,noCh){const c=L.ch||0;let h=noCh?'':`<div class="sec" style="margin:12px 0 6px">Karakter</div><div class="avrow">`;
+  if(!noCh)AVCH.forEach((x,i)=>{h+=`<button class="avt ${c===i?'on':''}" data-${pre}h="${i}" aria-label="${x[0]}"><span class="avs"><img src="${i?AVN[i][0]:avSrc({st:0,hc:L.hc||'kahve'})}" alt=""></span></button>`});
+  h+=(noCh?'':`</div><p class="note" style="margin:0 0 4px">${AVCH[c][0]}</p>`)+`<div class="sec" style="margin:12px 0 6px">Saç ve sakal</div><div class="avrow">`;
+  if(c>0){for(let i=0;i<12;i++)h+=`<button class="avt ${L.st===i?'on':''}" data-${pre}s="${i}" aria-label="${AVNS[c][i]}"><span class="avs"><img src="${AVN[c][i]}" alt=""></span></button>`;
+    return h+`</div><p class="note" style="margin:0 0 4px">${AVNS[c][L.st]||AVNS[c][0]}</p>`}
   for(let i=-1;i<10;i++)h+=`<button class="avt ${L.st===i?'on':''}" data-${pre}s="${i}" aria-label="${i<0?'Kel':AST[i]}"><span class="avs"><img src="${avSrc({st:i,hc:L.hc})}" alt=""></span></button>`;
   h+=`</div><p class="note" style="margin:0 0 4px">${L.st<0?'Kel, sinek kaydı':AST[L.st]}</p><div class="sec" style="margin:10px 0 6px">Saç rengi</div><div class="avcol">`+AHC.map(c=>`<button class="aws ${L.hc===c[0]?'on':''}" data-${pre}c="${c[0]}" style="background:${c[2]}" aria-label="${c[1]}"><i>${c[1]}</i></button>`).join('')+'</div>';
   return h}
-function avPick(L,d,pre){if(d[pre+'s']!==undefined){L.st=+d[pre+'s'];return true}if(d[pre+'c']!==undefined){L.hc=d[pre+'c'];return true}return false}
+function avPick(L,d,pre){if(d[pre+'h']!==undefined){const c=+d[pre+'h'];if(c!==(L.ch||0)){L.ch=c;L.st=0;if(c)L.hc=AVCH[c][1]}return true}if(d[pre+'s']!==undefined){L.st=+d[pre+'s'];return true}if(d[pre+'c']!==undefined){L.hc=d[pre+'c'];return true}return false}
 function avatarSVG(L,age=30,opts={}){if(opts.emo)return EMOH(age,opts.g);if(L&&L.av)return avHTML(L,age,opts);if(L&&L.pic&&PRESETS[L.pic-1])return `<img src="${picFor(PRESETS[L.pic-1],age)}" alt="" class="pimg"${opts.jail?' style="filter:grayscale(.7) contrast(1.1)"':''}>`;return avatarSVG2(L,age,opts)}
 
 /* ============ Durum ============ */
@@ -4683,14 +4692,14 @@ function showAv(){let o=$('picBox');if(!o){o=document.createElement('div');o.id=
   o.innerHTML=`<div class="pbIn"><div class="avbig">${avHTML(S.look,S.age,{jail:S.jail>0,yara:S.owned.acc.includes('yara')})}</div><b>${S.first} ${S.last}</b>${S.age>=20&&!S.jail?'<button id="picBer">💈 Berbere git</button>':''}${S.premium?'<button id="picEd">👑 Dayı modu: düzenle</button>':''}<span>Kapatmak için dokun</span></div>`;o.classList.add('on')}
 const ABER=()=>Math.round(1500*(S.cpi||1)/100)*100;
 let BDRAFT=null;
-EXTRA.berber=()=>{if(!S.look.av)Object.assign(S.look,avRand());if(!BDRAFT)BDRAFT={st:S.look.st,hc:S.look.hc};
-  const chg=BDRAFT.st!==S.look.st||BDRAFT.hc!==S.look.hc;
-  let h=`<div class="avbig" style="margin:0 auto 6px">${avHTML(BDRAFT,30)}</div><p class="note" style="text-align:center">Traş ücreti ${fmt(ABER())} · Kasanda ${fmt(S.money)}</p>`+avPicker(BDRAFT,'z');
+EXTRA.berber=()=>{if(!S.look.av)Object.assign(S.look,avRand());if(!BDRAFT)BDRAFT={ch:S.look.ch||0,st:S.look.st,hc:S.look.hc};
+  const chg=BDRAFT.st!==S.look.st||BDRAFT.hc!==S.look.hc||BDRAFT.ch!==(S.look.ch||0);
+  let h=`<div class="avbig" style="margin:0 auto 6px">${avHTML(BDRAFT,30)}</div><p class="note" style="text-align:center">Traş ücreti ${fmt(ABER())} · Kasanda ${fmt(S.money)}</p>`+avPicker(BDRAFT,'z',1);
   h+=`<button class="btn" data-x="berok:" style="margin-top:14px" ${chg&&(S.premium||canPay(ABER()))?'':'disabled'}>${chg?'Bu görünümü yap':'Değişiklik yok'}</button>`;
   return['💈 Berber',h]};
 ACT.berbergo=()=>{BDRAFT=null;openSheet('berber')};
-ACT.berok=()=>{if(!BDRAFT)return;if(BDRAFT.st===S.look.st&&BDRAFT.hc===S.look.hc&&S.look.av===2){toast('Görünüm aynı, berbere gerek yok');return}if(!canPay(ABER())){toast('💸 Traşa paran yetmiyor');return}pay(ABER());Object.assign(S.look,BDRAFT,{av:2});BDRAFT=null;log(`💈 Berbere ${fmt(ABER())} ödedin, yeni bir görünümle çıktın.`,'dim');add('happy',2);toast('💈 Yeni görünüm');closeSheet();afterChange()};
-document.addEventListener('click',e=>{const b=e.target.closest('[data-zs],[data-zc]');if(!b||!BDRAFT)return;avPick(BDRAFT,b.dataset,'z');const sl=[...document.querySelectorAll('.avrow')].map(e=>e.scrollLeft),sb=document.querySelector('.sh-b'),st=sb?sb.scrollTop:0;openSheet('berber');document.querySelectorAll('.avrow').forEach((e,i)=>{if(sl[i])e.scrollLeft=sl[i]});const sb2=document.querySelector('.sh-b');if(sb2)sb2.scrollTop=st});
+ACT.berok=()=>{if(!BDRAFT)return;if(BDRAFT.st===S.look.st&&BDRAFT.hc===S.look.hc&&BDRAFT.ch===(S.look.ch||0)&&S.look.av===2){toast('Görünüm aynı, berbere gerek yok');return}if(!canPay(ABER())){toast('💸 Traşa paran yetmiyor');return}pay(ABER());Object.assign(S.look,BDRAFT,{av:2});BDRAFT=null;log(`💈 Berbere ${fmt(ABER())} ödedin, yeni bir görünümle çıktın.`,'dim');add('happy',2);toast('💈 Yeni görünüm');closeSheet();afterChange()};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-zs],[data-zc],[data-zh]');if(!b||!BDRAFT)return;avPick(BDRAFT,b.dataset,'z');const sl=[...document.querySelectorAll('.avrow')].map(e=>e.scrollLeft),sb=document.querySelector('.sh-b'),st=sb?sb.scrollTop:0;openSheet('berber');document.querySelectorAll('.avrow').forEach((e,i)=>{if(sl[i])e.scrollLeft=sl[i]});const sb2=document.querySelector('.sh-b');if(sb2)sb2.scrollTop=st});
 
 /* ============ Karakter oluştur ============ */
 let draft;
