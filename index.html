@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.11-1430';
+const APPV='2026.11.11-1445';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1007,6 +1007,16 @@ function meet(pid){const pl=PLACES.find(x=>x.id===pid);
   done()}
 /* ============ Arkadaşlık sistemi ============ */
 const fG=f=>GIRLS.includes((f.name||'').split(' ')[0])?'k':'e';
+const NPC=[["k","y","","img/9164166dd54e.webp"],["e","g","sokak","img/0f76390fd63e.webp"],["e","y","avukat","img/91e53ad14dfb.webp"],["e","o","","img/02af35702f44.webp"],["k","y","sanatci","img/4ec302dd52c9.webp"],["e","y","sokak","img/329eb0e79e21.webp"],["k","y","doktor","img/a8c874e6b516.webp"],["e","o","esnaf","img/c788517f7135.webp"],["e","y","esnaf","img/905a9101e76d.webp"],["k","o","","img/3a74b43425a0.webp"],["k","g","","img/6d1ab12a2c34.webp"],["e","o","esnaf","img/5fbd96ecbc32.webp"],["e","y","sokak","img/98eb52aa2b24.webp"],["e","o","","img/933c232023d3.webp"],["k","g","sokak","img/1b91a3babf82.webp"],["e","o","gazeteci","img/57dcdfda7cff.webp"],["k","y","","img/1e62c21d930e.webp"],["k","o","","img/210f3fc9026a.webp"],["e","g","","img/8a85b1c6d52f.webp"],["e","o","","img/75cdb0f06074.webp"],["e","y","sokak","img/d58b9564bb13.webp"],["k","y","","img/5c461f0132eb.webp"],["e","g","sokak","img/d55a64254eed.webp"],["e","y","gazeteci","img/529987e1028d.webp"],["e","o","esnaf","img/46a085931a58.webp"],["k","y","","img/ed67fe56825b.webp"],["e","g","sokak","img/19ccb8c6e9c4.webp"],["k","g","","img/7135b0e7e57c.webp"],["e","o","","img/aeab2fb440be.webp"],["e","o","esnaf","img/5dfae801a18d.webp"],["e","y","polis","img/16c62b55a6eb.webp"],["k","g","sokak","img/d48499439e11.webp"],["e","o","","img/3b4d74720460.webp"],["k","g","","img/957da916f930.webp"],["k","y","sanatci","img/6bb47edbc274.webp"],["e","y","esnaf","img/69b1bfbf74b6.webp"],["e","g","sokak","img/85a4e19aadd3.webp"],["e","y","sokak","img/964b9ae7cda7.webp"],["e","y","","img/e64b2866694d.webp"],["e","y","avukat","img/49f61cd53108.webp"],["k","o","","img/1d568bf67d54.webp"],["e","y","","img/2cb68fb0c7e9.webp"],["k","g","","img/59ef981da736.webp"],["e","o","","img/63b8af060cfe.webp"],["e","g","","img/6e13be0d6580.webp"],["e","y","sokak","img/0cae87cb7e75.webp"],["k","g","","img/4d5b1acfa1e8.webp"],["e","o","","img/5335b60bce52.webp"],["e","y","esnaf","img/224accd9d20a.webp"],["e","g","avukat","img/974267b4dd75.webp"],["e","o","","img/940955394020.webp"],["k","y","","img/cc55f4232972.webp"],["k","g","sanatci","img/9857d6bcbed9.webp"],["k","y","avukat","img/2ab2714f84bc.webp"],["e","o","","img/b806961b4bb7.webp"],["e","g","sokak","img/b0c1a3666585.webp"],["e","y","sokak","img/2628473a8702.webp"],["k","y","","img/e013ff011870.webp"],["e","g","gazeteci","img/166205714220.webp"],["e","y","polis","img/1c1eeeb05571.webp"],["e","g","sokak","img/d0d366f15da7.webp"],["k","y","","img/6939ce4ecb24.webp"],["e","o","","img/aceb78f485da.webp"],["k","g","","img/57c8d02c4db3.webp"]];
+const npcGrp=a=>a<30?'g':a<50?'y':'o';
+function npcPic(o,age,g,job){if(age!==undefined&&age<18)return null;const gr=npcGrp(age===undefined?35:age);const N=NPC[o.pic];if(N&&N[0]===g&&N[1]===gr)return N[3];
+  let c=NPC.map((n,i)=>[n,i]).filter(([n])=>n[0]===g&&n[1]===gr);if(!c.length)c=NPC.map((n,i)=>[n,i]).filter(([n])=>n[0]===g);
+  const jj=c.filter(([n])=>n[2]&&n[2]===job);if(jj.length&&ch(.7))c=jj;else{const nj=c.filter(([n])=>!n[2]||n[2]===job);if(nj.length)c=nj}
+  const used=new Set([...(S.friends||[]),...(S.enemies||[]),...((S.org&&S.org.members)||[])].map(x=>x.pic));const fr=c.filter(([,i])=>!used.has(i));if(fr.length)c=fr;
+  o.pic=pick(c)[1];return NPC[o.pic][3]}
+const npcImg=(src,sz)=>src?`<img src="${src}" alt="" style="width:${sz||'100%'};height:${sz||'100%'};object-fit:cover;border-radius:${sz?'14px':'10px'};display:block">`:'';
+const fPic=f=>npcPic(f,f.age,fG(f),f.job);
+const mPic=m=>{if(m.age===undefined)m.age=R(22,48);return npcPic(m,m.age,fG(m),'sokak')};
 const fJob=f=>{const J=JOBS[f.job]||{n:'?',ic:'🙂'};const a=f.age===undefined?S.age:f.age;if(a<18)return{n:a<14?'Öğrenci':'Lise öğrencisi',ic:'🎒',ok:false,fut:J.n};if(a<22&&['polis','avukat','doktor','gazeteci','isinsani'].includes(f.job))return{n:J.n+' adayı (okuyor)',ic:'📚',ok:false,fut:J.n};return{n:J.n,ic:J.ic,ok:true}};
 function fEns(f){trOf(f);if(f.age===undefined)f.age=Math.max(S.age<18?S.age:16,S.age+R(-4,6));if(f.met===undefined)f.met=QS();if(f.owe===undefined)f.owe=0;return f}
 const fRelTxt=r=>r>=90?'Kardeşten öte':r>=70?'Çok yakın':r>=50?'İyi dost':r>=30?'Tanıdık':r>=15?'Soğuk':'Gergin';
@@ -1028,7 +1038,7 @@ function fHang(fid){const f=S.friends.find(x=>x.id===fid);if(!f)return;
     evFx(a[5],'');f.rel=clamp(f.rel+R(6,12));log(a[6].replace('{n}',f.name),'good')}}}),{t:'Vazgeç',fn:()=>setTimeout(()=>friendMenu(fid),40)}]})}
 function fGift(fid){const f=S.friends.find(x=>x.id===fid);if(!f)return;const G=[['🍫','Çiçek ve çikolata',500,R(3,6)],['📚','Kitap ya da parfüm',3000,R(6,10)],['⌚','Saat',25000,R(12,18)],['📱','Son model telefon',60000,R(16,24)]];
   queue({back:'insan',title:`${f.name}'e hediye`,text:`${f.huy} biri. Ne alalım?`,choices:[...G.map(([ic,n,p,v])=>{const c=M(p);return{t:`${ic} ${n}`,sub:fmt(c),dis:!canPay(c),fn:()=>{if(!useAct('f_'+f.id,'Bu kişiyle'))return;pay(c);const k=f.huy==='Cömert'||f.huy==='Neşeli'?1.2:f.huy==='Mağrur'?.7:1;f.rel=clamp(f.rel+Math.round(v*k));log(`${f.name}'e ${n.toLowerCase()} aldın. ${f.huy==='Mağrur'?'Burun kıvırdı ama sakladı.':'Çok sevindi.'}`,'good')}}}),{t:'Vazgeç',fn:()=>setTimeout(()=>friendMenu(fid),40)}]})}
-function fEnemy(f,why){S.friends=S.friends.filter(x=>x!==f);if(!S.enemies)S.enemies=[];if(S.enemies.length<12)S.enemies.push({id:'e'+R(0,99999),name:f.name,job:f.job,hate:R(40,80),why,since:S.age});log(`⚔️ ${f.name} artık düşmanın.`,'bad')}
+function fEnemy(f,why){S.friends=S.friends.filter(x=>x!==f);if(!S.enemies)S.enemies=[];if(S.enemies.length<12)S.enemies.push({id:'e'+R(0,99999),name:f.name,job:f.job,hate:R(40,80),why,since:S.age,pic:f.pic,age:f.age});log(`⚔️ ${f.name} artık düşmanın.`,'bad')}
 function fLose(f,msg,cls){S.friends=S.friends.filter(x=>x!==f);if(msg)log(msg,cls||'bad')}
 function friendMenu(fid){const f=S.friends.find(x=>x.id===fid);if(!f)return;fEns(f);const h=HELP[f.job];closeSheet();
   const left=S.premium?99:actLeft('f_'+f.id);const busy=left<=0;const B=fBest();
@@ -1048,7 +1058,7 @@ function friendMenu(fid){const f=S.friends.find(x=>x.id===fid);if(!f)return;fEns
     {t:'🧬 Özellikleri',sub:trOf(f).huy+(S.premium?' · Dayı modunda düzenlenir':''),fn:()=>setTimeout(()=>pCard('f',f.id,'insan'),40)},
     {t:'🚫 Arkadaşlığı bitir',sub:f.best?'En yakın dostun!':'',fn:()=>{fLose(f,`${f.name} ile yollarınızı ayırdınız.`,'dim');add('happy',f.best?-12:-3)}},
     {t:'Kapat',fn:()=>{}}];
-  queue({back:'insan',title:(f.best?'⭐ ':'')+f.name,text:`${fJob(f).ic} ${fJob(f).n} · ${f.age} yaş · ${f.huy}<br>Yakınlık %${f.rel} · <b>${fRelTxt(f.rel)}</b>${f.best?' · En yakın dostun':''}${f.owe<0?`<br>💸 Ona ${fmt(-f.owe)} borcun var`:''}${f.owe>0?`<br>💵 Sana ${fmt(f.owe)} borcu var`:''}<br><small>${h.d}${busy?' · Bu çeyrek onunla yeterince vakit geçirdin.':''}</small>`,choices:chs})}
+  queue({back:'insan',title:(f.best?'⭐ ':'')+f.name,text:`${fPic(f)?`<div style="float:left;margin:0 12px 6px 0">${npcImg(fPic(f),'76px')}</div>`:''}${fJob(f).ic} ${fJob(f).n} · ${f.age} yaş · ${f.huy}<br>Yakınlık %${f.rel} · <b>${fRelTxt(f.rel)}</b>${f.best?' · En yakın dostun':''}${f.owe<0?`<br>💸 Ona ${fmt(-f.owe)} borcun var`:''}${f.owe>0?`<br>💵 Sana ${fmt(f.owe)} borcu var`:''}<br><small>${h.d}${busy?' · Bu çeyrek onunla yeterince vakit geçirdin.':''}</small>`,choices:chs})}
 /* dostlar kendileri gelir */
 const FEV=[
  {w:3,c:f=>f.rel>=40,e:f=>({title:`📞 ${f.name} arıyor`,text:`"Akşam ${pick(['bizde mangal var','maç var, gel beraber izleyelim','meyhaneye gidiyoruz','sahilde buluşalım'])}, sen de gel!"`,choices:[{t:'Git',fn:()=>{f.rel=clamp(f.rel+R(5,10));add('happy',4);log(`${f.name}'in davetine gittin, güzel bir akşamdı.`,'good')}},{t:'Mazeret uydur',fn:()=>{f.rel=clamp(f.rel-R(3,7));log(`${f.name}'in davetini geri çevirdin.`,'dim')}}]})},
@@ -1604,7 +1614,7 @@ function memMenu(id){const m=S.org.members.find(x=>x.id===id);if(!m)return;close
   cs.push({t:'Prim ver',sub:`${fmt(m.str*5000)} · Sadakat +15`,dis:!canPay(m.str*5000),fn:()=>{pay(m.str*5000);m.loy=clamp(m.loy+15);log(`${m.name}'e prim verdin. Sadakati arttı.`,'good')}});
   cs.push({t:'Aileden çıkar',sub:'Kırgın ayrılır',fn:()=>{S.org.members=S.org.members.filter(x=>x!==m);if(m.relId){const r=S.rels.find(z=>z.id===m.relId);if(r)r.joined=false}log(`${m.name} aileden çıkarıldı.`,'dim');if(m.loy<40&&ch(.4)){add('heat',12);log(`${m.name} gidince polise bir şeyler anlattı.`,'bad')}}});
   cs.push({t:'Vazgeç',fn:()=>{}});
-  queue({back:'org',title:m.name,text:`${m.kin?m.kin+' · ':''}Güç ${m.str}/10 · Sadakat %${m.loy} · Yıllık pay ${fmt(m.wage)} · ${off}.`,choices:cs})}
+  queue({back:'org',title:m.name,text:`${mPic(m)?`<div style="float:left;margin:0 12px 6px 0">${npcImg(mPic(m),'76px')}</div>`:''}${m.kin?m.kin+' · ':''}Güç ${m.str}/10 · Sadakat %${m.loy} · Yıllık pay ${fmt(m.wage)} · ${off}.`,choices:cs})}
 function runMis(m,o,p){m.busy=QS();
   if(ch(p)){const mo=o.m[1]?R(o.m[0],o.m[1]):0;dirty(mo);gainResp(o.r);add('heat',o.h);m.loy=clamp(m.loy+3);
     if(o.guard)S.org.guard=QS();if(o.spy)S.org.intel=QS();
@@ -1763,7 +1773,7 @@ EXTRA.org=()=>{
   h+=row('data-go="rakip"','⚔️','Düşman çeteler','Savaş, mekân baskını, saldırı','›',false);
   h+=`<div class="sec">Üyeler (${o.members.length}/10)</div>`;
   if(!o.members.length)h+='<p class="note">Henüz kimse yok. Aşağıdan akrabalarını ve sokaktan adam ekle.</p>';
-  o.members.forEach(m=>{const st=m.jail?'🔒 Cezaevinde':m.hurt?'🩹 Yaralı':m.busy===QS()?'Görevde':'Hazır';h+=`<button class="row" data-x="mem:${m.id}"><span class="ic">${m.kin?'🧔':'🕶'}</span><span class="tx"><b>${m.name}</b><span>${m.kin?m.kin+' · ':''}Güç ${m.str} · ${m.sq||0} adam · Silah %${m.ar||0} · ${st}</span><div class="bar" style="margin-top:5px"><i style="width:${m.loy}%;background:${m.loy>=60?'var(--good)':m.loy>=30?'var(--warn)':'var(--blood)'}"></i></div></span><span class="rt">›</span></button>`});
+  o.members.forEach(m=>{const st=m.jail?'🔒 Cezaevinde':m.hurt?'🩹 Yaralı':m.busy===QS()?'Görevde':'Hazır';h+=`<button class="row" data-x="mem:${m.id}"><span class="ic"${mPic(m)?' style="padding:0;overflow:hidden"':''}>${npcImg(mPic(m))||(m.kin?'🧔':'🕶')}</span><span class="tx"><b>${m.name}</b><span>${m.kin?m.kin+' · ':''}Güç ${m.str} · ${m.sq||0} adam · Silah %${m.ar||0} · ${st}</span><div class="bar" style="margin-top:5px"><i style="width:${m.loy}%;background:${m.loy>=60?'var(--good)':m.loy>=30?'var(--warn)':'var(--blood)'}"></i></div></span><span class="rt">›</span></button>`});
   if(o.turf.length){h+='<div class="sec">Bölgen</div>';o.turf.forEach(v=>h+=row('data-x="nop:"','🏚',v.n,`Yıllık ${fmtS(v.inc)}${v.from?' · '+RV(v.from).n+'\'den alındı':''}`,'',true))}
   h+='<div class="sec">Eleman ekle</div>';
   S.rels.filter(r=>!r.joined&&!r.dead).forEach(r=>h+=row(`data-x="recrel:${r.id}"`,'🧔',r.name,`${r.kin} · Güç ${r.str}/10 · Kan bağı, sadakat yüksek`,'Davet et',o.members.length>=10));
@@ -4317,9 +4327,9 @@ function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';
     if(free.length){h+='<div class="sec">Eleman al</div><p class="note">İlk yılın maaşı peşin ödenir. Sonra her yıl kasadan otomatik çıkar. Maaşı ödenmeyen işi bırakır.</p>';
       free.forEach(s=>{const lock=s.rank&&rank()<s.rank;h+=row(`data-hire="${s.id}"`,s.ic,s.n,lock?`${RANKS[s.rank].n} rütbesi gerekir`:s.d,lock?'🔒':fmtS(s.sal)+'/yıl',lock||S.age<18||cashA()<s.sal||S.jail||(s.id==='sofor'&&!S.cars.length)||(s.id==='pilot'&&!hasL('jet')&&!hasL('heli')))})}
     h+=`<div class="sec">Dostların (${S.friends.length}/${MAXF})</div>`;
-    if(S.friends.length)[...S.friends].sort((a,b)=>(b.best?1:0)-(a.best?1:0)||b.rel-a.rel).forEach(f=>{fEns(f);h+=`<button class="row" data-fm="${f.id}"><span class="ic">${f.best?'⭐':fJob(f).ic}</span><span class="tx"><b>${f.name}</b><span>${fJob(f).n} · ${f.age} yaş · ${fRelTxt(f.rel)} %${f.rel}${f.owe<0?' · 💸 borcun var':''}${f.owe>0?' · 💵 sana borçlu':''}</span><div class="bar" style="margin-top:5px"><i style="width:${f.rel}%;background:${f.rel>=60?'var(--good)':f.rel>=30?'var(--warn)':'var(--blood)'}"></i></div></span><span class="rt">›</span></button>`});
+    if(S.friends.length)[...S.friends].sort((a,b)=>(b.best?1:0)-(a.best?1:0)||b.rel-a.rel).forEach(f=>{fEns(f);h+=`<button class="row" data-fm="${f.id}"><span class="ic"${fPic(f)?' style="padding:0;overflow:hidden"':''}>${npcImg(fPic(f))||(f.best?'⭐':fJob(f).ic)}</span><span class="tx"><b>${f.best?'⭐ ':''}${f.name}</b><span>${fJob(f).n} · ${f.age} yaş · ${fRelTxt(f.rel)} %${f.rel}${f.owe<0?' · 💸 borcun var':''}${f.owe>0?' · 💵 sana borçlu':''}</span><div class="bar" style="margin-top:5px"><i style="width:${f.rel}%;background:${f.rel>=60?'var(--good)':f.rel>=30?'var(--warn)':'var(--blood)'}"></i></div></span><span class="rt">›</span></button>`});
     else h+='<p class="note">Henüz dostun yok. Aşağıdaki yerlerde yeni insanlarla tanış.</p>';
-    if(S.enemies&&S.enemies.length){h+=`<div class="sec">Düşmanların (${S.enemies.length})</div>`;S.enemies.forEach(e=>h+=row(`data-x="enemy:${e.id}"`,'⚔️',e.name,`${JOBS[e.job]?JOBS[e.job].n:''} · Kin %${e.hate} · ${e.why}`,'›',false))}
+    if(S.enemies&&S.enemies.length){h+=`<div class="sec">Düşmanların (${S.enemies.length})</div>`;S.enemies.forEach(e=>h+=row(`data-x="enemy:${e.id}"`,npcImg(npcPic(e,e.age||35,fG(e),e.job))||'⚔️',e.name,`${JOBS[e.job]?JOBS[e.job].n:''} · Kin %${e.hate} · ${e.why}`,'›',false))}
     h+='<div class="sec">Yeni insanlarla tanış</div>';
     PLACES.filter(p=>p.jail?S.jail>0:(!S.jail&&S.age>=p.min&&(p.max===undefined||S.age<=p.max))).forEach(p=>h+=row(`data-meet="${p.id}"`,p.ic,p.n,p.d,'',S.friends.length>=MAXF));
   }
