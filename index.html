@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.11-1410';
+const APPV='2026.11.11-1415';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1938,7 +1938,7 @@ function bjStep(a,P,D){const pt=bjTotal(P);
       if(dt>21||pt>dt)gwin(a,2,txt);else if(pt===dt){log(txt+' Berabere, paran iade.','dim')}else glose(a,txt)}}]})}
 EXTRA.kumar=()=>{let h=`<p class="note">Kasa: <b style="color:var(--good)">${fmt(S.money)}</b> · Galibiyet: ${S.stats.wins}. Ev her zaman kazanır... çoğu zaman.</p>`;
   h+=row('data-x="rulet:"','🎡','Rulet','Kırmızı, siyah ya da sıfır','',false)+row('data-x="bj:"','🃏','Blackjack','21\'e en yakın olan kazanır','',false)+row('data-x="zar:"','🎲','Barbut','Yüksek mi düşük mü?','',false)+row('data-x="at:"','🐎','At yarışı','Altı at, altı oran','',false);
-  return['Kumarhane',h]};
+  return['Kaçak kumarhane',h]};
 
 /* ============ Şehir haritası ============ */
 const DIST={kartal:['Tarlabaşı','Dolapdere','Kurtuluş'],yilan:['Kasımpaşa','Okmeydanı','Hasköy'],liman:['Haydarpaşa','Kadıköy','Moda'],balkan:['Bayrampaşa','Topkapı','Merter'],sahil:['Bebek','Arnavutköy','Ulus']};
@@ -3251,13 +3251,13 @@ function kuyumcuHTML(){let h='';const pk=GKG();const own=S.goldKg||0;const hst=S
   return h}
 /* ============ Kara para kasası ============ */
 const DLIM=()=>5e6;
-function dirty(m){m=Math.round(m||0);if(m<=0)return;S.black=(S.black||0)+m;if(!S.blackTip){S.blackTip=1;setTimeout(()=>queue({title:'🖤 Kara para',text:'Yasa dışı kazandığın her kuruş <b>kara para kasasına</b> girer, cüzdanına değil. Kara parayla alışveriş yapamazsın; sadece sokak masraflarını (adam maaşı, silah, rüşvet) ödeyebilirsin.<br><br>Harcamak için önce <b>aklaman</b> gerekir: sarraf, kuyumcu, kumarhane fişi ya da işletmelerin üzerinden. Her aklamada komisyon ve küçük bir yakalanma riski var.',choices:[{t:'Kara para kasasına git',fn:()=>setTimeout(()=>openSheet('kara'),60)},{t:'Tamam',fn:()=>{}}]}),0)}}
+function dirty(m){m=Math.round(m||0);if(m<=0)return;S.black=(S.black||0)+m;if(!S.blackTip){S.blackTip=1;setTimeout(()=>queue({title:'🖤 Kara para',text:'Yasa dışı kazandığın her kuruş <b>kara para kasasına</b> girer, cüzdanına değil. Kara parayla alışveriş yapamazsın; sadece sokak masraflarını (adam maaşı, silah, rüşvet) ödeyebilirsin.<br><br>Harcamak için önce <b>aklaman</b> gerekir: sarraf, kuyumcu, Kıbrıs kumarhaneleri ya da işletmelerin üzerinden. Her aklamada komisyon ve küçük bir yakalanma riski var.',choices:[{t:'Kara para kasasına git',fn:()=>setTimeout(()=>openSheet('kara'),60)},{t:'Tamam',fn:()=>{}}]}),0)}}
 function lqUse(k){S.lq=S.lq&&S.lq.q===QS()?S.lq:{q:QS(),u:{}};return S.lq.u[k]||0}
 function bizCap(){return Math.round((propLaund()*1.2e6+S.props.length*4e5)*Math.max(1,S.cpi))}
 const LMETH=[
   {id:'sarraf',ic:'💱',n:'Sarraf ve döviz bürosu',d:'Hızlı, komisyon yüksek',fee:.2,risk:.08,cap:()=>2e7},
   {id:'kuyum',ic:'💍',n:'Kuyumcudan altın al-sat',d:'Altına çevir, faturalı sat',fee:.12,risk:.06,cap:()=>1e7},
-  {id:'kumar',ic:'🎰',n:'Kumarhane fişi',d:'Fiş al, "kazanç" olarak bozdur',fee:.15,risk:.1,cap:()=>5e7},
+  {id:'kumar',ic:'🎰',n:'Kıbrıs kumarhanesi',d:'KKTC\'ye geç, fiş al, "kumar kazancı" belgesiyle dön',fee:.15,risk:.1,cap:()=>5e7},
   {id:'emlak',ic:'🏠',n:'Tapuda düşük bedel',d:'Ev al, gerçek fiyattan sat',fee:.1,risk:.07,cap:()=>3e7,need:()=>S.houses&&S.houses.length>0},
   {id:'off',ic:'🌍',n:'Offshore paravan şirket',d:'Yurt dışından "yatırım" olarak döner · 1 çeyrek sürer',fee:.25,risk:.03,cap:()=>5e8,slow:1}];
 ACT.lmeth=id=>{const M=LMETH.find(x=>x.id===id);closeSheet();const cap=Math.round(M.cap()*Math.max(1,S.cpi));const left=Math.max(0,cap-lqUse(id));const opts=[1e4,5e4,2e5,1e6,5e6,2e7,1e8,5e8].map(a=>Math.round(a*Math.max(1,S.cpi)/1e3)*1e3).filter(a=>a<=S.black&&a<=left);if(S.black<=left&&S.black>0&&!opts.includes(S.black))opts.push(S.black);
@@ -4132,7 +4132,7 @@ function hubTiles(){return [
       ['sosyal','📱','Sosyal medya',`${fmtF(S.sm.f)} takipçi`,S.age>=13&&!S.jail],
       ['harita','🗺','Mafya savaşı haritası',S.org?`${S.org.turf.length} mekân senin`:'Kim nereyi tutuyor',true],
       ['gazete','📰','Gazete',`Ün %${Math.round(S.fame||0)}`,true],
-      ['kumar','🎰','Kumarhane','Rulet, blackjack, barbut',S.age>=18&&!S.jail],
+      ['kumar','🎰','Kaçak kumarhane','Yeraltında rulet, blackjack, barbut',S.age>=18&&!S.jail],
       ['luks','🛥','Lüks oyuncaklar',S.lux.length?`${S.lux.length} parça`:'Yat, jet, helikopter',S.age>=18&&!S.jail],
       ['basarim','🏆','Başarımlar',`${Object.keys(S.ach).length}/${ACH.length}`,true],
       ['yadigar','🧳','Yadigârlar',`${(S.yad||[]).length}/${YAD.length}`,true],
