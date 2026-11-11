@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.11-2200';
+const APPV='2026.11.11-2250';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -824,7 +824,7 @@ function adultYear(ny){if(ny)try{parYear()}catch(e){}
     if(S.famBg==='zengin')add('respect',-5);
     if(S.famBg==='polis'&&S.friends.length<MAXF){const n=pick(NAMES)+' '+pick(SURN);S.friends.push({id:'pb'+R(0,9999),name:n,job:'polis',rel:R(60,75)});log(`Babanın meslektaşı Komiser ${n} seni hep kollar.`,'good')}}
   if(ny&&S.age===16&&S.famBg==='mafya'&&!S.family&&!S.org){S.family=pick(FAMILIES).n;add('respect',15);add('heat',8);log(`Babanın ailesi ${S.family} seni resmen aralarına aldı.`,'gold');famQuitJob()}
-  if(ny&&S.age===18&&S.famBg==='zengin'){S.money+=M(2000000);log('Ailen 18. yaş gününde hesabına ₺2.000.000 yatırdı.','gold')}
+  if(ny&&S.age===18&&S.famBg==='zengin'){const g=M(570000);S.money+=g;log(`Ailen 18. yaş gününde hesabına ${fmt(g)} yatırdı.`,'gold')}
   if(ny&&S.age===15&&!S.jail)return queue({title:'Okul mu, sokak mı?',prem:{t:'İkisi birden',sub:'Dayının okulunda diplomayı al',fn:()=>{S.school=true;add('respect',6);log('Diploman dayının tanıdığı okuldan geldi, sen sokakta kaldın. İki dünyanın da en iyisi.','gold')}},text:'Lise başlıyor. Ama sokakta kazanılacak para seni çağırıyor.',choices:[
     {t:'Liseyi terk et',sub:'Saygı +5 · Tam zamanlı sokak',fn:()=>{S.school=false;add('respect',5);log('🎒 Liseyi terk ettin. Artık tam zamanlı sokaktasın.','bad')}},
     {t:'Liseye devam et',sub:'İşlerde risk azalır',fn:()=>{S.school=true;add('happy',4);log('📚 Liseye devam ettin. Akıllı bir suçlu, yaşayan bir suçludur.','good')}}]});
@@ -1473,7 +1473,7 @@ function kidMenu(id){const k=S.kids.find(x=>x.id===id);if(!k)return;closeSheet()
   const kidHc=S.premium&&k.age>=3?[{t:'👑 Saç rengini değiştir',sub:['Kahverengi','Siyah','Sarı','Kızıl'][famHc(k)],pr:true,fn:()=>setTimeout(()=>queue({back:'insan',title:`👑 ${k.name}`,text:'Saç rengi seç',choices:['Kahverengi','Siyah','Sarı','Kızıl'].map((n,i)=>({t:n,fn:()=>{k.fhc=i;setTimeout(()=>kidMenu(id),40)}}))}),40)}]:[];
   queue({back:'insan',title:k.name,text:`<span class="famav" style="display:block;margin:0 auto 8px">${kidAv(k)}</span>${c}, ${k.age} yaşında. Yakınlık %${k.rel}.${S.heir===id?' Varisin o.':''}${k.crew?' Aile işinde yanında çalışıyor.':''}`,choices:[...kidHc,
     {t:'Vakit geçir',sub:'Yakınlık +',fn:()=>{k.rel=clamp(k.rel+R(6,12));add('happy',4);log(`${k.name} ile ${pick(k.age<10?['parkta salıncakta sallandınız','dondurma yediniz','çizgi film izlediniz']:k.age<18?['maça gittiniz','balığa çıktınız','araba sürmeyi öğrettin']:['rakı masasına oturdunuz','iş konuştunuz','Boğaz\'da yürüdünüz'])}.`,'good')}},
-    {t:'Harçlık ver',sub:k.age<18?'₺5.000':'₺50.000',dis:cashA()<(k.age<18?5000:50000),fn:()=>{spend(k.age<18?5000:50000);k.rel=clamp(k.rel+15);log(`${k.name}'e harçlık verdin.`,'good')}},
+    {t:'Harçlık ver',sub:fmt(M(k.age<18?1500:15000)),dis:cashA()<M(k.age<18?1500:15000),fn:()=>{spend(M(k.age<18?1500:15000));k.rel=clamp(k.rel+15);log(`${k.name}'e harçlık verdin.`,'good')}},
     ...(k.age>=16&&!k.crew&&rank()>=1?[{t:'Aile işine al',sub:'Saygı + · Varis olarak yetişir',fn:()=>{k.crew=true;gainResp(3);log(`${k.name} artık işlerde yanında. Sokak onu da tanımaya başladı.`,'gold')}}]:[]),
     ...(k.age>=18&&!k.spouse?[{t:'Görücü ayarla',sub:`${fmt(Math.round(50000*S.cpi))} · %60 şans`,dis:!canPay(Math.round(50000*S.cpi)),fn:()=>{pay(Math.round(50000*S.cpi));if(ch(.6)){marryKid(k);k.rel=clamp(k.rel+10)}else{k.rel=clamp(k.rel-5);log(`${k.name} görücüye gelen adayı beğenmedi.`,'dim')}}}]:[]),
     ...(k.spouse&&k.age<=45?[{t:'Torun iste',sub:k.rel>=50?'%45 şans':'Aranız soğuk, %15 şans',fn:()=>{if(ch(k.rel>=50?.45:.15))addGrandkid(k);else log(`${k.name}: "Şimdi sırası değil."`,'dim')}}]:[]),
