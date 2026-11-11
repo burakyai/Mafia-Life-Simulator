@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.11-2120';
+const APPV='2026.11.11-2140';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1213,7 +1213,7 @@ function pay(x){fund(x);
   if(cashA()>=x){spend(x);return true}
   if(canPay(x)){const d=x-Math.max(0,S.money);S.money=0;S.bank.card.debt+=d;toast(`${fmt(d)} kredi kartından çekildi`);return true}
   toast('Paran yetmiyor: '+fmt(x));return false}
-const hval=o=>Math.round(HT(o.t).p*S.hidx*o.q*(.7+.3*(o.cond===undefined?100:o.cond)/100));
+const hval=o=>Math.round(HT(o.t).p*S.hidx*o.q*(.7+.3*(o.cond===undefined?100:o.cond)/100)*(o.har?.72:1));
 const portVal=()=>Object.keys(S.stocks).reduce((s,id)=>s+S.stocks[id].sh*S.px[id].p,0);
 function netWorth(){
   let n=S.money+S.bank.dep+portVal()+acctTotal();
@@ -1240,7 +1240,7 @@ function esnafQ(f){if(!S.props||!S.props.length)return;const X=PX();
   if(S.props.includes('spor')&&ch(f))add('health',1);
   if(S.props.includes('otopark')){X.oq=(X.oq||0)+f;if(X.oq>=1){X.oq-=1;X.oy++}}}
 function quarterSystems(f){
-  esnafQ(f);
+  esnafQ(f);try{flipQ()}catch(e){console.error(e)}
   let rent=0;
   rent+=emlakQ(f);
   if(rent){S.money+=rent;S.taxInc=(S.taxInc||0)+rent;log(`Kira gelirlerin: ${fmt(rent)}.`,'good')}
@@ -1339,10 +1339,10 @@ const EXTRA={
     HCATS.forEach(([cid,ic,n,d,ids])=>{const open=ids.map(by).filter(t=>t&&t[4]).length;h+=row(`data-go="cat_${cid}"`,'@c_'+cid,n,d,`${open}/${ids.length} ›`,false)});
     return['Hayat',h]},
   emlak:()=>{let h=`<p class="note">Konut fiyatları her yıl değişir. Kiraya verdiğin evler her yıl kira getirir; oturduğun ev her yıl mutluluğunu artırır.</p>`;
-    if(S.houses.length){h+='<div class="sec">Evlerin</div>';S.houses.forEach(o=>{const t=HT(o.t);const st=S.home===o.uid?'<span style="color:var(--gold)">Burada oturuyorsun</span>':o.ten?`Kiracı: ${o.ten.name} · ${fmtS(o.ten.rent)}/yıl`:'Boş duruyor';h+=row(`data-x="house:${o.uid}"`,hIco(t),t.n,`Değeri ${fmtS(hval(o))} · ${st}`,'›',false)})}
-    h+='<div class="sec">Satılık ilanlar · bu çeyrek</div><div class="tabs">'+[['all','Tümü'],...Object.entries(HCLS)].map(([id,n])=>`<button class="tab ${hFilt===id?'on':''}" data-x="hf:${id}">${n}</button>`).join('')+'</div>';
-    const hl=hMarket().filter(l=>hFilt==='all'||HT(l.t).cls===hFilt);if(!hl.length)h+='<p class="note">Bu kategoride bu çeyrek ilan yok.</p>';
-    hl.forEach(l=>{const t=HT(l.t);const lock=t.rank&&rank()<t.rank;const pr=Math.round(t.p*S.hidx*l.q);h+=row(`data-x="hl:${l.lid}"`,hIco(t),t.n,lock?`${RANKS[t.rank].n} rütbesi gerekir`:`${Math.round(t.m2*l.q)} m² · ${l.kat?l.kat+'. kat · ':''}${l.yas?l.yas+' yıllık':'Sıfır'} · Kira ~${fmtS(t.rent*S.hidx*l.q)}/yıl`,lock?'🔒':fmtS(pr),lock||!canPay(pr))});
+    if(S.houses.length){h+='<div class="sec">Evlerin</div>';S.houses.forEach(o=>{const t=HT(o.t);const st=o.reno?`🔨 Restorasyonda · ${Math.max(0,o.reno.end-QS())} çeyrek kaldı`:o.har?'🏚 Harap · restore bekliyor':S.home===o.uid?'<span style="color:var(--gold)">Burada oturuyorsun</span>':o.ten?`Kiracı: ${o.ten.name} · ${fmtS(o.ten.rent)}/yıl`:'Boş duruyor';h+=row(`data-x="house:${o.uid}"`,hIco(t),t.n,`Değeri ${fmtS(hval(o))} · ${st}`,'›',false)})}
+    h+='<div class="sec">Satılık ilanlar · bu çeyrek</div><div class="tabs">'+[['all','Tümü'],['har','🏚 Harap'],...Object.entries(HCLS)].map(([id,n])=>`<button class="tab ${hFilt===id?'on':''}" data-x="hf:${id}">${n}</button>`).join('')+'</div>';
+    const hl=hMarket().filter(l=>hFilt==='all'||(hFilt==='har'?l.har!==undefined:HT(l.t).cls===hFilt));if(!hl.length)h+='<p class="note">Bu kategoride bu çeyrek ilan yok.</p>';
+    hl.forEach(l=>{const t=HT(l.t);const lock=t.rank&&rank()<t.rank;const pr=hlPr(l);h+=row(`data-x="hl:${l.lid}"`,hIco(t),(l.har!==undefined?'🏚 Harap · ':'')+t.n,lock?`${RANKS[t.rank].n} rütbesi gerekir`:l.har!==undefined?`${Math.round(t.m2*l.q)} m² · ${l.yas} yıllık · durum %${l.har} · Restore edilirse ~${fmtS(t.p*S.hidx*l.q)}`:`${Math.round(t.m2*l.q)} m² · ${l.kat?l.kat+'. kat · ':''}${l.yas?l.yas+' yıllık':'Sıfır'} · Kira ~${fmtS(t.rent*S.hidx*l.q)}/yıl`,lock?'🔒':fmtS(pr),lock||!canPay(pr))});
     return['Emlakçı',h]},
   avm:()=>{let h='<div class="sec">Mağazalar</div>';
     SHOP.forEach(s=>{const bad=(s.home&&!S.home)||(s.partner&&!S.partner);h+=row(`data-x="avmbuy:${s.id}"`,'@s_'+s.id,s.n,bad?(s.home?'Önce bir evine yerleşmelisin':'Önce bir sevgilin olmalı'):`Mutluluk +${s.h}`,fmtS(s.p),bad||!canPay(s.p))});
@@ -1403,7 +1403,7 @@ const ACT={
       ...(S.home!==uid?[{t:'Buraya taşın',sub:o.ten?'Önce kiracıyı çıkarmalısın':`Mutluluk +${t.h}/yıl`,dis:!!o.ten,fn:()=>{S.home=uid;log(`${t.n} evine taşındın.`,'good')}}]:[]),
       ...(!o.ten&&S.home!==uid?[{t:'Kiracı bul',sub:'Emlakçı ilana çıkar',fn:()=>{if(ch(.8)){o.ten={name:pick(TENANTS),rent:Math.round(t.rent*S.hidx*R(90,112)/100)};log(`${t.n} evine kiracı geldi: ${o.ten.name}, yıllık ${fmt(o.ten.rent)}.`,'good')}else log('Bu yıl evine uygun kiracı çıkmadı.','dim')}}]:[]),
       ...(o.ten?[{t:'Kiracıyı çıkar',sub:'Ev boşalır',fn:()=>{log(`${o.ten.name} evden çıkarıldı.`,'dim');o.ten=null}}]:[]),
-      {t:'Sat',sub:fmt(v)+' (emlakçı payı %5)',fn:()=>{S.money+=v;S.houses=S.houses.filter(x=>x!==o);if(S.home===uid)S.home=null;log(`${t.n} evini ${fmt(v)} karşılığında sattın.`)}},
+      {t:'Sat',sub:fmt(v)+' (emlakçı payı %5)',fn:()=>{S.money+=v;S.houses=S.houses.filter(x=>x!==o);if(S.home===uid)S.home=null;log(`${t.n} evini ${fmt(v)} karşılığında sattın.`);if(o.inv){const k=v-o.inv;S.flipN=(S.flipN||0)+1;S.flipP=(S.flipP||0)+k;log(k>=0?`🏚➜🏡 Ev çevirmeden ${fmt(k)} kâr ettin. (Toplam ${S.flipN} ev, ${fmt(S.flipP)} kâr)`:`🏚 Bu evden ${fmt(-k)} zarar ettin.`,k>=0?'gold':'bad')}}},
       {t:'Vazgeç',fn:()=>{}}]})},
   avmbuy:id=>{const s=SHOP.find(x=>x.id===id);if(!s)return;if(!pay(s.p))return;add('happy',s.h);log(s.partner?`${S.partner} çantayı görünce boynuna sarıldı.`:`${s.n} aldın.`,'good');done()},
   dep:k=>{closeSheet();if(k==='in')amountModal('Vadesiz hesaba yatır',`Yıllık %${Math.round(Math.max(.03,depRate()*.35)*100)} faiz işler, istediğin an çekebilirsin.`,S.money,a=>{spend(a);S.bank.dep+=a;if(S.heat>=50&&a>=300000&&ch(.5)){add('heat',12);log(`Bankaya ${fmt(a)} yatırdın. Banka işlemi Maliye'ye bildirdi, dikkat arttı.`,'bad')}else log(`Bankaya ${fmt(a)} yatırdın.`,'dim')},'banka');
@@ -2159,11 +2159,12 @@ Object.assign(HT('gece'),{n:'Gecekondu, Gaziosmanpaşa',cls:'daire',m2:70});Obje
 Object.assign(HT('dubleks'),{cls:'daire',m2:220});Object.assign(HT('villa'),{cls:'yazlik',m2:300});Object.assign(HT('yali'),{n:'Boğaz yalısı, Kuruçeşme',cls:'yali',m2:800});
 const HCLS={daire:'Daire',villa:'Villa',yali:'Yalı ve köşk',yazlik:'Yazlık'};
 let hFilt='all';
-function hMarket(){if(!S.hmarket||S.hmarket.q!==QS()){const out=[];for(let i=0;i<12;i++){const t=ch(.6)?pick(HOUSES.filter(x=>x.p*S.hidx<=Math.max(4e6,netWorth()*1.2))):pick(HOUSES);out.push({lid:'h'+i+R(0,99999),t:t.id,q:R(85,118)/100,kat:t.cls==='daire'?R(1,14):0,yas:R(0,40)})}S.hmarket={q:QS(),items:out.sort((a,b)=>HT(a.t).p*a.q-HT(b.t).p*b.q)}}return S.hmarket.items}
+const hlPr=l=>Math.round(HT(l.t).p*S.hidx*l.q*(l.har!==undefined?.48+.2*l.har/100:1));
+function hMarket(){if(!S.hmarket||S.hmarket.q!==QS()){const out=[];for(let i=0;i<12;i++){const t=ch(.6)?pick(HOUSES.filter(x=>x.p*S.hidx<=Math.max(4e6,netWorth()*1.2))):pick(HOUSES);const har=t.id!=='gece'&&ch(.3);out.push({lid:'h'+i+R(0,99999),t:t.id,q:R(85,118)/100,kat:t.cls==='daire'?R(1,14):0,yas:har?R(35,90):R(0,40),...(har?{har:R(5,35)}:{})})}S.hmarket={q:QS(),items:out.sort((a,b)=>hlPr(a)-hlPr(b))}}return S.hmarket.items}
 ACT.hf=c=>{hFilt=c;openSheet('emlak')};
-ACT.hl=lid=>{const l=hMarket().find(x=>x.lid===lid);if(!l)return;const t=HT(l.t);const pr=Math.round(t.p*S.hidx*l.q);closeSheet();
-  const buy=price=>{if(!pay(price))return;const o={uid:'h'+Date.now()+R(0,999),t:t.id,q:l.q*(price/pr),ten:null};S.houses.push(o);if(!S.home)S.home=o.uid;S.hmarket.items=S.hmarket.items.filter(x=>x!==l);log(`${t.n} satın aldın.${S.home===o.uid?' Hemen taşındın.':''}`,'good');if(price>=1e7)news(`${S.first} ${S.last}, ${t.n} için servet ödedi`,2)};
-  queue({back:'emlak',title:t.n,text:`${Math.round(t.m2*l.q)} m² · ${l.kat?l.kat+'. kat · ':''}${l.yas?l.yas+' yıllık bina':'Sıfır bina'} · Tahmini kira ${fmt(Math.round(t.rent*S.hidx*l.q))}/yıl · Oturursan mutluluk +${t.h}/yıl. Fiyat ${fmt(pr)}.`,
+ACT.hl=lid=>{const l=hMarket().find(x=>x.lid===lid);if(!l)return;const t=HT(l.t);const pr=hlPr(l);const HR=l.har!==undefined;closeSheet();
+  const buy=price=>{if(!pay(price))return;const o={uid:'h'+Date.now()+R(0,999),t:t.id,q:l.q*(price/pr),ten:null,...(HR?{har:1,cond:l.har,inv:price}:{})};S.houses.push(o);if(!S.home&&!HR)S.home=o.uid;S.hmarket.items=S.hmarket.items.filter(x=>x!==l);log(`${t.n} satın aldın.${S.home===o.uid?' Hemen taşındın.':''}`,'good');if(price>=1e7)news(`${S.first} ${S.last}, ${t.n} için servet ödedi`,2)};
+  queue({back:'emlak',title:(HR?'🏚 ':'')+t.n,text:HR?`${Math.round(t.m2*l.q)} m² · ${l.yas} yıllık, bakımsız bina · Durum %${l.har}. Oturulamaz, kiraya verilemez. Restore edersen değeri ~${fmt(Math.round(t.p*S.hidx*l.q))} olur. Fiyat ${fmt(pr)}.`:`${Math.round(t.m2*l.q)} m² · ${l.kat?l.kat+'. kat · ':''}${l.yas?l.yas+' yıllık bina':'Sıfır bina'} · Tahmini kira ${fmt(Math.round(t.rent*S.hidx*l.q))}/yıl · Oturursan mutluluk +${t.h}/yıl. Fiyat ${fmt(pr)}.`,
     prem:{t:'Dayının emlakçısı',sub:`%25 indirim · ${fmt(Math.round(pr*.75))}`,fn:()=>buy(Math.round(pr*.75))},
     choices:[{t:'Satın al',sub:fmt(pr),dis:!canPay(pr),fn:()=>buy(pr)},
       {t:'Pazarlık yap',sub:'Şans karizmana bağlı',fn:()=>{if(ch(.4+karizma()/100)){const d=R(4,12);l.q=l.q*(100-d)/100;log(`Ev sahibi %${d} indirime razı oldu.`,'good')}else log('Ev sahibi pazarlığa yanaşmadı.','dim')}},
@@ -4126,8 +4127,8 @@ function emlakQ(f){let rent=0;S.houses.forEach(o=>{if(o.cond===undefined)o.cond=
   if(packOK('emlak')&&S.q===0&&S.houses.some(o=>o.ten)){const rs=S.houses.filter(o=>o.ten);const tot=rs.reduce((a,o)=>a+o.ten.rent,0);log(`🏠 Emlak raporu: ${rs.length}/${S.houses.length} ev kirada, yıllık kira ${fmt(tot)}, ortalama kiracı memnuniyeti %${Math.round(rs.reduce((a,o)=>a+(o.ten.sat||70),0)/rs.length)}, ortalama bakım durumu %${Math.round(S.houses.reduce((a,o)=>a+hCond(o),0)/S.houses.length)}.`,'good')}
   return rent}
 function hApplicants(o,lvl,chk){const base=hRentBase(o);const n=lvl<=1?3:lvl===2?2:1;return Array.from({length:n},()=>{const J=pick(TJOBS);const crim=ch(lvl>=3?.12:.22);return{name:pick(NAMES)+' '+pick(SURN),job:J[0],inc:J[1],age:R(22,70),crim,chk,rent:Math.round(base*[.85,1,1.15,1.3][lvl]),sat:70,late:!crim&&J[1]<.8&&ch(.25)}})}
-ACT.house=uid=>{const o=S.houses.find(x=>x.uid===uid);if(!o)return;if(o.cond===undefined)o.cond=100;const t=HT(o.t);const v=Math.round(hval(o)*.95);const PK=packOK('emlak');closeSheet();const T=o.ten;
-  queue({back:'emlak',title:t.n,text:`Bugünkü değeri ${fmt(hval(o))} · Bakım durumu %${Math.round(hCond(o))}${hUp(o).length?`<br>Yükseltmeler: ${hUp(o).map(u=>u[2]).join(' ')}`:''}<br>${S.home===uid?'Şu an burada oturuyorsun.':T?`Kiracın <b>${T.name}</b> (${T.job}, ${T.age}) · Yıllık ${fmt(T.rent)} · Memnuniyet %${Math.round(T.sat||70)}${T.bad?' · <span style="color:var(--blood)">kural ihlali yaptı</span>':''}`:`Ev boş. Piyasa kirası ~${fmt(hRentBase(o))}/yıl.`}`,choices:[
+ACT.house=uid=>{const o=S.houses.find(x=>x.uid===uid);if(!o)return;if(o.cond===undefined)o.cond=100;const t=HT(o.t);if(o.har||o.reno)return flipMenu(uid);const v=Math.round(hval(o)*.95);const PK=packOK('emlak');closeSheet();const T=o.ten;
+  queue({back:'emlak',title:t.n,text:`Bugünkü değeri ${fmt(hval(o))}${o.inv?` · Toplam yatırımın ${fmt(o.inv)}`:''} · Bakım durumu %${Math.round(hCond(o))}${hUp(o).length?`<br>Yükseltmeler: ${hUp(o).map(u=>u[2]).join(' ')}`:''}<br>${S.home===uid?'Şu an burada oturuyorsun.':T?`Kiracın <b>${T.name}</b> (${T.job}, ${T.age}) · Yıllık ${fmt(T.rent)} · Memnuniyet %${Math.round(T.sat||70)}${T.bad?' · <span style="color:var(--blood)">kural ihlali yaptı</span>':''}`:`Ev boş. Piyasa kirası ~${fmt(hRentBase(o))}/yıl.`}`,choices:[
     ...(S.home!==uid?[{t:'Buraya taşın',sub:T?'Önce kiracıyı çıkarmalısın':`Mutluluk +${t.h}/yıl`,dis:!!T,fn:()=>{S.home=uid;log(`${t.n} evine taşındın.`,'good')}}]:[]),
     ...(!T&&S.home!==uid?[{t:PK?'📋 Kiraya ver':'🔒 Kiraya ver',sub:PK?'İlan ver, kiracı seç':'Emlak Paketi gerekli',fn:()=>setTimeout(()=>PK?hList(uid):pkShop('emlak'),40)}]:[]),
     ...(T&&PK?[{t:'👤 Kiracıyla ilgilen',sub:'Kira, denetim, tahliye',fn:()=>setTimeout(()=>hTen(uid),40)}]:[]),
@@ -4149,6 +4150,26 @@ function hTen(uid){const o=S.houses.find(x=>x.uid===uid);const T=o&&o.ten;if(!T)
       [{t:'🚪 Tahliye davası aç',sub:`${fmt(lw)} avukat · %55 şans`,dis:!canPay(lw),fn:()=>{pay(lw);if(ch(.55)){log(`Mahkeme ${T.name}'ın tahliyesine karar verdi.`,'good');o.ten=null}else log('Dava reddedildi, kiracı kalıyor.','bad')}},
        {t:'🕶 Adamlarını gönder',sub:'Hemen boşaltır · Dikkat +10',fn:()=>{add('heat',10);gainResp(1);log(`${T.name} bir gecede evi boşalttı.`,'dim');o.ten=null}}]),
     {t:'Geri',fn:()=>setTimeout(()=>ACT.house(uid),40)}]})}
+
+const FCON=[['🧱 Mahalle ustası','Ucuz ama riskli: iş kötü çıkabilir, usta kaçabilir',.75,1,1],['🏗 Müteahhit firma','Standart iş, sürpriz az',1,1,1],['📐 Ünlü mimar','Pahalı ve uzun ama ev çok değerlenir',1.45,2,1.15]];
+const rnBase=o=>Math.round(HT(o.t).p*S.hidx*o.q*(.16+.16*(1-hCond(o)/100)));
+function flipMenu(uid){const o=S.houses.find(x=>x.uid===uid);if(!o)return;const t=HT(o.t);const PK=packOK('emlak');const full=Math.round(HT(o.t).p*S.hidx*o.q);const v=Math.round(hval(o)*.95);
+  if(o.reno){const C=FCON[o.reno.c];return queue({back:'emlak',title:'🔨 '+t.n,text:`${C[0]} çalışıyor. ${Math.max(0,o.reno.end-QS())} çeyrek sonra bitecek.<br>Şimdiye kadar yatırımın ${fmt(o.inv||0)}. Bitince tahmini değeri ~${fmt(Math.round(full*C[4]))}.`,choices:[{t:'Tamam',fn:()=>{}}]})}
+  const b=rnBase(o);
+  queue({back:'emlak',title:'🏚 '+t.n,text:`Harap durumda (durum %${Math.round(hCond(o))}). Oturulamaz, kiraya verilemez.<br>Şu anki değeri ${fmt(hval(o))} · Yatırımın ${fmt(o.inv||0)}<br>Restore edilirse değeri ~${fmt(full)}.`,choices:[
+    ...FCON.map((C,i)=>{const c=Math.round(b*C[2]);return{t:(PK?'':'🔒 ')+C[0],sub:PK?`${fmt(c)} · ${C[3]} çeyrek · ${C[1]}`:'Emlak Paketi gerekli',dis:PK&&!canPay(c),fn:()=>{if(!PK)return setTimeout(()=>pkShop('emlak'),40);if(!pay(c))return;o.inv=(o.inv||0)+c;o.reno={c:i,end:QS()+C[3],surp:0};log(`🔨 ${t.n} için restorasyon başladı: ${C[0]}, ${fmt(c)}.`,'dim')}}}),
+    {t:'Olduğu gibi sat',sub:fmt(v)+' (emlakçı payı %5)',fn:()=>{S.money+=v;S.houses=S.houses.filter(x=>x!==o);const k=v-(o.inv||0);log(`${t.n} evini harap haliyle ${fmt(v)} karşılığında sattın.${k<0?` ${fmt(-k)} zarar.`:''}`,k<0?'bad':'dim')}},
+    {t:'Vazgeç',fn:()=>{}}]})}
+function flipQ(){S.houses.forEach(o=>{if(!o.reno||QS()<o.reno.end)return;const C=FCON[o.reno.c];const t=HT(o.t);let m=C[4]*R(96,106)/100;
+  if(o.reno.c===0&&ch(.3)){m*=.9;log(`Mahalle ustası ${t.n} işini baştan savma yaptı. Ev beklediğin kadar değerlenmedi.`,'bad')}
+  o.q=o.q*m;o.har=0;o.cond=100;delete o.reno;log(`🏡 ${t.n} restorasyonu bitti! Yeni değeri ${fmt(hval(o))}, yatırımın ${fmt(o.inv||0)}. Satabilir, kiraya verebilir ya da oturabilirsin.`,'gold')})}
+EV(3,()=>!S.jail&&S.houses.some(o=>o.reno&&!o.reno.surp),()=>{const o=pick(S.houses.filter(o=>o.reno&&!o.reno.surp));o.reno.surp=1;const t=HT(o.t);const pv=Math.round(HT(o.t).p*S.hidx*o.q);
+  const opts=[()=>{const c=Math.round(pv*R(5,9)/100);return{title:'🔨 Çürük tesisat',text:`${t.n} evinin duvarlarını açınca tesisatın ve çatının çürüdüğü ortaya çıktı.`,choices:[{t:'Hepsini yenile',sub:fmt(c),dis:!canPay(c),fn:()=>{pay(c);o.inv=(o.inv||0)+c;log('Tesisat ve çatı yenilendi.','dim')}},{t:'Üstünü kapat',sub:'Ev daha az değerlenir',fn:()=>{o.q*=.93;log('Çürükler alçıpanın arkasında kaldı.','dim')}}]}},
+    ()=>{const c=Math.round(pv*.03);return{title:'🏛 Belediye denetimi',text:`Belediye ${t.n} tadilatında ruhsatsız çalışma tespit etti. İnşaat mühürlenebilir.`,choices:[{t:'Ruhsat çıkart, bekle',sub:'1 çeyrek gecikme',fn:()=>{o.reno.end++;log('Ruhsat işleri restorasyonu bir çeyrek geciktirdi.','dim')}},{t:'Memura zarf ver',sub:fmt(c)+' · Dikkat +4',dis:!canPay(c),fn:()=>{pay(c);o.inv=(o.inv||0)+c;add('heat',4);log('Mühür kâğıdı çekmecede kaldı.','dim')}}]}},
+    ()=>{const d=Math.round(pv*R(6,12)/100);return{title:'🏺 Temelden tarihi eser çıktı',text:`${t.n} evinin bodrumunu kazan işçiler eski bir küp ve sikkeler buldu.`,choices:[{t:'Müzeye bildir',sub:'2 çeyrek gecikme · Saygı +',fn:()=>{o.reno.end+=2;gainResp(2);o.q*=1.05;log('Müze yetkilileri geldi. Evin tarihi değeri arttı ama iş uzadı.','good')}},{t:'Gizlice sat',sub:'Kara para +'+fmtS(d)+' · Dikkat +8',fn:()=>{dirty(d);add('heat',8);log('Sikkeler bir antikacıya gitti.','gold')}}]}},
+    ()=>{return{title:'🔊 Komşular şikâyetçi',text:`${t.n} evindeki gürültüden bıkan komşular polis çağırdı.`,choices:[{t:'Komşulara tatlı gönder',sub:fmt(M(5000)),fn:()=>{spend(M(5000));log('Komşular yumuşadı.','dim')}},{t:'Adamlarını gönder',sub:'Dikkat +5',fn:()=>{add('heat',5);gainResp(1);log('Bir daha kimse şikâyet etmedi.','dim')}}]}}];
+  if(o.reno.c===0)opts.push(()=>{const lost=Math.round(rnBase(o)*.75*.5);return{title:'🏃 Usta kaçtı',text:`Mahalle ustası ${t.n} işinin avansını alıp ortadan kayboldu.`,choices:[{t:'Başka usta bul',sub:fmt(lost),dis:!canPay(lost),fn:()=>{pay(lost);o.inv=(o.inv||0)+lost;log('Yeni usta işi devraldı.','dim')}},{t:'Adamlarına buldur',sub:'Dikkat +6 · Para geri gelir',fn:()=>{add('heat',6);gainResp(2);log('Usta bir hafta sonra bulundu, işi ağlayarak bitirdi.','good')}}]}});
+  return pick(opts)()});
 function hReno(uid){const o=S.houses.find(x=>x.uid===uid);const pv=HT(o.t).p*S.hidx;const mc=Math.round(pv*.012*(100-hCond(o))/20);
   queue({back:'emlak',title:'🔨 Tadilat',text:`Bakım durumu %${Math.round(hCond(o))}. Yükseltmeler evin değerini ve kirasını kalıcı artırır.${o.ten?'<br>Kiracının memnuniyeti de artar.':''}`,choices:[
     ...(hCond(o)<98?[{t:'🧰 Genel bakım',sub:`${fmt(mc)} · Durum %100`,dis:!canPay(mc),fn:()=>{pay(mc);o.cond=100;if(o.ten)o.ten.sat=clamp((o.ten.sat||70)+10);log(`${HT(o.t).n} baştan aşağı bakımdan geçti.`,'good')}}]:[]),
