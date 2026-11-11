@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.11-2140';
+const APPV='2026.11.11-2200';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -390,15 +390,15 @@ const JEWELS=[
   {id:'yakut',n:'Osmanlı yakut yüzük',ic:'🔴',p:2000000,k:7,rank:4}
 ];
 const STAFF=[
-  {id:'sofor',n:'Şoför',ic:'🧢',sal:50000,d:'Kaçışlarda +%20 şans, mutluluk +. Araba gerekir.'},
-  {id:'koruma',n:'Koruma',ic:'🕶',sal:100000,d:'Pusularda karşılık şansı +%20, yaralar azalır'},
-  {id:'asci',n:'Özel aşçı',ic:'🍲',sal:80000,d:'Her yıl sağlık +3'},
-  {id:'muhasebe',n:'Muhasebeci',ic:'📒',sal:120000,d:'Mali Şube derdi biter, dikkat her yıl −3'},
-  {id:'avukat',n:'Aile avukatı',ic:'⚖',sal:300000,d:'Mahkemede beraat şansı +%25, ücret yok'},
-  {id:'tetikci',n:'Tetikçi',ic:'🎯',sal:200000,rank:2,d:'Tüm işlerde başarı şansı +%6'},
-  {id:'pilot',n:'Özel pilot',ic:'👨‍✈️',sal:1200000,d:'Jet ya da helikopter gerekir. Taşınmak bedava, kaçışta +%10, mutluluk +'},
-  {id:'portfoy',n:'Varlık yöneticisi',ic:'💼',sal:600000,d:'Fazla paranı otomatik yatırır ve büyütür (Hayat → Varlık yönetimi)'},
-  {id:'kostebek',n:'Emniyette köstebek',ic:'🐀',sal:400000,rank:3,d:'Baskınlardan önceden haber, dikkat her yıl −5'}
+  {id:'sofor',n:'Şoför',ic:'🧢',sal:343000,d:'Kaçışlarda +%20 şans, mutluluk +. Araba gerekir.'},
+  {id:'koruma',n:'Koruma',ic:'🕶',sal:514000,d:'Pusularda karşılık şansı +%20, yaralar azalır'},
+  {id:'asci',n:'Özel aşçı',ic:'🍲',sal:309000,d:'Her yıl sağlık +3'},
+  {id:'muhasebe',n:'Muhasebeci',ic:'📒',sal:411000,d:'Mali Şube derdi biter, dikkat her yıl −3'},
+  {id:'avukat',n:'Aile avukatı',ic:'⚖',sal:1030000,d:'Mahkemede beraat şansı +%25, ücret yok'},
+  {id:'tetikci',n:'Tetikçi',ic:'🎯',sal:857000,rank:2,d:'Tüm işlerde başarı şansı +%6'},
+  {id:'pilot',n:'Özel pilot',ic:'👨‍✈️',sal:2060000,d:'Jet ya da helikopter gerekir. Taşınmak bedava, kaçışta +%10, mutluluk +'},
+  {id:'portfoy',n:'Varlık yöneticisi',ic:'💼',sal:1370000,d:'Fazla paranı otomatik yatırır ve büyütür (Hayat → Varlık yönetimi)'},
+  {id:'kostebek',n:'Emniyette köstebek',ic:'🐀',sal:686000,rank:3,d:'Baskınlardan önceden haber, dikkat her yıl −5'}
 ];
 const MAXF=30;
 const JOBS={sanatci:{n:'Sanatçı',ic:'🎤'},esnaf:{n:'Esnaf',ic:'🧔'},sokak:{n:'Sokak adamı',ic:'🧢'},polis:{n:'Polis',ic:'👮'},avukat:{n:'Avukat',ic:'⚖'},doktor:{n:'Doktor',ic:'🩺'},isinsani:{n:'İş insanı',ic:'💼'},gazeteci:{n:'Gazeteci',ic:'📰'}};
@@ -670,7 +670,7 @@ function hurt(v,cause){add('health',-v);S.hurtCause=cause;if(!S.owned.acc.includ
 function newLife(first,last,look,org,fb){org=org||'istanbul';fb=fb||'orta';
   const pj=pick(['liman işçisi','taksici','kahveci','inşaat ustası','balıkçı']),mj=pick(['terzi','ev hanımı','hemşire','çamaşırcı','aşçı']);
   S={first,last,age:0,alive:true,look:{...look,acc:[]},owned:{outfit:['tisort','esofman'],acc:[]},
-    cpi:2.8,hidx:.8,birthYear:2008,money:0,health:R(80,100),happy:R(70,95),respect:0,heat:0,family:null,boss:false,jail:0,jailYears:0,
+    cpi:2.8,ev:2,hidx:.8,birthYear:2008,money:0,health:R(80,100),happy:R(70,95),respect:0,heat:0,family:null,boss:false,jail:0,jailYears:0,
     props:[],cars:[],car:null,jewels:[],staff:[],friends:[],partner:null,married:false,school:true,snitch:false,acts:3,lastRank:0,hurtCause:null,cause:null,peak:0,
     origin:org,famBg:fb,log:[{age:0,lines:[]}]};ensure();
   const O=ORIGINS[org],F=FAMBG[fb];
@@ -1020,7 +1020,7 @@ function hire(id){const s=STAFF.find(x=>x.id===id);
   if(cashA()<s.sal){toast('İlk yılın maaşını peşin vermelisin: '+fmt(s.sal));return}
   spend(s.sal);const name=pick(NAMES)+' '+pick(SURN);S.staff.push({id,name});log(`${name} adında bir ${s.n.toLowerCase()} işe aldın.`,'good');done()}
 function staffMenu(id){const st=S.staff.find(x=>x.id===id);const s=STAFF.find(x=>x.id===id);closeSheet();
-  queue({back:'insan',title:`${s.n}: ${st.name}`,text:`${s.d}. Yıllık maaş ${fmt(s.sal)}. Yetenek %${stSkill(st)}.`,choices:[
+  queue({back:'insan',title:`${s.n}: ${st.name}`,text:`${s.d}. Aylık maaş ${fmt(Math.round(s.sal/12))} (yıllık ${fmt(s.sal)}). Yetenek %${stSkill(st)}.`,choices:[
     ...(S.premium?[{t:'👑 Yeteneğini ayarla',sub:`Şu an %${stSkill(st)}`,pr:true,fn:()=>setTimeout(()=>ACT.stskill(st.id),40)}]:[]),
     {t:'Prim ver',sub:fmt(Math.round(s.sal/2))+' · Mutluluk +',dis:cashA()<s.sal/2,fn:()=>{spend(Math.round(s.sal/2));add('happy',3);log(`${st.name}'e prim verdin. Sana minnettar.`,'good')}},
     {t:'Kov',sub:'Hemen işi bırakır',fn:()=>{S.staff=S.staff.filter(x=>x!==st);log(`${s.n} ${st.name} ile yollarını ayırdın.`,'dim')}},
@@ -1190,7 +1190,7 @@ function ensure(){
   if(S.taxInc===undefined)S.taxInc=0;if(S.taxDebt===undefined)S.taxDebt=0;if(S.taxLast===undefined)S.taxLast=null;
   ensureOrg();
   if(!S.accts)S.accts=[];
-  if(!S.econ)S.econ={ph:'normal',left:R(3,6)};if(!S.cpi)S.cpi=1;if(S.boss&&S.family&&!S.org&&S.age<45){S.boss=false;S.respect=Math.min(S.respect,85);setTimeout(()=>{try{log(`Aile meclisi ${S.age} yaşında bir Babayı kabul etmedi. Tahta tecrübeli biri geçti; sen Sağ Kol olarak devam ediyorsun.`,'bad')}catch(e){}},0)}if(S.watches)S.watches.forEach(o=>{if(WOLD[o.id])o.id=WOLD[o.id]});if(!S.infl)S.infl=.08;if(S.infl>.18)S.infl=.18;if(!S.fx)S.fx={usd:42.5,eur:49.3};if(!S.fxh)S.fxh={usd:[S.fx.usd],eur:[S.fx.eur]};if(!S.fxw)S.fxw={usd:0,eur:0};if(!S.council)S.council={rel:{},chair:false,rules:[],chairEnd:0};applyCPI();
+  if(!S.econ)S.econ={ph:'normal',left:R(3,6)};if(!S.cpi)S.cpi=1;if(!S.ev){const k=2.8;S.cpi=+(S.cpi*k).toFixed(4);const mm=x=>Math.round((x||0)*k);S.money=mm(S.money);S.black=mm(S.black);S.peak=mm(S.peak);if(S.taxDebt)S.taxDebt=mm(S.taxDebt);if(S.taxDebtQ)S.taxDebtQ=mm(S.taxDebtQ);if(S.taxInc)S.taxInc=mm(S.taxInc);if(S.bank){S.bank.dep=mm(S.bank.dep);if(S.bank.loan)S.bank.loan.pay=mm(S.bank.loan.pay);if(S.bank.card){S.bank.card.limit=mm(S.bank.card.limit);S.bank.card.debt=mm(S.bank.card.debt)}}(S.loans||[]).forEach(l=>{l.mo=mm(l.mo)});(S.accts||[]).forEach(a=>a.amt=mm(a.amt));(S.cars||[]).forEach(c=>{if(typeof c==='object'&&c.val)c.val=mm(c.val)});(S.jewels||[]).forEach(j=>{if(j.val)j.val=mm(j.val)});(S.firms||[]).forEach(f=>{if(f.cash)f.cash=mm(f.cash)});if(S.club&&S.club.cash)S.club.cash=mm(S.club.cash);if(S.label&&S.label.cash)S.label.cash=mm(S.label.cash);if(S.org)(S.org.turf||[]).forEach(v=>v.inc=mm(v.inc));(S.rivals||[]).forEach(r=>(r.venues||[]).forEach(v=>v.inc=mm(v.inc)));if(S.st&&S.st.cash)S.st.cash=mm(S.st.cash);S.ev=2}if(S.boss&&S.family&&!S.org&&S.age<45){S.boss=false;S.respect=Math.min(S.respect,85);setTimeout(()=>{try{log(`Aile meclisi ${S.age} yaşında bir Babayı kabul etmedi. Tahta tecrübeli biri geçti; sen Sağ Kol olarak devam ediyorsun.`,'bad')}catch(e){}},0)}if(S.watches)S.watches.forEach(o=>{if(WOLD[o.id])o.id=WOLD[o.id]});if(!S.infl)S.infl=.08;if(S.infl>.18)S.infl=.18;if(!S.fx)S.fx={usd:42.5,eur:49.3};if(!S.fxh)S.fxh={usd:[S.fx.usd],eur:[S.fx.eur]};if(!S.fxw)S.fxw={usd:0,eur:0};if(!S.council)S.council={rel:{},chair:false,rules:[],chairEnd:0};applyCPI();
   if(S.club===undefined)S.club=null;if(S.co===undefined)S.co=null;if(S.label===undefined)S.label=null;if(S.gal===undefined)S.gal=null;if(S.black===undefined)S.black=0;if(!S.watches)S.watches=[];if(!S.firms)S.firms=[];try{migrateArtists()}catch(e){}if(!S.loans)S.loans=[];if(!S.city)S.city='istanbul';if(S.gender!=='k'&&['uzun','atkuyrugu','topuz','dalgali'].includes(S.look.hair))S.look.hair='italyan';if(S.goldKg===undefined)S.goldKg=0;if(!S.goldUsd)S.goldUsd=124000;if(S.jewels.some(j=>j.id==='kulce')){const n=S.jewels.filter(j=>j.id==='kulce').length;S.jewels=S.jewels.filter(j=>j.id!=='kulce');S.goldKg+=n;S.goldCost=(S.goldCost||0)+n*GKG()}if(!S.orders)S.orders={};if(!S.origin)S.origin='istanbul';if(!S.famBg)S.famBg='orta';
   ensureBosses();if(!S.artists)S.artists=[];if(!S.sm)S.sm={f:0,ver:false};if(!S.offs)S.offs={};if(S.abroad===undefined)S.abroad=null;
   migrateCars();
@@ -1493,7 +1493,7 @@ function inherit(id){
     family:(k.age>=16&&P.family&&!P.snitch)?P.family:null,boss:false,jail:0,jailYears:0,
     props:[...P.props],cars:P.cars.map(c=>({...c})),car:P.car,jewels:P.jewels.map(j=>({...j})),watches:(P.watches||[]).map(o=>({...o})),goldKg:P.goldKg||0,goldCost:P.goldCost||0,goldUsd:P.goldUsd,staff:[...P.staff],friends:[],houses:P.houses.map(h=>({...h})),home:P.home,
     school:true,snitch:false,lastRank:0,hurtCause:null,cause:null,peak:0,
-    hidx:P.hidx,px:P.px,stocks:P.stocks,bank:{dep:0,score:1200,loan:null,card:null},state:{rec:false,trust:0},
+    ev:2,hidx:P.hidx,px:P.px,stocks:P.stocks,bank:{dep:0,score:1200,loan:null,card:null},state:{rec:false,trust:0},
     org:P.org?{...P.org,members:P.org.members.filter(m=>m.relId!==undefined||true)}:null,rivals:P.rivals,exFamily:P.exFamily,
     econ:P.econ,accts:P.accts||[],cpi:P.cpi,infl:P.infl,fx:P.fx,fxh:P.fxh,fxw:P.fxw,council:P.council,
     slot:P.slot,origin:P.origin,famBg:(P.org||P.family)?'mafya':(P.famBg||'orta'),club:P.club||null,co:P.co||null,label:P.label||null,gal:P.gal||null,black:P.black||0,firms:(P.firms||[]).map(f=>({...f})),wm:P.wm?{...P.wm}:null,loans:(P.loans||[]).map(l=>({...l})),city:P.city||'istanbul',
@@ -4476,11 +4476,11 @@ function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';
     else h+='<p class="note">Henüz çocuğun yok. Öldüğünde çocuklarından biriyle oyuna devam edebilirsin.</p>';
     h+=row('data-go="agac"','🌳','Aile ağacı','Soyunun bütün kuşakları','›',false);
     h+='<div class="sec">Ekibin</div>';
-    if(S.staff.length)S.staff.forEach(st=>{const s=STAFF.find(x=>x.id===st.id);h+=row(`data-sm="${st.id}"`,s.ic,st.name,`${s.n} · ${fmtS(s.sal)}/yıl`,'›',false)});
+    if(S.staff.length)S.staff.forEach(st=>{const s=STAFF.find(x=>x.id===st.id);h+=row(`data-sm="${st.id}"`,s.ic,st.name,`${s.n} · ${fmtS(s.sal/12)}/ay`,'›',false)});
     else h+='<p class="note">Henüz kimseyi işe almadın.</p>';
     const free=STAFF.filter(s=>!has(s.id));
     if(free.length){h+='<div class="sec">Eleman al</div><p class="note">İlk yılın maaşı peşin ödenir. Sonra her yıl kasadan otomatik çıkar. Maaşı ödenmeyen işi bırakır.</p>';
-      free.forEach(s=>{const lock=s.rank&&rank()<s.rank;h+=row(`data-hire="${s.id}"`,s.ic,s.n,lock?`${RANKS[s.rank].n} rütbesi gerekir`:s.d,lock?'🔒':fmtS(s.sal)+'/yıl',lock||S.age<18||cashA()<s.sal||S.jail||(s.id==='sofor'&&!S.cars.length)||(s.id==='pilot'&&!hasL('jet')&&!hasL('heli')))})}
+      free.forEach(s=>{const lock=s.rank&&rank()<s.rank;h+=row(`data-hire="${s.id}"`,s.ic,s.n,lock?`${RANKS[s.rank].n} rütbesi gerekir`:s.d,lock?'🔒':fmtS(s.sal/12)+'/ay',lock||S.age<18||cashA()<s.sal||S.jail||(s.id==='sofor'&&!S.cars.length)||(s.id==='pilot'&&!hasL('jet')&&!hasL('heli')))})}
     h+=`<div class="sec">Dostların (${S.friends.length}/${MAXF})</div>`;
     if(S.friends.length)[...S.friends].sort((a,b)=>(b.best?1:0)-(a.best?1:0)||b.rel-a.rel).forEach(f=>{fEns(f);h+=`<button class="row" data-fm="${f.id}"><span class="ic"${fPic(f)?' style="padding:0;overflow:hidden"':''}>${npcImg(fPic(f))||(f.best?'⭐':fJob(f).ic)}</span><span class="tx"><b>${f.best?'⭐ ':''}${f.name}</b><span>${fJob(f).n} · ${f.age} yaş · ${fRelTxt(f.rel)} %${f.rel}${f.owe<0?' · 💸 borcun var':''}${f.owe>0?' · 💵 sana borçlu':''}</span><div class="bar" style="margin-top:5px"><i style="width:${f.rel}%;background:${f.rel>=60?'var(--good)':f.rel>=30?'var(--warn)':'var(--blood)'}"></i></div></span><span class="rt">›</span></button>`});
     else h+='<p class="note">Henüz dostun yok. Aşağıdaki yerlerde yeni insanlarla tanış.</p>';
