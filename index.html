@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.11-1530';
+const APPV='2026.11.11-1545';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1053,6 +1053,7 @@ function friendMenu(fid){const f=S.friends.find(x=>x.id===fid);if(!f)return;fEns
     {t:'😜 Şaka yap',sub:'Riskli',dis:busy||S.age<6,fn:()=>{if(!useAct('f_'+f.id,'Bu kişiyle'))return;const ok=ch(f.huy==='Şakacı'?.85:f.huy==='Sinirli'||f.huy==='Asabi'||f.huy==='Mağrur'?.3:.6);if(ok){f.rel=clamp(f.rel+R(4,8));add('happy',3);log(`${f.name}'e ${pick(['tuzlu kahve içirdin','telefonunda alarm kurdun','arabasını yer değiştirdin','sahte piyango bileti verdin'])}. Kahkahalar attınız.`,'good')}else{f.rel=clamp(f.rel-R(6,12));log(`${f.name} şakanı hiç komik bulmadı.`,'bad')}}},
     ...(B||f.rel<85||S.age<8?[]:[{t:'⭐ En yakın dostum ol',sub:'Kardeşlik yemini',fn:()=>{if(ch(.5+f.rel/250)){f.best=true;f.rel=clamp(f.rel+5);add('happy',6);log(`${f.name} ile kardeşlik yemini ettiniz. Artık en yakın dostun.`,'gold')}else{f.rel=clamp(f.rel-3);log(`${f.name} "biz zaten kardeşiz, isme gerek yok" dedi.`,'dim')}}}]),
     ...(f.job==='sokak'&&S.org&&S.org.members.length<10&&f.rel>=60?[{t:'🔫 Örgütüne al',sub:'Ailene katılır',fn:()=>{S.org.members.push({id:'m'+R(0,999999),name:f.name,str:R(4,7),loy:clamp(f.rel),busy:0,wage:Math.round(R(2,5)*1e4*S.cpi),sq:R(5,10),ar:R(40,70)});log(`${f.name} örgütüne katıldı.`,'gold')}}]:[]),
+    ...(S.partner&&S.age>=18&&f.age>=18&&fG(f)!==(S.gender==='k'?'k':'e')&&!affs().some(a=>a.fid===f.id)?[{t:'💋 Gizli ilişki teklif et',sub:f.rel>=60?`${S.partner} öğrenirse büyük sorun · Şans %${Math.round(clamp(.2+(f.rel-60)/90+karizma()/90,.1,.85)*100)}`:'Yakınlık %60 olmalı',dis:busy||f.rel<60,fn:()=>{if(!useAct('f_'+f.id,'Bu kişiyle'))return;if(ch(clamp(.2+(f.rel-60)/90+karizma()/90,.1,.85))){if(affStart(f.name,fPic(f),f.rel)){S.aff[S.aff.length-1].fid=f.id;log(`${f.name} ile gizli bir ilişki başladı.`,'dim')}}else{f.rel=clamp(f.rel-20);log(`${f.name}: "Sen ${S.married?'evlisin':'birisiyle birliktesin'}, utanmıyor musun?"`,'bad');if(ch(.25))later('affleak',0,{nm:f.name})}}}]:[]),
     ...(!S.partner&&S.age>=16&&f.age>=16&&fG(f)!==(S.gender==='k'?'k':'e')&&Math.abs(f.age-S.age)<=15?[{t:'💘 Duygularını aç',sub:f.rel>=60?`Şans %${Math.round(clamp(.25+(f.rel-60)/80+karizma()/80,.1,.9)*100)} · Olmazsa arkadaşlık zedelenir`:'Yakınlık %60 olmalı',dis:busy||f.rel<60,fn:()=>{if(!useAct('f_'+f.id,'Bu kişiyle'))return;if(ch(clamp(.25+(f.rel-60)/80+karizma()/80,.1,.9))){const n=f.name.split(' ')[0];S.partner=n;S.married=false;S.prel=clamp(f.rel);S.ppic=fPic(f);S.ppicN=n;S.friends=S.friends.filter(x=>x!==f);add('happy',12);log(`💘 ${f.name} da sana karşı boş değilmiş! Artık sevgilisiniz.`,'gold')}else{f.rel=clamp(f.rel-15);add('happy',-4);if(ch(.2)){fLose(f,`${f.name} aranızdaki garipliği kaldıramadı, uzaklaştı.`,'bad')}else log(`${f.name} "Seni hep arkadaşım olarak gördüm" dedi. Ortam biraz garip.`,'dim')}}}]:[]),
     {t:'🗯 Hakaret et',sub:'Yakınlık −−',dis:busy,fn:()=>{if(!useAct('f_'+f.id,'Bu kişiyle'))return;f.rel=clamp(f.rel-R(12,22));add('happy',-1);log(`${f.name}'e ağır laflar ettin.`,'bad');if(f.rel<10||(f.huy==='Sinirli'&&ch(.4)))fEnemy(f,'hakaret')}},
     {t:'👊 Kavga et',sub:'Sağlık riski',dis:busy||S.age<6,fn:()=>{if(!useAct('f_'+f.id,'Bu kişiyle'))return;const w=ch(clamp(.4+S.health/400+karizma()/300-trOf(f).tr.cur/400,.15,.85));if(w){gainResp(2);hurt(R(2,8),'Kavga');log(`${f.name} ile yumruklaştınız, sen kazandın.`,'dim')}else{hurt(R(8,20),'Kavga');log(`${f.name} seni iyi pataklamış.`,'bad')}if(ch(.6))fEnemy(f,'kavga');else{f.rel=clamp(f.rel-25);log(`Sonra barıştınız ama arada bir şey kırıldı.`,'dim')}}},
@@ -2223,6 +2224,7 @@ function prel(){if(S.partner&&(S.prel===undefined||S.prel===null))S.prel=65;retu
 function relQuarter(){
   if(S.partner){prel();S.prel=clamp(S.prel-R(1,4)+(S.married?1:0));
     if(S.prel<15&&ch(.35)){const share=S.married?Math.round(S.money*.25):0;log(`${S.partner} seni terk etti.${S.married?` Boşanma davasında servetinin çeyreği (${fmt(share)}) ona geçti.`:''}`,'bad');spend(share);if(S.married)S.alimony={amt:Math.max(50000,Math.round(netWorth()*.02)),left:5};S.partner=null;S.married=false;S.prel=null;add('happy',-20)}}
+  try{affQuarter()}catch(e){console.error(e)}
   if(S.alimony&&S.q===0){if(S.alimony.left>0){S.alimony.left--}if(S.alimony.left<=0)S.alimony=null}
 }
 function addGrandkid(k){const g=ch(.5)?'e':'k';const lk={...k.look,hair:g==='k'?pick(['uzun','atkuyrugu','kivircik']):pick(['kisa','kivircik','yan']),beard:'yok',outfit:'tisort',acc:[]};
@@ -4163,6 +4165,50 @@ function pTrip(){const N=S.partner;queue({back:'insan',title:'✈️ Nereye gide
    if(S.married&&S.age<46&&ch(.12)&&typeof ACT.baby==='function')log(`Tatil dönüşü ${N} sana bir haber vermek istiyor gibi…`,'gold')})}}),{t:'Geri',fn:()=>setTimeout(pMenu,40)}]})}
 ACT.pmenu=()=>pMenu();
 
+/* ============ Yasak ilişkiler, aldatma, boşanma ============ */
+const affs=()=>S.aff||(S.aff=[]);
+function pBreak(why){const n=S.partner;S.partner=null;S.married=false;S.prel=null;S.ppic=null;add('happy',-15);log(`💔 ${n} seni terk etti. ${why||''}`,'bad')}
+function pDivorce(cause,me){const n=S.partner;const base=Math.max(0,cashA());const na=Math.max(50000,Math.round(netWorth()*.02));const law=M(150000),top=M(1200000);
+  const fin=(sh,yrs,txt)=>{const a=Math.round(base*sh);if(a>0)spend(a);if(yrs>0)S.alimony={amt:Math.round(na*(yrs>5?1.3:1)),left:yrs};log(`⚖️ Boşanma kesinleşti. ${n} servetinin %${Math.round(sh*100)}'ini (${fmt(a)}) aldı${yrs>0?`, ${yrs} yıl nafaka (${fmt(S.alimony.amt)}/yıl) ödeyeceksin`:''}. ${txt||''}`,'bad');S.partner=null;S.married=false;S.prel=null;S.ppic=null;add('happy',-20);news(`${S.first} ${S.last} boşandı`,1)};
+  queue({back:'insan',title:'⚖️ Boşanma davası',text:`${me?`${n} ile boşanma davası açtın.`:`${n} boşanma davası açtı.`} Gerekçe: <b>${cause}</b>.<br>Avukatı ne kadar iyiyse o kadar az kaybedersin.`,choices:[
+    {t:'💼 Ünlü boşanma avukatı',sub:`${fmt(top)} · Kayıp ~%12, 3 yıl nafaka`,dis:!canPay(top),fn:()=>{pay(top);fin(.12,3,'Avukatın mahkemede şov yaptı.')}},
+    {t:'📁 Sıradan avukat',sub:`${fmt(law)} · Kayıp ~%25, 5 yıl nafaka`,dis:!canPay(law),fn:()=>{pay(law);fin(.25,5)}},
+    {t:'🤝 Anlaşmalı boşan',sub:'Kayıp %20, 4 yıl nafaka · Hızlı biter',fn:()=>fin(.2,4,'Masada anlaştınız.')},
+    {t:'🕴 Hakimi ayarla',sub:'Dikkat +15 · %55 şans: kayıp %5',fn:()=>{add('heat',15);if(ch(.55))fin(.05,1,'Hakim dosyayı senin lehine bağladı.');else{add('heat',10);fin(.4,7,'Rüşvet girişimi ortaya çıktı, hakim sana kızdı.')}}},
+    ...(me&&cause==='eşinin aldatması'?[]:[{t:'🧍 Mahkemeye kendin çık',sub:'Kayıp %35, 7 yıl nafaka',fn:()=>fin(.35,7)}]),
+    ...(me&&cause==='eşinin aldatması'?[{t:'📸 Delilleri sun',sub:'Kusurlu olan o · Kayıp %5, nafaka yok',fn:()=>fin(.05,0,'Mahkeme aldatanın sen olmadığını kabul etti.')}]:[])]})}
+function affStart(name,pic,rel){if(affs().length>=3){toast('Zaten çok fazla gizli ilişkin var');return false}S.aff.push({id:'a'+Date.now()+R(0,999),name,pic,rel:clamp(rel),meet:0,since:S.age});add('happy',6);return true}
+function affMenu(id){const a=affs().find(x=>x.id===id);if(!a)return;closeSheet();const busy=!S.premium&&actLeft('es')<=0;const N=S.partner;
+  queue({back:'insan',title:`🤫 ${a.name}`,text:`${a.pic?`<div style="float:left;margin:0 12px 6px 0">${npcImg(a.pic,'76px')}</div>`:''}Gizli ilişki · ${S.age-a.since} yıldır · Bağ %${Math.round(a.rel)}${N?`<br><small>${N} öğrenirse ${S.married?'boşanma davası açabilir':'seni terk edebilir'}. Her buluşma riski artırır.</small>`:''}`,choices:[
+    {t:'☕ Gizlice buluş',sub:'Mutluluk + · Risk +',dis:busy,fn:()=>{if(!useAct('es','Bu çeyrek'))return;a.rel=clamp(a.rel+R(5,10));a.meet++;add('happy',4);log(`${a.name} ile gizlice buluştun.`,'dim')}},
+    {t:'🏨 Otelde bir gece',sub:`${fmt(M(8000))} · Bağ ++ · Risk ++`,dis:busy||!canPay(M(8000)),fn:()=>{if(!useAct('es','Bu çeyrek'))return;pay(M(8000));a.rel=clamp(a.rel+R(10,15));a.meet+=2;add('happy',6);log(`${a.name} ile şehrin öbür ucunda bir otelde buluştunuz.`,'dim')}},
+    {t:'🎁 Hediye al',sub:`${fmt(M(25000))} · Bağ +`,dis:!canPay(M(25000)),fn:()=>{pay(M(25000));a.rel=clamp(a.rel+12);log(`${a.name}'e gizlice bir hediye yolladın.`,'dim')}},
+    ...(N?[{t:`💔 Ayrıl, ${a.name} ile birlikte ol`,sub:S.married?'Boşanma davası açılır':'Ayrılırsın',fn:()=>{const nm=a.name,pc=a.pic,rl=a.rel;S.aff=S.aff.filter(x=>x!==a);const go=()=>{S.partner=nm.split(' ')[0];S.prel=clamp(rl);S.ppic=pc;S.ppicN=S.partner;S.married=false;log(`💘 ${nm} ile artık açık açık birliktesiniz.`,'gold')};if(S.married){pDivorce('başka biriyle birlikte olmak');later('affnew',0,{nm,pc,rl})}else{pBreak('Başkasını seçtin.');go()}}}]:
+       [{t:`💍 ${a.name} ile ciddi ilişki`,sub:'Sevgilin olur',fn:()=>{S.aff=S.aff.filter(x=>x!==a);S.partner=a.name.split(' ')[0];S.prel=clamp(a.rel);S.ppic=a.pic;S.ppicN=S.partner;S.married=false;log(`💘 ${a.name} artık sevgilin.`,'gold')}}]),
+    {t:'✂️ İlişkiyi bitir',sub:a.rel>60?'Kırılabilir, ağzından kaçırabilir':'',fn:()=>{S.aff=S.aff.filter(x=>x!==a);log(`${a.name} ile gizli ilişkini bitirdin.`,'dim');if(N&&a.rel>60&&ch(.25))later('affleak',1,{nm:a.name})}},
+    {t:'Geri',fn:()=>{}}]})}
+LATER.affnew=d=>({title:'💘 Yeni bir başlangıç',text:`Boşanma bitti. ${d.nm} kapında bekliyor.`,choices:[{t:'Birlikte olun',fn:()=>{S.partner=d.nm.split(' ')[0];S.prel=clamp(d.rl);S.ppic=d.pc;S.ppicN=S.partner;S.married=false;log(`💘 ${d.nm} ile artık açık açık birliktesiniz.`,'gold')}},{t:'Bir süre yalnız kal',fn:()=>{}}]});
+LATER.affleak=d=>S.partner?caughtEv({name:d.nm},'Terk ettiğin '+d.nm+' her şeyi '+S.partner+'\'e anlattı.'):null;
+ACT.aff=id=>affMenu(id);
+ACT.bosan2=()=>{if(!S.married)return;closeSheet();queue({back:'insan',title:'💔 Boşanmak istiyor musun?',text:`${S.partner} ile evliliğini bitirmek üzeresin. Mahkeme mal paylaşımı ve nafakaya karar verir.`,choices:[{t:'Evet, dava aç',fn:()=>setTimeout(()=>pDivorce('geçimsizlik',true),40)},{t:'Vazgeç',fn:()=>{}}]})};
+function caughtEv(a,how){const N=S.partner;const leave=()=>{if(S.married)pDivorce('aldatma');else pBreak('Aldattığını öğrendi.')};
+  return{title:'😱 Yakalandın!',text:how||`${N}, ${a.name} ile mesajlarını buldu. Telefon elinde, gözleri dolu.`,choices:[
+    {t:'🙏 Yalvar, af dile',sub:`Şans %${Math.round(clamp(prel()/120,.1,.8)*100)} · O ilişki biter`,fn:()=>{S.aff=affs().filter(x=>x.name!==a.name);if(ch(clamp(prel()/120,.1,.8))){pAdd(-30,-6);log(`${N} seni affetti. Ama hiçbir şey eskisi gibi değil.`,'dim')}else leave()}},
+    {t:'🤥 İnkâr et',sub:`Şans %${Math.round(clamp(.3+karizma()/100,.1,.7)*100)}`,fn:()=>{if(ch(clamp(.3+karizma()/100,.1,.7))){pAdd(-10);log(`${N} sana inandı… şimdilik.`,'dim')}else{pAdd(-40);if(ch(.6))leave();else log(`${N} yalanını yüzüne vurdu ama gitmedi.`,'bad')}}},
+    {t:'💎 Pahalı hediyeyle gönlünü al',sub:`${fmt(M(300000))} · %60 şans`,dis:!canPay(M(300000)),fn:()=>{pay(M(300000));S.aff=affs().filter(x=>x.name!==a.name);if(ch(.6)){pAdd(-20);log(`${N} bileziğe baktı, sustu.`,'dim')}else leave()}},
+    {t:'🤷 Umurumda değil',fn:()=>leave()}]}}
+function affQuarter(){if(!S.aff||!S.aff.length)return;S.aff.forEach(a=>{a.rel=clamp(a.rel-R(2,5));
+  if(S.partner&&ch(Math.min(.6,.04+a.meet*.05+(S.fame||0)/500))){a.meet=0;queue(caughtEv(a));return}
+  a.meet=0;if(a.rel<25&&ch(.3)){S.aff=S.aff.filter(x=>x!==a);log(`${a.name} gizli ilişkinizi bitirdi.`,'dim')}
+  else if(S.partner&&a.rel<45&&ch(.08)){const c=M(200000);queue({title:'📩 Şantaj',text:`${a.name}: "${S.partner}'e anlatmamı istemiyorsan ${fmt(c)} gönder."`,choices:[{t:'Öde',sub:fmt(c),dis:!canPay(c),fn:()=>{pay(c);log('Şantajcıyı susturdun. Şimdilik.','dim')}},{t:'Adamlarını gönder',sub:'Dikkat +12',fn:()=>{add('heat',12);S.aff=S.aff.filter(x=>x!==a);log(`${a.name} şehirden ayrıldı. Bir daha sesi çıkmadı.`,'dim')}},{t:'Ödemem',fn:()=>{if(ch(.6))queue(caughtEv(a,`${a.name} her şeyi ${S.partner}'e anlattı. Fotoğraflarla.`))}}]})}})}
+EV(2,()=>!S.jail&&S.partner&&S.age>=18&&S.age<=60&&affs().length<3,()=>{const g=S.gender==='k'?'e':'k';const n=pick(g==='k'?GIRLS:NAMES)+' '+pick(SURN);const o={};const pic=npcPic(o,S.age+R(-6,4),g,'');
+  return{title:'👀 Biri sana yanaşıyor',text:`${pic?`<div style="float:left;margin:0 12px 6px 0">${npcImg(pic,'76px')}</div>`:''}Bir davette ${n} bütün gece seninle ilgilendi. Giderken kartını cebine bıraktı.`,choices:[
+    {t:'📞 Ara',sub:`Gizli ilişki · ${S.partner} öğrenirse…`,fn:()=>{if(affStart(n,pic,R(45,65)))log(`${n} ile gizli bir ilişki başladı.`,'dim')}},
+    {t:'💍 "Ben bağlıyım"',sub:`${S.partner} ile ilişki +`,fn:()=>{pAdd(3);log('Kartı çöpe attın.','good')}}]}});
+EV(1,()=>!S.jail&&S.married&&prel()<50,()=>{const N=S.partner;const c=M(60000);return{title:'🕵️ Şüphe',text:`${N} son zamanlarda telefonunu hep ters çeviriyor, geç geliyor.`,choices:[
+  {t:'Özel dedektif tut',sub:fmt(c),dis:!canPay(c),fn:()=>{pay(c);if(ch(.5)){const x=pick(S.gender==='k'?GIRLS:NAMES);queue({title:'📸 Dedektif raporu',text:`${N}, ${x} adında biriyle buluşuyor. Fotoğraflar masanda.`,choices:[{t:'Boşanma davası aç',sub:'Deliller senin elinde',fn:()=>pDivorce('eşinin aldatması',true)},{t:'Yüzleş, affet',fn:()=>{pAdd(-10);log(`${N} ağladı, özür diledi. Bir şans daha verdin.`,'dim')}},{t:`${x}'e adam gönder`,sub:'Dikkat +15',fn:()=>{add('heat',15);gainResp(2);pAdd(-5);log(`${x} bir daha ${N}'in yakınına gelmedi.`,'dim')}}]})}else log(`Dedektif bir şey bulamadı. ${N} temiz.`,'good')}},
+  {t:'Görmezden gel',fn:()=>{}}]}});
+
 /* ============ Hayat menüsü: kategoriler ============ */
 function hubTiles(){return [
       ['insan','👥','İnsanlar',`${S.friends.length} dost · ${S.kids.length} çocuk`,true],
@@ -4360,8 +4406,9 @@ function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';
       h+=row('data-x="pmenu:"','💞',`${S.partner} ile ilgilen`,'Sohbet, yemek, hediye, tatil, sürpriz…','›',!!S.jail);
       if(!S.married)h+=row('data-r="evlen"','💍','Evlenme teklif et','Boğaz\'da düğün','₺80.000',cashA()<80000||S.jail);
       h+=`<div class="bar" style="margin:-2px 0 10px"><i style="width:${prel()}%;background:${prel()>=60?'var(--good)':prel()>=30?'var(--warn)':'var(--blood)'}"></i></div>`;
-      h+=S.married?row('data-x="bosan:"','💔','Boşan','Mal paylaşımı ve nafaka','',false):row('data-r="ayril"','💔','Ayrıl','Mutluluk −','',false);
+      h+=S.married?row('data-x="bosan2:"','💔','Boşan','Avukat seç, mal paylaşımı ve nafaka','',false):row('data-r="ayril"','💔','Ayrıl','Mutluluk −','',false);
     }
+    if(S.aff&&S.aff.length){h+='<div class="sec">🤫 Gizli ilişkiler</div>';S.aff.forEach(a=>h+=row(`data-x="aff:${a.id}"`,npcImg(a.pic)||'💋',a.name,`Bağ %${Math.round(a.rel)}${S.partner?' · '+S.partner+' bilmiyor':''}`,'›',false))}
     if(!S.partner&&S.age>=16){h+='<div class="sec">Aşk hayatı</div><p class="note">Karizman, ünün, mutluluğun ve paran şansını artırır.</p>';
       Object.entries(DPLACE).forEach(([k,d])=>{if(S.age<d.min)return;h+=row(`data-x="date:${k}"`,d.ic,d.n,`Şans %${Math.round(dateP(k)*100)}`,d.c?fmtS(d.c*S.cpi):'',!!S.jail||(k==='dost'&&!S.friends.length)||(d.c&&!canPay(d.c*S.cpi)))})}
     if(S.partner)h+=row(`data-x="pc:p|p|insan"`,'🧬',S.partner+' · Özellikleri',trOf(pFind('p','p')).huy+(S.premium?' · Dayı modunda düzenle':''),'›',false);
