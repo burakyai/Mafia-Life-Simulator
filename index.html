@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-1345';
+const APPV='2026.11.12-1355';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2877,7 +2877,7 @@ EXTRA.insaat=()=>{const co=S.co;let h='';
     h+=row(`data-x="pstart:${t.id}"`,cat==='Mega'?'🌆':cat==='Büyük'?'🏙':'🏘',t.n,lock?`${CCLS[t.cls]} gerekir`:`${t.d} · ⏱ ${fmtDur(pjDur(t))} · Tahmini kâr ${fmtS(prof)}`,lock?'🔒':fmtS(t.cost),lock||!cCan(t.cost*.2)||!!S.jail)})});
   return['İnşaat şirketi',h]};
 
-/* ============ Zamanlı işler: yokluk kazancı, günlük zarf, sevkiyat, tehdit, haftalık etkinlik, hanedan puanı ============ */
+/* ============ Zamanlı işler: yokluk kazancı, sevkiyat, tehdit, haftalık etkinlik, hanedan puanı ============ */
 const MIN=60e3,HOUR=36e5;
 function fmtT(ms){if(ms<=0)return 'Hazır';const s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?`${h} sa ${m} dk`:m?`${m} dk ${String(x).padStart(2,'0')} sn`:`${x} sn`}
 function fmtDur(ms){const m=Math.round(ms/MIN);return m>=60?`${Math.floor(m/60)} saat${m%60?' '+m%60+' dakika':''}`:`${m} dakika`}
@@ -2912,7 +2912,7 @@ function welcomeBack(){if(!S||!S.alive)return;if(S.ops&&S.ops.length){const c=S.
   if(msgs.length&&away>=10*MIN)queue({title:`Hoş geldin, ${S.first}`,text:msgs.join('<br><br>')+`<br><br><b>${WEV().n}</b>: ${WEV().d}.`,choices:[...(rd?[{t:'📦 Kaçakçılık hatlarına git',fn:()=>setTimeout(()=>goSheet('kacak'),60)}]:[]),...(S.co&&S.co.projects.some(p=>p.state==='build')?[{t:'🏗 İnşaatlara bak',fn:()=>setTimeout(()=>goSheet('insaat'),60)}]:[]),{t:'Devam',fn:()=>{}}]});
   dailyCheck();threatCheck();save();render()}
 /* günlük zarf */
-function dailyCheck(){if(!S||!S.alive||S.age<14)return;const k=dKey(new Date());const d=S.daily||(S.daily={k:null,streak:0});if(d.k===k)return;
+function dailyCheck(){return;if(!S||!S.alive||S.age<14)return;const k=dKey(new Date());const d=S.daily||(S.daily={k:null,streak:0});if(d.k===k)return;
   const y=new Date();y.setDate(y.getDate()-1);d.streak=d.k===dKey(y)?d.streak+1:1;d.k=k;const day=(d.streak-1)%7+1;
   const mult=[1,1.3,1.6,2,2.5,3,6][day-1];const m=Math.round((40000+rank()*60000)*S.cpi*mult);
   const boxes=[1,2,3,4,5,6,7].map(i=>`<span style="display:inline-block;width:38px;margin:2px;padding:4px 0;text-align:center;border-radius:8px;border:1px solid ${i===day?'var(--gold)':'var(--line)'};opacity:${i<day?.45:1};font-size:12px">${i===7?'🎁':i<day?'✔️':'✉️'}<br>${i}</span>`).join('');
@@ -2984,7 +2984,7 @@ async function payBuy(b){if(isApp()){const t=await iapBuy(b.id);if(!t)return}// 
   log(`🎟 ${b.n} satın alındı: ${b.a} bilet hesabına yüklendi. Toplam ${tix()}.`,'gold');afterChange();
   setTimeout(()=>queue({back:null,title:'✅ Ödeme alındı',text:`<div style="text-align:center;font-size:44px;margin:6px 0">🎟</div><div style="text-align:center"><b>${b.n}</b><br>${b.p}<br><br><b style="color:var(--good);font-size:18px">+${b.a} bilet hesabına yüklendi</b><br><br>Toplam biletin: <b>${tix()}</b></div>`,choices:[{t:'Tamam',fn:()=>{}}]}),60)}
 function biletShop(){closeSheet();window._nm='';
-  queue({back:null,title:'🎟 Bilet mağazası',text:`Elinde <b>${tix()} bilet</b>. 1 bilet, zamanlı bir işin <b>30 dakikasını</b> atlar: inşaatlar ve sevkiyatlar. Biletler bu cihazda bütün kayıtlarda geçerli.<br><small>Ücretsiz bilet: Dayı'nın zarfında 3. gün 1, 7. gün 3 bilet.</small>`,
+  queue({back:null,title:'🎟 Bilet mağazası',text:`Elinde <b>${tix()} bilet</b>. 1 bilet, zamanlı bir işin <b>30 dakikasını</b> atlar: inşaatlar ve sevkiyatlar. Biletler bu cihazda bütün kayıtlarda geçerli.<br><small></small>`,
     choices:[...BUNDLES.map(b=>({t:`${b.ic} ${b.n} · ${iapPrice(b.id,b.p)}`,sub:`${b.a} bilet${b.b?' · '+b.b:''}`,fn:()=>setTimeout(()=>queue({back:null,title:`${b.ic} ${b.n}`,text:`<b>${b.a} bilet</b> · <b style="color:var(--gold)">${iapPrice(b.id,b.p)}</b><br><br>Satın almak istiyor musun?${isApp()?'<br><small>Ödeme Apple hesabından alınır.</small>':''}`,choices:[{t:`💳 ${iapPrice(b.id,b.p)} öde`,sub:'Biletler hemen hesabına yüklenir',fn:()=>payBuy(b)},{t:'Vazgeç',fn:()=>setTimeout(biletShop,50)}]}),50)})),
       ...(isApp()?[]:[{t:'🔑 Kodum var',sub:'Hediye ya da kampanya kodu',fn:()=>setTimeout(biletCode,50)}]),
       ...(isTestBuild()?[{t:'🧪 Test: 100 bilet ekle',sub:'Sadece TestFlight sürümünde görünür',fn:()=>{tixSet(tix()+100);toast('🎟 +100 test bileti');afterChange()}}]:[]),{t:'Kapat',fn:()=>{}}]})}
