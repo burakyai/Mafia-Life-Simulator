@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-1355';
+const APPV='2026.11.12-1405';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -5096,7 +5096,7 @@ function showDead(){const cause=S.cause;
       <div><span>Mülk</span><b>${S.props.length}</b></div>
     </div>
     ${S.kids.length?`<div class="sec" style="margin-top:20px">Mirasla devam et</div><p class="note">Çocuklarından birini seç. ${(S.yad||[]).length?`Yadigârların (${S.yad.map(y=>yIc(y.id,26)).join(' ')}) ona geçer. `:''}Servetin (${(S.yad||[]).some(y=>y.id==='anahtar')?'🗝️ vergisiz':'%10 veraset vergisi düşülerek'}), evlerin, işletmelerin ve itibarının bir kısmı ona geçer.</p>`+S.kids.map(k=>`<button class="row" data-inh="${k.id}"><span class="ic" style="padding:0;overflow:hidden;border-radius:50%"><span class="av" style="width:38px;height:38px;border-width:1px">${kidAv(k)}</span></span><span class="tx"><b>${k.name} ${S.last}${S.heir===k.id?' · Varis':''}</b><span>${k.g==='e'?'Oğlu':'Kızı'} · ${k.age} yaş${k.crew?' · Aile işinde':''}</span></span><span class="rt">Devam ›</span></button>`).join(''):''}
-    ${UNDO.length&&dayiOK()?'<button class="btn" id="undoDeath">⏪ Geri al · ölmeden önceye dön</button>':''}
+    ${UNDO.length&&dayiOK()&&S.premium?'<button class="btn" id="undoDeath">⏪ Geri al · ölmeden önceye dön</button>':''}
     <button class="btn ${S.kids.length?'ghost':''}" id="again">Yepyeni bir hayat</button>`;
   $('dead').classList.add('on');
   if($('undoDeath'))$('undoDeath').onclick=undo;
@@ -5111,7 +5111,7 @@ function render(){try{qbar()}catch(e){}
   $('hname').textContent=`${S.first} ${S.last}`;
   $('hsub').innerHTML=`${S.age} yaş${S.age>=14?' · '+SEASONS[S.q||0]:''} · <b>${RANKS[rk].n}</b>${S.org?' · '+S.org.name:S.family?' · '+S.family.replace(' Ailesi',''):''}`;
   $('hmoney').textContent=fmtS(S.money);{const hb=$('hblack');if(hb){hb.style.display='block';hb.textContent='🖤 '+fmtS(S.black||0)}}
-  $('advSub').textContent=S.age<14||S.yearStep?'1 YIL':'3 AY';$('nUndo').disabled=!UNDO.length;$('nUndo').style.display=dayiOK()?'':'none';
+  $('advSub').textContent=S.age<14||S.yearStep?'1 YIL':'3 AY';$('nUndo').disabled=!UNDO.length;$('nUndo').style.display=dayiOK()&&S.premium?'':'none';
   const bn=$('banner');
   if(S.jail){bn.className='banner on';bn.textContent=`Cezaevindesin · ${fmtJ(S.jail)} kaldı`}
   else if(S.heat>=60){bn.className='banner on';bn.style.color='#f09a90';bn.textContent='Polis tepende! Dikkat çok yüksek, baskın gelebilir.'}
@@ -5310,7 +5310,7 @@ async function delSlot(k){try{if(DB){const ref=DB.collection('data/users/'+UID).
 ACT.menu=()=>{closeSheet();save();cloudSave(true);PENDING=JSON.parse(JSON.stringify(S));refreshSlots().then(()=>{if($('title').classList.contains('on'))drawTitle()});showTitle()};
 
 
-function undo(){if(!dayiOK()){queue({title:'⏪ Zamanı geri al',text:'Zamanı geri alma <b>Dayı Paketi</b>\'ne özeldir.',choices:[{t:'👑 Dayı Paketi',fn:()=>setTimeout(dayiShop,60)},{t:'Vazgeç',fn:()=>{}}]});return}if(!UNDO.length){toast('Geri alınacak bir şey yok');return}
+function undo(){if(!(dayiOK()&&S&&S.premium)){queue({title:'⏪ Zamanı geri al',text:dayiOK()?'Zamanı geri almak için Dayı modunu aç.':'Zamanı geri alma <b>Dayı Paketi</b>\'ne özeldir.',choices:[...(dayiOK()?[]:[{t:'👑 Dayı Paketi',fn:()=>setTimeout(dayiShop,60)}]),{t:'Vazgeç',fn:()=>{}}]});return}if(!UNDO.length){toast('Geri alınacak bir şey yok');return}
   S=JSON.parse(UNDO.pop());Q.length=0;$('modal').classList.remove('on');$('dead').classList.remove('on');try{mgClose()}catch(e){}closeSheet();
   save();cloudSave();render();scrollLog();toast('Geri alındı')}
 $('nUndo').onclick=undo;
