@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-1800';
+const APPV='2026.11.12-1240';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2413,7 +2413,7 @@ ACT.art=id=>{const a=S.artists.find(x=>x.id===id);if(!a)return;closeSheet();cons
     {t:'Albüm çıkar',sub:fmt(M(500000))+' · Ün ++',dis:!canPay(M(500000)),fn:()=>{pay(M(500000));const g=R(3,20);a.fame=clamp(a.fame+g);log(`${a.name}'in albümü çıktı. Ün +${g}.`,'good');if(a.fame>=70)news(`${a.name}'in yeni albümü listelerde zirvede`,1)}},
     {t:'🧬 Özellikleri · Dost ol',sub:trOf(a).huy,fn:()=>setTimeout(()=>pCard('a',a.id,'sahne'),40)},
     {t:'Sözleşmeyi bitir',fn:()=>{S.artists=S.artists.filter(x=>x!==a);log(`${a.name} ile yollarını ayırdın.`,'dim')}},{t:'Vazgeç',fn:()=>{}}]})};
-ACT.konser=()=>{if(!pay(M(2000000)))return;const tot=S.artists.reduce((s,a)=>s+a.fame,0);const m=Math.round(tot*R(40,90)*1000);S.money+=m;S.fame=clamp((S.fame||0)+5);S.artists.forEach(a=>a.fame=clamp(a.fame+R(1,5)));gainResp(3);log(`Harbiye'de dev konser: ${fmt(m)} hasılat!`,'gold');news(`${S.first} ${S.last}'in organize ettiği konsere binlerce kişi akın etti`,2);done()};
+ACT.konser=()=>{if(S.konQ===QS())return toast('Bu çeyrek zaten konser verildi.');if(!pay(M(2000000)))return;S.konQ=QS();const tot=S.artists.reduce((s,a)=>s+a.fame,0);const m=Math.round(tot*R(40,90)*1000);S.money+=m;S.fame=clamp((S.fame||0)+5);S.artists.forEach(a=>a.fame=clamp(a.fame+R(1,5)));gainResp(3);log(`Harbiye'de dev konser: ${fmt(m)} hasılat!`,'gold');news(`${S.first} ${S.last}'in organize ettiği konsere binlerce kişi akın etti`,2);done()};
 ACT.unlu=()=>{if(!pay(M(100000)))return;S.fame=clamp((S.fame||0)+3);if(S.sm)S.sm.f+=R(2,15)*1000;log(`${pick(['Ünlü bir oyuncu','Bir futbolcu','Bir popçu','Bir dizi yıldızı'])} ile kulüpte fotoğraf çekildin.`,'good');done()};
 function artistsQuarter(){if(!S.artists.length)return;if(S.q===0){const fee=S.artists.reduce((s,a)=>s+a.fee,0);fund(fee);(fund(fee),S.money=Math.max(0,S.money-fee));log(`Sanatçı sözleşmeleri: ${fmt(fee)}.`,'dim')}
   S.artists.forEach(a=>a.fame=clamp(a.fame+R(-2,2)));
@@ -2422,7 +2422,7 @@ EXTRA.sahne=()=>{let h='';
   if(!hasStage())return['Gece kulübü',h+'<p class="note">Sanatçı yönetmek için bir gece kulübün olmalı. Varlıklar → İşletmeler\'den gece kulübü al ya da rakiplerden bir mekân ele geçir.</p>'];
   h+=`<p class="note">Ünün: %${Math.round(S.fame||0)} · Sanatçılar ${S.artists.length}/5</p>`;
   h+=row('data-x="scout:"','🔎','Yetenek avı','Üç aday arasından seç',fmtS(M(50000)),S.artists.length>=5||!canPay(M(50000)));
-  h+=row('data-x="konser:"','🎤','Büyük konser organize et','Bütün sanatçıların sahnede',fmtS(M(2000000)),!S.artists.length||!canPay(M(2000000)));
+  h+=row('data-x="konser:"','🎤','Büyük konser organize et',S.konQ===QS()?'Bu çeyrek yapıldı':'Çeyrekte bir · bütün sanatçıların sahnede',fmtS(M(2000000)),S.konQ===QS()||!S.artists.length||!canPay(M(2000000)));
   h+=row('data-x="unlu:"','📸','Ünlülerle fotoğraf','Ün +3',fmtS(M(100000)),!canPay(M(100000)));
   h+='<div class="sec">Sanatçıların</div>';if(!S.artists.length)h+='<p class="note">Henüz sanatçın yok.</p>';
   S.artists.forEach(a=>h+=`<button class="row" data-x="art:${a.id}"><span class="ic">🎙</span><span class="tx"><b>${a.name}</b><span>${a.g} · Yıllık ${fmtS(a.fee)}${a.q===QS()?' · Bu çeyrek sahnede':''}</span><div class="bar" style="margin-top:5px"><i style="width:${a.fame}%;background:var(--gold)"></i></div></span><span class="rt">›</span></button>`);
@@ -2461,8 +2461,9 @@ ACT.lart=id=>{const l=S.label,a=l.roster.find(x=>x.id===id);if(!a)return;closeSh
     {t:'Sözleşmeyi bitir',fn:()=>{l.roster=l.roster.filter(x=>x!==a);log(`${a.name} ile yollar ayrıldı.`,'dim')}},{t:'Vazgeç',fn:()=>{}}]})};
 ACT.lconcert=vid=>{const l=S.label,V=VENUES.find(v=>v.id===vid);closeSheet();const c=Math.round(V.c*S.cpi);
   const ok=l.roster.filter(a=>a.fame>=V.min);
-  queue({back:'muzik',title:V.n,text:`${V.cap.toLocaleString('tr-TR')} kişilik. Organizasyon ${fmt(c)} şirket kasasından. Doluluk sanatçının ününe bağlı.`,choices:[...ok.map(a=>{const fill=clamp(a.fame*1.25+R(-10,10),10,100)/100;const tk=Math.round(V.tk*S.cpi);const rev=Math.round(V.cap*fill*tk);return{t:`${a.name} sahnede`,sub:`Ün %${a.fame} · Tahmini hasılat ${fmtS(rev)}`,dis:l.cash<c||a.cq===QS(),fn:()=>{l.cash-=c;a.cq=QS();const real=Math.round(rev*R(85,115)/100*(lHas('men')?1.2:1)*(a.ct==='dag'?.5:1));l.cash+=real;a.fame=clamp(a.fame+R(1,4));S.fame=clamp((S.fame||0)+(V.cap>=15000?3:1));log(`${a.name}, ${V.n}: %${Math.round(fill*100)} doluluk, ${fmt(real)} hasılat.`,real>c?'good':'bad');if(V.cap>=15000)news(`${a.name} konserinde izdiham`,1)}}}),{t:'Vazgeç',fn:()=>{}}]})};
-ACT.ltour=()=>{const l=S.label;const c=Math.round(8e6*S.cpi);const st=l.roster.filter(a=>a.fame>=50);if(!st.length||l.cash<c)return;l.cash-=c;let tot=0;st.forEach(a=>{tot+=Math.round(a.fame*a.fame*R(4000,9000)*S.cpi);a.fame=clamp(a.fame+R(2,6))});l.cash+=tot;l.tours++;S.fame=clamp((S.fame||0)+4);log(`Türkiye turnesi bitti: ${fmt(tot)} hasılat.`,tot>c?'gold':'bad');news(`${l.name} yıldızları 20 şehirde sahne aldı`,1);done()};
+  queue({back:'muzik',title:V.n,text:`${V.cap.toLocaleString('tr-TR')} kişilik. Organizasyon ${fmt(c)} şirket kasasından. Doluluk sanatçının ününe bağlı.`,choices:[...ok.map(a=>{const fill=clamp(a.fame*1.25+R(-10,10),10,100)/100;const tk=Math.round(V.tk*S.cpi);const big=V.cap>=15000;const yb=big&&a.by===S.age;const rev=Math.round(V.cap*fill*tk*.45);return{t:`${a.name} sahnede`,sub:yb?'Bu yıl büyük sahneye çıktı · yılda bir':`Ün %${a.fame} · Net hasılat ~${fmtS(rev)} (KDV, salon, prodüksiyon düşülmüş)`,dis:l.cash<c||a.cq===QS()||yb,fn:()=>{l.cash-=c;a.cq=QS();if(big)a.by=S.age;const real=Math.round(rev*R(85,115)/100*(lHas('men')?1.2:1)*(a.ct==='dag'?.5:1));l.cash+=real;a.fame=clamp(a.fame+R(1,4));S.fame=clamp((S.fame||0)+(V.cap>=15000?3:1));log(`${a.name}, ${V.n}: %${Math.round(fill*100)} doluluk, ${fmt(real)} hasılat.`,real>c?'good':'bad');if(V.cap>=15000)news(`${a.name} konserinde izdiham`,1)}}}),{t:'Vazgeç',fn:()=>{}}]})};
+const tourC=()=>{const l=S.label;const n=l?l.roster.filter(a=>a.fame>=50).length:0;return Math.round((8e6+n*3e6)*S.cpi)};
+ACT.ltour=()=>{const l=S.label;const c=tourC();const st=l.roster.filter(a=>a.fame>=50);if(!st.length||l.cash<c||l.tourY===S.age)return;l.cash-=c;l.tourY=S.age;let tot=0;st.forEach(a=>{tot+=Math.round(a.fame*a.fame*R(2000,4000)*S.cpi*(lHas('men')?1.2:1)*(a.ct==='dag'?.5:1));a.fame=clamp(a.fame+R(2,6))});l.cash+=tot;l.tours++;S.fame=clamp((S.fame||0)+4);log(`Türkiye turnesi bitti: ${fmt(tot)} hasılat.`,tot>c?'gold':'bad');news(`${l.name} yıldızları 20 şehirde sahne aldı`,1);done()};
 ACT.lmoney=k=>{const l=S.label;closeSheet();
   if(k==='in')return amountModal('Şirkete sermaye koy','Temiz para. Şirket kasasına geçer.',S.money,a=>{spend(a);l.cash+=a;skBase('lbl',a);log(`${l.name}'a ${fmt(a)} sermaye koydun.`,'dim')},'muzik');
   if(k==='out')return amountModal('Şirketten para çek','Kâr payı olarak sana geçer ve vergilendirilir.',Math.max(0,l.cash),a=>{l.cash-=a;S.money+=a;S.taxInc=(S.taxInc||0)+a;skBase('lbl',-a);log(`${l.name}'dan ${fmt(a)} çektin.`,'dim')},'muzik');
@@ -2515,7 +2516,7 @@ EXTRA.muzik=()=>{const l=S.label;let h='';
   VENUES.forEach(V=>h+=row(`data-x="lconcert:${V.id}"`,'🎤',V.n,`${V.cap.toLocaleString('tr-TR')} kişi · Ün en az %${V.min}`,fmtS(V.c*S.cpi),!l.roster.some(a=>a.fame>=V.min)||l.cash<V.c*S.cpi));
   h+=row('data-x="unlu:"','📸','Ünlülerle fotoğraf','Ün +3',fmtS(M(100000)),!canPay(M(100000)));
   h+=row('data-x="lfest:"','🎪','Festival düzenle',l.fq===S.age?'Bu yıl düzenlendi':'Yılda bir · bütün sanatçıların sahnede · sponsorlu',fmtS(M(15e6)),l.fq===S.age||!l.roster.length||l.cash<M(15e6));
-  h+=row('data-x="ltour:"','🚌','Türkiye turnesi','Ünü %50+ bütün sanatçılar',fmtS(8e6*S.cpi),!l.roster.some(a=>a.fame>=50)||l.cash<8e6*S.cpi);
+  h+=row('data-x="ltour:"','🚌','Türkiye turnesi',l.tourY===S.age?'Bu yıl yapıldı · yılda bir':'Yılda bir · ünü %50+ bütün sanatçılar',fmtS(tourC()),l.tourY===S.age||!l.roster.some(a=>a.fame>=50)||l.cash<tourC());
   h+='<div class="sec">Kara para aklama</div><p class="note">Kara para kasandaki para şirkete girer, polis dikkatin düşer. Büyük meblağ risklidir.</p>';
   h+=row('data-x="lmoney:bot"','🤖','Sahte dinlenme (bot)','%90 temiz döner','',!!S.jail||(S.black||0)<1e6);
   h+=row('data-x="lmoney:bilet"','🎟','Hayalet bilet satışı','%88 temiz döner, daha az risk','',!!S.jail||(S.black||0)<1e6);
@@ -2751,7 +2752,7 @@ const cCan=x=>cC()>=Math.round(x);
 function cPay(x){x=Math.round(x);if(cC()<x){toast('🏗 Şirket kasası yetmiyor. İnşaat şirketine sermaye koy.');return false}S.co.cash-=x;return true}
 const cSpend=x=>{S.co.cash=(S.co.cash||0)-Math.round(x)};
 const cFund=x=>0;
-const REG=[['esen','Esenyurt',.75,.72,1.3,'Ucuz arsa, alıcı bol, fiyat düşük'],['kartal','Kartal',1,1,1,'Dengeli'],['umr','Ümraniye',1.05,1.12,1,'Merkeze yakın, iyi talep'],['bey','Beykoz',1.2,1.4,.8,'Orman ve Boğaz, zengin alıcı'],['sar','Sarıyer',1.4,1.75,.7,'Lüks bölge, yavaş ama pahalı satış'],['bod','Bodrum',1.3,1.6,.75,'Yazlıkçı ve yabancı alıcı']];
+const REG=[['esen','Esenyurt',.75,.72,1.3,'Ucuz arsa, alıcı bol, fiyat düşük'],['kartal','Kartal',1,1,1,'Dengeli'],['umr','Ümraniye',1.05,1.08,1,'Merkeze yakın, iyi talep'],['bey','Beykoz',1.2,1.3,.8,'Orman ve Boğaz, zengin alıcı'],['sar','Sarıyer',1.4,1.5,.7,'Lüks bölge, yavaş ama pahalı satış'],['bod','Bodrum',1.3,1.42,.75,'Yazlıkçı ve yabancı alıcı']];
 const TAS=[['ucuz','Ucuz taşeron',.92,.85,'Ucuz ve hızlı · kaza ve denetim riski yüksek'],['std','Standart taşeron',1,1,'Dengeli'],['kur','Kurumsal yüklenici',1.08,1,'Pahalı · kaza riski düşük · itibar +']];
 const RG=id=>REG.find(r=>r[0]===id)||REG[1];
 let CPD=null;
@@ -2765,15 +2766,15 @@ function pwLand(){const t=PJ(CPD.id),r=RG(CPD.reg);const c=Math.round(t.cost*r[2
 function pwMat(){const t=PJ(CPD.id);const mats=[['ucuz','Ucuz malzeme',.85,.9,'Maliyet −%15 · Satış −%10 · Deprem denetimi riski'],['std','Standart malzeme',1,1,'Dengeli'],['lux','Lüks malzeme',1.15,1.18,'Maliyet +%15 · Satış +%18 · İtibar +']];
   queue({back:'insaat',title:`${t.n} · 3/5 Malzeme`,text:'Hangi kalitede malzeme kullanılsın?',choices:[...mats.map(m=>({t:m[1],sub:m[4],fn:()=>{CPD.mat=m;setTimeout(pwTas,40)}})),{t:'Geri',fn:()=>setTimeout(pwLand,40)}]})}
 function pwTas(){const t=PJ(CPD.id);queue({back:'insaat',title:`${t.n} · 4/5 Taşeron`,text:'İşi kim yapacak?',choices:[...TAS.map(x=>({t:x[1],sub:`Maliyet ×${x[2]} · Süre ×${x[3]} · ${x[4]}`,fn:()=>{CPD.tas=x[0];setTimeout(pwFin,40)}})),{t:'Geri',fn:()=>setTimeout(pwMat,40)}]})}
-function pwCost(){const t=PJ(CPD.id),r=RG(CPD.reg),T=TAS.find(x=>x[0]===CPD.tas);let c=t.cost*r[2]*CPD.mat[2]*T[2]*(t.pol?1.08:1);if(CPD.land==='kat')c*=.65;if(CPD.land==='imar')c*=1.2;return Math.round(c)}
+function pwCost(){const t=PJ(CPD.id),r=RG(CPD.reg),T=TAS.find(x=>x[0]===CPD.tas);let c=t.cost*1.17*r[2]*CPD.mat[2]*T[2]*(t.pol?1.08:1);if(CPD.land==='kat')c*=.65;if(CPD.land==='imar')c*=1.2;return Math.round(c)}
 function pwFin(){const t=PJ(CPD.id),r=RG(CPD.reg),T=TAS.find(x=>x[0]===CPD.tas);const cost=pwCost(),dur=pjDur(t,T[3]);const units=CPD.land==='imar'?Math.round(t.u*1.3):t.u;const sh=CPD.land==='kat'?.6:1;
   const estRev=Math.round(units*t.up*r[3]*CPD.mat[3]*sh);
   queue({back:'insaat',title:`${t.n} · 5/5 Finansman`,text:`📍 ${r[1]} · ${CPD.land==='kat'?'Kat karşılığı':CPD.land==='imar'?'İmar artışlı arsa':'Kendi arsan'} · ${CPD.mat[1]} · ${T[1]}<br>Toplam maliyet <b>${fmt(cost)}</b> · ${units} birim · Süre ${fmtDur(dur)} (gerçek saat)<br>Tahmini satış geliri ~${fmt(estRev)}${sh<1?' (arsa sahibinin payı düşülmüş)':''}.${t.pol?'<br>Ruhsat için siyasi nüfuz ya da rüşvet gerekir.':''}`,choices:[
     {t:'🏦 Özkaynak',sub:`%20 peşin ${fmtS(cost*.2)} · Kalanı her çeyrek taksitle`,dis:!cCan(cost*.2),fn:()=>pwGo(cost,dur,units,sh,0)},
-    {t:'🏦 Proje kredisi',sub:`%8 peşin ${fmtS(cost*.08)} · Taksitlerin %70'ini banka öder · Çeyreklik faiz %3 · Satıştan önce bankaya ödenir`,dis:!cCan(cost*.08),fn:()=>pwGo(cost,dur,units,sh,1)},
+    {t:'🏦 Proje kredisi',sub:`%15 peşin ${fmtS(cost*.15)} · Taksitlerin %70'ini banka öder · Çeyreklik faiz %3 · Satıştan önce bankaya ödenir`,dis:!cCan(cost*.15),fn:()=>pwGo(cost,dur,units,sh,1)},
     {t:'Geri',fn:()=>setTimeout(pwTas,40)}]})}
-function pwGo(cost,dur,units,sh,kr){const t=PJ(CPD.id),r=RG(CPD.reg),D=CPD;const pe=Math.round(cost*(kr?.08:.2));if(!cPay(pe))return;
-  const p={uid:'pj'+Date.now()+R(0,999),t:t.id,cost,paid:Math.round(cost*.2),prog:0,delay:0,qual:D.mat[0],pm:D.mat[3]*r[3],units,presold:0,sold:0,launder:0,hidx0:S.hidx,up0:t.up,state:'build',start:gYear(),dur,endT:Date.now()+dur,reg:D.reg,land:D.land,tas:D.tas,sh,sp:r[4],lf:kr?.7:0,loan:kr?Math.round(cost*.12):0,risk:(D.mat[0]==='ucuz'?1:0)+(D.tas==='ucuz'?1:0),evs:[],prm:1};
+function pwGo(cost,dur,units,sh,kr){const t=PJ(CPD.id),r=RG(CPD.reg),D=CPD;const pe=Math.round(cost*(kr?.15:.2));if(!cPay(pe))return;
+  const p={uid:'pj'+Date.now()+R(0,999),t:t.id,cost,paid:Math.round(cost*.2),prog:0,delay:0,qual:D.mat[0],pm:D.mat[3]*r[3],units,presold:0,sold:0,launder:0,hidx0:S.hidx,up0:t.up,state:'build',start:gYear(),dur,endT:Date.now()+dur,reg:D.reg,land:D.land,tas:D.tas,sh,sp:r[4],lf:kr?.7:0,loan:kr?Math.round(cost*.05):0,cpi0:S.cpi,risk:(D.mat[0]==='ucuz'?1:0)+(D.tas==='ucuz'?1:0),evs:[],prm:1};
   S.co.projects.push(p);if(t.pol){add('heat',6);log('Ruhsat için belediyede "kapılar" açıldı.','dim')}
   if(D.land==='imar'){add('heat',8);p.imar=1;log(`${r[1]} belediyesinde imar planı senin için değişti. Arsaya %30 fazla daire sığacak.`,'dim')}
   if(D.land==='kat')log(`Arsa sahibiyle kat karşılığı anlaştın: satış gelirinin %40'ı onun.`,'dim');
@@ -2783,20 +2784,22 @@ const PSTG=[[10,'📝 Ruhsat'],[25,'🚜 Hafriyat'],[60,'🧱 Kaba inşaat'],[90
 const pjPct=p=>p.state==='build'?clamp(Math.round((1-(p.endT-Date.now())/p.dur)*100)):100;
 const pjStage=p=>{const x=pjPct(p);return PSTG.find(s=>x<s[0])||PSTG[4]};
 function upNow(p){const t=PJ(p.t);return Math.round((p.up0||t.up)*p.pm*(p.prm||1)*(S.hidx/p.hidx0)*(1+(S.co.rep-50)/500))}
+function pjGlut(p){const u=S.co.projects.filter(x=>x.state==='sale'&&(x.reg||'kartal')===(p.reg||'kartal')).reduce((t,x)=>t+x.units-x.presold-x.sold,0);return u>300?Math.max(.82,1-(u-300)/2500):1}
 function pjCash(p,rev){rev=Math.round(rev*(p.sh||1));if(p.loan>0){const x=Math.min(p.loan,rev);p.loan-=x;rev-=x;if(x)log(`${PJ(p.t).n}: satıştan ${fmt(x)} bankaya gitti${p.loan>0?`, kalan kredi ${fmt(p.loan)}`:', kredi kapandı'}.`,'dim')}return rev}
 function coQuarter(){const co=S.co;if(!co)return;
   co.projects.forEach(p=>{const t=PJ(p.t);if(p.loan>0)p.loan=Math.round(p.loan*1.03);
     if(p.state==='rent'){const left=p.units-p.presold-p.sold;const r=pjCash(p,upNow(p)*left*.018);S.co.cash+=r;S.taxInc=(S.taxInc||0)+r;log(`🏢 ${t.n} kira geliri: ${fmt(r)}.`,'good');return}
-    if(p.state==='build'){pjEnsure(p);const inst=Math.round((p.cost*.8)/t.q);
+    if(p.state==='build'){pjEnsure(p);if(!p.cpi0)p.cpi0=S.cpi;if(!p.cb)p.cb=p.cost;const fi=t.kamu?1:S.cpi/p.cpi0;const inst=Math.round((p.cb*.8)/t.q*fi);
       if(S.jail){p.endT+=Math.round(p.dur*.1);log(`${t.n}: sen içerideyken şantiye yavaşladı.`,'bad');return}
-      if(p.prog<t.q){const my=Math.round(inst*(1-(p.lf||0)));cFund(my);if(cC()>=my){cSpend(my);p.paid+=inst;p.loan=(p.loan||0)+inst-my;p.prog++;
-        if(ch(.1)){const e=R(0,3);if(e===0){const z=Math.round(p.cost*.06);p.cost+=z;log(`${t.n}: demir ve çimentoya zam geldi, maliyet +${fmt(z)}.`,'bad')}else if(e===1){p.endT+=Math.round(p.dur*.15);log(`${t.n}: işçiler greve gitti, teslim gecikti.`,'bad')}else if(e===2){log(`${t.n}: belediye denetimi zarf ile atlatıldı.`,'dim');(cFund(Math.round(inst*.05)),S.co.cash=Math.max(0,S.co.cash-Math.round(inst*.05)))}else{add('heat',4);log(`${t.n}: şantiyede iş kazası. Basına sızmadan kapatıldı.`,'bad')}}}
-        else{p.delay++;p.endT+=Math.round(p.dur*.1);p.cost=Math.round(p.cost*1.03);log(`${t.n}: taksit ödenemedi (${fmt(inst)}). Şantiye yavaşladı, maliyet %3 arttı.`,'bad')}}
+      if(p.prog<t.q){const my=Math.round(inst*(1-(p.lf||0)));cFund(my);if(cC()>=my){cSpend(my);p.paid+=inst;if(fi>1)p.cost+=Math.round(inst-inst/fi);p.loan=(p.loan||0)+inst-my;p.prog++;
+        if(ch(.1)){const e=R(0,3);if(e===0){const z=Math.round(p.cost*.06);p.cost+=z;p.cb+=z;log(`${t.n}: demir ve çimentoya zam geldi, maliyet +${fmt(z)}.`,'bad')}else if(e===1){p.endT+=Math.round(p.dur*.15);log(`${t.n}: işçiler greve gitti, teslim gecikti.`,'bad')}else if(e===2){log(`${t.n}: belediye denetimi zarf ile atlatıldı.`,'dim');(cFund(Math.round(inst*.05)),S.co.cash=Math.max(0,S.co.cash-Math.round(inst*.05)))}else{add('heat',4);log(`${t.n}: şantiyede iş kazası. Basına sızmadan kapatıldı.`,'bad')}}}
+        else{p.delay++;p.endT+=Math.round(p.dur*.1);p.cost=Math.round(p.cost*1.03);p.cb=Math.round(p.cb*1.03);log(`${t.n}: taksit ödenemedi (${fmt(inst)}). Şantiye yavaşladı, maliyet %3 arttı.`,'bad')}}
       pjCheck(p)}
     else if(p.state==='sale'){const left=p.units-p.presold-p.sold;if(left<=0){if(p.def){S.co.cash+=p.def;p.def=0}p.state='done';co.done++;return}
-      const pf={.9:1.5,1:1,1.1:.7,1.2:.45}[p.prm||1]||1;const n=Math.min(left,Math.max(1,Math.ceil(left*clamp((.22+co.rep/300)*(p.sp||1)*pf*(p.vade?1.4:1),.08,.8))));const pr=upNow(p)*(p.vade?1.05:1);let rev=n*pr;if(p.def){S.co.cash+=p.def;p.def=0}if(p.vade){p.def=Math.round(pjCash(p,rev/2));rev=rev/2}rev=pjCash(p,rev);S.co.cash+=rev;p.sold+=n;
+      const pf={.9:1.5,1:1,1.1:.7,1.2:.45}[p.prm||1]||1;const ef={yuksek:.7,program:.9}[S.econ&&S.econ.ph]||1;const sat=pjGlut(p);const n=Math.min(left,Math.max(1,Math.ceil(left*clamp((.16+co.rep/400)*(p.sp||1)*pf*ef*(p.vade?1.4:1),.06,.6))));const pr=upNow(p)*(p.vade?1.05:1)*sat*.96;
+      if(left>n){const hc=Math.round((left-n)*upNow(p)*.004);S.co.cash-=hc;p.hold=(p.hold||0)+hc}let rev=n*pr;if(p.def){S.co.cash+=p.def;p.def=0}if(p.vade){p.def=Math.round(pjCash(p,rev/2));rev=rev/2}rev=pjCash(p,rev);S.co.cash+=rev;p.sold+=n;
       const prof=Math.max(0,rev-p.cost*n/p.units);S.taxInc=(S.taxInc||0)+prof;
-      log(`${t.n}: ${n} birim satıldı, ${fmt(rev)} kasaya girdi.${p.units-p.presold-p.sold>0?` Kalan ${p.units-p.presold-p.sold}.`:' Hepsi satıldı!'}`,'good');
+      log(`${t.n}: ${n} birim satıldı, ${fmt(rev)} kasaya girdi (komisyon düşüldü${sat<1?`, bölgede arz fazlası: fiyat −%${Math.round((1-sat)*100)}`:''}${ef<1?', piyasa durgun':''}).${p.units-p.presold-p.sold>0?` Kalan ${p.units-p.presold-p.sold}, boş daire gideri işliyor.`:' Hepsi satıldı!'}`,'good');
       if(p.units-p.presold-p.sold<=0){if(p.def){S.co.cash+=p.def;p.def=0}p.state='done';co.done++;const tot=p.revAll=(p.revAll||0)+rev;log(`${t.n} projesi kapandı.`,'gold')}}
   });
   co.projects=co.projects.filter(p=>p.state!=='done');
