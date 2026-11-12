@@ -329,7 +329,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-2320';
+const APPV='2026.11.12-2345';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2294,7 +2294,7 @@ function mgClose(){if(CT){ctSes(false);CT.over=1;clearInterval(CT.iv);cancelAnim
 /* ============ Çatışma mini oyunu ============ */
 let CT=null,CTA=null,CTF=0;
 const sesOn=()=>{try{return localStorage.getItem('mafya-ses')!=='0'}catch(e){return true}};
-function ctSes(on){clearInterval(CTF);try{if(on){if(!sesOn())return;if(!CTA){CTA=new Audio('img/ct_ses.mp3');CTA.loop=true;CTA.preload='auto'}CTA.volume=.7;CTA.currentTime=R(0,20);const p=CTA.play();p&&p.catch&&p.catch(()=>{})}else if(CTA&&!CTA.paused){CTF=setInterval(()=>{try{if(CTA.volume>.1)CTA.volume=Math.max(0,CTA.volume-.1);else{CTA.pause();CTA.volume=.7;clearInterval(CTF)}}catch(e){CTA.pause();clearInterval(CTF)}},70)}}catch(e){}}
+function ctSes(on){clearInterval(CTF);try{if(on){if(!sesOn())return;if(!CTA){CTA=new Audio('img/ct_ses.mp3');CTA.loop=true;CTA.preload='auto'}CTA.volume=.7;CTA.currentTime=R(0,20);const p=CTA.play();p&&p.catch&&p.catch(()=>{})}else if(CTA){let n=0;const stop=()=>{clearInterval(CTF);try{CTA.pause();CTA.currentTime=0}catch(e){}try{CTA.volume=.7}catch(e){}};CTF=setInterval(()=>{n++;let v=1;try{CTA.volume=Math.max(0,.7-n*.12);v=CTA.volume}catch(e){}if(n>=6||v<=.02||v>.7)stop()},70);setTimeout(stop,600)}}catch(e){}}
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&CTA){try{CTA.pause()}catch(e){}}else if(!document.hidden&&CT&&!CT.over&&CTA&&sesOn()){try{CTA.play().catch(()=>{})}catch(e){}}});
 ACT.sestog=()=>{const on=!sesOn();try{localStorage.setItem('mafya-ses',on?'1':'0')}catch(e){}if(!on)ctSes(false);toast(on?'🔊 Ses açık':'🔇 Ses kapalı');openSheet('ben')};
 function mgShoot(cb,o){o=o||{};const p=o.p===undefined?.5:o.p;let box=$('ctBox');if(!box){box=document.createElement('div');box.id='ctBox';document.body.appendChild(box)}
