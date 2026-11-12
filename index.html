@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-1800';
+const APPV='2026.11.12-1830';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -921,8 +921,8 @@ const EVENTS=[
 ];
 
 /* ============ İşler ============ */
-const ALIM={basvuru:2,calis:1,zam:1,yanke:3,araba:3,harac:3,kacak:1,baskin:1,kuyumcu:1,zirhli:1,altin:1,ihale:1,silah:1,vakit:2};
-const AMSG={calis:'Bu çeyrek zaten fazla mesai yaptın. Biraz dinlen.',zam:'Patronla bu çeyrek zaten konuştun. Sonraki çeyreği bekle.',basvuru:'Bu çeyrek yeterince iş başvurusu yaptın.',yanke:'Bu çeyrek kalabalıkta cebine el atılacak kimse kalmadı.',araba:'Bu çeyrek mahallede çalınacak araba kalmadı.',harac:'Bu çeyrek haraç toplanacak esnaf kalmadı.',vakit:()=>`${S.partner||'Sevgilin'} bu çeyrek biraz yalnız kalmak istiyor.`};
+const ALIM={atk:4,basvuru:2,calis:1,zam:1,yanke:3,araba:3,harac:3,kacak:1,baskin:1,kuyumcu:1,zirhli:1,altin:1,ihale:1,silah:1,vakit:2};
+const AMSG={atk:'Bu çeyrek yeterince saldırdın, adamların yorgun. 👑 Dayı modunda saldırı sınırı yok.',calis:'Bu çeyrek zaten fazla mesai yaptın. Biraz dinlen.',zam:'Patronla bu çeyrek zaten konuştun. Sonraki çeyreği bekle.',basvuru:'Bu çeyrek yeterince iş başvurusu yaptın.',yanke:'Bu çeyrek kalabalıkta cebine el atılacak kimse kalmadı.',araba:'Bu çeyrek mahallede çalınacak araba kalmadı.',harac:'Bu çeyrek haraç toplanacak esnaf kalmadı.',vakit:()=>`${S.partner||'Sevgilin'} bu çeyrek biraz yalnız kalmak istiyor.`};
 function actLeft(k){if(!S.aq||S.aq.q!==QS()||!S.aq.m)S.aq={q:QS(),m:{}};return (ALIM[k]||3)-(S.aq.m[k]||0)}
 function useAct(k,n){if(!k||S.premium)return true;if(actLeft(k)<=0){const m=AMSG[k];toast(typeof m==='function'?m():m||(ALIM[k]===1?`${n}: bu çeyrek uygun fırsat yok. Ortalığın sakinleşmesini bekle.`:`${n}: bu çeyreklik yeterince yaptın. Sonraki çeyreği bekle.`));return false}S.aq.m[k]=(S.aq.m[k]||0)+1;return true}
 const actDone=k=>!S.premium&&actLeft(k)<=0;
@@ -1645,26 +1645,29 @@ function recruitStreet(){if(!canPay(M(20000))){toast('Paran yetmiyor.');return}c
   const c=[0,1,2].map(()=>({name:`${pick(NICK)} ${pick(NAMES)}`,str:R(2,8),loy:R(35,65)}));
   queue({back:'org',title:'Sokaktan adam topla',text:'Kahvehanede adamların üç aday getirdi. Hangisini alıyorsun?',choices:[...c.map(x=>({t:x.name,sub:`Güç ${x.str}/10 · Sadakat %${x.loy} · Yıllık ${fmt(x.str*8000)}`,fn:()=>{if(addMember(x))log(`${x.name} ailene katıldı.`,'good')}})),{t:'Hiçbirini alma',fn:()=>{}}]})}
 function rivMenu(id){const r=RV(id);if(r.dead){toast(`${r.n} dağıldı. Yeni lider çıkması zaman alacak.`);return}closeSheet();const intel=S.org&&S.org.intel===QS()?.12:0;
-  const cs=[];
+  const cs=[];const A=fn=>()=>{if(!useAct('atk','Saldırı'))return;fn();rivAfter(r)};
+  if(S.premium&&S.org&&!r.venues.length&&r.pow<=Math.max(25,r.base*.3))cs.push({t:'👑 Çeteyi tamamen bitir',sub:'Mekânı kalmadı, adamları dağınık · Liderleri teslim olur',pr:true,fn:()=>killBoss(r,'son kalan adamları da dağılınca')});
   if(S.org){
-    if(r.venues.length)cs.push({t:'Mekânlarına çök',sub:`${r.venues.length} mekân · Şans %${Math.round(battleP(r.pow,intel)*100)}`,fn:()=>setTimeout(()=>venuePick(id),30)});
-    cs.push({t:'Adamlarından birine saldırı düzenle',sub:`Şans %${Math.round(battleP(r.pow,.12+intel)*100)} · Rakibi zayıflatır`,fn:()=>hitRival(r,battleP(r.pow,.12+intel))});
+    if(r.venues.length)cs.push({t:'Mekânlarına çök',sub:`${r.venues.length} mekân · Şans %${Math.round(battleP(r.pow,intel)*100)}`,fn:()=>{if(!S.premium&&actLeft('atk')<=0){useAct('atk','Saldırı');return}setTimeout(()=>venuePick(id),30)}});
+    cs.push({t:'Adamlarından birine saldırı düzenle',sub:`Şans %${Math.round(battleP(r.pow,.12+intel)*100)} · Rakibi zayıflatır`,fn:A(()=>hitRival(r,battleP(r.pow,.12+intel)))});
     if(!r.war)cs.push({t:'Savaş ilan et',sub:S.council.rules.includes('ateskes')?'Ateşkesi bozar, konsey kızar':'Misillemeler başlar',fn:()=>{r.war=true;if(S.council.rules.includes('ateskes')){cMembers().forEach(m=>S.council.rel[m.id]=crel(m.id)-20);log('Ateşkesi bozdun. Konseydeki babalar sana sırt çevirdi.','bad')}gainResp(4);log(`${r.n} ile savaş başladı. Sokaklar gergin.`,'bad')}});
     else cs.push({t:'Barış teklif et',sub:fmt(r.pow*5000),dis:!canPay(r.pow*5000),fn:()=>{pay(r.pow*5000);if(ch(.7)){r.war=false;log(`${r.n} ile barış masasına oturdun. Silahlar sustu.`,'good')}else log(`${r.n} barış teklifini reddetti, parayı da aldı.`,'bad')}});
   }
   if(S.org&&!r.dead)cs.push({t:`Liderine suikast: ${r.boss.name}`,sub:`Şans %${Math.round(battleP(r.pow+30)*100)} · Çete dağılır`,fn:()=>setTimeout(()=>ACT.suikast(id),40)});
-  if(!S.mgOff)cs.push({t:'Adamlarından biriyle yumruk yumruğa',sub:'Mini oyun',fn:()=>setTimeout(()=>miniGame('kavga',w=>{if(w){gainResp(5);r.pow=Math.max(10,r.pow-2);log(`${r.n}'in adamını sokak ortasında yere serdin.`,'good')}else{hurt(R(8,18),'Sokak kavgası');log(`${r.n}'in adamı seni hırpaladı.`,'bad')}if(!r.war&&ch(.3)){r.war=true;log(`${r.n} bunu savaş sebebi saydı.`,'bad')}},`${r.n} adamı`),60)});
-  cs.push({t:'Adamlarıyla kavga çıkar',sub:`Sen tek başına · Şans %${Math.round(clamp(.4+S.health/400+S.respect/400+karizma()/300,.1,.9)*100)}`,fn:()=>{const p=clamp(.4+S.health/400+S.respect/400+karizma()/300,.1,.9);if(ch(p)){gainResp(4);r.pow=Math.max(10,r.pow-2);log(`${r.n} adamlarıyla meyhanede kavgaya tutuştun. Hepsini yere serdin.`,'good')}else{hurt(R(8,20),'Sokak kavgası');add('respect',-2);log(`${r.n} adamları seni fena hırpaladı.`,'bad')}if(!r.war&&ch(.3)){r.war=true;log(`${r.n} bunu savaş sebebi saydı.`,'bad')}}});
+  if(!S.mgOff)cs.push({t:'Adamlarından biriyle yumruk yumruğa',sub:'Mini oyun',fn:()=>{if(!useAct('atk','Saldırı'))return;setTimeout(()=>miniGame('kavga',w=>{if(w){gainResp(5);r.pow=Math.max(rFloor(),r.pow-2);log(`${r.n}'in adamını sokak ortasında yere serdin.`,'good')}else{hurt(R(8,18),'Sokak kavgası');log(`${r.n}'in adamı seni hırpaladı.`,'bad')}if(!r.war&&ch(.3)){r.war=true;log(`${r.n} bunu savaş sebebi saydı.`,'bad')}rivAfter(r)},`${r.n} adamı`),60)}});
+  cs.push({t:'Adamlarıyla kavga çıkar',sub:`Sen tek başına · Şans %${Math.round(clamp(.4+S.health/400+S.respect/400+karizma()/300,.1,.9)*100)}`,fn:A(()=>{const p=clamp(.4+S.health/400+S.respect/400+karizma()/300,.1,.9);if(ch(p)){gainResp(4);r.pow=Math.max(rFloor(),r.pow-2);log(`${r.n} adamlarıyla meyhanede kavgaya tutuştun. Hepsini yere serdin.`,'good')}else{hurt(R(8,20),'Sokak kavgası');add('respect',-2);log(`${r.n} adamları seni fena hırpaladı.`,'bad')}if(!r.war&&ch(.3)){r.war=true;log(`${r.n} bunu savaş sebebi saydı.`,'bad')}})});
   cs.push({t:'Vazgeç',fn:()=>{}});
-  queue({back:'rakip',title:r.n,text:`${r.dead?'Lideri öldü, çete dağınık. ':`Lideri ${r.boss.name} (${TRAITS[r.boss.trait]}) · `}${r.ally?'Müttefikin · ':''}Gücü ${r.pow}${S.org?` · Senin gücün ${orgPow()}`:''} · ${r.venues.length} mekân${r.war?' · <b style="color:var(--blood)">Savaştasınız</b>':''}.${!S.org?' Mekân basmak ve saldırı düzenlemek için önce kendi aileni kurmalısın.':''}`,
-    prem:S.org?{t:'Dayının adamları da gelsin',sub:'Bir mekânı kayıpsız al',fn:()=>{if(!r.venues.length){r.pow=Math.max(10,r.pow-15);gainResp(8);log(`${r.n} dayının adamlarını görünce dağıldı.`,'gold');return}const v=r.venues.shift();S.org.turf.push({...v,from:r.id});r.pow=Math.max(10,r.pow-10);r.war=true;gainResp(10);dirty(Math.round(v.inc*.5));log(`Dayının adamlarıyla ${v.n} mekânına çöktün. Tek kayıp yok, mekân artık senin.`,'gold')}}:null,choices:cs})}
+  queue({back:'rakip',title:r.n,text:`${!S.premium&&S.org?`Bu çeyrek kalan saldırı hakkın: ${Math.max(0,actLeft('atk'))}. `:''}${r.dead?'Lideri öldü, çete dağınık. ':`Lideri ${r.boss.name} (${TRAITS[r.boss.trait]}) · `}${r.ally?'Müttefikin · ':''}Gücü ${r.pow}${S.org?` · Senin gücün ${orgPow()}`:''} · ${r.venues.length} mekân${r.war?' · <b style="color:var(--blood)">Savaştasınız</b>':''}.${!S.org?' Mekân basmak ve saldırı düzenlemek için önce kendi aileni kurmalısın.':''}`,
+    prem:S.org?{t:'Dayının adamları da gelsin',sub:'Bir mekânı kayıpsız al',fn:()=>{if(!r.venues.length){r.pow=Math.max(rFloor(),r.pow-15);gainResp(8);log(`${r.n} dayının adamlarını görünce dağıldı.`,'gold');return}const v=r.venues.shift();S.org.turf.push({...v,from:r.id});r.pow=Math.max(rFloor(),r.pow-Math.max(10,Math.round(r.pow*.12)));r.war=true;gainResp(10);dirty(Math.round(v.inc*.5));log(`Dayının adamlarıyla ${v.n} mekânına çöktün. Tek kayıp yok, mekân artık senin.`,'gold');rivAfter(r)}}:null,choices:cs})}
+const rFloor=()=>S.premium?0:10;
+function rivAfter(r){if(r.dead)return;if(r.pow<=0&&!r.venues.length){killBoss(r,'bütün adamları dağılınca');return}if(S.premium)setTimeout(()=>{if(!Q.length&&!r.dead)rivMenu(r.id)},120)}
 function venuePick(id){const r=RV(id);if(!r.venues.length)return;const intel=S.org.intel===QS()?.12:0;
-  queue({back:'rakip',title:'Hangi mekân?',text:`${r.n} mekânları. Alırsan her yıl gelir getirir.`,choices:[...r.venues.map(v=>({t:v.n,sub:`Yıllık ${fmtS(v.inc)} · Şans %${Math.round(battleP(r.pow+v.inc/20000,intel)*100)}`,fn:()=>raidVenue(r,v,battleP(r.pow+v.inc/20000,intel))})),{t:'Vazgeç',fn:()=>{}}]})}
+  queue({back:'rakip',title:'Hangi mekân?',text:`${r.n} mekânları. Alırsan her yıl gelir getirir.`,choices:[...r.venues.map(v=>({t:v.n,sub:`Yıllık ${fmtS(v.inc)} · Şans %${Math.round(battleP(r.pow+v.inc/20000,intel)*100)}`,fn:()=>{if(!useAct('atk','Saldırı'))return;raidVenue(r,v,battleP(r.pow+v.inc/20000,intel));rivAfter(r)}})),{t:'Vazgeç',fn:()=>{}}]})}
 function raidVenue(r,v,p){r.war=true;
-  if(ch(p)){r.venues=r.venues.filter(x=>x!==v);S.org.turf.push({...v,from:r.id});r.pow=Math.max(10,r.pow-10);gainResp(8);add('heat',10);S.stats.venues++;news(`${S.org.name}, ${r.n}'in ${v.n} mekânını ele geçirdi`,3);const loot=Math.round(v.inc*.5);dirty(loot);log(`${v.n} mekânına çöktünüz. Mekân artık ${S.org.name}'in. Kasadan ${fmt(loot)} çıktı.`,'gold');if(ch(.25))casualties(1)}
+  if(ch(p)){r.venues=r.venues.filter(x=>x!==v);S.org.turf.push({...v,from:r.id});r.pow=Math.max(rFloor(),r.pow-Math.max(10,Math.round(r.pow*.12)));gainResp(8);add('heat',10);S.stats.venues++;news(`${S.org.name}, ${r.n}'in ${v.n} mekânını ele geçirdi`,3);const loot=Math.round(v.inc*.5);dirty(loot);log(`${v.n} mekânına çöktünüz. Mekân artık ${S.org.name}'in. Kasadan ${fmt(loot)} çıktı.`,'gold');if(ch(.25))casualties(1)}
   else{add('respect',-4);add('heat',8);log(`${v.n} baskını başarısız oldu. ${r.n} hazırlıklıydı.`,'bad');casualties(R(1,2))}}
 function hitRival(r,p){r.war=true;const t=`${pick(NICK)} ${pick(NAMES)}`;
-  if(ch(p)){r.pow=Math.max(10,r.pow-7);gainResp(6);add('heat',8);log(`${r.n}'in adamı ${t} hastanelik edildi. Rakip zayıfladı.`,'good')}
+  if(ch(p)){r.pow=Math.max(rFloor(),r.pow-Math.max(7,Math.round(r.pow*.08)));gainResp(6);add('heat',8);log(`${r.n}'in adamı ${t} hastanelik edildi. Rakip zayıfladı.`,'good')}
   else{add('heat',5);log(`${t}'e kurulan pusu boşa çıktı.`,'bad');casualties(1)}}
 function orgQuarter(f){
   if(!S.org)return;const o=S.org;
@@ -1681,8 +1684,8 @@ function orgQuarter(f){
   for(const r of wr){if(!ch(.3*g))continue;
     const mine=o.turf.filter(v=>v.from===r.id);
     if(mine.length&&ch(.55)){const v=pick(mine);const p=battleP(r.pow,.05);
-      queue({back:null,title:'Misilleme!',text:`${r.n}, ${v.n} mekânını geri almak için adamlarıyla geldi.`,prem:{t:'Dayının adamları mekânı korusun',sub:'Kayıpsız zafer',fn:()=>{r.pow=Math.max(10,r.pow-8);gainResp(6);log(`Dayının adamları ${r.n} saldırısını kapıda durdurdu.`,'gold')}},choices:[
-        {t:'Mekânı savun',sub:`Şans %${Math.round(p*100)}`,fn:()=>{if(ch(p)){r.pow=Math.max(10,r.pow-6);gainResp(5);log(`${v.n} savunuldu. ${r.n} geri çekildi.`,'good')}else{o.turf=o.turf.filter(x=>x!==v);delete v.from;r.venues.push({id:v.id,n:v.n,inc:v.inc});log(`${v.n} mekânını kaybettin.`,'bad');casualties(1)}}},
+      queue({back:null,title:'Misilleme!',text:`${r.n}, ${v.n} mekânını geri almak için adamlarıyla geldi.`,prem:{t:'Dayının adamları mekânı korusun',sub:'Kayıpsız zafer',fn:()=>{r.pow=Math.max(rFloor(),r.pow-8);gainResp(6);log(`Dayının adamları ${r.n} saldırısını kapıda durdurdu.`,'gold')}},choices:[
+        {t:'Mekânı savun',sub:`Şans %${Math.round(p*100)}`,fn:()=>{if(ch(p)){r.pow=Math.max(rFloor(),r.pow-6);gainResp(5);log(`${v.n} savunuldu. ${r.n} geri çekildi.`,'good')}else{o.turf=o.turf.filter(x=>x!==v);delete v.from;r.venues.push({id:v.id,n:v.n,inc:v.inc});log(`${v.n} mekânını kaybettin.`,'bad');casualties(1)}}},
         {t:'Mekânı bırak',sub:'Kayıp yok · Saygı −6',fn:()=>{o.turf=o.turf.filter(x=>x!==v);r.venues.push({id:v.id,n:v.n,inc:v.inc});add('respect',-6);log(`${v.n} mekânını savaşmadan bıraktın.`,'bad')}}]});break}
     else if(o.members.length&&ch(.6)){log(`${r.n} adamlarından birine saldırdı!`,'bad');casualties(1);break}
   }
@@ -2324,8 +2327,12 @@ ACT.mgtog=()=>{S.mgOff=!S.mgOff;toast(S.mgOff?'Mini oyunlar kapalı':'Mini oyunl
 /* ============ Rakip babalar ============ */
 const TRAITS={acimasiz:'Acımasız',kurnaz:'Kurnaz',onurlu:'Onurlu',acgozlu:'Açgözlü'};
 function ensureBosses(){S.rivals.forEach(r=>{if(!r.boss)r.boss={name:`${pick(NICK)} ${pick(NAMES)}`,trait:pick(Object.keys(TRAITS))}})}
-function bossQuarter(){if(!S.org&&rank()<2)return;
-  S.rivals.forEach(r=>{if(r.dead){r.dead--;if(r.dead<=0){r.dead=0;r.boss={name:`${pick(NICK)} ${pick(NAMES)}`,trait:pick(Object.keys(TRAITS))};r.pow=Math.round(r.base*.7);log(`${r.n} küllerinden doğdu. Yeni lideri: ${r.boss.name}.`,'bad');news(`${r.n}'in yeni babası ${r.boss.name}`,1)}}});
+const RTIER=[.55,.75,.95,1.15,1.4];
+const RVN=['Kumarhane','Gece kulübü','Liman deposu','Oto sanayi','Meyhane','Otopark','Gazino','Kahvehane','Lojistik deposu','Beach club'];
+function rNewVenues(r,n){return Array.from({length:n},()=>({id:r.id+'v'+R(0,99999),n:`${pick(RVN)}`,inc:M(60000+Math.min(r.pow,400)*3000)}))}
+function rivGrow(){if(!S.org)return;const op=orgPow();S.rivals.forEach((r,i)=>{if(r.dead||r.ally)return;const tg=Math.max(r.base,Math.round(op*RTIER[i]));if(tg>r.pow){const g=Math.max(2,Math.round((tg-r.pow)*.3));r.pow+=g;if(g>=10)log(`${r.n} yeni adamlar topladı, gücü ${r.pow} oldu.`,'dim')}if(r.venues.length<3&&ch(.35)){r.venues.push(...rNewVenues(r,1));log(`${r.n} yeni bir mekân açtı.`,'dim')}})}
+function bossQuarter(){if(!S.org&&rank()<2)return;if(S.q===0)rivGrow();
+  S.rivals.forEach(r=>{if(r.dead){r.dead--;if(r.dead<=0){r.dead=0;r.boss={name:`${pick(NICK)} ${pick(NAMES)}`,trait:pick(Object.keys(TRAITS))};r.pow=Math.max(Math.round(r.base*.7),Math.round(orgPow()*RTIER[S.rivals.indexOf(r)]*.85));r.venues=rNewVenues(r,2);log(`${r.n} küllerinden doğdu. Yeni lideri: ${r.boss.name}.`,'bad');news(`${r.n}'in yeni babası ${r.boss.name}`,1)}}});
   if(S.jail||S.abroad||!ch(.18))return;
   const r=pick(S.rivals.filter(x=>!x.dead));if(!r)return;const b=r.boss;
   if(r.ally){if(ch(.3))log(`Müttefikin ${b.name} (${r.n}) selam gönderdi.`,'dim');return}
@@ -3609,7 +3616,7 @@ ACT.semt=d=>{if(!S.org){toast('Semt ele geçirmek için önce kendi aileni kur (
 function takeSemt(d,inc){S.org.turf.push({id:'semt'+R(0,99999),n:d+' haracı',dist:d,inc,def:0});S.stats.venues++;gainResp(8);delete S.semt[d];log(`${d} artık ${S.org.name}'in! Yıllık ${fmt(inc)} haraç.`,'gold');news(`${S.org.name} ${d}'te kontrolü ele geçirdi`,2)}
 function semtQuarter(){if(!S.org||S.jail)return;const wars=S.rivals.filter(r=>r.war&&!r.dead);
   S.org.turf.filter(v=>v.dist&&NEUTRAL.includes(v.dist)).forEach(v=>{const p=(.035+wars.length*.025)*(1-(v.def||0)*.25);if(!ch(p))return;const r=wars.length?pick(wars):RVX();
-    if(ch(battleP(r.pow*.7,(v.def||0)*.08))){gainResp(4);r.pow=Math.max(10,r.pow-4);log(`${r.n} ${v.dist}'e saldırdı, adamların püskürttü.`,'good')}
+    if(ch(battleP(r.pow*.7,(v.def||0)*.08))){gainResp(4);r.pow=Math.max(rFloor(),r.pow-4);log(`${r.n} ${v.dist}'e saldırdı, adamların püskürttü.`,'good')}
     else{S.org.turf=S.org.turf.filter(x=>x!==v);casualties(1);log(`${r.n} ${v.dist}'i elinden aldı!`,'bad');news(`${r.n} ${v.dist}'e çöktü`,2)}})}
 
 /* ============ Kaçakçılık rotaları ============ */
@@ -3950,8 +3957,8 @@ EV(2,()=>GAMBLE&&okE()&&S.age>=18&&S.age<=55,()=>{const m=BIG();return{title:'Ye
   {t:'Favoriye bahis yap',sub:`${fmt(Math.round(m*.3))} · %60 şans`,dis:!canPay(Math.round(m*.3)),fn:()=>{pay(Math.round(m*.3));if(ch(.6)){dirty(Math.round(m*.5));log('Favori kazandı. Cebin doldu.','good')}else log('Favori ilk rauntta nakavt oldu. Şike mi vardı?','bad')}},
   {t:'Sürprize oyna',sub:`${fmt(Math.round(m*.3))} · %25 şans, 4 kat`,dis:!canPay(Math.round(m*.3)),fn:()=>{pay(Math.round(m*.3));if(ch(.25)){dirty(Math.round(m*1.2));log('Kimsenin tanımadığı çocuk şampiyonu devirdi! 4 katını aldın.','gold')}else log('Sürpriz olmadı.','dim')}},
   {t:'Sadece izle',fn:()=>add('happy',4)}]}});
-EV(2,()=>okE()&&rank()>=1,()=>{const r=RVX();return{title:'Gece yarısı telefonu',text:`Tanımadığın bir numara: "${r.n} bu gece seni bitirmeye adam yolladı. Benden duymadın." Telefon kapandı.`,prem:{t:'Dayının adamları pusuya düşürsün',sub:'Tetikçiler yakalanır',fn:()=>{gainResp(10);r.pow=Math.max(10,r.pow-10);log(`Tetikçiler daha arabadan inmeden yakalandı. ${r.n} mesajı aldı.`,'gold')}},choices:[
-  {t:'Evde pusu kur',sub:`Şans %${Math.round((S.org?battleP(r.pow*.6):.45)*100)}`,fn:()=>{if(ch(S.org?battleP(r.pow*.6):.45)){gainResp(9);r.pow=Math.max(10,r.pow-6);add('heat',8);log('Gelenleri karşıladın. Sabah hiçbiri yoktu.','gold')}else{hurt(R(20,35),'pusu');if(S.org)casualties(1);log('Çatışmada yaralandın.','bad')}}},
+EV(2,()=>okE()&&rank()>=1,()=>{const r=RVX();return{title:'Gece yarısı telefonu',text:`Tanımadığın bir numara: "${r.n} bu gece seni bitirmeye adam yolladı. Benden duymadın." Telefon kapandı.`,prem:{t:'Dayının adamları pusuya düşürsün',sub:'Tetikçiler yakalanır',fn:()=>{gainResp(10);r.pow=Math.max(rFloor(),r.pow-10);log(`Tetikçiler daha arabadan inmeden yakalandı. ${r.n} mesajı aldı.`,'gold')}},choices:[
+  {t:'Evde pusu kur',sub:`Şans %${Math.round((S.org?battleP(r.pow*.6):.45)*100)}`,fn:()=>{if(ch(S.org?battleP(r.pow*.6):.45)){gainResp(9);r.pow=Math.max(rFloor(),r.pow-6);add('heat',8);log('Gelenleri karşıladın. Sabah hiçbiri yoktu.','gold')}else{hurt(R(20,35),'pusu');if(S.org)casualties(1);log('Çatışmada yaralandın.','bad')}}},
   {t:'Şehirden kaç',sub:'Bir çeyrek ortadan kaybol',fn:()=>{add('respect',-4);add('heat',-8);log('Gece arabaya atlayıp Karadeniz\'e gittin. Ortalık sakinleşince dönersin.','dim')}},
   {t:'Ciddiye alma',sub:'%50 şaka çıkar',fn:()=>{if(ch(.5))log('Kimse gelmedi. Biri seninle dalga geçmiş.','dim');else{hurt(R(25,45),'gece baskını');log('Ciddiymiş. Kapın kırıldı, zor kurtuldun.','bad')}}}]}});
 EV(2,()=>okE()&&S.org&&S.org.members.length>=3,()=>{const ms=S.org.members.filter(m=>!m.jail).slice(0,4);const snitch=pick(S.org.members);return{title:'Aramızda köstebek var',text:'Son iki operasyonda polis hep bir adım öndeydi. Çetende biri konuşuyor. Kimi sorgulatacaksın?',prem:{t:'Dayının emniyetteki kaynağı',sub:'Köstebeğin adı direkt gelir',fn:()=>{S.org.members=S.org.members.filter(x=>x!==snitch);add('heat',-15);gainResp(6);log(`Köstebek ${snitch.name} çıktı. Sessizce ortadan kayboldu.`,'gold')}},choices:[
@@ -3977,7 +3984,7 @@ EV(2,()=>okE()&&(S.fame||0)>=15,()=>({title:'Araştırmacı gazeteci',text:'Bir 
   {t:'Gazeteciyi tehdit et',sub:'Saygı + · Dikkat ++',fn:()=>{gainResp(4);add('heat',18);log('Gazeteci susmadı, tehdidi de yazdı.','bad');news('Gazeteciye tehdit skandalı',3)}}]}));
 EV(2,()=>GAMBLE&&okE()&&S.age>=21,()=>{const r=RVX();const b=BIG();return{title:'Yüksek bahisli poker',text:`Bir otelin kral dairesinde gizli masa. Karşında ${r.n} lideri ${r.boss?r.boss.name:''}. Masaya ne koyuyorsun?`,choices:[
   {t:`${fmt(b)} koy`,sub:'%50',dis:!canPay(b),fn:()=>{pay(b);if(ch(.5+karizma()/400)){dirty(b*2);gainResp(5);log(`${r.boss?r.boss.name:r.n} son eli kaybetti. Masadaki her şey senin.`,'gold')}else log('Karşındaki blöf yapmıyordu. Para gitti.','bad')}},
-  {t:'Mekânını masaya koy',sub:'Kazanırsan onun mekânı senin',dis:!S.org||!S.org.turf.length,fn:()=>{if(ch(.5)){gainResp(12);r.pow=Math.max(10,r.pow-8);dirty(b);log(`Poker masasında ${r.n}'in bir mekânını kazandın! Bedelini nakit ödediler.`,'gold')}else{S.org.turf.pop();log('Mekânını bir el pokerde kaybettin.','bad')}}},
+  {t:'Mekânını masaya koy',sub:'Kazanırsan onun mekânı senin',dis:!S.org||!S.org.turf.length,fn:()=>{if(ch(.5)){gainResp(12);r.pow=Math.max(rFloor(),r.pow-8);dirty(b);log(`Poker masasında ${r.n}'in bir mekânını kazandın! Bedelini nakit ödediler.`,'gold')}else{S.org.turf.pop();log('Mekânını bir el pokerde kaybettin.','bad')}}},
   {t:'Hile yap (kart değiştir)',sub:'%55 · Yakalanırsan kavga',fn:()=>{if(ch(.55)){dirty(b*2);log('Kimse fark etmedi. Gece senin gecendi.','gold')}else{hurt(R(15,30),'poker kavgası');r.war=true;log('Kartı yakaladılar! Masa devrildi, silahlar çekildi.','bad')}}},
   {t:'Masaya oturma',fn:()=>{}}]}});
 EV(2,()=>okE()&&S.age>=18,()=>({title:'Cüzdanını çalan çocuk',text:'Kalabalıkta küçük bir el cebine girdi. Çocuğu bileğinden yakaladın. 12-13 yaşlarında, gözleri korkudan büyümüş.',choices:[
