@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-1300';
+const APPV='2026.11.12-1340';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -675,7 +675,7 @@ function newLife(first,last,look,org,fb){org=org||'istanbul';fb=fb||'orta';
     props:[],cars:[],car:null,jewels:[],staff:[],friends:[],partner:null,married:false,school:true,snitch:false,acts:3,lastRank:0,hurtCause:null,cause:null,peak:0,
     origin:org,famBg:fb,log:[{age:0,lines:[]}]};ensure();
   const O=ORIGINS[org],F=FAMBG[fb];
-  if(fb==='yetim'){log(`${first} ${last} olarak İstanbul'da dünyaya geldin. Kökenin ${O.m}. Annen ve babanı hiç tanımadın; yetimhanede büyüyeceksin.`);add('happy',-10)}
+  if(fb==='yetim'){log(`${first} ${last} olarak İstanbul'da dünyaya geldin. Memleketin ${O.m}. Annen ve babanı hiç tanımadın; yetimhanede büyüyeceksin.`);add('happy',-10)}
   else if(fb==='zengin')log(`${first} ${last} olarak ${O.m} kökenli varlıklı bir ailenin çocuğu olarak Nişantaşı'nda dünyaya geldin. Baban holding sahibi.`);
   else if(fb==='polis')log(`${first} ${last} olarak ${O.m} kökenli bir ailede dünyaya geldin. Baban emniyet müdürü, annen öğretmen.`);
   else if(fb==='mafya'){log(`${first} ${last} olarak ${O.m} kökenli bir ailede dünyaya geldin. Baban yeraltı dünyasının saygın isimlerinden.`);add('heat',5)}
@@ -3002,17 +3002,17 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){_hidAt=Dat
 /* ============ Köken ============ */
 const ORIGINS={
   istanbul:{n:'İstanbullu',m:'İstanbul',b:'Şehrin dilini bilir: karizma +1'},
-  karadeniz:{n:'Karadenizli',m:'Trabzon',b:'Limanda hemşehri ağı: kaçakçılık başarısı +%5, dededen kalma yayla evi'},
-  arnavut:{n:'Arnavut',m:'Balkanlar',b:'Balkan akrabaları: Belgrad rotası %40 ucuz'},
-  kurt:{n:'Kürt',m:'Diyarbakır',b:'Kalabalık aile: 3 akraba fazla'},
-  cerkes:{n:'Çerkes',m:'Kafkasya',b:'Güçlü aile bağları: akrabaların sadakati +10'},
-  arap:{n:'Arap',m:'Hatay',b:'Körfez bağlantıları: Dubai paravan şirketi %40 ucuz'},
-  laz:{n:'Laz',m:'Rize',b:'Denizci aile: Marsilya liman bağlantısı %40 ucuz'},
-  bosnak:{n:'Boşnak',m:'Saraybosna',b:'Balkan diasporası: yurt dışı seyahatleri yarı fiyatına'},
-  gurcu:{n:'Gürcü',m:'Artvin',b:'Batum\'da akrabalar: Batum gezileri bedava'},
-  roman:{n:'Roman',m:'Edirne',b:'Müzik dünyasında tanıdıklar: yetenek avı yarı fiyatına, sanatçılar daha ünlü başlar'},
-  yoruk:{n:'Yörük',m:'Toroslar',b:'Dayanıklı bünye: sağlık +10, yaşlanma yavaş'},
-  egeli:{n:'Egeli',m:'İzmir',b:'Rahat mizaç: her yıl mutluluk +2'}};
+  karadeniz:{n:'Trabzonlu',m:'Trabzon',b:'Limanda hemşehri ağı: kaçakçılık başarısı +%5, dededen kalma yayla evi'},
+  arnavut:{n:'Kosovalı',m:'Kosova',b:'Balkan akrabaları: Belgrad rotası %40 ucuz'},
+  kurt:{n:'Diyarbakırlı',m:'Diyarbakır',b:'Kalabalık aile: 3 akraba fazla'},
+  cerkes:{n:'Düzceli',m:'Düzce',b:'Güçlü aile bağları: akrabaların sadakati +10'},
+  arap:{n:'Hataylı',m:'Hatay',b:'Körfez bağlantıları: Dubai paravan şirketi %40 ucuz'},
+  laz:{n:'Rizeli',m:'Rize',b:'Denizci aile: Marsilya liman bağlantısı %40 ucuz'},
+  bosnak:{n:'Saraybosnalı',m:'Bosna-Hersek',b:'Balkan diasporası: yurt dışı seyahatleri yarı fiyatına'},
+  gurcu:{n:'Artvinli',m:'Artvin',b:'Batum\'da akrabalar: Batum gezileri bedava'},
+  roman:{n:'Edirneli',m:'Edirne',b:'Müzik dünyasında tanıdıklar: yetenek avı yarı fiyatına, sanatçılar daha ünlü başlar'},
+  yoruk:{n:'Mersinli',m:'Mersin',b:'Dayanıklı bünye: sağlık +10, yaşlanma yavaş'},
+  egeli:{n:'İzmirli',m:'İzmir',b:'Rahat mizaç: her yıl mutluluk +2'}};
 const FAMBG={
   orta:{n:'Orta halli aile',b:'Dengeli bir başlangıç; ailen sıkışınca biraz destek olur'},
   zengin:{n:'Zengin aile',b:'18 yaşında ₺2 milyon harçlık, ailenden yüklü para isteyebilirsin, büyük miras; sokak seni ciddiye almaz (saygı −5)'},
@@ -4953,7 +4953,7 @@ function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';
     const rk=rank(),nx=RANKS[rk+1];
     h+=`<div class="sum">
       <div><span>İsim</span><b>${S.first} ${S.last}</b></div>
-      <div><span>Köken</span><b>${ORIGINS[S.origin].n} · ${FAMBG[S.famBg].n}</b></div>
+      <div><span>Memleket</span><b>${ORIGINS[S.origin].n} · ${FAMBG[S.famBg].n}</b></div>
       <div><span>Hanedan puanı</span><b style="color:var(--gold)">${dynScore()} · Rekor ${Math.max(dynBest(),dynScore())}</b></div>
       <div><span>Bu hafta</span><b>${WEV().n} · ${WEV().d}</b></div>
       <div><span>🎟 Bilet</span><b>${tix()}</b></div>
@@ -5215,7 +5215,7 @@ function drawCreate(){const _sl=[...document.querySelectorAll('#createIn .avrow'
     <div class="names"><input id="fn" value="${draft.first}" maxlength="14" aria-label="Ad" placeholder="Ad"><input id="ln" value="${draft.last}" maxlength="14" aria-label="Soyad" placeholder="Soyad"><button class="dice" id="rnd" aria-label="Rastgele isim">🎲</button></div>
     ${avPicker(draft.look,'y')}<button class="row" id="avr" style="justify-content:center;margin-top:22px"><b>🎲 Rastgele görünüm</b></button>
     <div class="sec" style="margin:14px 0 6px">Hikâyen</div>
-    ${crPick('origin','🌍','Memleket',ORIGINS,o=>o.n+' · '+o.m)}
+    ${crPick('origin','🌍','Memleket',ORIGINS,o=>o.n)}
     ${crPick('fam','🏠','Aile',FAMBG,o=>o.n)}
     <button class="btn" id="start" style="margin-top:14px">Hayata başla</button>`;
   document.querySelectorAll('#createIn .avrow').forEach((e,i)=>{if(_sl[i])e.scrollLeft=_sl[i]});
