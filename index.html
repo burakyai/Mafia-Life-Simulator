@@ -318,7 +318,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-2010';
+const APPV='2026.11.12-2020';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -3308,8 +3308,8 @@ EXTRA.sokak=()=>{const st=stEnsure();let h='';
   const n=totSq();h+=`<div class="sec">🔫 Sokak kadron · ${n} adam</div><p class="note">Ailendeki her üyenin kendi sokak ekibi var. Kadro büyüdükçe savaşta ve haraçta güçlenirsin. Her çeyrek adam başı ${fmt(Math.round(SQW*S.cpi))} maaş${st.gw?' (savaşta ×1,5)':''}; silahlar zamanla eskir, savaşta mermi hızla biter. Toplam güç: <b>${stPow()}</b></p>`;
   {const c=fullCost();if(S.premium)h+=row('data-x="sqfull:dayi"','👑','Dayı modu: kadroyu fulle','Üyelerin gücü 10/10, bütün ekipler tam kadro, silahlar %100, sadakat %100 · Ücretsiz','',false);
    h+=row('data-x="sqfull:"','⚡','Bütün ekipleri doldur ve silahlandır',c?`Tek tuşla tam kadro + silah %100`:'Kadron zaten tam',c?fmtS(c):'',!c||!canPayB(c));}
-  h+=row('data-x="sq:me"','🧍','Senin ekibin',`${st.my.sq}/${sqCap(null)} adam · Silah %${st.my.ar}`,'›',false);
-  LTS().forEach(m=>h+=row(`data-x="sq:${m.id}"`,m.jail?'⛓️':m.hurt?'🩹':m.fam?'🌹':'🧔',m.fam?`${m.name} (ailenin ekibi)`:m.name,`${m.sq||0}/${sqCap(m)} adam · Silah %${m.ar||0} · Sadakat %${m.loy}${m.jail?' · Cezaevinde':''}`,'›',false));
+  h+=`<button class="row" data-x="sq:me"><span class="ic" style="padding:0;overflow:hidden"><span class="av" style="width:100%;height:100%;border:0">${avatarSVG(S.look,S.age)}</span></span><span class="tx"><b>Senin ekibin</b><span>${st.my.sq}/${sqCap(null)} adam · Silah %${st.my.ar}</span></span><span class="rt">›</span></button>`;
+  LTS().forEach(m=>{const pc=typeof mPic==='function'&&!m.fam?mPic(m):null;const im=pc?npcImg(pc):'';h+=`<button class="row" data-x="sq:${m.id}"><span class="ic"${im?' style="padding:0;overflow:hidden"':''}>${im||(m.jail?'⛓️':m.hurt?'🩹':m.fam?'🌹':'🧔')}</span><span class="tx"><b>${m.fam?`${m.name} (ailenin ekibi)`:m.name}</b><span>${m.sq||0}/${sqCap(m)} adam · Silah %${m.ar||0} · Sadakat %${m.loy}${m.jail?' · ⛓️ Cezaevinde':m.hurt?' · 🩹 Yaralı':''}</span></span><span class="rt">›</span></button>`});
   if(!S.org&&S.family)h+=`<p class="note">${S.family} rütbene göre sana ${LTS().length} sokak ekibi verdi${LTS().length?'':' (Tetikçi rütbesinde ilk ekip gelir)'}. Maaşlarını aile öder. Rütben yükseldikçe daha çok ekip gelir.</p>`;else if(!S.org)h+='<p class="note">Bir aileye katılırsan aile sana sokak ekipleri verir; kendi aileni kurarsan her üyen kendi ekibini yönetir.</p>';
   // haraç
   const il=st.shops.filter(o=>shopT(o).il),lg=st.shops.filter(o=>!shopT(o).il);const payers=il.filter(o=>o.st==='odeyor');const tot=payers.reduce((a,o)=>a+shopFee(o),0);
