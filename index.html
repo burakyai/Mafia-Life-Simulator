@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-1430';
+const APPV='2026.11.12-1800';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1351,24 +1351,9 @@ const EXTRA={
     if(S.bank.card)h+=`<p class="note">Nakit yetmezse fark kredi kartından çekilir. Kalan kart limitin: ${fmt(cardAvail())}</p>`;
     return['Alışveriş merkezi',h]},
   banka:()=>{const b=S.bank;let h='';
-    const tot=b.dep+acctTotal();h+=`<div class="sum"><div><span>Toplam mevduat</span><b style="color:var(--gold)">${fmt(tot)}</b></div><div><span>Vadesiz (Boğaz Bankası)</span><b>${fmt(b.dep)}</b></div><div><span>Vadeli hesaplar</span><b>${fmt(acctTotal())}</b></div>${acctTotal(true)?`<div><span>İsviçre'de gizli</span><b>${fmt(acctTotal(true))}</b></div>`:''}</div>`;
-    if(S.accts.length){h+='<div class="sec">Vadeli hesapların</div>';S.accts.forEach(a=>{const bk=BK(a.bank),t=TERMS.find(x=>x.q===a.q),left=a.mat-QS();h+=`<button class="row" data-x="acct:${a.id}">${bLogo(bk)}<span class="tx"><b>${bk.n} · ${t.n}</b><span>%${Math.round(a.rate*100)} · Vadeye ${left*3} ay${a.auto?' · otomatik yenileme':''}</span><div class="bar" style="margin-top:5px"><i style="width:${Math.round((1-left/a.q)*100)}%;background:${bk.c}"></i></div></span><span class="rt">${fmtS(a.amt)}</span></button>`})}
-    h+='<div class="sec">Bankalar ve vadeli mevduat oranları</div><p class="note">Oranlar enflasyona göre her yıl değişir. Vadeli hesap açınca o anki oran kilitlenir.</p>';
-    BANKS.forEach(bk=>{h+=`<div class="bk" style="border-color:${bk.c}"><div class="bkh">${bLogo(bk,34)}<div><b>${bk.n}</b><span>${bk.d}</span></div></div><div class="bkr">${TERMS.map(t=>`<button data-x="bopen:${bk.id}:${t.q}" ${(S.money+b.dep)<(bk.min?bk.min*S.cpi:10000)||!!S.jail?'disabled':''}><small>${t.n}</small><b>%${Math.round(bRate(bk,t,0)*100)}</b></button>`).join('')}</div></div>`});
-    h+=`<div class="sec">${bLogo(BK('bogaz'),20)} Boğaz Bankası hizmetleri</div>`;
-    h+=`<div class="sum">
-      <div><span>Kredi notu</span><b style="color:${b.score>=1300?'var(--good)':b.score>=900?'var(--warn)':'var(--blood)'}">${b.score} / 1900</b></div>
-      <div><span>Vadesiz hesap (yıllık %${Math.round(Math.max(.03,depRate()*.35)*100)})</span><b>${fmt(b.dep)}</b></div>
-      <div><span>Kredi borcu</span><b>${b.loan?fmt(b.loan.pay*b.loan.left)+` · ${b.loan.left} taksit`:'Yok'}</b></div>
-      <div><span>Kredi kartı</span><b>${b.card?`Borç ${fmtS(b.card.debt)} / Limit ${fmtS(b.card.limit)}`:'Yok'}</b></div></div>`;
-    h+='<div class="sec">Mevduat</div>'+row('data-x="dep:in"','⬇','Vadesiz hesaba yatır',`Yıllık %${Math.round(Math.max(.03,depRate()*.35)*100)} faiz · istediğin an çekilir`,'',S.money<1000)+row('data-x="dep:out"','⬆','Para çek','Kasana aktar','',b.dep<=0);
-    h+='<div class="sec">Kredi</div>';
-    if((S.loans||[]).length){h+='<div class="sec">Taşıt kredilerin</div>';S.loans.forEach(L=>h+=row(`data-x="lnclose:${L.id}"`,'🚗',L.n,`Aylık ${fmt(L.mo)} · ${L.left}/${L.tot} ay kaldı${L.late?' · Gecikmede!':''}`,'Kapat '+fmtS(L.mo*L.left*.92),!canPay(L.mo*L.left*.92)))}
-    if(b.loan){const c=Math.round(b.loan.pay*b.loan.left*.9);h+=row('data-x="loan:close"','✅','Krediyi erken kapat','%10 erken kapama indirimi',fmtS(c),cashA()<c)}
-    else{const L=loanLimit();h+=row('data-x="loan:new"','💰','İhtiyaç kredisi çek',L?`Limitin ${fmt(L)} · 3 yıl vade · yıllık %${Math.round(loanRate()*100)}`:'Kredi notun en az 800 olmalı','',!L||!!S.jail)}
-    h+='<p class="note">Taksitler her yıl kasandan otomatik ödenir. İki taksiti üst üste ödeyemezsen icra mallarına el koyar.</p><div class="sec">Kredi kartı</div>';
-    if(b.card)h+=row('data-x="card:pay"','💵','Kart borcunu öde','Borç her yıl %50 faizle büyür',fmtS(b.card.debt),!b.card.debt||cashA()<=0)+'<p class="note">Bir şey alırken nakdin yetmezse fark otomatik karttan çekilir. Her yıl borcun %30\'u kasandan ödenir.</p>';
-    else h+=row('data-x="card:apply"','🪪','Kredi kartı başvurusu','Kredi notu en az 900 olmalı','',!!S.jail);
+    const tot=b.dep+acctTotal();h+=`<div class="sum"><div><span>Toplam mevduat</span><b style="color:var(--gold)">${fmt(tot)}</b></div><div><span>Vadesiz (Boğaz Bankası)</span><b>${fmt(b.dep)}</b></div><div><span>Vadeli hesaplar</span><b>${fmt(acctTotal())}</b></div>${acctTotal(true)?`<div><span>Offshore'da gizli</span><b>${fmt(acctTotal(true))}</b></div>`:''}</div>`;
+    h+='<div class="sec">Bankalar</div>';
+    BANKS.forEach(bk=>{const acc=(S.accts||[]).filter(a=>a.bank===bk.id).reduce((t,a)=>t+a.amt,0)+(bk.id==='bogaz'?b.dep:0);h+=`<button class="row" data-go="bk_${bk.id}" style="background:${bk.g};border-color:${bk.ac}66;color:#fff">${bLogo(bk,40)}<span class="tx"><b style="font-family:${bk.f};color:#fff">${bk.n}</b><span style="color:${bk.ac}">${bk.sl}</span></span><span class="rt" style="color:#fff">${acc?fmtS(acc):''} ›</span></button>`});
     return['Banka',h]},
   borsa:()=>{const pv=portVal(),cost=Object.values(S.stocks).reduce((s,x)=>s+x.cost,0);
     let h=`<p class="note">Fiyatlar her çeyrek değişir. Portföyün: <b style="color:var(--gold)">${fmt(pv)}</b>${cost?` · Kâr/zarar <b style="color:${pv>=cost?'var(--good)':'var(--blood)'}">${pv>=cost?'+':''}${fmt(pv-cost)}</b>`:''}</p>`;
@@ -1408,12 +1393,12 @@ const ACT={
       {t:'Sat',sub:fmt(v)+' (emlakçı payı %5)',fn:()=>{S.money+=v;S.houses=S.houses.filter(x=>x!==o);if(S.home===uid)S.home=null;log(`${t.n} evini ${fmt(v)} karşılığında sattın.`);if(o.inv){const k=v-o.inv;S.flipN=(S.flipN||0)+1;S.flipP=(S.flipP||0)+k;log(k>=0?`🏚➜🏡 Ev çevirmeden ${fmt(k)} kâr ettin. (Toplam ${S.flipN} ev, ${fmt(S.flipP)} kâr)`:`🏚 Bu evden ${fmt(-k)} zarar ettin.`,k>=0?'gold':'bad')}}},
       {t:'Vazgeç',fn:()=>{}}]})},
   avmbuy:id=>{const s=SHOP.find(x=>x.id===id);if(!s)return;if(!pay(s.p))return;add('happy',s.h);log(s.partner?`${S.partner} çantayı görünce boynuna sarıldı.`:`${s.n} aldın.`,'good');done()},
-  dep:k=>{closeSheet();if(k==='in')amountModal('Vadesiz hesaba yatır',`Yıllık %${Math.round(Math.max(.03,depRate()*.35)*100)} faiz işler, istediğin an çekebilirsin.`,S.money,a=>{spend(a);S.bank.dep+=a;if(S.heat>=50&&a>=300000&&ch(.5)){add('heat',12);log(`Bankaya ${fmt(a)} yatırdın. Banka işlemi Maliye'ye bildirdi, dikkat arttı.`,'bad')}else log(`Bankaya ${fmt(a)} yatırdın.`,'dim')},'banka');
-    else amountModal('Para çek','Mevduattan kasana aktar.',S.bank.dep,a=>{S.bank.dep-=a;S.money+=a;log(`Bankadan ${fmt(a)} çektin.`,'dim')},'banka')},
+  dep:k=>{closeSheet();if(k==='in')amountModal('Vadesiz hesaba yatır',`Yıllık %${Math.round(Math.max(.03,depRate()*.35)*100)} faiz işler, istediğin an çekebilirsin.`,S.money,a=>{spend(a);S.bank.dep+=a;if(S.heat>=50&&a>=300000&&ch(.5)){add('heat',12);log(`Bankaya ${fmt(a)} yatırdın. Banka işlemi Maliye'ye bildirdi, dikkat arttı.`,'bad')}else log(`Bankaya ${fmt(a)} yatırdın.`,'dim')},'bk_bogaz');
+    else amountModal('Para çek','Mevduattan kasana aktar.',S.bank.dep,a=>{S.bank.dep-=a;S.money+=a;log(`Bankadan ${fmt(a)} çektin.`,'dim')},'bk_bogaz')},
   loan:k=>{const b=S.bank;
     if(k==='close'){const c=Math.round(b.loan.pay*b.loan.left*.9);if(cashA()<c)return;spend(c);b.loan=null;b.score=Math.min(1900,b.score+60);log(`Kredini ${fmt(c)} ödeyerek kapattın.`,'good');return done()}
     const L=loanLimit();closeSheet();
-    queue({back:'banka',title:'İhtiyaç kredisi',text:`Limitin ${fmt(L)}. Vade 3 yıl, yıllık faiz %${Math.round(loanRate()*100)}. Taksitler her yıl kasandan çekilir.`,choices:[.25,.5,1].map(f=>{const a=Math.max(10000,Math.round(L*f/1000)*1000),p=Math.round(a*(1+loanRate()*3)/3);return{t:fmt(a),sub:`Yıllık taksit ${fmt(p)}`,fn:()=>{S.money+=a;b.loan={pay:p,left:3,late:0};log(`${fmt(a)} kredi çektin. Yıllık taksit ${fmt(p)}.`,'gold')}}}).concat([{t:'Vazgeç',fn:()=>{}}])})},
+    queue({back:'bk_bogaz',title:'İhtiyaç kredisi',text:`Limitin ${fmt(L)}. Vade 3 yıl, yıllık faiz %${Math.round(loanRate()*100)}. Taksitler her yıl kasandan çekilir.`,choices:[.25,.5,1].map(f=>{const a=Math.max(10000,Math.round(L*f/1000)*1000),p=Math.round(a*(1+loanRate()*3)/3);return{t:fmt(a),sub:`Yıllık taksit ${fmt(p)}`,fn:()=>{S.money+=a;b.loan={pay:p,left:3,late:0};log(`${fmt(a)} kredi çektin. Yıllık taksit ${fmt(p)}.`,'gold')}}}).concat([{t:'Vazgeç',fn:()=>{}}])})},
   card:k=>{const b=S.bank;
     if(k==='apply'){if(b.score>=900){b.card={limit:Math.round(b.score*100/1000)*1000,debt:0};log(`Kredi kartın onaylandı. Limit: ${fmt(b.card.limit)}.`,'good')}else{log('Kredi kartı başvurun reddedildi. Kredi notun yetersiz.','bad')}return done()}
     const x=Math.min(S.money,b.card.debt);spend(x);b.card.debt-=x;log(`Kart borcundan ${fmt(x)} ödedin.`,'dim');done()},
@@ -3138,15 +3123,37 @@ EXTRA.konsey=()=>{const C=S.council;let h='';
 
 /* ============ Bankalar ve vadeli hesaplar ============ */
 const BANKS=[
-  {id:'bogaz',n:'Boğaz Bankası',c:'#1f5fa8',l:'B',d:'Ana bankan. Vadesiz hesap, kredi kartı ve kredi burada.',adj:0},
-  {id:'anadolu',n:'Anadolu Katılım',c:'#2e7d4f',l:'A',d:'Faizsiz bankacılık: faiz yerine kâr payı verir, oran dönem sonunda biraz oynar.',adj:-.01,vary:.05},
-  {id:'galata',n:'Galata Yatırım',c:'#8a2f2f',l:'G',d:'Büyük paraya özel: ₺10 milyon üstü hesaplara +%3.',adj:.005,big:.03},
-  {id:'cepte',n:'Cepte Dijital',c:'#7b4fd6',l:'C',d:'Sadece uygulama, şube yok. En yüksek oran ama hesap başına ₺5 milyon sınırı.',adj:.04,max:5e6},
-  {id:'zurih',n:'Zürih Private Bank',c:'#b8962e',l:'Z',d:'İsviçre özel bankacılık. Faiz düşük ama Maliye görmez, icra dokunamaz. En az ₺10 milyon.',adj:-.14,min:1e7,secret:true}];
+  {id:'bogaz',n:'Boğaz Bankası',c:'#1f5fa8',l:'B',d:'Ana bankan. Vadesiz hesap, kredi kartı ve kredi burada.',adj:0,g:'linear-gradient(135deg,#071d42,#1f5fa8)',sl:'1924\'ten beri Türkiye\'nin bankası',f:'Georgia,serif',ac:'#9cc4ff'},
+  {id:'anadolu',n:'Anadolu Katılım',c:'#2e7d4f',l:'A',d:'Faizsiz bankacılık: faiz yerine kâr payı verir, oran dönem sonunda biraz oynar.',adj:-.01,vary:.05,g:'linear-gradient(135deg,#0b3321,#2e7d4f 60%,#b8962e)',sl:'Faizsiz, helal kazanç',f:'inherit',ac:'#e9cf7a'},
+  {id:'galata',n:'Galata Bankası',c:'#c3272b',l:'G',d:'Kurumsal ve yatırım bankası. ₺10 milyon üstü hesaplara +%3.',adj:.005,big:.03,g:'linear-gradient(135deg,#4a0a0d,#c3272b)',sl:'Büyük işlerin bankası',f:'"Arial Black",Arial,sans-serif',ac:'#ffc2c2'},
+  {id:'cepte',n:'Cepte Dijital',c:'#7b4fd6',l:'C',d:'Sadece uygulama, şube yok. En yüksek oran ama hesap başına ₺5 milyon sınırı.',adj:.04,max:5e6,g:'linear-gradient(135deg,#2a1470,#7b4fd6 55%,#e14fd6)',sl:'Şube yok, masraf yok, sadece cebin',f:'inherit',ac:'#f3d0ff'},
+  {id:'zurih',n:'Kayman Offshore Bank',c:'#b8962e',l:'K',d:'Cayman Adaları\'nda offshore hesap. Faiz düşük ama Maliye görmez, icra dokunamaz. En az ₺10 milyon.',adj:-.14,min:1e7,secret:true,g:'linear-gradient(135deg,#030303,#1c1a12 60%,#8a6d1f)',sl:'Cayman Adaları · Gizlilik esastır',f:'Georgia,serif',ac:'#e9d08a'}];
+const bkHead=bk=>{const mine=bk.id==='bogaz'?S.bank.dep:0;const acc=(S.accts||[]).filter(a=>a.bank===bk.id).reduce((t,a)=>t+a.amt,0);return `<div style="background:${bk.g};border-radius:16px;padding:16px;margin-bottom:12px;color:#fff;box-shadow:0 4px 16px #0008;border:1px solid ${bk.ac}55"><div style="display:flex;gap:12px;align-items:center">${bLogo(bk,46)}<div><b style="font-family:${bk.f};font-size:20px;letter-spacing:.02em">${bk.n}</b><div style="font-size:12.5px;color:${bk.ac};margin-top:2px">${bk.sl}</div></div></div><div style="display:flex;justify-content:space-between;margin-top:14px;font-size:13px"><span>${bk.id==='bogaz'?`Vadesiz<br><b style="font-size:16px">${fmtS(mine)}</b>`:`&nbsp;`}</span><span style="text-align:right">Vadeli<br><b style="font-size:16px">${fmtS(acc)}</b></span></div></div>`};
 const TERMS=[{q:1,n:'3 ay',b:-.05},{q:2,n:'6 ay',b:-.025},{q:4,n:'1 yıl',b:0},{q:8,n:'2 yıl',b:.02}];
 const BK=id=>BANKS.find(b=>b.id===id);
 function bRate(bk,t,amt){return clamp((S.infl||.3)+bk.adj+t.b+(bk.big&&amt>=1e7*S.cpi?bk.big:0),.02,1.2)}
-const bLogo=(bk,sz=38)=>`<span style="width:${sz}px;height:${sz}px;border-radius:10px;background:${bk.c};display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:${sz*.5}px;color:#fff;flex:none">${bk.l}</span>`;
+const bLogo=(bk,sz=38)=>`<span style="width:${sz}px;height:${sz}px;border-radius:${bk.id==='cepte'?'50%':'10px'};background:${bk.id==='zurih'?'#0a0a0a':bk.c};border:${bk.id==='zurih'?'1.5px solid #e9d08a':'0'};color:${bk.id==='zurih'?'#e9d08a':'#fff'};display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:${sz*.5}px;color:#fff;flex:none">${bk.l}</span>`;
+function bkPage(id){const bk=BK(id);const b=S.bank;let h=bkHead(bk);
+  h+=`<p class="note">${bk.d}</p>`;
+  const my=(S.accts||[]).filter(a=>a.bank===id);if(my.length){h+='<div class="sec">Vadeli hesapların</div>';my.forEach(a=>{const t=TERMS.find(x=>x.q===a.q),left=a.mat-QS();h+=`<button class="row" data-x="acct:${a.id}">${bLogo(bk)}<span class="tx"><b>${t.n} vadeli</b><span>%${Math.round(a.rate*100)} · Vadeye ${left*3} ay${a.auto?' · otomatik yenileme':''}</span><div class="bar" style="margin-top:5px"><i style="width:${Math.round((1-left/a.q)*100)}%;background:${bk.c}"></i></div></span><span class="rt">${fmtS(a.amt)}</span></button>`})}
+  h+=`<div class="sec">Vadeli hesap aç</div><p class="note">Oranlar enflasyona göre her yıl değişir. Hesap açınca o anki oran kilitlenir.</p><div class="bk" style="border-color:${bk.c}"><div class="bkr">${TERMS.map(t=>`<button data-x="bopen:${bk.id}:${t.q}" ${(S.money+b.dep)<(bk.min?bk.min*S.cpi:10000)||!!S.jail?'disabled':''} style="border-color:${bk.c}"><small>${t.n}</small><b style="color:${bk.ac}">%${Math.round(bRate(bk,t,0)*100)}</b></button>`).join('')}</div></div>`;
+  if(id==='bogaz'){
+    h+=`<div class="sum">
+      <div><span>Kredi notu</span><b style="color:${b.score>=1300?'var(--good)':b.score>=900?'var(--warn)':'var(--blood)'}">${b.score} / 1900</b></div>
+      <div><span>Vadesiz hesap (yıllık %${Math.round(Math.max(.03,depRate()*.35)*100)})</span><b>${fmt(b.dep)}</b></div>
+      <div><span>Kredi borcu</span><b>${b.loan?fmt(b.loan.pay*b.loan.left)+` · ${b.loan.left} taksit`:'Yok'}</b></div>
+      <div><span>Kredi kartı</span><b>${b.card?`Borç ${fmtS(b.card.debt)} / Limit ${fmtS(b.card.limit)}`:'Yok'}</b></div></div>`;
+    h+='<div class="sec">Mevduat</div>'+row('data-x="dep:in"','⬇','Vadesiz hesaba yatır',`Yıllık %${Math.round(Math.max(.03,depRate()*.35)*100)} faiz · istediğin an çekilir`,'',S.money<1000)+row('data-x="dep:out"','⬆','Para çek','Kasana aktar','',b.dep<=0);
+    h+='<div class="sec">Kredi</div>';
+    if((S.loans||[]).length){h+='<div class="sec">Taşıt kredilerin</div>';S.loans.forEach(L=>h+=row(`data-x="lnclose:${L.id}"`,'🚗',L.n,`Aylık ${fmt(L.mo)} · ${L.left}/${L.tot} ay kaldı${L.late?' · Gecikmede!':''}`,'Kapat '+fmtS(L.mo*L.left*.92),!canPay(L.mo*L.left*.92)))}
+    if(b.loan){const c=Math.round(b.loan.pay*b.loan.left*.9);h+=row('data-x="loan:close"','✅','Krediyi erken kapat','%10 erken kapama indirimi',fmtS(c),cashA()<c)}
+    else{const L=loanLimit();h+=row('data-x="loan:new"','💰','İhtiyaç kredisi çek',L?`Limitin ${fmt(L)} · 3 yıl vade · yıllık %${Math.round(loanRate()*100)}`:'Kredi notun en az 800 olmalı','',!L||!!S.jail)}
+    h+='<p class="note">Taksitler her yıl kasandan otomatik ödenir. İki taksiti üst üste ödeyemezsen icra mallarına el koyar.</p><div class="sec">Kredi kartı</div>';
+    if(b.card)h+=row('data-x="card:pay"','💵','Kart borcunu öde','Borç her yıl %50 faizle büyür',fmtS(b.card.debt),!b.card.debt||cashA()<=0)+'<p class="note">Bir şey alırken nakdin yetmezse fark otomatik karttan çekilir. Her yıl borcun %30\'u kasandan ödenir.</p>';
+    else h+=row('data-x="card:apply"','🪪','Kredi kartı başvurusu','Kredi notu en az 900 olmalı','',!!S.jail);
+  }
+  return[bk.n,h]}
+BANKS.forEach(bk=>{EXTRA['bk_'+bk.id]=()=>bkPage(bk.id)});
 const acctTotal=(secretOnly)=>(S.accts||[]).filter(a=>secretOnly===undefined||!!BK(a.bank).secret===secretOnly).reduce((s,a)=>s+a.amt,0);
 function acctQuarter(){const now=QS();const keep=[];
   (S.accts||[]).forEach(a=>{if(now>=a.mat){const bk=BK(a.bank);let r=a.rate;if(bk.vary)r=clamp(r+R(-100,100)/100*bk.vary,.01,1.2);const int=Math.round(a.amt*r*a.q/4);
@@ -3154,18 +3161,21 @@ function acctQuarter(){const now=QS();const keep=[];
       if(a.auto){const t=TERMS.find(x=>x.q===a.q);a.amt+=int;a.rate=bRate(bk,t,a.amt);a.mat=now+a.q;keep.push(a);log(`${bk.n}: vadeli hesabın ${fmt(int)} ${bk.vary?'kâr payı':'faiz'} getirdi ve yenilendi (yeni oran %${Math.round(a.rate*100)}).`,'good')}
       else{S.bank.dep+=a.amt+int;log(`${bk.n}: vadeli hesabın doldu. ${fmt(a.amt+int)} vadesiz hesabına geçti (getiri ${fmt(int)}).`,'good')}}
     else keep.push(a)});S.accts=keep}
-ACT.bopen=k=>{const [bid,q]=k.split(':');const bk=BK(bid),t=TERMS.find(x=>x.q===+q);closeSheet();
+ACT.bopen=k=>{const [bid,q]=k.split(':');const bk=BK(bid),t=TERMS.find(x=>x.q===+q);closeSheet();window._nm='';
   const minA=bk.min?Math.ceil(bk.min*S.cpi/1000)*1000:10000,maxA=bk.max?bk.max*S.cpi:Infinity;const pool=S.money+S.bank.dep;
-  const opts=[1e5,1e6,1e7,1e8,1e9].map(a=>Math.ceil(a*S.cpi/1000)*1000).filter(a=>a>=minA&&a<Math.min(pool,maxA));
-  const all=Math.min(pool,maxA);
-  queue({back:'banka',title:`${bk.n} · ${t.n} vadeli`,text:`Yıllık %${Math.round(bRate(bk,t,all)*100)} ${bk.vary?'tahmini kâr payı':'faiz'}. Para ${t.n} boyunca kilitlenir, vadeden önce bozarsan getiri alamazsın. Önce kasadan, yetmezse vadesiz hesabından çekilir.${bk.min?` En az ${fmt(minA)}.`:''}${bk.max?` En fazla ${fmt(maxA)}.`:''}`,
-    choices:[...opts.map(a=>({t:fmt(a),sub:`Vade sonunda ~${fmt(Math.round(a*(1+bRate(bk,t,a)*t.q/4)))}`,fn:()=>openAcct(bk,t,a)})),...(all>=minA?[{t:`Tamamı (${fmt(all)})`,sub:'Kasa + vadesiz',fn:()=>openAcct(bk,t,all)}]:[]),{t:'Vazgeç',fn:()=>{}}]})};
+  const all=Math.floor(Math.min(pool,maxA)),half=Math.floor(Math.min(pool/2,maxA));const ok=a=>a>=minA&&a<=all;
+  const go=a=>{a=Math.floor(a);if(!ok(a)){toast(a<minA?`En az ${fmt(minA)}`:`En fazla ${fmt(all)}`);return}openAcct(bk,t,a)};
+  queue({back:'bk_'+bk.id,title:`${bk.n} · ${t.n} vadeli`,text:`Yıllık %${Math.round(bRate(bk,t,all)*100)} ${bk.vary?'tahmini kâr payı':'faiz'}. Para ${t.n} boyunca kilitlenir, vadeden önce bozarsan getiri alamazsın. Önce kasadan, yetmezse vadesiz hesabından çekilir.${bk.min?` En az ${fmt(minA)}.`:''}${bk.max?` En fazla ${fmt(maxA)}.`:''}<br>Kullanılabilir: <b>${fmt(pool)}</b>. Tutar yaz: <i>250 bin</i>, <i>1,5 milyon</i>, <i>%30</i>.<input id="nmBox" inputmode="text" autocomplete="off" placeholder="Örn. 500 bin" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:12px;padding:12px 14px;border-radius:12px;border:1.5px solid ${bk.c};background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box">`,
+    choices:[{t:'✍️ Yazdığım tutar',sub:'Kutuya yazıp dokun',fn:()=>go(amtRead(pool))},
+      {t:`Yarısı · ${fmtS(half)}`,sub:`Vade sonunda ~${fmtS(half*(1+bRate(bk,t,half)*t.q/4))}`,dis:!ok(half),fn:()=>go(half)},
+      {t:`Tamamı · ${fmtS(all)}`,sub:`Vade sonunda ~${fmtS(all*(1+bRate(bk,t,all)*t.q/4))}`,dis:!ok(all),fn:()=>go(all)},
+      {t:'Vazgeç',fn:()=>{}}]})};
 function openAcct(bk,t,a){let need=a;const m=Math.min(S.money,need);spend(m);need-=m;if(need>0){S.bank.dep-=Math.min(S.bank.dep,need)}
   S.accts.push({id:'ac'+Date.now()+R(0,999),bank:bk.id,amt:Math.round(a),q:t.q,rate:bRate(bk,t,a),mat:QS()+t.q,auto:true});
   if(!bk.secret&&S.heat>=50&&a>=3e5*S.cpi&&ch(.4)){add('heat',10);log(`${bk.n} büyük yatırımını Maliye'ye bildirdi.`,'bad')}
   log(`${bk.n}'de ${t.n} vadeli hesap açtın: ${fmt(a)}, yıllık %${Math.round(bRate(bk,t,a)*100)}.`,'good')}
 ACT.acct=id=>{const a=S.accts.find(x=>x.id===id);if(!a)return;const bk=BK(a.bank);closeSheet();const left=a.mat-QS();
-  queue({back:'banka',title:`${bk.n} · ${TERMS.find(x=>x.q===a.q).n} vadeli`,text:`Anapara ${fmt(a.amt)}, yıllık %${Math.round(a.rate*100)}. Vadeye ${left*3} ay var. Vade sonunda ~${fmt(Math.round(a.amt*(1+a.rate*a.q/4)))}. ${a.auto?'Vade sonunda otomatik yenilenir.':'Vade sonunda vadesiz hesaba geçer.'}`,choices:[
+  queue({back:'bk_'+bk.id,title:`${bk.n} · ${TERMS.find(x=>x.q===a.q).n} vadeli`,text:`Anapara ${fmt(a.amt)}, yıllık %${Math.round(a.rate*100)}. Vadeye ${left*3} ay var. Vade sonunda ~${fmt(Math.round(a.amt*(1+a.rate*a.q/4)))}. ${a.auto?'Vade sonunda otomatik yenilenir.':'Vade sonunda vadesiz hesaba geçer.'}`,choices:[
     {t:a.auto?'Otomatik yenilemeyi kapat':'Otomatik yenilemeyi aç',fn:()=>{a.auto=!a.auto;log(`${bk.n} hesabında otomatik yenileme ${a.auto?'açıldı':'kapatıldı'}.`,'dim')}},
     {t:'Vadeyi boz',sub:'Anapara geri gelir, getiri yanar',fn:()=>{S.accts=S.accts.filter(x=>x!==a);S.bank.dep+=a.amt;log(`${bk.n} hesabını vadesinden önce bozdun. ${fmt(a.amt)} vadesiz hesaba geçti.`,'dim')}},
     {t:'Kapat',fn:()=>{}}]})};
