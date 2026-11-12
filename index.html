@@ -203,6 +203,7 @@ body{position:fixed;inset:0;width:100%;height:var(--vh,100%);overflow:hidden;tou
 #ctBox{position:fixed;inset:0;z-index:70;background:#000000f0;display:none;flex-direction:column;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none}#ctBox.on{display:flex}
 .ctHud{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;padding:8px 14px;box-sizing:border-box;font-size:15px;color:#eee}.ctHud b{font-family:var(--display);color:var(--gold);letter-spacing:.06em;font-size:15px}
 .ctSt{position:relative;overflow:hidden;border:2px solid var(--gold2);border-radius:10px;box-shadow:0 10px 40px #000;touch-action:none;box-sizing:content-box}
+.kvRoad{position:absolute;inset:0;background-image:url(img/kv_yol.webp);background-repeat:repeat-y}.kvSiren{position:absolute;left:0;right:0;bottom:0;height:16%;pointer-events:none;z-index:900;animation:kvsir .5s infinite alternate}@keyframes kvsir{from{background:linear-gradient(0deg,#1a4dffaa,transparent)}to{background:linear-gradient(0deg,#ff1a1aaa,transparent)}}
 .ctM{position:absolute;left:0;top:0;pointer-events:none;filter:drop-shadow(0 3px 3px #000a);will-change:transform}.ctDd{filter:drop-shadow(0 2px 2px #000a) brightness(.85)}
 .ctBl{position:absolute;left:0;top:0;width:9px;height:4px;margin:-2px 0 0 -4px;border-radius:2px;background:#ff5a3a;box-shadow:0 0 6px 2px #ff3a1a;pointer-events:none;z-index:999;will-change:transform}.ctBm{background:#ffe9a0;box-shadow:0 0 6px 2px #ffc23a}.ctIn{position:absolute;top:0;background-image:url(img/ct_bg.webp);image-rendering:auto}
 .ctE{position:absolute;opacity:0;transform:translateY(22%);transition:opacity .1s,transform .12s;pointer-events:none;filter:drop-shadow(0 3px 3px #000a)}.ctE.up{opacity:1;transform:none;pointer-events:auto}
@@ -329,7 +330,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-2345';
+const APPV='2026.11.13-0010';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2358,22 +2359,29 @@ function mgFight(cb,opp){let hits=0,miss=0,pos=0,dir=1,sp=1.3,z0=R(20,65),zw=20,
   const step=()=>{if(!run)return;pos+=dir*sp;if(pos>=100){pos=100;dir=-1}if(pos<=0){pos=0;dir=1}m.style.left=pos+'%';MGT=requestAnimationFrame(step)};step();
   $('mgv').onclick=()=>{if(!run)return;if(pos>=z0&&pos<=z0+zw){hits++;toast('İsabet!')}else miss++;$('mgs').textContent=`İsabet ${hits} · Iska ${miss}`;sp+=.35;z0=R(5,75);zw=Math.max(11,zw-2);setZ();
     if(hits>=3||miss>=3){run=false;setTimeout(()=>{mgClose();cb(hits>=3)},250)}}}
-function mgChase(cb){mgOpen(`<h2>Kovalamaca</h2><p class="mgp">Polis peşinde! Engellerden kaç, 10 saniye dayan. 2 canın var. Ekranın soluna ya da sağına dokun.</p><canvas id="mgcv" width="300" height="340" style="width:100%;border-radius:10px;background:#1b1719;display:block;touch-action:none"></canvas><div class="mgpad2"><button id="mgl">◀</button><button id="mgr">▶</button></div>`);
-  const cv=$('mgcv'),x=cv.getContext('2d');let lane=1,obs=[],t0=performance.now(),last=t0,lives=2,spawn=.6,run=true,inv=0;const L=i=>50+i*100;
-  $('mgl').onclick=()=>lane=Math.max(0,lane-1);$('mgr').onclick=()=>lane=Math.min(2,lane+1);
-  cv.onclick=e=>{const r=cv.getBoundingClientRect();if(e.clientX-r.left<r.width/2)lane=Math.max(0,lane-1);else lane=Math.min(2,lane+1)};
-  const loop=now=>{if(!run)return;const dt=Math.min(.05,(now-last)/1000);last=now;const el=(now-t0)/1000;spawn-=dt;
-    if(spawn<=0){obs.push({l:R(0,2),y:-30});spawn=Math.max(.38,.85-el*.045)}
-    const sp=210+el*24;obs.forEach(o=>o.y+=sp*dt);obs=obs.filter(o=>o.y<380);
-    if(inv>0)inv-=dt;else obs.forEach(o=>{if(o.l===lane&&o.y>262&&o.y<318){lives--;inv=1;o.y=999;if(navigator.vibrate)try{navigator.vibrate(80)}catch(e){}}});
-    x.fillStyle='#1b1719';x.fillRect(0,0,300,340);x.strokeStyle='#3a3335';x.lineWidth=2;x.setLineDash([14,14]);x.lineDashOffset=-el*220;[100,200].forEach(v=>{x.beginPath();x.moveTo(v,0);x.lineTo(v,340);x.stroke()});x.setLineDash([]);
-    obs.forEach(o=>{x.fillStyle='#b8302f';x.fillRect(L(o.l)-22,o.y,44,26);x.fillStyle='#ffffff33';x.fillRect(L(o.l)-18,o.y+4,36,6)});
-    if(!(inv>0&&Math.floor(el*10)%2)){x.fillStyle='#d2a94f';x.fillRect(L(lane)-18,276,36,48);x.fillStyle='#00000088';x.fillRect(L(lane)-14,283,28,11)}
-    x.fillStyle='#3d6496';x.fillRect(L(1)-16,334-((el*40)%6),32,6);
-    x.fillStyle='#f1e8da';x.font='bold 16px sans-serif';x.fillText(`${Math.max(0,10-el).toFixed(1)} sn   ${'❤'.repeat(Math.max(0,lives))}`,10,22);
-    if(lives<=0){run=false;mgClose();cb(false);return}
-    if(el>=10){run=false;mgClose();toast('Polisi ektin!');cb(true);return}
-    MGT=requestAnimationFrame(loop)};MGT=requestAnimationFrame(loop)}
+function kvCar(){const c=typeof curCar==='function'?curCar():null;const m=c?CM(c.mid):null;return m?({ekonomi:9,orta:1,luks:10,suv:3,spor:4,super:5,zirhli:2,klasik:7}[m.c]??0):0}
+function mgChase(cb,o){o=o||{};let box=$('ctBox');if(!box){box=document.createElement('div');box.id='ctBox';document.body.appendChild(box)}
+  const W=Math.min(window.innerWidth,460),H=Math.min(window.innerHeight-170,Math.round(W*1.55)),k=W/941,cw=Math.round(W*.2),DUR=o.dur||15;
+  const xMin=75*k+cw/2,xMax=865*k-cw/2,LN=[191*k,470*k,750*k],tileH=1672*k;const pc=kvCar();
+  box.innerHTML=`<div class="ctHud" style="max-width:${W}px"><span id="ctHp"></span><b>${o.title||'Kovalamaca'}</b><span id="ctLeft"></span></div>
+  <div class="ctSt" id="ctSt" style="width:${W}px;height:${H}px"><div class="kvRoad" id="kvRoad" style="background-size:${W}px ${tileH.toFixed(1)}px"></div><div id="ctFx"></div><img id="ctP" class="ctM" src="img/kv_p${pc}.webp" alt="" draggable="false" style="width:${cw}px"><div class="kvSiren" id="kvSiren"></div><div class="ctFlash" id="ctFlash"></div></div>
+  <div class="ctBot" style="max-width:${W}px"><p id="ctMsg">Polis peşinde! Parmağını sağa sola kaydır, trafiğe çarpmadan ${DUR} saniye dayan.</p><button id="ctRun">Teslim ol</button></div>`;
+  box.classList.add('on');for(let i=0;i<12;i++)new Image().src=`img/kv_t${i}.webp`;
+  const fxl=$('ctFx'),pe=$('ctP'),road=$('kvRoad');const ph=cw*2.05,py=H-ph-H*.09;
+  const st={hp:3+(S.premium?1:0),over:0,raf:0,iv:0,t:0,px:LN[1],tr:[],sp:.5,inv:0,last:0,off:0};CT=st;
+  const hud=()=>{$('ctHp').textContent='❤️'.repeat(Math.max(0,st.hp));$('ctLeft').textContent=`⏱ ${Math.max(0,DUR-st.t).toFixed(1)}`};
+  const end=ok=>{if(st.over)return;st.over=1;cancelAnimationFrame(st.raf);$('ctMsg').innerHTML=ok?'<b style="color:var(--good)">Polisi ektin!</b>':'<b style="color:var(--blood)">Yakalandın.</b>';setTimeout(()=>{box.classList.remove('on');box.innerHTML='';box.onpointerdown=box.onpointermove=box.onpointerup=box.onpointercancel=null;CT=null;cb(ok)},900)};
+  const step=ts=>{if(st.over)return;const dt=Math.min(.05,st.last?(ts-st.last)/1000:.016);st.last=ts;st.t+=dt;const v=(H*.95)*(1+st.t*.045);
+    st.off=(st.off+v*dt)%tileH;road.style.backgroundPositionY=st.off.toFixed(1)+'px';
+    st.sp-=dt;if(st.sp<=0){const free=[0,1,2].filter(l=>!st.tr.some(c=>c.l===l&&c.y<ph*1.6));const busy=st.tr.filter(c=>c.y<H*.5).map(c=>c.l);let ls=free.filter(l=>new Set([...busy,l]).size<3);if(ls.length){const l=pick(ls),e=document.createElement('img');e.className='ctM';e.src=`img/kv_t${R(0,11)}.webp`;e.style.width=cw+'px';e.draggable=false;fxl.appendChild(e);st.tr.push({e,l,x:LN[l]+R(-8,8)*k*3,y:-ph*1.15,r:R(42,60)/100})}st.sp=Math.max(.34,.8-st.t*.028)*R(80,125)/100}
+    st.tr=st.tr.filter(c=>{c.y+=v*c.r*dt;if(c.y>H+20){c.e.remove();return false}c.e.style.transform=`translate(${(c.x-cw/2).toFixed(1)}px,${c.y.toFixed(1)}px)`;
+      if(st.t>st.inv&&Math.abs(c.x-st.px)<cw*.78&&c.y+ph*.9>py+ph*.08&&c.y+ph*.1<py+ph*.92){st.hp--;st.inv=st.t+1.1;hud();const F=$('ctFlash');F.classList.remove('on');void F.offsetWidth;F.classList.add('on');try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}if(st.hp<=0)end(false)}return true});
+    pe.style.transform=`translate(${(st.px-cw/2).toFixed(1)}px,${py.toFixed(1)}px)`;pe.style.opacity=st.t<st.inv&&Math.floor(st.t*11)%2?'.35':'1';
+    hud();if(st.t>=DUR)return end(true);st.raf=requestAnimationFrame(step)};
+  let lx=null;box.onpointerdown=ev=>{if(ev.target.id==='ctRun')return;lx=ev.clientX;ev.preventDefault()};
+  box.onpointermove=ev=>{if(lx===null||st.over)return;st.px=Math.max(xMin,Math.min(xMax,st.px+(ev.clientX-lx)*1.2));lx=ev.clientX};
+  box.onpointerup=box.onpointercancel=()=>{lx=null};
+  $('ctRun').onclick=()=>end(false);hud();st.raf=requestAnimationFrame(step)}
 ACT.dovus=()=>{closeSheet();const t=`${pick(NICK)} ${pick(NAMES)}`;
   if(S.mgOff){if(ch(clamp(.45+S.health/400+karizma()/300,.1,.9))){gainResp(4);log(`Sokakta ${t} ile dövüştün ve kazandın.`,'good')}else{hurt(R(6,16),'Sokak dövüşü');log(`${t} seni yere serdi.`,'bad')}return done()}
   miniGame('kavga',ok=>{if(ok){gainResp(R(3,6));add('happy',4);log(`Sokak dövüşünde ${t}'i yere serdin. Mahalle seni konuşuyor.`,'good')}else{hurt(R(6,18),'Sokak dövüşü');add('respect',-2);log(`${t} sana iyi bir ders verdi.`,'bad')}},t)};
