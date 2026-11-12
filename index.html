@@ -329,7 +329,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-2230';
+const APPV='2026.11.12-2300';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2300,32 +2300,35 @@ function mgShoot(cb,o){o=o||{};const p=o.p===undefined?.5:o.p;let box=$('ctBox')
   box.innerHTML=`<div class="ctHud" style="max-width:${W}px"><span id="ctHp"></span><b id="ctT">${o.title||'Çatışma'}</b><span id="ctLeft"></span></div>
   <div class="ctSt" id="ctSt" style="width:${W}px;height:${Hh}px"><div class="ctIn" style="left:0;width:${W}px;height:${Hh}px;background-size:${(1672*k).toFixed(1)}px ${(941*k).toFixed(1)}px;background-position:${(-SX*k).toFixed(1)}px ${(-SY*k).toFixed(1)}px">
     <img class="ctCar" src="img/ct_car.webp" alt="" draggable="false" style="left:${((1010-SX)*k).toFixed(1)}px;top:${((262-SY)*k).toFixed(1)}px;width:${(290*k).toFixed(1)}px">
-    <div id="ctFx"></div><img id="ctP" class="ctM" src="img/ct_a0.webp" alt="" draggable="false" style="height:${ph}px"></div><div class="ctFlash" id="ctFlash"></div></div>
-  <div class="ctBot" style="max-width:${W}px"><p id="ctMsg">Parmağını yukarı aşağı kaydır: adamın kendiliğinden ateş eder. Mermilerden kaç, düşmanları indir.</p><button id="ctRun">Geri çekil</button></div>`;
-  [2,3,4,5].forEach(i=>{new Image().src=`img/ct_d${i}.webp`;new Image().src=`img/ct_a${i}.webp`});
+    <div id="ctFx"></div><img class="ctM" id="ctA1" src="img/cs_pc1.webp" alt="" draggable="false" style="height:${Math.round(ph*.75)}px"><img class="ctM" id="ctA2" src="img/cs_pc2.webp" alt="" draggable="false" style="height:${Math.round(ph*.75)}px"><img id="ctP" class="ctM" src="img/cs_p0.webp" alt="" draggable="false" style="height:${ph}px"></div><div class="ctFlash" id="ctFlash"></div></div>
+  <div class="ctBot" style="max-width:${W}px"><p id="ctMsg">Parmağını yukarı aşağı kaydır: adamların kendiliğinden ateş eder. Mermilerden kaç, düşmanları indir.</p><button id="ctRun">Geri çekil</button></div>`;
+  [3,4,5].forEach(i=>{new Image().src=`img/cs_ed${i}.webp`;new Image().src=`img/cs_e${i}.webp`});new Image().src='img/cs_pd0.webp';
   box.classList.add('on');const fxl=$('ctFx'),pe=$('ctP');
-  const st={hp:HP,kill:0,over:0,raf:0,iv:0,t:0,py:(yMin+yMax)/2,px:W-pw*.9,en:[],bl:[],pf:0,sp:400,inv:0,spawned:0,last:0};CT=st;
+  const sw=ph*170/150,AL=[{x:W-pw*.55,y:yMin+2,f:700,id:'ctA1'},{x:W-pw*.55,y:yMax,f:1300,id:'ctA2'}],aw=ph*.75*150/112;
+  const st={hp:HP,kill:0,over:0,raf:0,iv:0,t:0,py:(yMin+yMax)/2,px:W-pw*1.5,en:[],bl:[],pf:0,sp:400,inv:0,spawned:0,last:0};CT=st;
   const hud=()=>{$('ctHp').textContent='🧍'.repeat(Math.max(0,st.hp));$('ctLeft').textContent=`💀 ${st.kill}/${N}`};
   const mk=(cls,html)=>{const e=document.createElement(html||'i');e.className=cls;fxl.appendChild(e);return e};
   const place=(e,x,y)=>{e.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`};
-  const end=ok=>{if(st.over)return;st.over=1;cancelAnimationFrame(st.raf);clearInterval(st.iv);$('ctMsg').innerHTML=ok?'<b style="color:var(--good)">Sokak temizlendi!</b>':'<b style="color:var(--blood)">Geri çekildiniz.</b>';setTimeout(()=>{box.classList.remove('on');box.innerHTML='';box.onpointerdown=box.onpointermove=null;CT=null;cb(ok)},ok?1100:900)};
-  const spawn=()=>{const c=R(2,5);const e=mk('ctM','img');e.src=`img/ct_a${c}.webp`;e.style.height=ph+'px';e.draggable=false;const o_={e,c,x:-pw,tx:R(Math.round(pw*.6),Math.round(W*.34)),y:R(Math.round(yMin),Math.round(yMax)),vy:(ch(.5)?1:-1)*R(18,40)*k*2.4,ft:st.t+R(500,FIRE),dead:0};st.en.push(o_);st.spawned++};
+  const end=ok=>{if(st.over)return;st.over=1;if(!ok&&st.hp<=0){pe.src='img/cs_pd0.webp';pe.style.height='auto';pe.style.width=(ph*1.05)+'px';pe.style.opacity=1;place(pe,st.px-ph*.5,st.py-ph*.55)}cancelAnimationFrame(st.raf);clearInterval(st.iv);$('ctMsg').innerHTML=ok?'<b style="color:var(--good)">Sokak temizlendi!</b>':'<b style="color:var(--blood)">Geri çekildiniz.</b>';setTimeout(()=>{box.classList.remove('on');box.innerHTML='';box.onpointerdown=box.onpointermove=null;CT=null;cb(ok)},ok?1100:900)};
+  const spawn=()=>{const c=R(3,5);const e=mk('ctM','img');e.src=`img/cs_e${c}.webp`;e.style.height=ph+'px';e.draggable=false;const o_={e,c,x:-pw,tx:R(Math.round(pw*.6),Math.round(W*.34)),y:R(Math.round(yMin),Math.round(yMax)),vy:(ch(.5)?1:-1)*R(18,40)*k*2.4,ft:st.t+R(500,FIRE),dead:0};st.en.push(o_);st.spawned++};
   const shoot=(x,y,vx,vy,mine)=>{const e=mk(mine?'ctBl ctBm':'ctBl');st.bl.push({e,x,y,vx,vy,mine})};
   const step=ts=>{if(st.over)return;const dt=Math.min(.05,st.last?(ts-st.last)/1000:.016);st.last=ts;st.t+=dt*1000;
     if(st.t>=st.sp&&st.spawned<N&&st.en.filter(x=>!x.dead).length<MAXE){spawn();st.sp=st.t+R(700,1500)-(1-p)*350}
-    if(st.t>=st.pf){st.pf=st.t+330;shoot(st.px-pw*.35,st.py-ph*.62,-430*k*2.4,0,1)}
+    if(st.t>=st.pf){st.pf=st.t+330;shoot(st.px-sw*.62,st.py-ph*.76,-430*k*2.4,0,1)}
+    AL.forEach(a=>{if(st.t>=a.f){a.f=st.t+R(1300,1900);shoot(a.x-aw*.62,a.y-ph*.75*.6,-430*k*2.4,0,1)}});
     st.en.forEach(e=>{if(e.dead)return;if(e.x<e.tx)e.x+=90*k*2.4*dt;else{e.y+=e.vy*dt;if(e.y<yMin){e.y=yMin;e.vy=-e.vy}if(e.y>yMax){e.y=yMax;e.vy=-e.vy}if(ch(.006))e.vy=-e.vy;
-        if(st.t>=e.ft){e.ft=st.t+FIRE*R(80,125)/100;const sx=e.x+pw*.35,sy=e.y-ph*.62,dx=st.px-sx,dy=(st.py-ph*.5)-sy+R(-14,14),d=Math.hypot(dx,dy),v=(150+(1-p)*70)*k*2.4;shoot(sx,sy,dx/d*v,dy/d*v,0);const f=mk('ctMz');f.style.left=sx+'px';f.style.top=sy+'px';setTimeout(()=>f.remove(),120)}}
-      place(e.e,e.x-pw/2,e.y-ph);e.e.style.zIndex=Math.round(e.y)});
+        if(st.t>=e.ft){e.ft=st.t+FIRE*R(80,125)/100;const sx=e.x+sw*.57,sy=e.y-ph*.77,dx=st.px-sx,dy=(st.py-ph*.5)-sy+R(-14,14),d=Math.hypot(dx,dy),v=(150+(1-p)*70)*k*2.4;shoot(sx,sy,dx/d*v,dy/d*v,0);const f=mk('ctMz');f.style.left=sx+'px';f.style.top=sy+'px';setTimeout(()=>f.remove(),120)}}
+      place(e.e,e.x-sw*.43,e.y-ph);e.e.style.zIndex=Math.round(e.y)});
     st.bl=st.bl.filter(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt;if(b.x<-10||b.x>W+10||b.y<-10||b.y>Hh+10){b.e.remove();return false}
-      if(b.mine){for(const e of st.en){if(e.dead||e.x<0)continue;if(Math.abs(b.x-e.x)<pw*.42&&b.y>e.y-ph&&b.y<e.y-ph*.1){e.dead=1;e.e.src=`img/ct_d${e.c}.webp`;e.e.style.height='auto';e.e.style.width=(ph*1.05)+'px';place(e.e,e.x-ph*.5,e.y-ph*.55);e.e.style.zIndex=1;e.e.classList.add('ctDd');st.kill++;hud();b.e.remove();if(st.kill>=N)end(true);return false}}}
+      if(b.mine){for(const e of st.en){if(e.dead||e.x<0)continue;if(Math.abs(b.x-e.x)<pw*.42&&b.y>e.y-ph&&b.y<e.y-ph*.1){e.dead=1;e.e.src=`img/cs_ed${e.c}.webp`;e.e.style.height='auto';e.e.style.width=(ph*1.05)+'px';place(e.e,e.x-ph*.5,e.y-ph*.55);e.e.style.zIndex=1;e.e.classList.add('ctDd');st.kill++;hud();b.e.remove();if(st.kill>=N)end(true);return false}}}
       else if(st.t>st.inv&&Math.abs(b.x-st.px)<pw*.36&&b.y>st.py-ph*.95&&b.y<st.py-ph*.12){b.e.remove();st.hp--;st.inv=st.t+900;hud();const F=$('ctFlash');F.classList.remove('on');void F.offsetWidth;F.classList.add('on');try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}if(st.hp<=0)end(false);return false}
       place(b.e,b.x,b.y);return true});
-    place(pe,st.px-pw/2,st.py-ph);pe.style.zIndex=Math.round(st.py);pe.style.opacity=st.t<st.inv&&Math.floor(st.t/90)%2?'.35':'1';
+    place(pe,st.px-sw*.62,st.py-ph);pe.style.zIndex=Math.round(st.py);pe.style.opacity=st.t<st.inv&&Math.floor(st.t/90)%2?'.35':'1';
     st.raf=requestAnimationFrame(step)};
   let ly=null;box.onpointerdown=ev=>{if(ev.target.id==='ctRun')return;ly=ev.clientY;ev.preventDefault()};
   box.onpointermove=ev=>{if(ly===null||st.over)return;st.py=Math.max(yMin,Math.min(yMax,st.py+(ev.clientY-ly)*1.15));ly=ev.clientY};
   box.onpointerup=box.onpointercancel=()=>{ly=null};
+  AL.forEach(a=>{const e=$(a.id);place(e,a.x-aw*.62,a.y-ph*.75);e.style.zIndex=Math.round(a.y)});
   $('ctRun').onclick=()=>end(false);hud();st.raf=requestAnimationFrame(step)}
 function miniGame(t,cb,opp){const done2=ok=>{cb(ok);afterChange();scrollLog()};if(t==='catisma')mgShoot(done2,opp);else if(t==='kasa')mgSafe(done2);else if(t==='kovala')mgChase(done2);else mgFight(done2,opp)}
 function mgSafe(cb){const code=[R(1,6),R(1,6),R(1,6)];let cur=[],hist=[],left=6;
