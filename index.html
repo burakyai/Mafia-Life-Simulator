@@ -330,7 +330,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.13-0215';
+const APPV='2026.11.13-0245';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1254,6 +1254,7 @@ function esnafQ(f){if(!S.props||!S.props.length)return;const X=PX();
   if(S.props.includes('spor')&&ch(f))add('health',1);
   if(S.props.includes('otopark')){X.oq=(X.oq||0)+f;if(X.oq>=1){X.oq-=1;X.oy++}}}
 function quarterSystems(f){
+  if(S.gmGod&&gmOK())S.health=100;
   esnafQ(f);try{otoQ()}catch(e){console.error(e)}try{yapQ()}catch(e){console.error(e)}try{ceoQuarter()}catch(e){console.error(e)}try{flipQ()}catch(e){console.error(e)}
   let rent=0;
   rent+=emlakQ(f);try{agentQ()}catch(e){console.error(e)}
@@ -4758,6 +4759,64 @@ ACT.glb=i=>{i=+i;const g=GLS[i];if(!g)return;S.gls=S.gls||[];
   if(S.gls.includes(i)){if(S.look.gl===i){S.look.gl=null;log(`${g.n} gözlüğünü çıkardın.`,'dim')}else{S.look.gl=i;log(`${g.n} gözlüğünü taktın.`,'dim')}return done()}
   if(S.age<16||S.jail)return;if(!pay(glPr(i)))return;S.gls.push(i);S.look.gl=i;add('happy',R(2,5));log(`🕶 ${g.n} aldın ve taktın.`,'good');if(glPr(i)>=M(5e4))news(`${S.first} ${S.last} yeni gözlüğüyle görüntülendi`,1);done()};
 
+/* ============ GM (yaratıcı) modu ============ */
+const GM_H='17bc903a9f9101250f3ae74c';
+const gmOK=()=>{try{return localStorage.getItem('mafya-gm')==='1'}catch(e){return false}};
+let GMP=[];
+const gmAt=()=>GMP.reduce((o,k)=>o&&o[k],S);
+const gmFmt=v=>typeof v==='number'?(Math.abs(v)>=1e4?fmt(v).replace('₺',''):String(Math.round(v*1000)/1000)):typeof v==='boolean'?(v?'✓ açık':'✗ kapalı'):v===null?'boş':String(v).slice(0,28);
+const GML={money:'Kasa',black:'Kara para',health:'Sağlık',happy:'Mutluluk',respect:'Saygı',heat:'Polis dikkati',fame:'Ün',age:'Yaş',q:'Çeyrek',jail:'Hapis (çeyrek)',first:'Ad',last:'Soyad',cpi:'Fiyat seviyesi',infl:'Enflasyon',hidx:'Konut endeksi',kb:'Karizma bonusu',guz:'Yakışıklılık',zek:'Zekâ',prel:'Eşle bağ',partner:'Eş',married:'Evli',premium:'Dayı modu',city:'Şehir',cash:'Kasa',rep:'İtibar',loy:'Sadakat',str:'Güç',rel:'Yakınlık',name:'İsim',pow:'Güç',sq:'Adam sayısı',ar:'Silah',dep:'Vadesiz',score:'Kredi notu',sol:'Adam',yt:'Yetenek',un:'Ün',sk:'Yetenek',sal:'Maaş',val:'Değer',amt:'Tutar',inc:'Gelir',taxDebt:'Vergi borcu',xp:'Tecrübe'};
+function gmInput(title,cur,fn){window._nm='';const num=typeof cur==='number';queue({back:'gm',title,text:`Şu an: <b>${gmFmt(cur)}</b><br>${num?'Sayı yaz: <i>50</i>, <i>250 bin</i>, <i>5 milyon</i>, <i>2 milyar</i>':'Yeni değeri yaz'}.<input id="nmBox" inputmode="text" autocomplete="off" placeholder="${num?'Örn. 100 milyon':'Yeni değer'}" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:12px;padding:12px 14px;border-radius:12px;border:1.5px solid #4ad;background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box">`,
+  choices:[{t:'✍️ Kaydet',fn:()=>{const raw=String((document.getElementById('nmBox')||{}).value||window._nm||'').trim();if(!raw){toast('Bir değer yaz');return}let v=raw;if(num){const neg=/^-/.test(raw);const r=raw.replace(/^-/,'').toLocaleLowerCase('tr-TR');v=/[a-zığüşöç]/.test(r)?parseAmt(r):parseFloat(r.replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'));if(!isFinite(v)){toast('Sayı anlaşılmadı');return}if(neg)v=-v}fn(v);try{ensure()}catch(e){}afterChange();setTimeout(()=>openSheet('gm'),60)}},...(num?[{t:'0 yap',fn:()=>{fn(0);afterChange();setTimeout(()=>openSheet('gm'),60)}},{t:'100 yap',fn:()=>{fn(100);afterChange();setTimeout(()=>openSheet('gm'),60)}}]:[]),{t:'Vazgeç',fn:()=>setTimeout(()=>openSheet('gm'),60)}]})}
+EXTRA.gm=()=>{if(!gmOK())return['GM','<p class="note">Kapalı.</p>'];let h='';
+  if(!GMP.length){h+='<p class="note" style="color:#6cf">🛠 Yaratıcı mod. Burada yaptığın her değişiklik anında kayda işlenir. Yanlış bir değer oyunu bozabilir; emin olmadığın alanlara dokunma.</p>';
+    const Q_=[['money','💰'],['black','🖤'],['health','❤️'],['happy','😊'],['respect','🎖'],['heat','🚨'],['fame','⭐'],['age','🎂'],['kb','🕶'],['guz','💎'],['zek','🧠']];
+    h+='<div class="sec">Hızlı ayar</div>';Q_.forEach(([k,ic])=>h+=row(`data-x="gmq:${k}"`,ic,GML[k]||k,'',gmFmt(S[k]===undefined?0:S[k]),false));
+    if(S.bank)h+=row('data-x="gmb:"','🏦','Banka vadesiz','',gmFmt(S.bank.dep),false);
+    h+='<div class="sec">Şirket kasaları</div>';[['label','💿','Müzik şirketi'],['co','🏗','İnşaat'],['gal','🏪','Galeri'],['yap','🎬','Yapım'],['club','⚽','Kulüp']].forEach(([k,ic,n])=>{if(S[k])h+=row(`data-x="gmc:${k}"`,ic,n+' kasası',S[k].name||'',gmFmt(S[k].cash||0),false)});
+    h+='<div class="sec">Tek dokunuş</div>';
+    h+=row('data-x="gmdo:max"','⭐','Her şeyi en iyi yap','Sağlık, mutluluk, saygı, ün 100 · Dikkat 0','',false);
+    h+=row('data-x="gmdo:para"','💵','+1 milyar kasaya','','',false);
+    h+=row('data-x="gmdo:temiz"','🧼','Sabıkayı ve borçları sil','Dikkat 0, vergi borcu 0, kredi ve kart borcu 0, hapisten çık','',false);
+    h+=row('data-x="gmdo:adam"','🕶','Adamları fulle','Güç 10, sadakat 100, kadro ve silah tam','',!S.org&&!S.st);
+    h+=row('data-x="gmdo:iliski"','❤️','Bütün ilişkileri 100 yap','Eş, çocuklar, dostlar','',false);
+    h+=row('data-x="gmdo:dusman"','☠️','Düşman çeteleri sıfırla','Güçleri 10\'a iner, savaşlar biter','',!S.rivals);
+    h+=row('data-x="gmdo:genc"','🧬','20 yaşına dön','Yaş 20, sağlık 100','',false);
+    h+=row('data-x="gmdo:olmez"',S.gmGod?'🛡':'💀','Ölümsüzlük',S.gmGod?'Açık · sağlık her çeyrek 100':'Kapalı',S.gmGod?'Kapat':'Aç',false);
+    h+=row('data-x="gmdo:paket"','🎁','Bütün paketleri ve Dayı\'yı aç','Bu cihazda','',false);
+    h+=row('data-x="gmdo:bilet"','🎟','+100 bilet',`Elinde ${tix()}`,'',false);
+    h+=row('data-x="gmdo:ilerle"','⏩','5 yıl ileri sar','Olaylar otomatik geçilir','',false);
+    h+='<div class="sec">Bütün değerler</div><p class="note">Oyunun kayıt dosyasındaki her alan. Klasörlere girip tek tek değiştirebilirsin.</p>'}
+  else h+=row('data-x="gmup:"','⬅️','Geri',`Kayıt › ${GMP.map(k=>GML[k]||k).join(' › ')}`,'',false);
+  const o=gmAt();if(o&&typeof o==='object'){const ks=Object.keys(o).filter(k=>!(GMP.length===0&&['log','newsLog'].includes(k)));const lim=ks.slice(0,160);
+    const prim=lim.filter(k=>o[k]===null||typeof o[k]!=='object'),objs=lim.filter(k=>o[k]!==null&&typeof o[k]==='object');
+    prim.forEach(k=>{const v=o[k];h+=row(`data-x="gms:${encodeURIComponent(k)}"`,typeof v==='number'?'🔢':typeof v==='boolean'?(v?'✅':'⬜'):'🔤',(GML[k]?GML[k]+' · ':'')+k,'',gmFmt(v),false)});
+    objs.forEach(k=>{const v=o[k];const nm=Array.isArray(o)?(v.name||v.n||v.title||v.id||'#'+k):(GML[k]?GML[k]+' · ':'')+k;h+=row(`data-x="gmg:${encodeURIComponent(k)}"`,Array.isArray(v)?'📚':'📁',String(nm).slice(0,30),Array.isArray(v)?`${v.length} kayıt`:`${Object.keys(v).length} alan`,'›',false)});
+    if(ks.length>160)h+=`<p class="note">İlk 160 alan gösteriliyor (${ks.length}).</p>`}
+  return['🛠 GM modu',h]};
+ACT.gmq=k=>{closeSheet();gmInput(GML[k]||k,S[k]===undefined?0:S[k],v=>{S[k]=v;if(k==='age')S.q=S.q||0})};
+ACT.gmb=()=>{closeSheet();gmInput('Banka vadesiz',S.bank.dep,v=>S.bank.dep=v)};
+ACT.gmc=k=>{closeSheet();gmInput((S[k].name||k)+' kasası',S[k].cash||0,v=>S[k].cash=v)};
+ACT.gmg=k=>{GMP.push(decodeURIComponent(k));openSheet('gm')};
+ACT.gmup=()=>{GMP.pop();openSheet('gm')};
+ACT.gms=k=>{k=decodeURIComponent(k);const o=gmAt();if(!o)return;const v=o[k];if(typeof v==='boolean'){o[k]=!v;afterChange();return openSheet('gm')}closeSheet();gmInput((GML[k]?GML[k]+' · ':'')+k,v===null?'':v,nv=>{o[k]=nv})};
+ACT.gmdo=k=>{const full=o=>{if(!o)return};
+  if(k==='max'){S.health=100;S.happy=100;S.respect=100;S.heat=0;S.fame=100;S.kb=50;S.guz=100;S.zek=100}
+  if(k==='para')S.money+=1e9;
+  if(k==='temiz'){S.heat=0;S.taxDebt=0;S.taxDebtQ=0;S.jail=0;if(S.bank){S.bank.loan=null;if(S.bank.card)S.bank.card.debt=0;S.bank.score=1900}S.loans=[];S.threat=null}
+  if(k==='adam'){if(S.org)S.org.members.forEach(m=>{m.str=10;m.loy=100;m.jail=0;m.hurt=0;m.ar=100;try{m.sq=sqCap(m)}catch(e){}});if(S.st&&S.st.my){S.st.my.ar=100;try{S.st.my.sq=sqCap(null)}catch(e){}}}
+  if(k==='iliski'){if(S.partner)S.prel=100;(S.kids||[]).forEach(x=>x.rel=100);(S.friends||[]).forEach(x=>x.rel=100)}
+  if(k==='dusman'){(S.rivals||[]).forEach(r=>{r.pow=10;r.war=false});if(S.st)S.st.gw=null;S.threat=null}
+  if(k==='genc'){S.age=20;S.health=100;S.dying=false}
+  if(k==='olmez')S.gmGod=!S.gmGod;
+  if(k==='paket'){Object.keys(PACKS).forEach(p=>pkGrant(p,1));try{localStorage.setItem('mafya-dayi','1')}catch(e){}S.premium=true}
+  if(k==='bilet')tixSet(tix()+100);
+  if(k==='ilerle'){closeSheet();for(let i=0;i<20&&S.alive;i++){Q.splice(0).forEach(x=>{try{const c=x.choices.filter(c=>!c.dis&&c.fn);c[c.length-1].fn()}catch(e){}});Q.length=0;try{$('modal').classList.remove('on')}catch(e){}ageUp()}Q.length=0;try{$('modal').classList.remove('on')}catch(e){}afterChange();render();toast('⏩ 5 yıl geçti');return}
+  afterChange();toast('🛠 Uygulandı');openSheet('gm')};
+ACT.kodgir=()=>{closeSheet();window._nm='';queue({back:'ben',title:'🔑 Kod gir',text:`Elindeki kodu yaz.<input id="nmBox" autocomplete="off" autocapitalize="characters" placeholder="KOD" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:12px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gold2);background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box">`,choices:[{t:'🔑 Onayla',fn:()=>{const c=String((document.getElementById('nmBox')||{}).value||window._nm||'').trim().toUpperCase().replace(/\s+/g,'');if(!c)return;crypto.subtle.digest('SHA-256',new TextEncoder().encode(c)).then(b=>{const hx=[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,24);if(hx===GM_H){try{localStorage.setItem('mafya-gm','1')}catch(e){}toast('🛠 GM modu açıldı');GMP=[];setTimeout(()=>openSheet('gm'),80)}else dayiTry(c).then(ok=>{if(ok)dayiGrant();else toast('Kod geçersiz')})}).catch(()=>toast('Kod doğrulanamadı'))}},{t:'Vazgeç',fn:()=>{}}]})};
+ACT.gmopen=()=>{GMP=[];openSheet('gm')};
+ACT.gmoff=()=>{try{localStorage.removeItem('mafya-gm')}catch(e){}toast('GM modu bu cihazda kapatıldı');openSheet('ben')};
+
 /* ============ Sağ kol ============ */
 const SKR={az:['Az tutsun',.1],orta:['Orta',.25],cok:['Bol tutsun',.5]};
 function skBoxes(){const B=[];if(S.gal)B.push(['gal','🚗','Oto galeri',S.gal,bizVal('gal')]);if(S.label)B.push(['lbl','💿',S.label.name,S.label,bizVal('lbl')]);if(S.co)B.push(['co','🏗',S.co.name,S.co,bizVal('co')]);if(S.yap)B.push(['yap','🎬',S.yap.name,S.yap,yVal()]);(S.firms||[]).forEach(f=>{try{B.push(['f'+f.id,'🏭',f.name,f,firmVal(f)])}catch(e){}});return B}
@@ -5226,7 +5285,7 @@ function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';
     h+='<div class="sec">Ayarlar</div>'+row('data-go="ayar"','⚙️','Ayarlar',`Dayı Paketi ${S.premium?'açık':'kapalı'} · Ana menü · Kayıt · Çizim stili`,'›',false);
   }
   if(EXTRA[k]){const r=EXTRA[k]();T=r[0];h=r[1]}
-  if(k==='ayar')h=('<div class="sec">Oyun</div>').replace('<div class="sec">Oyun</div>',`<div class="sec">Ekran</div><p class="note">Alt menü ekranın altında kalıyorsa yukarı al. Bu ayar sadece bu cihazda geçerli.</p><div class="row" style="justify-content:space-between"><span class="tx"><b>Alt menü boşluğu</b><span>${BOTMAN===null?'Otomatik · '+BOT+' px':BOT+' px'}</span></span><span style="display:flex;gap:6px"><button class="x" data-x="bot:-" aria-label="Aşağı">−</button><button class="x" data-x="bot:+" aria-label="Yukarı">+</button><button class="tab" data-x="bot:auto">Oto</button></span></div>`+'<div class="sec">Oyun menüsü</div>'+row('data-x="menu:"','🏠','Ana menü','Kayıt yuvaları, tema, yeni oyun','›',false)+'<div class="sec">Mini oyunlar</div>'+row('data-x="mgtog:"','🎮','Mini oyunlar',S.mgOff?'Kapalı · Her şey otomatik zarla':'Açık · Kasa, kovalamaca, dövüş',S.mgOff?'Aç':'Kapat',false)+row('data-x="sestog:"',sesOn()?'🔊':'🔇','Ses',sesOn()?'Açık · Çatışma ve kovalamaca sesleri':'Kapalı',sesOn()?'Kapat':'Aç',false)+'<div class="sec">Premium</div>'+(S.premium?row('data-x="selfed:"','✏️','Kendini düzenle','Sağlık, saygı, karizma, ün… (profil fotoğrafına dokunarak da açılır)','›',false):'')+row('data-go="paketler"','🎁','Paketler','İş, Emlak, Şöhret, Spor · Patron','›',false)+row('data-x="prem:"','👑','Dayı Paketi',S.premium?'Açık · Her zor anda avantajlı premium seçenekler':dayiOK()?'Kapalı · Dokun ve aç':`${iapPrice(IAP.dayi,DAYI_PRICE)} · Sınırsız geri alma ve dayı ayrıcalıkları · Satın almak için dokun`,S.premium?'Kapat':dayiOK()?'Aç':'🔒',false)+saveSection()+'<div class="sec">Oyun</div>');
+  if(k==='ayar')h=('<div class="sec">Oyun</div>').replace('<div class="sec">Oyun</div>',`<div class="sec">Ekran</div><p class="note">Alt menü ekranın altında kalıyorsa yukarı al. Bu ayar sadece bu cihazda geçerli.</p><div class="row" style="justify-content:space-between"><span class="tx"><b>Alt menü boşluğu</b><span>${BOTMAN===null?'Otomatik · '+BOT+' px':BOT+' px'}</span></span><span style="display:flex;gap:6px"><button class="x" data-x="bot:-" aria-label="Aşağı">−</button><button class="x" data-x="bot:+" aria-label="Yukarı">+</button><button class="tab" data-x="bot:auto">Oto</button></span></div>`+'<div class="sec">Oyun menüsü</div>'+row('data-x="menu:"','🏠','Ana menü','Kayıt yuvaları, tema, yeni oyun','›',false)+'<div class="sec">Mini oyunlar</div>'+row('data-x="mgtog:"','🎮','Mini oyunlar',S.mgOff?'Kapalı · Her şey otomatik zarla':'Açık · Kasa, kovalamaca, dövüş',S.mgOff?'Aç':'Kapat',false)+row('data-x="sestog:"',sesOn()?'🔊':'🔇','Ses',sesOn()?'Açık · Çatışma ve kovalamaca sesleri':'Kapalı',sesOn()?'Kapat':'Aç',false)+row('data-x="kodgir:"','🔑','Kod gir','Dayı ya da özel kod','›',false)+(gmOK()?row('data-x="gmopen:"','🛠','GM modu','Yaratıcı mod · her değeri değiştir','›',false)+row('data-x="gmoff:"','🚫','GM modunu bu cihazdan kaldır','','',false):'')+'<div class="sec">Premium</div>'+(S.premium?row('data-x="selfed:"','✏️','Kendini düzenle','Sağlık, saygı, karizma, ün… (profil fotoğrafına dokunarak da açılır)','›',false):'')+row('data-go="paketler"','🎁','Paketler','İş, Emlak, Şöhret, Spor · Patron','›',false)+row('data-x="prem:"','👑','Dayı Paketi',S.premium?'Açık · Her zor anda avantajlı premium seçenekler':dayiOK()?'Kapalı · Dokun ve aç':`${iapPrice(IAP.dayi,DAYI_PRICE)} · Sınırsız geri alma ve dayı ayrıcalıkları · Satın almak için dokun`,S.premium?'Kapat':dayiOK()?'Aç':'🔒',false)+saveSection()+'<div class="sec">Oyun</div>');
   if(k==='ayar')h=row('data-x="yasal:"','⚖️','Yasal uyarı','Kurgu bildirimi ve kullanım koşulları','›',false)+'<div class="sec">Mağaza</div>'+row('data-x="bshop:"','🎟','Bilet mağazası',`Elinde ${tix()} bilet · İnşaat ve kaçakçılık seferlerini hemen bitir`,'›',false)+'<div class="sec">İlerleme</div>'+row('data-x="yrstep:"','⏩','İLERLE adımı',S.yearStep?'1 yıl · Bir dokunuşta bütün yıl geçer (olaylarda durur)':'3 ay · Her dokunuşta bir çeyrek',S.yearStep?'1 YIL':'3 AY',false)+h;
   if(k==='ayar')h+=`<p class="note" style="text-align:center;margin-top:18px">Derin Dünya · Sürüm ${APPV}</p>`;
   if(k==='ayar'){const a=h.indexOf('<div class="sec">Ekran</div>'),b=h.indexOf('<div class="sec">Oyun menüsü</div>');if(a>=0&&b>a){const disp=h.slice(a,b);h=h.slice(0,a)+h.slice(b);h=h.replace('<div class="sec">Oyun</div>',disp+'<div class="sec">Oyun</div>')}}
@@ -5331,7 +5390,7 @@ EXTRA.yadigar=()=>{const own=S.yad||[],c=YKG();
   let h=`<p class="note">${own.length}/${YAD.length} yadigâr sende. Yadigârlar kalıcı küçük avantajlar verir ve öldüğünde mirasçına geçer. Mirasçı bırakmazsan kaybolurlar.</p><div class="grid">`;
   YAD.forEach(Y=>{const o=own.find(x=>x.id===Y[0]);h+=`<div class="it ${o?'on':''}" style="opacity:${o?1:.55}"><span style="font-size:30px;display:block;height:72px;line-height:72px">${o?yIc(Y[0],72):c[Y[0]]?yIc(Y[0],72,1):'🔒'}</span><b>${Y[2]}</b><em>${o?`${Y[4]} · ${o.gen<(S.gen||1)?`${o.by} bulmuştu`:'Sen buldun'}`:`${Y[5]}${c[Y[0]]?' · daha önce bulunmuştu':''}`}</em></div>`});
   return['🧳 Yadigârlar',h+'</div>']};
-function die(cause){
+function die(cause){if(S&&S.gmGod&&gmOK()){S.health=100;S.dying=false;S.alive=true;log('🛡 Ölümsüzlük: ölüm seni atladı.','gold');return}
   S.alive=false;S.cause=cause;try{lakapAward()}catch(e){}log('Hayatını kaybettin.','bad');save();cloudSave(true);showDead();}
 function showDead(){const cause=S.cause;
   const rk=rank();
