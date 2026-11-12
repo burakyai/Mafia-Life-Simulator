@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-1600';
+const APPV='2026.11.12-1615';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -4411,7 +4411,7 @@ EXTRA.sagkol=()=>{const k=S.sagkol;let h='';
   h+='<div class="sec">Ayarlar</div>'+row('data-x="skset:oran"','💰','Kâr toplama oranı',`Kasadaki fazlanın %${k.oran}'ini getirir`,'›',false)+row('data-x="skset:rez"','🏦','Şirketlerde kalacak para',`${SKR[k.rez][0]} (şirket değerinin %${SKR[k.rez][1]*100}'i)`,'›',false)+row('data-x="skset:sik"','📅','Toplama sıklığı',k.sik==='yil'?'Yılda bir':'Her çeyrek','›',false)+row('data-x="skset:now"','📥','Şimdi topla','Fazla kârı hemen getirsin','›',!!S.jail)+row('data-x="skset:fire"','🚪','Sağ kolu bırak',`Tazminat ${fmtS(k.sal/4)}`,'›',false);
   return['🫱 Sağ kol',h]};
 ACT.skhire=()=>{if(!S.premium)return setTimeout(dayiShop,40);closeSheet();const C=[0,1,2].map(()=>{const sk=R(50,95);return{name:pick(NAMES)+' '+pick(SURN),sk,loy:R(55,90),sal:M(sk*sk*800)}});
-  queue({back:'sagkol',title:'🫱 Sağ kol adayları',text:'Yetenek, kasalardaki parayı ne kadar iyi değerlendirdiğini; sadakat dürüstlüğünü belirler. Maaş aylık, her çeyrek şahsi kasandan ödenir.',choices:[...C.map(x=>({t:x.name,sub:`Yetenek %${x.sk} · Sadakat %${x.loy} · Aylık ${fmtS(x.sal/12)}`,dis:!canPay(x.sal/12),fn:()=>{pay(Math.round(x.sal/12));S.sagkol={...x,oran:50,rez:'orta',sik:'ceyrek',tot:0};log(`🫱 ${x.name} artık sağ kolun. Bütün işlerini o takip edecek.`,'gold')}})),{t:'Vazgeç',fn:()=>{}}]})};
+  queue({back:'insan',title:'🫱 Sağ kol adayları',text:'Yetenek, kasalardaki parayı ne kadar iyi değerlendirdiğini; sadakat dürüstlüğünü belirler. Maaş aylık, her çeyrek şahsi kasandan ödenir.',choices:[...C.map(x=>({t:x.name,sub:`Yetenek %${x.sk} · Sadakat %${x.loy} · Aylık ${fmtS(x.sal/12)}`,dis:!canPay(x.sal/12),fn:()=>{pay(Math.round(x.sal/12));S.sagkol={...x,oran:50,rez:'orta',sik:'ceyrek',tot:0};log(`🫱 ${x.name} artık sağ kolun. Bütün işlerini o takip edecek.`,'gold')}})),{t:'Vazgeç',fn:()=>{}}]})};
 ACT.skset=w=>{const k=S.sagkol;if(!k)return;closeSheet();
   if(w==='oran')return queue({back:'sagkol',title:'Kâr toplama oranı',text:'Şirket kasasında bırakılacak paranın üstündeki fazlanın ne kadarı sana gelsin?',choices:[25,50,75,100].map(v=>({t:`%${v}${k.oran===v?' ✓':''}`,fn:()=>{k.oran=v}}))});
   if(w==='rez')return queue({back:'sagkol',title:'Şirketlerde kalacak para',text:'Şirketlerin büyümesi ve yöneticilerin çalışması için kasada ne kadar kalsın?',choices:Object.entries(SKR).map(([x,v])=>({t:`${v[0]}${k.rez===x?' ✓':''}`,sub:`Şirket değerinin %${v[1]*100}'i`,fn:()=>{k.rez=x}}))});
@@ -4576,7 +4576,6 @@ function hubTiles(){return [
       ['muzik','💿','Müzik şirketi',S.label?`${S.label.name} · ${S.label.roster.length} sanatçı`:'Plak şirketi kur, konser düzenle',S.age>=18],
       ['berber','💈','Berber','Saç, sakal ve saç rengi',S.age>=20&&!S.jail],
       ['gece','🍸','Gece hayatı',S.nl&&S.nl.addict?'⚠️ Bağımlılık':S.nl&&S.nl.liver>=40?`Karaciğer %${S.nl.liver}`:'Kulüp, bar, VIP masa',S.age>=18],
-      ['sagkol','🫱','Sağ kol',S.sagkol?`${S.sagkol.name} · bütün işlerini yönetiyor`:'👑 İşlerini takip etsin, kârı toplayıp getirsin',S.age>=18],
       ['esnaf','🏪','Esnaf işletmeleri',S.props.length?`${S.props.length} işletme · yıllık ${fmtS(propIncome())}`:'Taksi durağı, kahvehane, otopark, spor salonu…',S.age>=18],
       ['sirket','🏭','Şirketlerin',(S.firms||[]).length?`${S.firms.length} şirket`:'Şirket kur, ürün sat, büyü',S.age>=18],
       ['dunya','🌍','Dünya',`${CITY().fl} ${CITY().n} · Yurt dışı işler`,S.age>=18],
@@ -4608,7 +4607,7 @@ const HCATS=[
   ['kisisel','👤','Kişisel hayat','İnsanlar, aile ağacı, berber, gece hayatı, sosyal medya, yadigârlar, lakaplar',['insan','agac','berber','gece','sosyal','basarim','yadigar','lakap']],
   ['yeralti','🔫','Yeraltı dünyası','Ailen, rakip aileler, harita, konsey, sokak kadrosu, haraç, kaçakçılık',['org','rakip','harita','konsey','sokak','kacak']],
   ['para','💰','Para ve finans','Banka, borsa, döviz, kara para, varlık yönetimi, vergi',['banka','borsa','doviz','kara','varlikyon','vergi',...(GAMBLE?['kumar']:[])]],
-  ['is','🏢','İş dünyası','Sağ kol, esnaf işletmeleri, şirketler, müzik, futbol kulübü, inşaat, oto galeri',['sagkol','esnaf','sirket','muzik','kulup','insaat','ogaleri']],
+  ['is','🏢','İş dünyası','Esnaf işletmeleri, şirketler, müzik, futbol kulübü, inşaat, oto galeri',['esnaf','sirket','muzik','kulup','insaat','ogaleri']],
   ['alisveris','🛍','Alışveriş','Emlak, araba, kuyumcu ve saat, AVM, lüks oyuncaklar',['emlak','galeri','kuyumcu','avm','luks']],
   ['sehir','🏙','Şehir ve dünya','Yaşadığın şehir, yurt dışı, karakol, gazete',['dunya','karakol','gazete']]];
 HCATS.forEach(([cid,ic,n,d,ids])=>{EXTRA['cat_'+cid]=()=>{const T=hubTiles();let h=`<p class="note">${d}.</p>`;h+='<div class="tiles">'+ids.map(id=>T.find(t=>t[0]===id)).filter(Boolean).map(tileHTML).join('')+'</div>';return[`${ic} ${n}`,h]}});
@@ -4763,10 +4762,12 @@ function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';
     else h+='<p class="note">Henüz çocuğun yok. Öldüğünde çocuklarından biriyle oyuna devam edebilirsin.</p>';
     h+=row('data-go="agac"','🌳','Aile ağacı','Soyunun bütün kuşakları','›',false);
     h+='<div class="sec">Ekibin</div>';
+    if(S.sagkol)h+=row('data-go="sagkol"','🫱',S.sagkol.name,`Sağ kol · ${fmtS(S.sagkol.sal/12)}/ay · bütün işlerini yönetiyor`,'›',false);
     if(S.staff.length)S.staff.forEach(st=>{const s=STAFF.find(x=>x.id===st.id);h+=row(`data-sm="${st.id}"`,s.ic,st.name,`${s.n} · ${fmtS(s.sal/12)}/ay`,'›',false)});
-    else h+='<p class="note">Henüz kimseyi işe almadın.</p>';
+    else if(!S.sagkol)h+='<p class="note">Henüz kimseyi işe almadın.</p>';
     const free=STAFF.filter(s=>!has(s.id));
-    if(free.length){h+='<div class="sec">Eleman al</div><p class="note">İlk yılın maaşı peşin ödenir. Sonra her yıl kasadan otomatik çıkar. Maaşı ödenmeyen işi bırakır.</p>';
+    if(free.length||!S.sagkol){h+='<div class="sec">Eleman al</div><p class="note">İlk yılın maaşı peşin ödenir. Sonra her yıl kasadan otomatik çıkar. Maaşı ödenmeyen işi bırakır.</p>';
+      if(!S.sagkol)h+=row('data-x="skhire:"','🫱','Sağ kol',S.premium?'👑 Bütün işlerini takip eder, şirketlerin raporunu sunar, kârı toplayıp getirir':'👑 Dayı Paketi ile açılır',S.premium?'Adaylar ›':'👑',S.age<18||!!S.jail);
       free.forEach(s=>{const lock=s.rank&&rank()<s.rank;h+=row(`data-hire="${s.id}"`,s.ic,s.n,lock?`${RANKS[s.rank].n} rütbesi gerekir`:s.d,lock?'🔒':fmtS(s.sal/12)+'/ay',lock||S.age<18||cashA()<s.sal||S.jail||(s.id==='sofor'&&!S.cars.length)||(s.id==='pilot'&&!hasL('jet')&&!hasL('heli')))})}
     h+=`<div class="sec">Dostların (${S.friends.length}/${MAXF})</div>`;
     if(S.friends.length)[...S.friends].sort((a,b)=>(b.best?1:0)-(a.best?1:0)||b.rel-a.rel).forEach(f=>{fEns(f);h+=`<button class="row" data-fm="${f.id}"><span class="ic"${fPic(f)?' style="padding:0;overflow:hidden"':''}>${npcImg(fPic(f))||(f.best?'⭐':fJob(f).ic)}</span><span class="tx"><b>${f.best?'⭐ ':''}${f.name}</b><span>${fJob(f).n} · ${f.age} yaş · ${fRelTxt(f.rel)} %${f.rel}${f.owe<0?' · 💸 borcun var':''}${f.owe>0?' · 💵 sana borçlu':''}</span><div class="bar" style="margin-top:5px"><i style="width:${f.rel}%;background:${f.rel>=60?'var(--good)':f.rel>=30?'var(--warn)':'var(--blood)'}"></i></div></span><span class="rt">›</span></button>`});
