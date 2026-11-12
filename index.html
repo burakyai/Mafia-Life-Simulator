@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-1430';
+const APPV='2026.11.12-1500';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1243,7 +1243,7 @@ function esnafQ(f){if(!S.props||!S.props.length)return;const X=PX();
 function quarterSystems(f){
   esnafQ(f);try{ceoQuarter()}catch(e){console.error(e)}try{flipQ()}catch(e){console.error(e)}
   let rent=0;
-  rent+=emlakQ(f);
+  rent+=emlakQ(f);try{agentQ()}catch(e){console.error(e)}
   if(rent){S.money+=rent;S.taxInc=(S.taxInc||0)+rent;log(`Kira gelirlerin: ${fmt(rent)}.`,'good')}
   if(S.home){const o=S.houses.find(x=>x.uid===S.home);if(o){if(f===1||S.q===0)add('happy',HT(o.t).h)}else S.home=null}
   const b=S.bank;
@@ -1340,6 +1340,7 @@ const EXTRA={
     HCATS.forEach(([cid,ic,n,d,ids])=>{const open=ids.map(by).filter(t=>t&&t[4]).length;h+=row(`data-go="cat_${cid}"`,'@c_'+cid,n,d,`${open}/${ids.length} ›`,false)});
     return['Hayat',h]},
   emlak:()=>{let h=`<p class="note">Konut fiyatları her yıl değişir. Kiraya verdiğin evler her yıl kira getirir; oturduğun ev her yıl mutluluğunu artırır.</p>`;
+    h+=agRow();
     if(S.houses.length){h+='<div class="sec">Evlerin</div>';S.houses.forEach(o=>{const t=HT(o.t);const st=o.reno?`🔨 Restorasyonda · ${Math.max(0,o.reno.end-QS())} çeyrek kaldı`:o.har?'🏚 Harap · restore bekliyor':S.home===o.uid?'<span style="color:var(--gold)">Burada oturuyorsun</span>':o.ten?`Kiracı: ${o.ten.name} · ${fmtS(o.ten.rent)}/yıl`:'Boş duruyor';h+=row(`data-x="house:${o.uid}"`,hIco(t),t.n,`Değeri ${fmtS(hval(o))} · ${st}`,'›',false)})}
     h+='<div class="sec">Satılık ilanlar · bu çeyrek</div><div class="tabs">'+[['all','Tümü'],['har','🏚 Harap'],...Object.entries(HCLS)].map(([id,n])=>`<button class="tab ${hFilt===id?'on':''}" data-x="hf:${id}">${n}</button>`).join('')+'</div>';
     const hl=hMarket().filter(l=>hFilt==='all'||(hFilt==='har'?l.har!==undefined:HT(l.t).cls===hFilt));if(!hl.length)h+='<p class="note">Bu kategoride bu çeyrek ilan yok.</p>';
@@ -4390,6 +4391,35 @@ EV(1,()=>!S.jail&&S.co&&((S.co.torp||0)+(S.co.built||[]).filter(b=>b.imar&&!b.in
     {t:'Avukatlara bırak',sub:fmt(M(2e6)),dis:!cCan(M(2e6)),fn:()=>{cPay(M(2e6));if(ch(has('avukat')?.8:.55))log('Soruşturma takipsizlikle sonuçlandı.','good');else{add('heat',15);co.rep=clamp(co.rep-10);log('İddianame hazırlandı. Şirketin ihalelerden men edildi.','bad');co.ih=null}}},
     {t:'Siyasi bağlantılarını kullan',sub:'Dikkat −5 · Bir iyilik borçlanırsın',fn:()=>{add('heat',-5);gainResp(-1);log('Dosya bir çekmecede unutuldu.','dim')}},
     {t:'Belediye başkanını sat',sub:'Sen kurtulursun · Saygı −',fn:()=>{add('respect',-6);add('heat',-3);log('İfaden belediye başkanını yaktı, sen tanık oldun.','dim')}}]}});
+
+/* ============ Gayrimenkul danışmanı ============ */
+const AGS={piyasa:['Piyasa kirası',1,'Kiracı hızlı bulunur'],yuksek:['Yüksek kira',1.15,'Daha çok kira, daha seçici kiracı']};
+function agRow(){const a=S.agent;if(a)return row('data-x="agent:"','🤝',`Danışman: ${a.name}`,`Yetenek %${a.sk} · Komisyon %${a.com} · ${a.last||'Evlerini yönetiyor'}`,'›',false);
+  return row('data-x="agent:"','🤝','Gayrimenkul danışmanı tut',packOK('emlak')?'Evlerini kiraya versin, kiracılarla ilgilensin, istersen satsın':'🔒 Emlak Paketi gerekir','›',false)}
+ACT.agent=()=>{closeSheet();if(!packOK('emlak'))return setTimeout(()=>pkShop('emlak'),40);const a=S.agent;
+  if(!a){const C=[0,1,2].map(()=>{const sk=R(45,92);return{name:pick(NAMES)+' '+pick(SURN),sk,com:Math.max(4,Math.round(14-sk/10)),fee:M(sk*2500)}});
+    return queue({back:'emlak',title:'🤝 Danışman adayları',text:'Danışman boş evlerini kiraya verir, kiracı seçer (sabıka kaydına bakar), sorunlu kiracıyı çıkarır, gerekirse bakım yaptırır ve senin istediğin evleri satar. Kiradan komisyon alır, yıllık sabit ücreti vardır.',choices:[...C.map(x=>({t:x.name,sub:`Yetenek %${x.sk} · Kiradan %${x.com} komisyon · Yıllık ${fmtS(x.fee)}`,dis:!canPay(x.fee),fn:()=>{pay(x.fee);S.agent={...x,lvl:'piyasa',bakim:true,sell:[]};log(`🤝 ${x.name} artık evlerinle ilgileniyor.`,'good')}})),{t:'Vazgeç',fn:()=>{}}]})}
+  const own=S.houses.filter(o=>!o.har&&!o.reno);
+  queue({back:'emlak',title:`🤝 ${a.name}`,text:`Yetenek %${a.sk} · Kiradan %${a.com} komisyon · Yıllık ${fmt(a.fee)}<br>Kira politikası: ${AGS[a.lvl][0]} · Bakım: ${a.bakim?'açık':'kapalı'}${a.sell.length?`<br>Satışta: ${a.sell.map(u=>{const o=S.houses.find(x=>x.uid===u);return o?HT(o.t).n:''}).filter(Boolean).join(', ')}`:''}${a.rep?`<br><br>Son rapor: ${a.rep}`:''}`,choices:[
+    ...Object.entries(AGS).filter(([k])=>k!==a.lvl).map(([k,v])=>({t:`Kira politikası: ${v[0]}`,sub:v[2],fn:()=>{a.lvl=k}})),
+    {t:a.bakim?'🧰 Bakımı kapat':'🧰 Bakımı aç',sub:a.bakim?'Durum %60 altına düşen evler bakıma girmesin':'Durum %60 altına düşen evlerin bakımını yaptırsın',fn:()=>{a.bakim=!a.bakim}},
+    {t:'🏷 Ev sattır',sub:'Danışman en iyi alıcıyı bulur · %2 komisyon',dis:!own.length,fn:()=>setTimeout(()=>queue({back:'emlak',title:'Hangi evi satsın?',text:'Satış bir çeyrek sürer. Yetenekli danışman piyasanın üstünde satar. Kiracılı ev de satılır.',choices:[...own.map(o=>{const on=a.sell.includes(o.uid);return{t:`${HT(o.t).n}${on?' ✓':''}`,sub:on?'Satıştan çek':`Değeri ${fmtS(hval(o))}${S.home===o.uid?' · Şu an burada oturuyorsun':''}`,fn:()=>{if(on)a.sell=a.sell.filter(u=>u!==o.uid);else a.sell.push(o.uid);setTimeout(ACT.agent,40)}}}),{t:'Tamam',fn:()=>{}}]}),40)},
+    {t:'🚪 Danışmanla çalışmayı bırak',fn:()=>{S.agent=null;log(`${a.name} ile çalışma bitti.`,'dim')}},
+    {t:'Kapat',fn:()=>{}}]})};
+function agentQ(){const a=S.agent;if(!a)return;if(!packOK('emlak')){return}const out=[];let comm=0;
+  if(S.q===0){fund(a.fee);if(cashA()>=a.fee)spend(a.fee);else{log(`${a.name} ücretini alamadı ve işi bıraktı.`,'bad');S.agent=null;return}}
+  // satış
+  a.sell=a.sell.filter(u=>{const o=S.houses.find(x=>x.uid===u);if(!o)return false;const v=Math.round(hval(o)*(.97+a.sk/1000+R(-2,3)/100));const c=Math.round(v*.02);S.money+=v-c;S.houses=S.houses.filter(x=>x!==o);if(S.home===o.uid)S.home=null;out.push(`${HT(o.t).n} ${fmtS(v)}'ye satıldı`);if(o.inv){const k=v-c-o.inv;S.flipN=(S.flipN||0)+1;S.flipP=(S.flipP||0)+k}return false});
+  S.houses.forEach(o=>{if(o.har||o.reno||S.home===o.uid)return;
+    if(a.bakim&&hCond(o)<60){const pv=HT(o.t).p*S.hidx;const mc=Math.round(pv*.012*(100-hCond(o))/20);fund(mc);if(cashA()>=mc){spend(mc);o.cond=100;if(o.ten)o.ten.sat=clamp((o.ten.sat||70)+10);out.push(`${HT(o.t).n} bakıma girdi`)}}
+    const T=o.ten;
+    if(T){if(T.bad||T.crim&&ch(.3)){if(T.crim&&!T.bad)T.bad=pick(BAD);o.ten=null;out.push(`${HT(o.t).n}: sorunlu kiracı çıkarıldı`);return}
+      if(S.q===0){const b=hRentBase(o)*AGS[a.lvl][1];if(T.rent<b*.95&&T.sat>40){T.rent=Math.round(Math.min(b,T.rent*1.25));T.sat=clamp(T.sat-6);out.push(`${HT(o.t).n} kirası güncellendi`)}}
+      comm+=Math.round(T.rent/4*a.com/100);return}
+    // boş ev → kiracı bul
+    const lvl=a.lvl==='yuksek'?2:1;if(ch(.55+a.sk/250-(lvl===2?.15:0))){const A=hApplicants(o,lvl,true).filter(x=>!x.crim);const best=A.sort((x,y)=>y.inc-x.inc)[0];if(best){o.ten=best;out.push(`${HT(o.t).n} kiraya verildi (${best.job}, ${fmtS(best.rent)}/yıl)`)}}});
+  if(comm){fund(comm);spend(Math.min(comm,cashA()));out.push(`komisyon ${fmtS(comm)}`)}
+  a.rep=out.length?out.join(' · '):'Evlerin sorunsuz';a.last=out[0]||'Evlerin sorunsuz';if(out.length)log(`🤝 ${a.name}: ${a.rep}`,'dim')}
 // Emlak olayları
 EV(1,()=>packOK('emlak')&&!S.jail&&S.houses.some(o=>!o.ten&&S.home!==o.uid),()=>{const o=pick(S.houses.filter(o=>!o.ten&&S.home!==o.uid));return{title:'Evine işgalci girmiş',text:`Boş duran ${HT(o.t).n} evine birileri yerleşmiş. Kapıyı açmıyorlar.`,choices:[{t:'Adamlarını gönder',sub:'Dikkat +8',fn:()=>{add('heat',8);gainResp(1);log('İşgalciler bir saatte toparlanıp gitti.','good')}},{t:'Polise başvur',sub:`${fmt(Math.round(15000*cpiX()))} · Ev hasar görebilir`,fn:()=>{spend(Math.round(15000*cpiX()));o.cond=clamp(hCond(o)-20);log('Polis işgalcileri çıkardı ama ev kötü durumda.','dim')}},{t:'Kiracı yap',sub:'Düşük kirayla kalsınlar',fn:()=>{o.ten={name:pick(NAMES)+' '+pick(SURN),job:'İşsiz',age:R(20,50),crim:true,rent:Math.round(hRentBase(o)*.5),sat:60,late:true};log('İşgalciler artık kiracın. Bakalım ödeyecekler mi…','dim')}}]}});
 EV(1,()=>packOK('emlak')&&!S.jail&&S.houses.some(o=>o.ten),()=>{const o=pick(S.houses.filter(o=>o.ten));const c=Math.round(HT(o.t).p*S.hidx*.03);return{title:'Su bastı',text:`${HT(o.t).n} evinde boru patladı. Kiracın ${o.ten.name} perişan.`,choices:[{t:'Hemen tamir ettir',sub:`${fmt(c)} · Memnuniyet +10`,fn:()=>{spend(c);o.ten.sat=clamp((o.ten.sat||70)+10)}},{t:'Kiracı halletsin',sub:'Memnuniyet −25 · Bakım −15',fn:()=>{o.ten.sat=clamp((o.ten.sat||70)-25);o.cond=clamp(hCond(o)-15)}}]}});
