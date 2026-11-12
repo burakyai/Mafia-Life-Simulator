@@ -330,7 +330,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.13-0200';
+const APPV='2026.11.13-0215';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2558,7 +2558,7 @@ ACT.trip=id=>{const d=DEST.find(x=>x.id===id);if(tripCost(d)&&!pay(tripCost(d)))
 ACT.op=id=>{const d=DEST.find(x=>x.id===id);const o=S.offs=S.offs||{};const k=d.op.id;
   if(k==='casino'){if(!GAMBLE){closeSheet();add('happy',R(6,12));log('Batum sahilinde sabaha kadar eğlendin.','good');return done()}backTo='hayat';return goSheet('kumar')}
   if(k==='offshore'){closeSheet();if(!o.offshore){if(!pay(d.op.c))return;o.offshore=true;o.offAmt=0;log('Kıbrıs\'ta offshore hesap açtın.','good')}
-    return queue({back:'yurtdisi',title:'Offshore hesap',text:`Hesabında ${fmt(o.offAmt||0)} var. İcra dokunamaz, vergi alınmaz, her yıl %10 büyür.`,choices:[
+    return queue({back:'dunya',title:'Offshore hesap',text:`Hesabında ${fmt(o.offAmt||0)} var. İcra dokunamaz, vergi alınmaz, her yıl %10 büyür.`,choices:[
       ...[100000,1000000,10000000].filter(a=>a<S.money).map(a=>({t:`${fmt(a)} yatır`,fn:()=>{spend(a);o.offAmt=(o.offAmt||0)+a;log(`Offshore hesaba ${fmt(a)} aktardın.`,'dim')}})),
       ...(S.money>0?[{t:'Kasadaki paranın tamamını yatır',sub:fmt(S.money),fn:()=>{const a=S.money;S.money=0;o.offAmt=(o.offAmt||0)+a;log(`Kasadaki ${fmt(a)}'nin tamamını offshore hesaba aktardın.`,'dim')}}]:[]),
       ...(S.bank&&S.bank.dep>0?[{t:'Bankadaki mevduatı da aktar',sub:fmt(S.bank.dep),fn:()=>{const a=S.bank.dep;S.bank.dep=0;o.offAmt=(o.offAmt||0)+a;log(`Bankadaki ${fmt(a)} offshore hesaba aktarıldı.`,'dim')}}]:[]),
@@ -4312,7 +4312,8 @@ EXTRA.yeralti=()=>{const tabs=[['org','👑 Ailem'],['rakip','⚔️ Çeteler'],
   const r=EXTRA[yTab]();h+=r[1];return['Yeraltı dünyası',h]};
 ACT.ytab=t=>{yTab=t;openSheet('yeralti')};
 EXTRA.dunya=()=>{let h='<div class="sec">🌍 Yaşadığın şehir</div>'+EXTRA.sehir()[1];
-  h+='<div class="sec">✈️ Yurt dışı operasyonları</div>'+EXTRA.yurtdisi()[1].replace(/<button class="row" data-x="yerles:[^"]*"[\s\S]*?<\/button>/g,'');
+  {const o=S.offs||{};if(S.abroad){const d=DEST.find(x=>x.id===S.abroad);h+=`<div class="sec">${d?d.ic+' '+d.n:'Yurt dışı'}</div>`+row('data-x="don:"','🇹🇷','Türkiye\'ye dön','Polis dikkatin şu an %'+S.heat,'',false)+abRows()}
+   if(o.offshore&&(o.offAmt||0)>0)h+='<div class="sec">Eski hesabın</div>'+row('data-x="op:kibris"','🏝','Offshore hesap',`Bakiye ${fmtS(o.offAmt)} · paranı çekebilirsin`,'›',false)}
   return['Dünya',h]};
 function migrateArtists(){if(!S||!S.artists||!S.artists.length)return;
   if(!S.label)S.label={name:`${S.last} Müzik`,cash:0,roster:[],done:0,tours:0};
