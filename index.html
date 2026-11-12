@@ -317,7 +317,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-1400';
+const APPV='2026.11.12-1430';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2079,7 +2079,7 @@ ACT.mycar=uid=>{const o=myCar(uid);if(!o)return;const m=CM(o.mid);closeSheet();c
 
 
 /* ============ Oto galeri işletmesi ============ */
-const GTIER=[{n:'Mahalle galerisi',c:2e6,cap:4,rent:2e5,sell:.0},{n:'Oto plaza',c:1e7,cap:10,rent:8e5,sell:.1},{n:'Lüks showroom',c:4e7,cap:20,rent:2.5e6,sell:.2}];
+const GTIER=[{n:'Mahalle galerisi',c:2e6,cap:12,rent:2e5,sell:.0},{n:'Oto plaza',c:1e7,cap:40,rent:8e5,sell:.1},{n:'Lüks showroom',c:4e7,cap:100,rent:2.5e6,sell:.15}];
 const gC=()=>S.gal?Math.round(S.gal.cash||0):0;
 const gCan=x=>gC()>=Math.round(x);
 function gPay(x){x=Math.round(x);if(gC()<x){toast('🏪 Galeri kasası yetmiyor. Galeriye sermaye koy.');return false}S.gal.cash-=x;return true}
@@ -2088,7 +2088,7 @@ const gFund=x=>0;
 const DMG=[{n:'Temiz',ic:'🟢',buy:.86,rep:0},{n:'Hafif hasarlı',ic:'🟡',buy:.66,rep:.08},{n:'Ağır hasarlı',ic:'🟠',buy:.46,rep:.22},{n:'Pert kayıtlı',ic:'🔴',buy:.28,rep:.4},{n:'Selden çıkma',ic:'🌊',buy:.22,rep:.5}];
 const PV=[1,.97,.9,.74,.68];
 const MARKUP=[[0,'Piyasa fiyatı','Hızlı satılır'],[10,'%10 üstü','Normal hız'],[20,'%20 üstü','Yavaş'],[35,'%35 üstü','Çok yavaş']];
-function galMarket(){const g=S.gal;if(!g.mk||g.mk.q!==QS()){const n=8+g.tier*4;const pool=CAT.filter(m=>m.c!=='klasik'&&m.p<=GTIER[g.tier].c*(g.tier===2?4:1.2)*S.cpi);
+function galMarket(){const g=S.gal;if(!g.mk||g.mk.q!==QS()){const n=[18,50,110][g.tier];const pool=CAT.filter(m=>m.c!=='klasik'&&m.p<=GTIER[g.tier].c*(g.tier===2?4:1.2)*S.cpi);
   g.mk={q:QS(),items:Array.from({length:n},(_,i)=>{const m=pick(pool.length?pool:CAT);const age=R(1,12),km=R(10,28)*1000*age,col=pick(COLB);const clean=carPrice(m,age,km);const d=pick([0,1,1,1,2,2,2,3,3,4]);
     return{lid:'g'+i+R(0,99999),mid:m.id,y:gYear()-age,km,col:col[0],hex:col[1],clean,d,price:Math.round(clean*DMG[d].buy*R(92,108)/100/1000)*1000,src:d>=3?pick(['Sigorta ihalesi','Pert mezatı','Hurdacı']):d?pick(['Kazalı ilan','Sigorta ihalesi','Sahibinden acil']):pick(['Sahibinden','Takas','Kiralık filo çıkması'])}})}}return g.mk.items}
 const galVal=c=>Math.round(c.clean*(c.d?PV[c.d]-DMG[c.d].rep*.8:1));
@@ -2186,7 +2186,7 @@ EV(1,()=>!S.jail&&S.ceo&&Object.values(S.ceo).some(c=>c&&c.sk>=70),()=>{const k=
 function galQuarter(){const g=S.gal;if(!g)return;const T=GTIER[g.tier];
   if(S.q===0){const r=Math.round(T.rent*S.cpi);gFund(r);(gFund(r),S.gal.cash=Math.max(0,S.gal.cash-r));log(`Galeri kirası ve personel: ${fmt(r)}.`,'dim')}
   g.stock.forEach(c=>{if(c.rep&&c.rep!==QS()){c.rep=null;c.clean=Math.round(c.clean*Math.min(1,PV[c.d]+(c.rec?.16:0)));c.wd=c.d;c.d=0;log(`${CM(c.mid).n} tamirden çıktı, satışa hazır.`,'good')}});
-  g.stock.filter(c=>!c.d&&!c.rep).forEach(c=>{const p={0:.7,10:.48,20:.28,35:.13}[c.ask]+T.sell+karizma()/400;if(ch(p)){const v=Math.round(galVal(c)*(1+c.ask/100)*R(96,103)/100);galSold(c,v,'müşteriye')}});
+  g.stock.filter(c=>!c.d&&!c.rep).forEach(c=>{const cc=S.premium&&S.ceo&&S.ceo.gal;const p={0:.9,10:.72,20:.48,35:.26}[c.ask]+T.sell+karizma()/400+(cc?cc.sk/600:0);if(ch(p)){const v=Math.round(galVal(c)*(1+c.ask/100)*R(96,103)/100);galSold(c,v,'müşteriye')}});
   g.stock.forEach(c=>{c.clean=Math.round(c.clean*.985)})}
 EXTRA.ogaleri=()=>{const g=S.gal;let h='';
   if(!g){h+='<p class="note">Kendi oto galerini aç. Hasarlı, pert ya da temiz araçları ucuza al, ustaya tamir ettir, kârla sat. Galeri kara para aklamak için de birebir.</p>';
