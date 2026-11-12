@@ -200,6 +200,15 @@ body{position:fixed;inset:0;width:100%;height:var(--vh,100%);overflow:hidden;tou
 .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
 .ov,.modal,.full{bottom:var(--bot,0px)!important}
 #mg .card{max-width:380px}
+#ctBox{position:fixed;inset:0;z-index:70;background:#0b0808;display:none;flex-direction:column;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none}#ctBox.on{display:flex}
+.ctHud{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;padding:8px 14px;box-sizing:border-box;font-size:15px;color:#eee}.ctHud b{font-family:var(--display);color:var(--gold);letter-spacing:.06em;font-size:15px}
+.ctSt{position:relative;overflow:hidden;border-top:2px solid var(--gold2);border-bottom:2px solid var(--gold2);touch-action:none}.ctIn{position:absolute;top:0;background-image:url(img/ct_bg.webp);image-rendering:auto}
+.ctE{position:absolute;opacity:0;transform:translateY(22%);transition:opacity .1s,transform .12s;pointer-events:none;filter:drop-shadow(0 3px 3px #000a)}.ctE.up{opacity:1;transform:none;pointer-events:auto}
+.ctCov{position:absolute;background-image:url(img/ct_bg.webp);pointer-events:none}.ctCar{position:absolute;pointer-events:none;filter:drop-shadow(0 6px 6px #000b)}.ctD{position:absolute;pointer-events:none;filter:drop-shadow(0 2px 2px #000a)}
+.ctBar{position:absolute;height:5px;border-radius:3px;background:#0009;overflow:hidden;display:none}.ctBar.on{display:block}.ctBar u{display:block;height:100%;width:100%;background:#e33;transform-origin:left;animation:ctbar linear forwards}@keyframes ctbar{from{transform:scaleX(1);background:#e8b33a}to{transform:scaleX(0);background:#e33}}
+#ctFx i{position:absolute;pointer-events:none;border-radius:50%}.ctHit{width:34px;height:34px;margin:-17px;background:radial-gradient(circle,#fff,#ffb400 40%,#c00 70%,transparent 72%);animation:ctpop .26s forwards}.ctHole{width:7px;height:7px;margin:-3px;background:#000;box-shadow:0 0 0 2px #0005}.ctMz{width:44px;height:44px;margin:-22px;background:radial-gradient(circle,#fff,#ffe07a 35%,#ff8a00 60%,transparent 72%)}@keyframes ctpop{to{transform:scale(1.8);opacity:0}}
+.ctFlash{position:absolute;inset:0;pointer-events:none;background:#c00;opacity:0}.ctFlash.on{animation:ctfl .35s}@keyframes ctfl{0%{opacity:.5}100%{opacity:0}}
+.ctBot{width:100%;max-width:520px;padding:10px 14px;box-sizing:border-box;text-align:center;color:#ddd}.ctBot #ctAmmo{font-size:20px;letter-spacing:3px;color:var(--gold)}.ctBot p{margin:6px 0 10px;font-size:13.5px;color:var(--muted)}#ctRun{background:none;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:8px 18px;font-size:14px}
 .mgp{font-size:14.5px!important;margin-bottom:10px!important}
 .mgh{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}.mgh div{display:flex;justify-content:space-between;background:var(--panel2);border-radius:8px;padding:6px 10px;font-family:var(--cond);font-size:18px}.mgh span{color:var(--gold);letter-spacing:.15em}
 .mgcur{display:flex;gap:10px;justify-content:center;margin:8px 0}.mgcur span{width:52px;height:60px;border-radius:10px;background:#0f0d0e;border:1px solid var(--gold2);display:grid;place-items:center;font-family:var(--display);font-size:30px;color:var(--gold)}
@@ -318,7 +327,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.12-2100';
+const APPV='2026.11.12-2200';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2279,8 +2288,38 @@ ACT.bonusall=()=>{const ms=S.org.members;const c=ms.reduce((s,m)=>s+m.str*5000,0
 /* ============ Mini oyunlar ============ */
 let MGT=null;
 function mgOpen(html){$('mgc').innerHTML=html;$('mg').classList.add('on')}
-function mgClose(){$('mg').classList.remove('on');cancelAnimationFrame(MGT);$('mgc').onclick=null}
-function miniGame(t,cb,opp){const done2=ok=>{cb(ok);afterChange();scrollLog()};if(t==='kasa')mgSafe(done2);else if(t==='kovala')mgChase(done2);else mgFight(done2,opp)}
+function mgClose(){if(CT){CT.over=1;clearInterval(CT.iv);CT=null;const b=$('ctBox');if(b){b.classList.remove('on');b.innerHTML=''}}$('mg').classList.remove('on');cancelAnimationFrame(MGT);$('mgc').onclick=null}
+/* ============ Çatışma mini oyunu ============ */
+let CT=null;
+function mgShoot(cb,o){o=o||{};const p=o.p===undefined?.5:o.p;let box=$('ctBox');if(!box){box=document.createElement('div');box.id='ctBox';document.body.appendChild(box)}
+  const vw=Math.min(window.innerWidth,520),vh=window.innerHeight;const k=Math.min((vh-170)/941,vw/640),H=Math.round(941*k),x0=830-vw/(2*k);
+  const N=o.n||Math.round(5+(1-p)*7),UP=o.up||Math.round(1550-(1-p)*650),HP=(o.hp||3+Math.round(p*2))+(S.premium?2:0);
+  const SL=[{x:555,top:182,h:118,door:1,dx:560,dy:330},{x:716,top:186,h:122,dx:700,dy:400},{x:935,top:150,h:124,dx:920,dy:440},{x:1085,top:150,h:124,dx:1080,dy:445}];
+  const px=v=>(v*k).toFixed(1)+'px';
+  box.innerHTML=`<div class="ctHud"><span id="ctHp"></span><b id="ctT">${o.title||'Çatışma'}</b><span id="ctLeft"></span></div>
+  <div class="ctSt" id="ctSt" style="width:${vw}px;height:${H}px"><div class="ctIn" id="ctIn" style="width:${px(1672)};height:${px(941)};left:${(-x0*k).toFixed(1)}px;background-size:${px(1672)} ${px(941)}">
+    ${SL.map((s,i)=>`<img class="ctE" id="ctE${i}" data-i="${i}" alt="" draggable="false" style="left:${px(s.x-s.h*.3)};top:${px(s.top)};height:${px(s.h)}"><i class="ctBar" id="ctB${i}" style="left:${px(s.x-30)};top:${px(s.top-12)};width:${px(60)}"><u></u></i>`).join('')}
+    <div class="ctCov" style="left:${px(666)};top:${px(270)};width:${px(104)};height:${px(90)};background-size:${px(1672)} ${px(941)};background-position:${px(-666)} ${px(-270)}"></div>
+    <img class="ctCar" src="img/ct_car.webp" alt="" draggable="false" style="left:${px(850)};top:${px(232)};width:${px(310)}">
+    <div id="ctFx"></div></div><div class="ctFlash" id="ctFlash"></div></div>
+  <div class="ctBot"><span id="ctAmmo"></span><p id="ctMsg">Siperden çıkan düşmana dokun. Geç kalırsan o ateş eder.</p><button id="ctRun">Geri çekil</button></div>`;
+  box.classList.add('on');
+  const st={hp:HP,kill:0,ammo:7,rel:0,sl:SL.map(()=>({s:0,t:0,c:0})),over:0,next:700,iv:0,t:0};CT=st;
+  const hud=()=>{$('ctHp').textContent='🧍'.repeat(Math.max(0,st.hp));$('ctLeft').textContent=`💀 ${st.kill}/${N}`;$('ctAmmo').innerHTML=st.rel?'🔄 Şarjör değişiyor…':'<b>'+'▮'.repeat(st.ammo)+'</b><span style="opacity:.25">'+'▮'.repeat(7-st.ammo)+'</span>'};
+  const fx=(x,y,cls,ms)=>{const e=document.createElement('i');e.className=cls;e.style.left=x+'px';e.style.top=y+'px';$('ctFx').appendChild(e);setTimeout(()=>e.remove(),ms||300)};
+  const end=ok=>{if(st.over)return;st.over=1;clearInterval(st.iv);$('ctMsg').innerHTML=ok?'<b style="color:var(--good)">Sokak temizlendi!</b>':'<b style="color:var(--blood)">Geri çekildiniz.</b>';setTimeout(()=>{box.classList.remove('on');box.innerHTML='';CT=null;cb(ok)},ok?1100:900)};
+  const hide=i=>{const e=$('ctE'+i);e.classList.remove('up');$('ctB'+i).classList.remove('on');st.sl[i].s=0;st.sl[i].c=st.t+500};
+  const pop=()=>{const free=st.sl.map((s,i)=>i).filter(i=>st.sl[i].s===0&&st.sl[i].c<=st.t);const upN=st.sl.filter(s=>s.s===1).length;if(!free.length||upN>=(p<.4?3:2)||st.kill+upN>=N)return;const i=pick(free),e=$('ctE'+i),b=$('ctB'+i);st.sl[i].ch=R(2,5);e.src=`img/ct_a${st.sl[i].ch}.webp`;e.classList.add('up');st.sl[i].s=1;st.sl[i].t=st.t+UP;b.classList.remove('on');void b.offsetWidth;b.querySelector('u').style.animationDuration=UP+'ms';b.classList.add('on')};
+  st.iv=setInterval(()=>{if(st.over)return;st.t+=80;if(st.t>=st.next){pop();st.next=st.t+R(450,950)-(1-p)*250}
+    st.sl.forEach((s,i)=>{if(s.s===1&&st.t>=s.t){const S_=SL[i];fx((S_.x)*k,(S_.top+S_.h*.45)*k,'ctMz',160);$('ctFlash').classList.remove('on');void $('ctFlash').offsetWidth;$('ctFlash').classList.add('on');st.hp--;hide(i);hud();try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}if(st.hp<=0)end(false)}});
+    if(st.rel&&st.t>=st.rel){st.rel=0;st.ammo=7;hud()}},80);
+  $('ctSt').onpointerdown=ev=>{if(st.over)return;ev.preventDefault();if(st.rel)return;if(st.ammo<=0)return;st.ammo--;const r=$('ctIn').getBoundingClientRect();const x=ev.clientX-r.left,y=ev.clientY-r.top;
+    const t=ev.target.closest('.ctE');let hit=-1;if(t&&st.sl[+t.dataset.i].s===1)hit=+t.dataset.i;else{st.sl.forEach((s,i)=>{if(s.s!==1)return;const S_=SL[i];if(Math.abs(x/k-S_.x)<S_.h*.42&&y/k>S_.top-8&&y/k<S_.top+S_.h)hit=i})}
+    if(hit>=0){const S_=SL[hit],s=st.sl[hit];fx(x,y,'ctHit',260);hide(hit);s.c=st.t+900;st.kill++;const d=document.createElement('img');d.src=`img/ct_d${s.ch}.webp`;d.className='ctD';d.style.left=px(S_.dx-45+R(-25,25));d.style.top=px(S_.dy+R(-12,22));d.style.width=px(92);if(ch(.5))d.style.transform='scaleX(-1)';$('ctIn').insertBefore(d,$('ctFx'));if(st.kill>=N)end(true)}
+    else fx(x,y,'ctHole',1600);
+    if(st.ammo<=0&&!st.over)st.rel=st.t+900;hud()};
+  $('ctRun').onclick=()=>end(false);hud()}
+function miniGame(t,cb,opp){const done2=ok=>{cb(ok);afterChange();scrollLog()};if(t==='catisma')mgShoot(done2,opp);else if(t==='kasa')mgSafe(done2);else if(t==='kovala')mgChase(done2);else mgFight(done2,opp)}
 function mgSafe(cb){const code=[R(1,6),R(1,6),R(1,6)];let cur=[],hist=[],left=6;
   const draw=()=>mgOpen(`<h2>Kasayı aç</h2><p class="mgp">3 haneli şifre, rakamlar 1–6. <b>●</b> doğru rakam doğru yerde, <b>○</b> doğru rakam yanlış yerde. Kalan deneme: <b>${left}</b></p>
     <div class="mgh">${hist.map(h=>`<div><b>${h.g.join(' ')}</b><span>${'●'.repeat(h.a)}${'○'.repeat(h.b)}${!h.a&&!h.b?'—':''}</span></div>`).join('')}</div>
@@ -3282,8 +3321,8 @@ function gangHit(){const st=S.st,g=st&&st.gw;if(!g||S.jail)return;
   if(t==='tehdit')return queue({title:'✉️ Tehdit mesajı',text:`Kapına bir zarf bırakmışlar: içinde bir mermi ve "${g.boss}" imzalı not: "Sıradaki senin kafanda."`,choices:[ret,{t:'Korumaları artır',sub:fmtS(Math.round(60000*S.cpi))+' · Sonraki saldırıda avantaj',dis:!canPay(Math.round(60000*S.cpi)),fn:()=>{pay(Math.round(60000*S.cpi));g.intel=true;log('Etrafına koruma diktin.','dim')}},{...ign,fn:()=>{add('happy',-6);log('Gece uyuyamadın.','bad')}}]});
   if(t==='adam'){const m=pick(LTS().filter(x=>!x.jail&&!x.hurt));return queue({title:`🩸 ${m.name} saldırıya uğradı`,text:`${g.name} senin adamın ${m.name}'i kahvenin önünde bıçakladı. Ekibi başsız kaldı.`,choices:[ret,ign].map(c=>({...c,fn:()=>{m.hurt=R(1,3);c.fn()}}))})}
   if(t==='ev')return queue({title:'🔥 Evine molotof',text:`Gece yarısı ${g.name} evinin camından içeri molotof attı.`,choices:[{...ret,t:'Kanla öde',sub:'Büyük misilleme · Polis dikkati +',fn:()=>{add('heat',6);gangFight(.25,.4,'misilleme')}},{t:'Polise git',sub:'Dikkat −5 · Saygı −8',fn:()=>{add('heat',-5);add('respect',-8);log('Polise gittin. Sokak "ispiyoncu" diyor.','bad')}}].map(c=>({...c,fn:()=>{add('happy',-8);(fund(Math.round(80000*S.cpi)),S.money=Math.max(0,S.money-Math.round(80000*S.cpi)));c.fn()}}))})}
-function gangFight(lo,hi,how){const g=S.st.gw;if(!g)return;const p=winP(g,g.intel?.12:0);g.intel=false;armUse(how==='baskin'?14:8);
-  if(ch(p)){const d=Math.max(2,Math.round(g.sol*(lo+Math.random()*(hi-lo))));g.sol=Math.max(0,g.sol-d);const myL=Math.round(d*R(5,25)/100);if(myL)sqLossN(myL);gainResp(4);add('heat',R(2,5));
+function gangFight(lo,hi,how,forced){const g=S.st.gw;if(!g)return;const p=winP(g,g.intel?.12:0);g.intel=false;armUse(how==='baskin'?14:8);
+  if(forced===undefined?ch(p):forced){const d=Math.max(2,Math.round(g.sol*(lo+Math.random()*(hi-lo))));g.sol=Math.max(0,g.sol-d);const myL=Math.round(d*R(5,25)/100);if(myL)sqLossN(myL);gainResp(4);add('heat',R(2,5));
     log(`⚔️ ${g.name}'e ${how==='baskin'?'baskın':how==='catisma'?'çatışmada üstün geldin':'misilleme'}: ${d} adamları düştü${myL?`, sen ${myL} adam kaybettin`:''} (kalan ${g.sol}).`,'good');
     if(how==='baskin'&&ch(.5)){const m=Math.round(R(40000,250000)*S.cpi);dirty(m);log(`Mekânlarından ${fmt(m)} çıktı.`,'good')}}
   else{const myL=Math.max(1,Math.round(totSq()*R(5,15)/100));sqLossN(myL);hurt(R(5,18),'Çete çatışması');add('respect',-3);add('heat',R(3,7));log(`${g.name} hazırlıklıydı: ${myL} adamın düştü.`,'bad');if(LTS().length&&ch(.3)){const m=pick(LTS().filter(x=>!x.jail)||[]);if(m){m.hurt=R(1,3);log(`${m.name} yaralandı.`,'bad')}}}
@@ -3339,10 +3378,13 @@ ACT.gw=a=>{const st=S.st,g=st&&st.gw;if(!g)return;closeSheet();
   if(a==='intel'){if(!payB(Math.round(40000*S.cpi)))return;g.intel=true;log(`Muhbirler ${g.name}'in toplandığı depoyu söyledi.`,'dim');afterChange();setTimeout(()=>openSheet('sokak'),50);return}
   if(a==='baris'){const c=Math.round(gPow(g)*9000*S.cpi);if(!payB(c))return;add('respect',-10);log(`${g.name} ile barıştın.`,'bad');st.gw=null;afterChange();return}
   if(!S.premium&&g.act===qnow())return;g.act=qnow();
-  if(a==='pusu')gangFight(.15,.28,'pusu');
-  else if(a==='baskin'){add('heat',6);gangFight(.22,.38,'baskin')}
-  else if(a==='son'){if(ch(winP(g,.1+(g.intel?.12:0)))){g.sol=0;gangWin()}else{hurt(R(15,35),'Hesaplaşma');g.sol=Math.round(g.sol*1.2);add('respect',-6);sqLossN(Math.round(totSq()*.1));log(`${g.boss} son hesaplaşmadan sağ çıktı. Sen hastanelik oldun.`,'bad')}}
-  afterChange();if(S.premium&&st.gw)setTimeout(()=>{if(!Q.length)openSheet('sokak')},90)};
+  const run=ok=>{if(!st.gw)return;
+    if(a==='pusu')gangFight(.15,.28,'pusu',ok);
+    else if(a==='baskin'){add('heat',6);gangFight(.22,.38,'baskin',ok)}
+    else if(a==='son'){if(ok===undefined?ch(winP(g,.1+(g.intel?.12:0))):ok){g.sol=0;gangWin()}else{hurt(R(15,35),'Hesaplaşma');g.sol=Math.round(g.sol*1.2);add('respect',-6);sqLossN(Math.round(totSq()*.1));log(`${g.boss} son hesaplaşmadan sağ çıktı. Sen hastanelik oldun.`,'bad')}}
+    afterChange();if(S.premium&&st.gw)setTimeout(()=>{if(!Q.length)openSheet('sokak')},90)};
+  if(S.mgOff)return run(undefined);
+  const p=winP(g,(g.intel?.12:0)+(a==='son'?.1:0));miniGame('catisma',ok=>run(ok),{p:a==='son'?Math.max(.1,p-.15):p,title:a==='pusu'?`Pusu · ${g.name}`:a==='baskin'?`Baskın · ${g.name}`:`Son hesaplaşma · ${g.boss}`})};
 ACT.shop=id=>{const st=stEnsure(),o=st.shops.find(x=>x.id===id);if(!o)return;const T=shopT(o);closeSheet();const f=shopFee(o);
   if(o.st==='odeyor')return queue({back:'sokak',title:`${T.ic} ${T.n} · ${o.owner}`,text:`Düzenli ödüyor: çeyrekte ${fmt(f)}. Memnuniyeti %${o.mood}.`,choices:[
     {t:'Hal hatır sor',sub:'Memnuniyet +12',fn:()=>{o.vq=qnow();o.mood=clamp(o.mood+12);log(`${o.owner} ile çay içtin.`,'dim')}},
