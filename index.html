@@ -2375,7 +2375,8 @@ function mgChase(cb,o){o=o||{};let box=$('ctBox');if(!box){box=document.createEl
     st.off=(st.off+v*dt)%tileH;road.style.backgroundPositionY=st.off.toFixed(1)+'px';
     st.sp-=dt;if(st.sp<=0){const free=[0,1,2].filter(l=>!st.tr.some(c=>c.l===l&&c.y<ph*1.6));const busy=st.tr.filter(c=>c.y<H*.5).map(c=>c.l);let ls=free.filter(l=>new Set([...busy,l]).size<3);if(ls.length){const l=pick(ls),e=document.createElement('img');e.className='ctM';e.src=`img/kv_t${R(0,11)}.webp`;e.style.width=cw+'px';e.draggable=false;fxl.appendChild(e);st.tr.push({e,l,x:LN[l]+R(-8,8)*k*3,y:-ph*1.15,r:R(42,60)/100})}st.sp=Math.max(.34,.8-st.t*.028)*R(80,125)/100}
     st.tr=st.tr.filter(c=>{c.y+=v*c.r*dt;if(c.y>H+20){c.e.remove();return false}c.e.style.transform=`translate(${(c.x-cw/2).toFixed(1)}px,${c.y.toFixed(1)}px)`;
-      if(st.t>st.inv&&Math.abs(c.x-st.px)<cw*.78&&c.y+ph*.9>py+ph*.08&&c.y+ph*.1<py+ph*.92){st.hp--;st.inv=st.t+1.1;hud();const F=$('ctFlash');F.classList.remove('on');void F.offsetWidth;F.classList.add('on');try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}if(st.hp<=0)end(false)}return true});
+      if(c.hit){c.x+=c.hit*W*.9*dt;c.e.style.opacity=Math.max(0,+c.e.style.opacity-dt*2.2||0);c.e.style.transform+=` rotate(${(c.hit*(1-(+c.e.style.opacity))*28).toFixed(1)}deg)`}
+      if(!c.hit&&st.t>st.inv&&Math.abs(c.x-st.px)<cw*.78&&c.y+ph*.9>py+ph*.08&&c.y+ph*.1<py+ph*.92){c.hit=c.x>=st.px?1:-1;c.e.style.opacity=1;st.hp--;st.inv=st.t+1.1;hud();const F=$('ctFlash');F.classList.remove('on');void F.offsetWidth;F.classList.add('on');try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}if(st.hp<=0)end(false)}return true});
     pe.style.transform=`translate(${(st.px-cw/2).toFixed(1)}px,${py.toFixed(1)}px)`;pe.style.opacity=st.t<st.inv&&Math.floor(st.t*11)%2?'.35':'1';
     hud();if(st.t>=DUR)return end(true);st.raf=requestAnimationFrame(step)};
   let lx=null;box.onpointerdown=ev=>{if(ev.target.id==='ctRun')return;lx=ev.clientX;ev.preventDefault()};
