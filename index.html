@@ -345,7 +345,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.14-0330';
+const APPV='2026.11.14-0400';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -3497,8 +3497,8 @@ const SHOPN=['Hasan','Mehmet','Rıza','Yaşar','Cemil','Halil','Nuri','İsmail',
 const SHOPE=['Usta','Abi','Efendi','Bey','Amca'];
 const SST={yok:'Haraç vermiyor',odeyor:'Haraç veriyor',kizgin:'Ödemeyi kesti',korkuyor:'Çete korkuttu'};
 const shopT=o=>SHOPT.find(x=>x.t===o.t)||SHOPT[0];
-const shopFee=o=>Math.round(o.fee*S.cpi);const shopCap=o=>{const T=shopT(o);return Math.round(T.fee*(T.cx||2.5))};
-const zamP=o=>clamp(.35+o.mood/200+S.respect/400+karizma()/300+Math.min(.15,sqPow()/600)-(o.fee/shopCap(o))*.35-(o.zs||0)*.12+(S.premium?.1:0),.05,.92);
+const shopFee=o=>Math.round(o.fee*S.cpi);const shopCap=o=>{const T=shopT(o);return Math.round(T.fee*Math.max(T.cx||2.5,S.premium?10:0))};
+const zamP=o=>S.premium?1:clamp(.35+o.mood/200+S.respect/400+karizma()/300+Math.min(.15,sqPow()/600)-(o.fee/shopCap(o))*.35-(o.zs||0)*.12+(S.premium?.1:0),.05,.92);
 const qnow=()=>S.age*4+(S.q||0);
 function stEnsure(){if(!S.st)S.st={shops:[],gw:null,won:0};const st=S.st;
   if(!st.my)st.my={sq:0,ar:60};if(!st.city)st.city=[];
@@ -3640,11 +3640,11 @@ ACT.gw=a=>{const st=S.st,g=st&&st.gw;if(!g)return;closeSheet();
   if(S.mgOff)return run(undefined);
   const p=winP(g,(g.intel?.12:0)+(a==='son'?.1:0));if(a==='son')return miniGame('kavga',ok=>run(ok),{duel:1,lv:3,p,title:g.boss});miniGame('catisma',ok=>run(ok),{p:a==='son'?Math.max(.1,p-.15):p,title:a==='pusu'?`Pusu · ${g.name}`:a==='baskin'?`Baskın · ${g.name}`:`Son hesaplaşma · ${g.boss}`})};
 ACT.shop=id=>{const st=stEnsure(),o=st.shops.find(x=>x.id===id);if(!o)return;const T=shopT(o);closeSheet();const f=shopFee(o);
-  if(o.st==='odeyor'){const cap=shopCap(o),atCap=o.fee>=cap,vis=o.vq===qnow(),zp=zamP(o),nf=Math.min(cap,Math.round(o.fee*1.2));
-    return queue({back:'sokak',title:`${T.ic} ${T.n} · ${o.owner}`,text:`Düzenli ödüyor: çeyrekte ${fmt(f)}. Memnuniyeti %${o.mood}.<br>Bu işletmenin ödeme gücü: çeyrekte en çok ${fmt(Math.round(cap*S.cpi))}.${vis?'<br><br>Bu çeyrek buraya zaten uğradın. Yeni bir şey istemek için sonraki çeyreği bekle.':''}`,choices:[
+  if(o.st==='odeyor'){const cap=shopCap(o),atCap=o.fee>=cap,vis=!S.premium&&o.vq===qnow(),zp=zamP(o),nf=Math.min(cap,Math.round(o.fee*(S.premium?1.5:1.2)));
+    return queue({back:'sokak',title:`${T.ic} ${T.n} · ${o.owner}`,text:`Düzenli ödüyor: çeyrekte ${fmt(f)}. Memnuniyeti %${o.mood}.<br>Bu işletmenin ödeme gücü: çeyrekte en çok ${fmt(Math.round(cap*S.cpi))}${S.premium?' (👑 Dayı modu)':''}.${vis?'<br><br>Bu çeyrek buraya zaten uğradın. Yeni bir şey istemek için sonraki çeyreği bekle.':''}`,choices:[
     {t:'Hal hatır sor',sub:vis?'Bu çeyrek uğradın':'Memnuniyet +12',dis:vis,fn:()=>{o.vq=qnow();o.mood=clamp(o.mood+12);log(`${o.owner} ile çay içtin.`,'dim')}},
-    {t:'Haracı artır',sub:atCap?'Daha fazlasını kaldırmaz':vis?'Bu çeyrek uğradın':`${fmtS(Math.round(nf*S.cpi))} olur · Şans %${Math.round(zp*100)} · Reddederse bozuşursunuz`,dis:atCap||vis,fn:()=>{o.vq=qnow();o.zs=(o.zs||0)+1;o.zq=qnow();
-      if(ch(zp)){o.fee=nf;o.mood=clamp(o.mood-15);log(`${o.owner} homurdanarak zammı kabul etti: çeyrekte ${fmt(shopFee(o))}.`,'good');return}
+    {t:'Haracı artır',sub:atCap?'Daha fazlasını kaldırmaz':vis?'Bu çeyrek uğradın':S.premium?`${fmtS(Math.round(nf*S.cpi))} olur · 👑 Dayı modu: kesin kabul`:`${fmtS(Math.round(nf*S.cpi))} olur · Şans %${Math.round(zp*100)} · Reddederse bozuşursunuz`,dis:atCap||vis,fn:()=>{o.vq=qnow();if(!S.premium){o.zs=(o.zs||0)+1;o.zq=qnow()}
+      if(ch(zp)){o.fee=nf;o.mood=clamp(o.mood-15);log(`${o.owner} homurdanarak zammı kabul etti: çeyrekte ${fmt(shopFee(o))}.`,'good');if(S.premium)setTimeout(()=>{if(!Q.length)ACT.shop(o.id)},90);return}
       o.mood=clamp(o.mood-25);const x=Math.random();
       if(x<.2){st.shops=st.shops.filter(z=>z!==o);add('respect',-2);log(`${T.ic} ${o.owner} zammı kaldıramadı; dükkânı kapatıp mahalleden gitti. O haraç bitti.`,'bad')}
       else if(x<.4){o.st='yok';o.gang=gName();log(`${T.ic} ${o.owner} zam isteyince ${o.gang} çetesinin korumasına girdi. Artık sana ödemiyor.`,'bad')}
