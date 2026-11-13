@@ -345,7 +345,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.14-0400';
+const APPV='2026.11.14-0430';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -3650,7 +3650,8 @@ ACT.shop=id=>{const st=stEnsure(),o=st.shops.find(x=>x.id===id);if(!o)return;con
       else if(x<.4){o.st='yok';o.gang=gName();log(`${T.ic} ${o.owner} zam isteyince ${o.gang} çetesinin korumasına girdi. Artık sana ödemiyor.`,'bad')}
       else if(x<.55){add('heat',8);log(`${T.ic} ${o.owner} zam yüzünden seni polise şikâyet etti. Zam da olmadı.`,'bad')}
       else log(`${T.ic} ${o.owner} zammı reddetti: "Bundan fazlasını veremem." Aranız bozuldu.`,'bad')}},
-    {t:'Haracı bırak',sub:'Serbest bırak',fn:()=>{o.st='yok';o.mood=clamp(o.mood+20);log(`${o.owner}'i serbest bıraktın.`,'dim')}}]})}
+    {t:'Haracı bırak',sub:'Serbest bırak · Artık ödemez',fn:()=>{o.st='yok';o.mood=clamp(o.mood+20);log(`${o.owner}'i serbest bıraktın.`,'dim')}},
+    {t:'Geri dön',sub:'Bir şey yapmadan çık',fn:()=>{setTimeout(()=>{if(!Q.length)openSheet('sokak')},60)}}]})}
   if(o.vq===qnow()){toast('Buraya bu çeyrek zaten uğradın');return}
   const base=.2+karizma()/120+rank()*.07+S.respect/400+Math.min(.25,sqPow()/400)-(o.st==='kizgin'?.15:0);
   const warn=!T.il?'<br><br>⚠️ <b>Meşru esnaf.</b> Haraç alırsan büyük kabadayı aileler parana çöker.':o.gang?`<br><br>⚠️ Burası <b>${o.gang}</b> çetesinin koruması altında. El sürersen savaş çıkar.`:'';
