@@ -294,18 +294,45 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 .toast.on{opacity:1}
 
 /* ============ PC görünümü ============ */
-@media (min-width:1220px){
+@media (min-width:1100px){
+  :root{--sbw:clamp(250px,19vw,330px);--shw:clamp(470px,38vw,760px)}
   body{background:radial-gradient(ellipse at 30% 0%,#2a1712 0%,#0b0807 60%)}
-  #hdr,#ftr,#log{left:calc(50% - 600px)!important;right:auto!important;width:520px;margin:0!important}
+  #hdr,#ftr,#log{max-width:none!important;margin:0!important}
+  /* üst bant: tam genişlik */
+  #hdr{left:0!important;right:0!important;width:auto;padding-bottom:0;border-bottom:1px solid #c9a24a44;box-shadow:0 6px 24px #000a}
+  #hdr .top{padding:12px 28px;gap:16px;border-bottom:0}
+  #hdr .top .who h1{font-size:24px}
+  #hdr .cash strong{font-size:26px}
+  /* sol sütun: durum ve menü */
+  #ftr{left:0!important;right:auto!important;top:var(--th,84px);bottom:0!important;width:var(--sbw);display:flex;flex-direction:column;border-right:1px solid #c9a24a44;box-shadow:8px 0 24px #0008;padding-bottom:0}
+  #ftr .stats{order:1;grid-template-columns:1fr;gap:12px;padding:18px 18px 14px;border-top:0}
+  #ftr .stats .chips{max-width:100%;flex-wrap:wrap;overflow:visible}
+  #ftr #qbar{order:2;padding:8px 18px;min-height:0;flex-wrap:wrap}
+  #ftr #qbar #qBack{max-width:100%;margin-left:0}
+  #ftr .nav{order:3;flex:1;display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:14px 14px 18px;min-height:0}
+  #ftr .nav button{flex-direction:row;justify-content:flex-start;gap:14px;padding:13px 16px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);font-size:15px!important;color:var(--ink)}
+  #ftr .nav button:hover{border-color:var(--gold2);background:#ffffff0a}
+  #ftr .nav button svg{width:22px;height:22px}
+  #ftr .nav .age{order:9;margin-top:auto;justify-content:center;border:0;background:none;padding:10px 0 0}
+  #ftr .nav .age:hover{background:none}
+  #ftr .nav .age span.c{width:118px;height:118px;font-size:26px}
+  body.t-baba #ftr .nav .age span.c>span{font-size:20px!important}
+  #ftr .nav .age span.c small{font-size:13px;margin-top:3px}
+  #ftr #nUndo{left:auto;right:16px;bottom:118px;width:36px;height:36px}
+  /* orta: hayat akışı */
+  #log{left:var(--sbw)!important;right:var(--shw)!important;top:var(--th,84px)!important;bottom:30px!important;padding:18px 34px 28px;font-size:17px}
+  /* sağ: menü paneli */
   .ov{background:transparent!important;pointer-events:none}
-  .ov.on{display:flex!important;top:0!important;bottom:0!important;left:calc(50% - 70px)!important;right:auto!important;width:670px;align-items:stretch;justify-content:stretch;pointer-events:auto}
-  .ov .sheet{max-width:none!important;max-height:none!important;height:100%;border-radius:0;border-top:0;border-left:1px solid #c9a24a55;box-shadow:-12px 0 30px #0009;animation:none}
+  .ov.on{display:flex!important;top:var(--th,84px)!important;bottom:0!important;left:auto!important;right:0!important;width:var(--shw);align-items:stretch;justify-content:stretch;pointer-events:auto}
+  .ov .sheet{max-width:none!important;max-height:none!important;width:100%;height:100%;border-radius:0;border-top:0;border-left:1px solid #c9a24a55;box-shadow:-12px 0 30px #0009;animation:none}
   .ov .sheet .tiles{grid-template-columns:repeat(3,1fr)}
-  .modal .mc,.modal>div{max-width:560px}
+  .modal .mc,.modal>div{max-width:620px}
   #pcHint{display:block!important}
-  .ov .sheet #shB{padding-bottom:34px}
+  .ov .sheet #shB{padding-bottom:24px}
+  button,.row,.tab,.avt{cursor:pointer}
 }
-#pcHint{display:none;position:fixed;left:calc(50% - 70px);width:670px;bottom:0;padding:6px 0;background:#0b0807;border-top:1px solid #c9a24a33;text-align:center;font-size:11px;color:#8a7d6a;z-index:25;pointer-events:none}
+@media (min-width:1700px){.ov .sheet .tiles{grid-template-columns:repeat(4,1fr)}#log{font-size:18px;padding-left:48px;padding-right:48px}}
+#pcHint{display:none;position:fixed;left:var(--sbw,300px);right:var(--shw,560px);bottom:0;padding:6px 0;background:#0b0807;border-top:1px solid #c9a24a33;text-align:center;font-size:11px;color:#8a7d6a;z-index:25;pointer-events:none}
 </style>
 </head>
 <body>
@@ -345,7 +372,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.14-0500';
+const APPV='2026.11.14-0530';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2341,8 +2368,10 @@ const sesOn=()=>{try{return localStorage.getItem('mafya-ses')!=='0'}catch(e){ret
 const CTAS={};function ctSes(on,f){clearInterval(CTF);try{if(on){if(!sesOn())return;Object.values(CTAS).forEach(a=>{try{a.pause()}catch(e){}});f=f||'ct_ses';if(!CTAS[f]){CTAS[f]=new Audio('img/'+f+'.mp3');CTAS[f].loop=true;CTAS[f].preload='auto'}CTA=CTAS[f];try{CTA.volume=.7}catch(e){}let d=CTA.duration;try{CTA.currentTime=d>4?R(0,Math.floor(d*.6)):0}catch(e){}const p=CTA.play();p&&p.catch&&p.catch(()=>{})}else if(CTA){const A=CTA;let n=0;const stop=()=>{clearInterval(CTF);try{A.pause();A.currentTime=0}catch(e){}try{A.volume=.7}catch(e){}};CTF=setInterval(()=>{n++;let v=1;try{A.volume=Math.max(0,.7-n*.12);v=A.volume}catch(e){}if(n>=6||v<=.02||v>.7)stop()},70);setTimeout(stop,600)}}catch(e){}}
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&CTA){try{CTA.pause()}catch(e){}}else if(!document.hidden&&CT&&!CT.over&&CTA&&sesOn()){try{CTA.play().catch(()=>{})}catch(e){}}});
 ACT.sestog=()=>{const on=!sesOn();try{localStorage.setItem('mafya-ses',on?'1':'0')}catch(e){}if(!on)ctSes(false);toast(on?'🔊 Ses açık':'🔇 Ses kapalı');openSheet('ben')};
+/* mini oyun sahne genişliği: telefonda ekran, PC'de pencereye göre büyür */
+function mgW(base,ratio){if(!(typeof isPC==='function'&&isPC()))return Math.min(window.innerWidth,base);return Math.round(Math.max(base,Math.min(window.innerWidth-80,980,(window.innerHeight-230)/ratio)))}
 function mgShoot(cb,o){o=o||{};const p=o.p===undefined?.5:o.p;let box=$('ctBox');if(!box){box=document.createElement('div');box.id='ctBox';document.body.appendChild(box)}
-  const W=Math.min(window.innerWidth,560),SX=300,SY=215,SW=1000,k=W/SW,Hh=Math.round(570*k);
+  const W=mgW(560,570/1000),SX=300,SY=215,SW=1000,k=W/SW,Hh=Math.round(570*k);
   const N=o.n||Math.round(6+(1-p)*8),HP=(o.hp||3+Math.round(p*2))+(S.premium?2:0),FIRE=Math.round(1900-(1-p)*800),MAXE=p<.4?4:3;
   const ph=Math.round(Hh*.27),pw=Math.round(ph*.6),yMin=Math.round((392-SY)*k)+ph*.35,yMax=Math.round((748-SY)*k);
   box.innerHTML=`<div class="ctHud" style="max-width:${W}px"><span id="ctHp"></span><b id="ctT">${o.title||'Çatışma'}</b><span id="ctLeft"></span></div>
@@ -2398,7 +2427,7 @@ function mgSafe(cb){const code=[R(1,6),R(1,6),R(1,6)];let cur=[],hist=[],left=6;
       if(left<=0){mgClose();toast(`Şifre ${code.join('')} idi. Alarm çaldı!`);cb(false);return}}
     draw()}}
 function mgFight(cb,opp,hard){let box=$('ctBox');if(!box){box=document.createElement('div');box.id='ctBox';document.body.appendChild(box)}
-  const W=Math.min(window.innerWidth,560),SW=900,SX=386,SY=190,k=W/SW,Hh=Math.round(600*k);
+  const W=mgW(560,600/900),SW=900,SX=386,SY=190,k=W/SW,Hh=Math.round(600*k);
   const ph=Math.round(Hh*.46),sh=ph*280/230,sw=sh*460/280,gy=(575-SY)*k,cx=W/2;
   const O=opp&&typeof opp==='object'?opp:{},D=!!O.duel,lv=Math.max(0,Math.min(3,O.lv||0)),bp=O.p===undefined?.5:Math.max(.05,Math.min(.95,O.p));
   const name=typeof opp==='string'?opp:(O.title||''),bossN=typeof opp==='string'?opp:(O.boss||''),N=D?1:(O.n||(hard?7:5)),MAXA=hard?3:2;
@@ -2460,7 +2489,7 @@ function mgFight(cb,opp,hard){let box=$('ctBox');if(!box){box=document.createEle
   $('ctRun').onclick=()=>end(false);hud();place(P,cx,gy);st.raf=requestAnimationFrame(step)}
 function kvCar(){const c=typeof curCar==='function'?curCar():null;const m=c?CM(c.mid):null;return m?({ekonomi:9,orta:1,luks:10,suv:3,spor:4,super:5,zirhli:2,klasik:7}[m.c]??0):0}
 function mgChase(cb,o){o=o||{};let box=$('ctBox');if(!box){box=document.createElement('div');box.id='ctBox';document.body.appendChild(box)}
-  const W=Math.min(window.innerWidth,460),H=Math.min(window.innerHeight-170,Math.round(W*1.55)),k=W/941,cw=Math.round(W*.2),DUR=o.dur||15;
+  const W=(typeof isPC==='function'&&isPC())?Math.round(Math.min(620,(window.innerHeight-190)/1.55)):Math.min(window.innerWidth,460),H=Math.min(window.innerHeight-170,Math.round(W*1.55)),k=W/941,cw=Math.round(W*.2),DUR=o.dur||15;
   const xMin=75*k+cw/2,xMax=865*k-cw/2,LN=[191*k,470*k,750*k],tileH=1672*k;const pc=kvCar();
   box.innerHTML=`<div class="ctHud" style="max-width:${W}px"><span id="ctHp"></span><b>${o.title||'Kovalamaca'}</b><span id="ctLeft"></span></div>
   <div class="ctSt" id="ctSt" style="width:${W}px;height:${H}px"><div class="kvRoad" id="kvRoad" style="background-size:${W}px ${tileH.toFixed(1)}px"></div><div id="ctFx"></div><img id="ctP" class="ctM" src="img/kv_p${pc}.webp" alt="" draggable="false" style="width:${cw}px"><div class="kvSiren" id="kvSiren"></div><div class="ctFlash" id="ctFlash"></div></div>
@@ -5678,10 +5707,11 @@ function stepYr(){if($('mg').classList.contains('on')){setTimeout(stepYr,400);re
 function advance(){if(!S||!S.alive)return;if(Q.length){showEv();return}if(!S.yearStep||S.age<14){ageUp();return}YR=4-(S.q||0);YSTART=S.log.length;stepYr()}
 $('nAge').onclick=advance;
 /* ============ PC: kalıcı yan panel ve klavye kısayolları ============ */
-const isPC=()=>window.matchMedia('(min-width:1220px)').matches;
+const isPC=()=>window.matchMedia('(min-width:1100px)').matches;
 const _closeSheet=closeSheet;
 closeSheet=function(){_closeSheet();if(isPC()&&S&&S.alive&&!$('title').classList.contains('on'))setTimeout(()=>{if(!curSheet&&S&&S.alive&&!$('title').classList.contains('on'))openSheet('hayat')},0)};
 window.addEventListener('resize',()=>{if(isPC()&&!curSheet&&S&&S.alive&&!$('title').classList.contains('on'))openSheet('hayat')});
+{const _rn=render;let busy=false;render=function(){const r=_rn.apply(this,arguments);if(!busy&&isPC()&&!curSheet&&S&&S.alive&&!$('title').classList.contains('on')&&!$('create').classList.contains('on')&&!(typeof CT!=='undefined'&&CT)){busy=true;try{openSheet('hayat')}catch(e){}busy=false}return r}}
 const KMAP={ArrowLeft:'l',a:'l',A:'l',ArrowRight:'r',d:'r',D:'r',ArrowUp:'u',w:'u',W:'u',ArrowDown:'d',s:'d',S:'d'};
 ['keydown','keyup'].forEach(tp=>document.addEventListener(tp,e=>{if(typeof CT==='undefined'||!CT||!CT.key)return;const dn=tp==='keydown';if(e.key==='Escape'){if(dn){const b=$('ctRun');if(b)b.click()}e.preventDefault();e.stopImmediatePropagation();return}const c=KMAP[e.key];if(c&&CT.key(c,dn,e.repeat)){e.preventDefault()}e.stopImmediatePropagation()},true));
 const kbHint=t=>{try{return window.matchMedia('(hover:hover) and (pointer:fine)').matches?` <span style="opacity:.8">Klavye: ${t}</span>`:''}catch(e){return''}};
