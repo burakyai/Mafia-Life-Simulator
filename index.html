@@ -330,7 +330,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.13-1515';
+const APPV='2026.11.13-1600';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2210,13 +2210,32 @@ function ceoLbl(c){const l=S.label;const out=[];const sc=Math.round(3e5*S.cpi*(l
   if(l.roster.length<want&&l.cash>Math.round(2e5*S.cpi)*10){const C=[0,1,2].map(()=>mkArtist(10,45));const a=C.sort((x,y)=>y.pot-x.pot)[0];a.pot=clamp(a.pot+Math.round((c.sk-50)/5));a.ct='std';a.until=S.age+3;l.cash-=Math.round(2e5*S.cpi);l.roster.push(a);out.push(`${a.name} ile 3 yıllık sözleşme imzaladı`)}
   l.roster.filter(a=>a.fame<12&&a.pot<30).forEach(a=>{l.roster=l.roster.filter(x=>x!==a);out.push(`${a.name} ile yolları ayırdı`)});
   return out.length?out.join(' · '):'Şarkı ve konser planlıyor'}
-function ceoCo(c){const co=S.co;const out=[];const cl=coCls();const lim=Math.max(bizVal('co')*{temkin:.15,denge:.3,agr:.6}[c.sty],cC()*{temkin:.05,denge:.1,agr:.2}[c.sty]);
-  co.projects.filter(p=>p.state==='sale').forEach(p=>{p.prm={temkin:1,denge:1,agr:1.1}[c.sty];p.vade=c.sty!=='temkin'});
-  const builds=co.projects.filter(p=>p.state==='build').length;const maxB={temkin:1,denge:2,agr:3}[c.sty];
-  if(builds<maxB){const opts=PROJ.filter(t=>!t.kamu&&t.cls<=cl).sort((a,b)=>(b.u*b.up-b.cost)-(a.u*a.up-a.cost));const reg={temkin:'kartal',denge:'umr',agr:'sar'}[c.sty];
-    const t=opts.find(t=>t.cost*RG(reg)[2]*.2<=Math.min(lim,cC()));
-    if(t){CPD={id:t.id,reg,land:'al',mat:c.sty==='agr'?['lux','Lüks malzeme',1.15,1.18]:['std','Standart malzeme',1,1],tas:c.sty==='temkin'?'kur':'std'};const cost=pwCost();const T=TAS.find(x=>x[0]===CPD.tas);const dur=pjDur(t,T[3]);pwGo(cost,dur,t.u,1,c.sty==='agr'?1:0);out.push(`${RG(reg)[1]}'da ${t.n} projesi başlattı`)}}
-  if(S.q===1){const I=ihaleList().find(x=>!x.used&&PJ(x.id).cls<=cl);if(I&&cC()>PJ(I.id).cost*.15){const t=PJ(I.id);I.used=1;const pw=clamp(.35+co.rep/400+cl*.04-I.rivals*.02+(c.sk-60)/300,.05,.9);
+function coOwed(){const co=S.co;if(!co)return 0;return Math.round(co.projects.filter(p=>p.state==='build').reduce((t,p)=>{const T=PJ(p.t);const fi=T.kamu?1:Math.max(1,S.cpi/(p.cpi0||S.cpi));return t+Math.max(0,p.cost-p.paid)*(1-(p.lf||0))*fi*(1+(S.infl||.05)*Math.max(0,T.q-p.prog)/8)},0))}
+function ceoCo(c){const co=S.co;const out=[];const cl=coCls();const sk=c.sk||60;const sty=c.sty;
+  const buf={temkin:1.3,denge:1.12,agr:1}[sty],cover={temkin:1,denge:.85,agr:.8}[sty];
+  const sale=co.projects.filter(p=>p.state==='sale');
+  sale.forEach(p=>{p.prm={temkin:1,denge:1,agr:1.1}[sty];p.vade=sty!=='temkin';if(sk>=85&&pjGlut(p)<1&&p.prm>1)p.prm=1});
+  // nakit sıkışırsa önlem al (yetenek 70+)
+  let owed=coOwed();const builds=co.projects.filter(p=>p.state==='build');
+  const nextQ=Math.round(builds.reduce((t,p)=>{const T=PJ(p.t);return t+(p.prog<T.q?p.cb||p.cost:0)*.8/T.q*(1-(p.lf||0))*1.1},0));
+  if(cC()<nextQ*1.2){
+    for(const p of builds){if(cC()>=nextQ*1.2)break;const T=PJ(p.t);const avail=Math.floor(p.units*.3)-p.presold;if(avail>0&&T.u>1){const m=pjCash(p,Math.round(avail*upNow(p)*.8));co.cash+=m;p.presold+=avail;S.taxInc=(S.taxInc||0)+Math.round(m*.3);out.push(`nakit için ${T.n} projesinde ${avail} birim ön satış yaptı (${fmtS(m)})`)}}
+    if(cC()<nextQ&&sale.length){sale.forEach(p=>{p.prm=.9;p.vade=false});out.push('taksitler için satıştaki dairelerde %10 indirime gitti')}
+    if(cC()<nextQ*.6&&sk>=90&&sale.length){const p=sale.sort((a,b)=>(b.units-b.presold-b.sold)-(a.units-a.presold-a.sold))[0];const left=p.units-p.presold-p.sold;if(left>0){const m=pjCash(p,Math.round(left*upNow(p)*.9*.96*pjGlut(p)));if(p.def){co.cash+=p.def;p.def=0}co.cash+=m;p.sold+=left;S.taxInc=(S.taxInc||0)+Math.max(0,m-p.cost*left/p.units);p.state='done';co.done++;out.push(`şantiyeler durmasın diye ${PJ(p.t).n} projesinin kalan ${left} birimini toptan sattı (${fmtS(m)})`)}}
+    if(cC()<nextQ&&sk>=65){const p=builds.filter(x=>!x.lf&&!PJ(x.t).kamu).sort((a,b)=>b.cost-a.cost)[0];if(p){p.lf=.7;out.push(`${PJ(p.t).n} için bankadan proje kredisi çekti (kalan taksitlerin %70'i bankadan, satışta geri ödenir)`)}}
+    const nq2=Math.round(builds.reduce((t,p)=>{const T=PJ(p.t);return t+(p.prog<T.q?p.cb||p.cost:0)*.8/T.q*(1-(p.lf||0))*1.1},0));
+    if(cC()<nq2)out.push(`⚠️ kasa önümüzdeki taksitlere yetmiyor (gereken ~${fmtS(nq2)}): sermaye koymanı öneriyor`)}
+  owed=coOwed();const free=cC()-owed*buf;const maxB={temkin:1,denge:2,agr:3}[sty];
+  if(builds.length<maxB){const blunder=ch(Math.max(0,(80-sk))/300);
+    const regs=({temkin:['kartal','umr','esen'],denge:['umr','kartal','bey'],agr:['sar','bey','bod']})[sty];const glut=r=>co.projects.filter(x=>x.state!=='done'&&(x.reg||'kartal')===r).reduce((t,x)=>t+x.units-x.presold-x.sold,0);
+    const reg=sk>=80?regs.slice().sort((a,b)=>glut(a)-glut(b))[0]:regs[0];
+    const mat=sty==='agr'?['lux','Lüks malzeme',1.15,1.18]:['std','Standart malzeme',1,1],tas=sty==='temkin'?'kur':'std',kr=sty==='agr'?1:0;
+    const full=t=>{CPD={id:t.id,reg,land:'al',mat,tas};const v=pwCost();CPD=null;return v};
+    const opts=PROJ.filter(t=>!t.kamu&&t.cls<=cl).sort((a,b)=>(b.u*b.up-b.cost)-(a.u*a.up-a.cost));
+    const t=opts.find(t=>{const fc=full(t);const need=blunder?fc*.2:fc*(kr?.55:1)*cover*(1+(S.infl||.05)*t.q/8);return need<=free&&fc*.2<=cC()});
+    if(t){CPD={id:t.id,reg,land:'al',mat,tas};let cost=pwCost();cost=Math.round(cost*(1-Math.max(0,sk-60)/800));const T=TAS.find(x=>x[0]===tas);const dur=pjDur(t,T[3]);pwGo(cost,dur,t.u,1,kr);out.push(`${RG(reg)[1]}'da ${t.n} projesi başlattı (kasada taksitler için ${fmtS(Math.max(0,cC()-coOwed()))} pay bıraktı)`)}
+    else if(!builds.length&&opts.length)out.push(`yeni proje için kasa yetersiz: en küçük proje için ~${fmtS(full(opts[opts.length-1])*cover)} gerekiyor`)}
+  if(S.q===1){const I=ihaleList().find(x=>!x.used&&PJ(x.id).cls<=cl);if(I&&cC()-coOwed()*buf>=PJ(I.id).cost*.9*cover){const t=PJ(I.id);I.used=1;const pw=clamp(.35+co.rep/400+cl*.04-I.rivals*.02+(c.sk-60)/300,.05,.9);
     if(ch(pw)){const pe=Math.round(t.cost*.1);cSpend(pe);const dur=pjDur(t);const contract=Math.round(t.cost*1.25);co.projects.push({uid:'pj'+Date.now()+R(0,999),t:t.id,cost:t.cost,paid:pe,prog:0,delay:0,qual:'std',pm:1,units:1,presold:0,sold:0,launder:0,hidx0:S.hidx,up0:0,state:'build',start:gYear(),dur,endT:Date.now()+dur,contract,tas:'std',risk:0,evs:[],prm:1,sh:1,lf:0,loan:0});out.push(`${t.n} ihalesini kazandı`)}else out.push(`${t.n} ihalesini kaybetti`)}}
   return out.length?out.join(' · '):'Projeleri takip ediyor'}
 EV(1,()=>!S.jail&&S.ceo&&Object.values(S.ceo).some(c=>c&&c.loy<45),()=>{const k=Object.keys(S.ceo).find(k=>S.ceo[k]&&S.ceo[k].loy<45);const c=S.ceo[k];const z=Math.round(bizVal(k)*R(3,8)/100);
