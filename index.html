@@ -57,7 +57,7 @@ body{position:fixed;inset:0;width:100%;height:var(--vh,100%);overflow:hidden;tou
 .avs{position:relative;display:block;width:100%;height:100%}.avs img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain}
 .avs img.glo{object-fit:fill!important;border:0!important;border-radius:0!important;box-shadow:none!important;max-width:none!important;max-height:none!important;background:none!important;filter:drop-shadow(0 1px 2px rgba(0,0,0,.45))!important;z-index:2}.av:has(>.avs),body.t-baba .av:has(>.avs){border:0;border-radius:0;background:none;box-shadow:none;overflow:visible}.av .avs{transform:none}.av .avs>img{filter:drop-shadow(0 3px 6px rgba(0,0,0,.55))}
 .avs img.tto{object-fit:fill!important;border:0!important;border-radius:0!important;box-shadow:none!important;max-width:none!important;max-height:none!important;background:none!important;filter:none!important;opacity:.8;mix-blend-mode:multiply;z-index:1}.avs img.tto.dr{opacity:.95;filter:drop-shadow(0 0 2px #ffd34a)!important;mix-blend-mode:normal}
-.ttg{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:6px 0}.ttg button{aspect-ratio:1;border-radius:10px;border:1.5px solid var(--line);background:#c9966f;padding:3px}.ttg button.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold2)}.ttg img{width:100%;height:100%;display:block;object-fit:contain}.ttg.ttw{grid-template-columns:repeat(3,1fr)}.ttg.ttw button{aspect-ratio:2.4;padding:6px}
+.ttg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:6px 0;width:100%;max-width:100%;overflow:hidden}.ttg button{position:relative;display:block;min-width:0;width:100%;height:0;padding:0 0 100%;border-radius:10px;border:1.5px solid var(--line);background:#c9966f;overflow:hidden;box-sizing:border-box}.ttg button.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold2)}.ttg img{position:absolute;left:6%;top:6%;width:88%;height:88%;display:block;object-fit:contain;max-width:none}.ttg.ttw{grid-template-columns:repeat(3,minmax(0,1fr))}.ttg.ttw button{padding:0 0 42%}
 .avbig{width:min(230px,60vw);aspect-ratio:1;border-radius:18px;border:2px solid var(--gold);background:radial-gradient(circle at 50% 35%,#3b3134,#1a1517 70%);overflow:hidden;box-shadow:0 10px 30px #000c}.avbig .avs{transform:scale(1.05) translateY(4%)}
 .avrow{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;-webkit-overflow-scrolling:touch}.avt{flex:none;width:68px;height:68px;border-radius:12px;border:1.5px solid var(--line);background:var(--panel2);padding:0;overflow:hidden}.avt.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold2)}.avt .avs{transform:scale(1.25) translateY(8%)}
 .avcol{display:flex;gap:14px;flex-wrap:wrap;padding-bottom:18px}.aws{width:44px;height:44px;border-radius:50%;border:2px solid var(--line);position:relative}.aws.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold2)}.aws i{position:absolute;top:48px;left:50%;transform:translateX(-50%);font-size:10px;font-style:normal;color:var(--muted);white-space:nowrap}
@@ -111,7 +111,7 @@ body{position:fixed;inset:0;width:100%;height:var(--vh,100%);overflow:hidden;tou
 .sh-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--line)}
 .sh-h h2{font-family:var(--display);font-size:22px}
 .x{width:36px;height:36px;border-radius:50%;background:var(--panel2);font-size:20px;line-height:1}
-.sh-b{overflow-y:auto;padding:12px 16px 20px;-webkit-overflow-scrolling:touch}
+.sh-b{overflow-x:hidden;overflow-y:auto;padding:12px 16px 20px;-webkit-overflow-scrolling:touch}
 .sec{font-family:var(--cond);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:14px 0 8px}
 .sec:first-child{margin-top:2px}
 .note{font-size:14px;color:var(--muted);line-height:1.4;margin-bottom:8px}
@@ -392,7 +392,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.14-0630';
+const APPV='2026.11.14-0700';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
