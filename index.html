@@ -345,7 +345,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.14-0200';
+const APPV='2026.11.14-0230';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -5335,6 +5335,7 @@ function closeSheet(){if(curSheet){LASTSH=curSheet;LASTT=(($('shT')&&$('shT').te
 function qbar(){const l=$('qLeft'),b=$('qBack');if(!l||!S)return;l.innerHTML='';if(LASTSH&&S.alive){b.style.display='';b.textContent='↩ '+(LASTT||'Son menü')}else b.style.display='none'}
 document.addEventListener('click',e=>{if(e.target.closest('#qBack')&&LASTSH){openSheet(LASTSH)}});
 const PARENT={berber:'cat_kisisel',meslek:'is',egitim:'meslek',ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
+try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{gozluk:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm'});
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
 $('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeSheet()});
@@ -5516,7 +5517,7 @@ $('shB').addEventListener('click',e=>{
   else if(d.sm)staffMenu(d.sm);
   else if(d.fm)friendMenu(d.fm);
   else if(d.meet)meet(d.meet);
-  else if(d.go){backTo='hayat';if(d.go==='berber')BDRAFT=null;if(curSheet&&curSheet.startsWith('cat_')&&!d.go.startsWith('cat_'))DYNP[d.go]=curSheet;else if(d.go.startsWith('cat_'))delete DYNP[d.go];if(!d.go.startsWith('cat_')&&S){S.recent=[d.go,...(S.recent||[]).filter(x=>x!==d.go)].slice(0,6)}if(d.go==='kuyumcu'){vTab='mucevher';goSheet('varlik')}else goSheet(d.go)}
+  else if(d.go){backTo='hayat';if(d.go==='berber')BDRAFT=null;if(d.go.startsWith('cat_'))delete DYNP[d.go];else if(curSheet&&curSheet!==d.go&&curSheet!=='hayat'&&d.go!=='hayat'&&!PARENT[d.go]){let c=curSheet,loop=false;for(let i=0;i<8&&c;i++){if(c===d.go){loop=true;break}c=PARENT[c]||DYNP[c]}if(!loop)DYNP[d.go]=curSheet}if(!d.go.startsWith('cat_')&&S){S.recent=[d.go,...(S.recent||[]).filter(x=>x!==d.go)].slice(0,6)}if(d.go==='kuyumcu'){vTab='mucevher';goSheet('varlik')}else goSheet(d.go)}
   else if(d.x){const i=d.x.indexOf(':');const n=i<0?d.x:d.x.slice(0,i),a=i<0?'':d.x.slice(i+1);if(ACT[n])ACT[n](a)}
   else if(d.t){wTab=d.t;openSheet('gard')}
   else if(d.w){const[c,id]=d.w.split(':');wardAct(c,id)}
