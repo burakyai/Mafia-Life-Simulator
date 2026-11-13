@@ -337,7 +337,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.13-2300';
+const APPV='2026.11.13-2330';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -649,7 +649,8 @@ const AVNS={1:['Kıvırcık, dolgun sakal','Kısa kazıma, kirli sakal','Geriye 
 3:['Kakül, sinek kaydı','Yukarı taralı, ince bıyık','Kazıma, kısa sakal','Geriye dalgalı, sinek kaydı','Yana taralı, bıyık','Kıvırcık, keçi sakal','Düz kesim, sinek kaydı','Uzun dalgalı, sakal','Kel, bıyık','Kıvırcık kısa, sinek kaydı','Uzun, ortadan ayrık','Kısa, keçi sakal'],
 4:['Kıvırcık, dolgun sakal','Kısa dağınık, kirli sakal','Geriye dalgalı, kısa sakal','Yana taralı, sinek kaydı','Kıvırcık, bıyık','Uzun kıvırcık, gür sakal','Kazıma, kısa sakal','Geriye taralı, sinek kaydı','Dağınık kıvırcık, kısa sakal','Yana taralı, pala bıyık','Kısa saç, kirli sakal','Üstü kıvırcık, kısa sakal']};
 function avSrc(L,sc){if(L&&L.av===3){L.st=L.hair>=0?L.hair:(L.beard>=0?L.beard:-1);L.av=2;delete L.hair;delete L.beard}if(L&&L.ch>0&&AVN[L.ch])return AVN[L.ch][L.st>=0&&L.st<12?L.st:0];const T=sc?AVI:AVIC;return L.st<0?T.kel:(T[(L.hc||'kahve')+L.st]||T.kel)}
-function avHTML(L,age,opts){opts=opts||{};const hc=(L&&L.hc)||'kahve';const nk=L&&L.ch>0?L.ch:0;const src=(age!=null&&age<10?(nk&&AVNK['c'+nk]||AVK['c'+hc]):age!=null&&age<20?(nk&&AVNK['t'+nk]||AVK['t'+hc]):avSrc(L,opts.yara))||avSrc(L,opts.yara);const gl=L&&typeof L.gl==='number'&&(age==null||age>=10)&&typeof glOver==='function'?glOver(src,L.gl):'';return `<span class="avs"${opts.jail?' style="filter:grayscale(.7) contrast(1.1)"':''}><img src="${src}" alt="">${gl}</span>`}
+const AVLATE=[2,4]; // olgun yüzlü karakterler: gençlik yüzü 32 yaşına kadar kalır
+function avHTML(L,age,opts){opts=opts||{};const hc=(L&&L.hc)||'kahve';const nk=L&&L.ch>0?L.ch:0;const src=(age!=null&&age<10?(nk&&AVNK['c'+nk]||AVK['c'+hc]):age!=null&&age<(AVLATE.includes(nk)?32:20)?(nk&&AVNK['t'+nk]||AVK['t'+hc]):avSrc(L,opts.yara))||avSrc(L,opts.yara);const gl=L&&typeof L.gl==='number'&&(age==null||age>=10)&&typeof glOver==='function'?glOver(src,L.gl):'';return `<span class="avs"${opts.jail?' style="filter:grayscale(.7) contrast(1.1)"':''}><img src="${src}" alt="">${gl}</span>`}
 function avRand(hc){if(!hc&&ch(.6)){const c=R(1,AVCH.length-1);return {av:2,ch:c,st:R(0,11),hc:AVCH[c][1],outfit:'tisort',acc:[]}}return {av:2,ch:0,st:ch(.08)?-1:R(0,9),hc:hc||pick(['kahve','kahve','sari','kul','siyah','siyah']),outfit:'tisort',acc:[]}}
 function avPicker(L,pre,noCh){const c=L.ch||0;let h=noCh?'':`<div class="sec" style="margin:12px 0 6px">Karakter</div><div class="avrow">`;
   if(!noCh)AVCH.forEach((x,i)=>{h+=`<button class="avt ${c===i?'on':''}" data-${pre}h="${i}" aria-label="${x[0]}"><span class="avs"><img src="${i?AVN[i][0]:avSrc({st:0,hc:L.hc||'kahve'})}" alt=""></span></button>`});
@@ -4838,7 +4839,7 @@ function glGrp(src){if(!glGrp.m){const m={};try{Object.values(AVI).forEach(f=>m[
 function glAdj(g){if(!GLADJ){try{GLADJ=JSON.parse(localStorage.getItem('mafya-gladj')||'{}')}catch(e){GLADJ={}}}return GLADJ[g]||GLDEF[g]||[0,0,1]}
 function glOver(src,gl){const e=GLEYE[src],g=GLS[gl];if(!e||!g)return'';const A=glAdj(glGrp(src));const s=e[2]*A[2]/(g.fx[1]-g.fx[0]);const gx=(g.fx[0]+g.fx[1])/2*s,gy=(g.lc[1]+g.lc[3])/2*s;return `<img class="glo" src="img/gl${String(gl).padStart(2,'0')}.webp" alt="" style="left:${((e[0]+A[0]-gx)/3.6).toFixed(2)}%;top:${((e[1]+A[1]-gy)/3.6).toFixed(2)}%;width:${(300*s/3.6).toFixed(2)}%;height:auto">`}
 let GLT={ch:0,st:0,gl:1,teen:0};
-EXTRA.gmgl=()=>{if(!gmOK())return['',''];const L={av:2,ch:GLT.ch,st:GLT.st,hc:GLT.ch?AVCH[GLT.ch][1]:'kahve',gl:GLT.gl};const age=GLT.teen?16:30;const src=GLT.teen?(GLT.ch&&AVNK['t'+GLT.ch]||AVK['tkahve']):avSrc(L);const g=glGrp(src),A=glAdj(g);
+EXTRA.gmgl=()=>{if(!gmOK())return['',''];const L={av:2,ch:GLT.ch,st:GLT.st,hc:GLT.ch?AVCH[GLT.ch][1]:'kahve',gl:GLT.gl};const age=GLT.teen?16:40;const src=GLT.teen?(GLT.ch&&AVNK['t'+GLT.ch]||AVK['tkahve']):avSrc(L);const g=glGrp(src),A=glAdj(g);
   const code=Object.keys({...GLDEF,...(GLADJ||{})}).map(k=>{const a=glAdj(k);return `${k}:${a[0]},${a[1]},${a[2]}`}).join(' ')||'(değişiklik yok)';
   const B=(x,t)=>`<button class="tab" data-x="gmgla:${x}" style="min-width:52px;font-size:18px">${t}</button>`;
   let h=`<p class="note">Gözlüğü bu karakter yüzüne göre elle oturt. Ayar bu karakterin bütün saç modellerine ve bütün gözlüklere uygulanır. Bitince alttaki kodu bana gönder, herkese kalıcı yapayım.</p><div class="avbig" style="margin:0 auto 8px;width:min(300px,78vw)">${avHTML(L,age)}</div>`;
@@ -5615,7 +5616,7 @@ EXTRA.esnaf=()=>{let h='<p class="note">Esnaf işletmeleri gelir getirir, kara p
   return['🏪 Esnaf işletmeleri',h]};
 EXTRA.berber=()=>{if(!S.look.av)Object.assign(S.look,avRand());if(!BDRAFT)BDRAFT={ch:S.look.ch||0,st:S.look.st,hc:S.look.hc};
   const chg=BDRAFT.st!==S.look.st||BDRAFT.hc!==S.look.hc||BDRAFT.ch!==(S.look.ch||0);
-  let h=`<div class="avbig" style="margin:0 auto 6px">${avHTML({...BDRAFT,av:2,gl:S.look.gl},30)}</div><p class="note" style="text-align:center">Traş ücreti ${fmt(ABER())} · Kasanda ${fmt(S.money)}</p>`+avPicker(BDRAFT,'z',1);
+  let h=`<div class="avbig" style="margin:0 auto 6px">${avHTML({...BDRAFT,av:2,gl:S.look.gl},40)}</div><p class="note" style="text-align:center">Traş ücreti ${fmt(ABER())} · Kasanda ${fmt(S.money)}</p>`+(AVLATE.includes(BDRAFT.ch)&&S.age<32?`<p class="note" style="text-align:center">Bu karakter 32 yaşına kadar gençlik yüzüyle görünür. Seçtiğin saç ve sakal 32 yaşında ortaya çıkar.</p>`:'')+avPicker(BDRAFT,'z',1);
   h+=`<button class="btn" data-x="berok:" style="margin-top:14px" ${chg&&(S.premium||canPay(ABER()))?'':'disabled'}>${chg?'Bu görünümü yap':'Değişiklik yok'}</button>`;
   return['💈 Berber',h]};
 ACT.berbergo=()=>{BDRAFT=null;openSheet('berber')};
@@ -5646,7 +5647,7 @@ function showCreate(slot){
 }
 function drawCreate(){const _sl=[...document.querySelectorAll('#createIn .avrow')].map(e=>e.scrollLeft);
     $('createIn').innerHTML=`<div class="logo">Derin <span>Dünya</span></div><p class="tag">Sokaktan tahta bir ömür</p>
-    <div class="avbig" style="margin:0 auto 14px">${avHTML(draft.look,30)}</div>
+    <div class="avbig" style="margin:0 auto 14px">${avHTML(draft.look,40)}</div>
     <div class="names"><input id="fn" value="${draft.first}" maxlength="14" aria-label="Ad" placeholder="Ad"><input id="ln" value="${draft.last}" maxlength="14" aria-label="Soyad" placeholder="Soyad"><button class="dice" id="rnd" aria-label="Rastgele isim">🎲</button></div>
     ${avPicker(draft.look,'y')}<button class="row" id="avr" style="justify-content:center;margin-top:22px"><b>🎲 Rastgele görünüm</b></button>
     <div class="sec" style="margin:14px 0 6px">Hikâyen</div>
