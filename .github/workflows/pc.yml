@@ -1,0 +1,55 @@
+name: PC uygulaması
+
+# Oyunun Windows sürümünü GitHub'ın Windows sunucusunda derler.
+# - "Run workflow" düğmesiyle elle başlatılır.
+# - Derlenen oyunu açıp hatasız yüklendiğini sınar, sonra zip olarak "Artifacts" bölümüne koyar.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["pc/**", ".github/workflows/pc.yml"]
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Oyun dosyalarını hazırla
+        working-directory: app
+        run: |
+          npm ci --ignore-scripts
+          node build.mjs
+
+      - name: Dosyaları PC klasörüne kopyala
+        shell: bash
+        run: |
+          rm -rf pc/www
+          cp -r app/www pc/www
+          ls pc/www | head
+
+      - name: Windows uygulamasını derle
+        working-directory: pc
+        run: |
+          npm ci
+          npx electron-builder --win zip --x64 --publish never
+
+      - name: Açılış testi
+        working-directory: pc
+        shell: bash
+        run: |
+          "./dist/win-unpacked/Derin Dünya.exe" --smoke
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DerinDunya-Windows
+          path: pc/dist/*.zip
+          if-no-files-found: error
+          retention-days: 30

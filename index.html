@@ -345,7 +345,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.14-0430';
+const APPV='2026.11.14-0500';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2349,7 +2349,7 @@ function mgShoot(cb,o){o=o||{};const p=o.p===undefined?.5:o.p;let box=$('ctBox')
   <div class="ctSt" id="ctSt" style="width:${W}px;height:${Hh}px"><div class="ctIn" style="left:0;width:${W}px;height:${Hh}px;background-size:${(1672*k).toFixed(1)}px ${(941*k).toFixed(1)}px;background-position:${(-SX*k).toFixed(1)}px ${(-SY*k).toFixed(1)}px">
     <img class="ctCar" src="img/ct_car.webp" alt="" draggable="false" style="left:${((1010-SX)*k).toFixed(1)}px;top:${((262-SY)*k).toFixed(1)}px;width:${(290*k).toFixed(1)}px">
     <div id="ctFx"></div><img class="ctM" id="ctA1" src="img/cs_pc1.webp" alt="" draggable="false" style="height:${Math.round(ph*.75)}px"><img class="ctM" id="ctA2" src="img/cs_pc2.webp" alt="" draggable="false" style="height:${Math.round(ph*.75)}px"><img id="ctP" class="ctM" src="img/cs_p0.webp" alt="" draggable="false" style="height:${ph}px"></div><div class="ctFlash" id="ctFlash"></div></div>
-  <div class="ctBot" style="max-width:${W}px"><p id="ctMsg">Parmağını yukarı aşağı kaydır: adamların kendiliğinden ateş eder. Mermilerden kaç, düşmanları indir.</p><button id="ctRun">Geri çekil</button></div>`;
+  <div class="ctBot" style="max-width:${W}px"><p id="ctMsg">Parmağını yukarı aşağı kaydır: adamların kendiliğinden ateş eder. Mermilerden kaç, düşmanları indir.${kbHint('↑ ↓ ya da W S')}</p><button id="ctRun">Geri çekil</button></div>`;
   [3,4,5].forEach(i=>{new Image().src=`img/cs_ed${i}.webp`;new Image().src=`img/cs_e${i}.webp`});new Image().src='img/cs_pd0.webp';
   box.classList.add('on');ctSes(true);const fxl=$('ctFx'),pe=$('ctP');
   const sw=ph*170/150,AL=[{x:W-pw*.55,y:yMin+2,f:700,id:'ctA1'},{x:W-pw*.55,y:yMax,f:1300,id:'ctA2'}],aw=ph*.75*150/112;
@@ -2371,11 +2371,12 @@ function mgShoot(cb,o){o=o||{};const p=o.p===undefined?.5:o.p;let box=$('ctBox')
       if(b.mine){for(const e of st.en){if(e.dead||e.x<0)continue;if(Math.abs(b.x-e.x)<pw*.42&&b.y>e.y-ph&&b.y<e.y-ph*.1){e.dead=1;e.e.src=`img/cs_ed${e.c}.webp`;e.e.style.height='auto';e.e.style.width=(ph*1.05)+'px';place(e.e,e.x-ph*.5,e.y-ph*.55);e.e.style.zIndex=1;e.e.classList.add('ctDd');st.kill++;hud();b.e.remove();if(st.kill>=N)end(true);return false}}}
       else if(st.t>st.inv&&Math.abs(b.x-st.px)<pw*.36&&b.y>st.py-ph*.95&&b.y<st.py-ph*.12){b.e.remove();st.hp--;st.inv=st.t+900;hud();const F=$('ctFlash');F.classList.remove('on');void F.offsetWidth;F.classList.add('on');try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}if(st.hp<=0)end(false);return false}
       place(b.e,b.x,b.y);return true});
+    if(st.kd){const d=(st.kd.d?1:0)-(st.kd.u?1:0);if(d)st.py=Math.max(yMin,Math.min(yMax,st.py+d*(yMax-yMin)*1.7*dt))}
     place(pe,st.px-sw*.62,st.py-ph);pe.style.zIndex=Math.round(st.py);pe.style.opacity=st.t<st.inv&&Math.floor(st.t/90)%2?'.35':'1';
     st.raf=requestAnimationFrame(step)};
   let ly=null;box.onpointerdown=ev=>{if(ev.target.id==='ctRun')return;ly=ev.clientY;ev.preventDefault()};
   box.onpointermove=ev=>{if(ly===null||st.over)return;st.py=Math.max(yMin,Math.min(yMax,st.py+(ev.clientY-ly)*1.15));ly=ev.clientY};
-  box.onpointerup=box.onpointercancel=()=>{ly=null};
+  box.onpointerup=box.onpointercancel=()=>{ly=null};st.kd={};st.key=(c,dn)=>{if(c==='u'||c==='d')st.kd[c]=dn;else return false;return true};
   AL.forEach(a=>{const e=$(a.id);place(e,a.x-aw*.62,a.y-ph*.75);e.style.zIndex=Math.round(a.y)});
   $('ctRun').onclick=()=>end(false);hud();st.raf=requestAnimationFrame(step)}
 function miniGame(t,cb,opp){const done2=ok=>{cb(ok);afterChange();scrollLog()};if(t==='catisma')mgShoot(done2,opp);else if(t==='kasa')mgSafe(done2);else if(t==='kovala')mgChase(done2);else mgFight(done2,t==='dovus'&&!opp?{duel:1,lv:2,title:'Hesaplaşma'}:opp,t==='dovus')}
@@ -2407,7 +2408,7 @@ function mgFight(cb,opp,hard){let box=$('ctBox');if(!box){box=document.createEle
   const TY=[{k:'e0',hp:2,sp:1,sc:1},{k:'e1',hp:2,sp:1.05,sc:1},{k:'e2',hp:3,sp:.78,sc:1.08},{k:'e3',hp:1,sp:1.3,sc:.97}];
   box.innerHTML=`<div class="ctHud" style="max-width:${W}px"><span id="ctHp"></span><b id="ctT">${D?(lv===3?'Son yüzleşme':'Teke tek'):name?'Kavga · '+name:'Yumruk yumruğa'}</b><span id="ctLeft"></span></div>
   <div class="ctSt" id="ctSt" style="width:${W}px;height:${Hh}px"><div class="kgIn" style="background-size:${(1672*k).toFixed(1)}px ${(941*k).toFixed(1)}px;background-position:${(-SX*k).toFixed(1)}px ${(-SY*k).toFixed(1)}px"><div id="ctFx"></div></div><div class="kgSide kgL" id="kgL"></div><div class="kgSide kgR" id="kgR"></div><div class="ctFlash" id="ctFlash"></div></div>
-  <div class="ctBot" style="max-width:${W}px"><p id="ctMsg">${D?'Rakip soldaysa ekranın <b>soluna</b>, sağdaysa <b>sağına</b> dokun. Gardı kapalıyken yumruk işlemez: <b>ünlem</b> çıkınca ya da yumruğunu savurduktan hemen sonra vur. Çift ünlem ağır yumruktur, iki can götürür.':'Soldan gelene ekranın <b>soluna</b>, sağdan gelene <b>sağına</b> dokunup vur. Ünlem çıkınca yumruk geliyor: ondan önce davran. Boşa sallarsan açık verirsin.'}</p><button id="ctRun">Geri çekil</button></div>`;
+  <div class="ctBot" style="max-width:${W}px"><p id="ctMsg">${D?'Rakip soldaysa ekranın <b>soluna</b>, sağdaysa <b>sağına</b> dokun. Gardı kapalıyken yumruk işlemez: <b>ünlem</b> çıkınca ya da yumruğunu savurduktan hemen sonra vur. Çift ünlem ağır yumruktur, iki can götürür.':'Soldan gelene ekranın <b>soluna</b>, sağdan gelene <b>sağına</b> dokunup vur. Ünlem çıkınca yumruk geliyor: ondan önce davran. Boşa sallarsan açık verirsin.'}${kbHint('← → ya da A D, Esc geri çekil')}</p><button id="ctRun">Geri çekil</button></div>`;
   ['p_i','p_l1','p_l2','p_r','p_h','p_d'].concat(...TY.map(t=>['i','l','r','h','d'].filter(f=>!(t.k==='e0'&&f==='l')).map(f=>t.k+'_'+f))).forEach(f=>{new Image().src=`img/kg_${f}.webp`});
   box.classList.add('on');const fxl=$('ctFx');
   const mk=(kk,sc)=>{const el=document.createElement('div');el.className='kgM';el.style.width=sw+'px';el.style.height=sh+'px';const im=document.createElement('img');im.draggable=false;im.alt='';el.appendChild(im);fxl.appendChild(el);return{el,im,k:kk,sc:sc||1,fr:'',fl:null}};
@@ -2455,6 +2456,7 @@ function mgFight(cb,opp,hard){let box=$('ctBox');if(!box){box=document.createEle
     place(P,cx+(t<st.ph_?-st.phs*ph*.06:0)+(t<st.shake?R(-2,2):0),gy);
     st.raf=requestAnimationFrame(step)};
   box.onpointerdown=ev=>{if(ev.target.id==='ctRun')return;ev.preventDefault();const r=$('ctSt').getBoundingClientRect();punch(ev.clientX<r.left+r.width/2?-1:1)};
+  st.key=(c,dn,rep)=>{if(c!=='l'&&c!=='r')return false;if(dn&&!rep)punch(c==='l'?-1:1);return true};
   $('ctRun').onclick=()=>end(false);hud();place(P,cx,gy);st.raf=requestAnimationFrame(step)}
 function kvCar(){const c=typeof curCar==='function'?curCar():null;const m=c?CM(c.mid):null;return m?({ekonomi:9,orta:1,luks:10,suv:3,spor:4,super:5,zirhli:2,klasik:7}[m.c]??0):0}
 function mgChase(cb,o){o=o||{};let box=$('ctBox');if(!box){box=document.createElement('div');box.id='ctBox';document.body.appendChild(box)}
@@ -2462,13 +2464,14 @@ function mgChase(cb,o){o=o||{};let box=$('ctBox');if(!box){box=document.createEl
   const xMin=75*k+cw/2,xMax=865*k-cw/2,LN=[191*k,470*k,750*k],tileH=1672*k;const pc=kvCar();
   box.innerHTML=`<div class="ctHud" style="max-width:${W}px"><span id="ctHp"></span><b>${o.title||'Kovalamaca'}</b><span id="ctLeft"></span></div>
   <div class="ctSt" id="ctSt" style="width:${W}px;height:${H}px"><div class="kvRoad" id="kvRoad" style="background-size:${W}px ${tileH.toFixed(1)}px"></div><div id="ctFx"></div><img id="ctP" class="ctM" src="img/kv_p${pc}.webp" alt="" draggable="false" style="width:${cw}px"><div class="kvSiren" id="kvSiren"></div><div class="ctFlash" id="ctFlash"></div></div>
-  <div class="ctBot" style="max-width:${W}px"><p id="ctMsg">Polis peşinde! Parmağını sağa sola kaydır, trafiğe çarpmadan ${DUR} saniye dayan.</p><button id="ctRun">Teslim ol</button></div>`;
+  <div class="ctBot" style="max-width:${W}px"><p id="ctMsg">Polis peşinde! Parmağını sağa sola kaydır, trafiğe çarpmadan ${DUR} saniye dayan.${kbHint('← → ya da A D')}</p><button id="ctRun">Teslim ol</button></div>`;
   box.classList.add('on');ctSes(true,'kv_ses');for(let i=0;i<12;i++)new Image().src=`img/kv_t${i}.webp`;
   const fxl=$('ctFx'),pe=$('ctP'),road=$('kvRoad');const ph=cw*2.05,py=H-ph-H*.09;
   const st={hp:3+(S.premium?1:0),over:0,raf:0,iv:0,t:0,px:LN[1],tr:[],sp:.5,inv:0,last:0,off:0};CT=st;
   const hud=()=>{$('ctHp').textContent='❤️'.repeat(Math.max(0,st.hp));$('ctLeft').textContent=`⏱ ${Math.max(0,DUR-st.t).toFixed(1)}`};
   const end=ok=>{if(st.over)return;st.over=1;ctSes(false);cancelAnimationFrame(st.raf);$('ctMsg').innerHTML=ok?'<b style="color:var(--good)">Polisi ektin!</b>':'<b style="color:var(--blood)">Yakalandın.</b>';setTimeout(()=>{box.classList.remove('on');box.innerHTML='';box.onpointerdown=box.onpointermove=box.onpointerup=box.onpointercancel=null;CT=null;cb(ok)},900)};
   const step=ts=>{if(st.over)return;const dt=Math.min(.05,st.last?(ts-st.last)/1000:.016);st.last=ts;st.t+=dt;const v=(H*.95)*(1+st.t*.045);
+    if(st.kd){const d=(st.kd.r?1:0)-(st.kd.l?1:0);if(d)st.px=Math.max(xMin,Math.min(xMax,st.px+d*(xMax-xMin)*1.5*dt))}
     st.off=(st.off+v*dt)%tileH;road.style.backgroundPositionY=st.off.toFixed(1)+'px';
     st.sp-=dt;if(st.sp<=0){const free=[0,1,2].filter(l=>!st.tr.some(c=>c.l===l&&c.y<ph*1.6));const busy=st.tr.filter(c=>c.y<H*.5).map(c=>c.l);let ls=free.filter(l=>new Set([...busy,l]).size<3);if(ls.length){const l=pick(ls),e=document.createElement('img');e.className='ctM';e.src=`img/kv_t${R(0,11)}.webp`;e.style.width=cw+'px';e.draggable=false;fxl.appendChild(e);st.tr.push({e,l,x:LN[l]+R(-8,8)*k*3,y:-ph*1.15,r:R(42,60)/100})}st.sp=Math.max(.34,.8-st.t*.028)*R(80,125)/100}
     st.tr=st.tr.filter(c=>{c.y+=v*c.r*dt;if(c.y>H+20){c.e.remove();return false}c.e.style.transform=`translate(${(c.x-cw/2).toFixed(1)}px,${c.y.toFixed(1)}px)`;
@@ -2478,7 +2481,7 @@ function mgChase(cb,o){o=o||{};let box=$('ctBox');if(!box){box=document.createEl
     hud();if(st.t>=DUR)return end(true);st.raf=requestAnimationFrame(step)};
   let lx=null;box.onpointerdown=ev=>{if(ev.target.id==='ctRun')return;lx=ev.clientX;ev.preventDefault()};
   box.onpointermove=ev=>{if(lx===null||st.over)return;st.px=Math.max(xMin,Math.min(xMax,st.px+(ev.clientX-lx)*1.2));lx=ev.clientX};
-  box.onpointerup=box.onpointercancel=()=>{lx=null};
+  box.onpointerup=box.onpointercancel=()=>{lx=null};st.kd={};st.key=(c,dn)=>{if(c==='l'||c==='r')st.kd[c]=dn;else return false;return true};
   $('ctRun').onclick=()=>end(false);hud();st.raf=requestAnimationFrame(step)}
 ACT.dovus=()=>{closeSheet();const t=`${pick(NICK)} ${pick(NAMES)}`;
   if(S.mgOff){if(ch(clamp(.45+S.health/400+karizma()/300,.1,.9))){gainResp(4);log(`Sokakta ${t} ile dövüştün ve kazandın.`,'good')}else{hurt(R(6,16),'Sokak dövüşü');log(`${t} seni yere serdi.`,'bad')}return done()}
@@ -5679,6 +5682,9 @@ const isPC=()=>window.matchMedia('(min-width:1220px)').matches;
 const _closeSheet=closeSheet;
 closeSheet=function(){_closeSheet();if(isPC()&&S&&S.alive&&!$('title').classList.contains('on'))setTimeout(()=>{if(!curSheet&&S&&S.alive&&!$('title').classList.contains('on'))openSheet('hayat')},0)};
 window.addEventListener('resize',()=>{if(isPC()&&!curSheet&&S&&S.alive&&!$('title').classList.contains('on'))openSheet('hayat')});
+const KMAP={ArrowLeft:'l',a:'l',A:'l',ArrowRight:'r',d:'r',D:'r',ArrowUp:'u',w:'u',W:'u',ArrowDown:'d',s:'d',S:'d'};
+['keydown','keyup'].forEach(tp=>document.addEventListener(tp,e=>{if(typeof CT==='undefined'||!CT||!CT.key)return;const dn=tp==='keydown';if(e.key==='Escape'){if(dn){const b=$('ctRun');if(b)b.click()}e.preventDefault();e.stopImmediatePropagation();return}const c=KMAP[e.key];if(c&&CT.key(c,dn,e.repeat)){e.preventDefault()}e.stopImmediatePropagation()},true));
+const kbHint=t=>{try{return window.matchMedia('(hover:hover) and (pointer:fine)').matches?` <span style="opacity:.8">Klavye: ${t}</span>`:''}catch(e){return''}};
 document.addEventListener('keydown',e=>{if(!S||!S.alive)return;const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA')return;
   if($('modal').classList.contains('on')){const n=parseInt(e.key,10);if(n>=1&&n<=9){const bs=[...document.querySelectorAll('#mcard .ch')];const b=bs[n-1];if(b&&!b.disabled){e.preventDefault();b.click()}}return}
   if($('mg').classList.contains('on')||$('title').classList.contains('on')||$('create').classList.contains('on'))return;

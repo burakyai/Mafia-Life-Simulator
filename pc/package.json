@@ -1,0 +1,41 @@
+{
+  "name": "derin-dunya-pc",
+  "productName": "Derin Dünya",
+  "version": "1.0.0",
+  "description": "Derin Dünya - Sokaktan tahta bir ömür",
+  "author": "Burak Yörük",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win zip --x64 --publish never"
+  },
+  "build": {
+    "appId": "com.burakyoruk.derindunya.pc",
+    "productName": "Derin Dünya",
+    "artifactName": "DerinDunya-${version}-win.${ext}",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "www/**/*",
+      "icon.png"
+    ],
+    "win": {
+      "icon": "icon.png",
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
+  },
+  "devDependencies": {
+    "electron": "^45.3.2",
+    "electron-builder": "^26.18.0"
+  }
+}
