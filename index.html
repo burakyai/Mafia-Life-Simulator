@@ -331,6 +331,25 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
   .ov .sheet #shB{padding-bottom:24px}
   button,.row,.tab,.avt{cursor:pointer}
 }
+@media (min-width:1100px){
+  #title .in,#create .in{max-width:1240px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(40px,6vw,110px);align-items:center;min-height:calc(100vh - 70px);padding:0 30px}
+  #title .tL .tLogo{width:min(460px,34vw)!important}
+  #title .tL .tag{font-size:16px;letter-spacing:.2em;margin-top:22px!important}
+  #create .in{align-items:start;padding-top:30px}
+  #create .cL{position:sticky;top:30px}
+  #create .cL .logo{font-size:54px}
+  #create .cL .avbig{width:min(400px,30vw)!important}
+  #create .cR .avrow{flex-wrap:wrap;overflow:visible}
+  #create .cR .avt{width:84px;height:84px}
+}
+#pcGo{position:fixed;inset:0;z-index:29;display:none;align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(ellipse at 50% 40%,#2a1712f2 0%,#0b0807f7 62%);opacity:0;transition:opacity .16s;pointer-events:none;text-align:center}
+#pcGo.on{display:flex}#pcGo.in{opacity:1}
+#pcGo small{font-family:var(--cond);letter-spacing:.34em;text-transform:uppercase;color:var(--muted);font-size:14px}
+#pcGo b{display:block;text-transform:uppercase;font-family:"Cinzel",var(--display);font-weight:900;font-size:clamp(48px,6.4vw,104px);letter-spacing:.06em;color:var(--gold);margin:14px 0 8px;text-shadow:0 6px 30px #000}
+#pcGo span{font-family:var(--cond);letter-spacing:.2em;text-transform:uppercase;color:var(--ink);font-size:18px}
+#pcGo i{display:block;width:min(420px,40vw);height:2px;margin:26px auto 0;background:#c9a24a33;position:relative;overflow:hidden}
+#pcGo i::after{content:"";position:absolute;inset:0;background:var(--gold);transform:translateX(-100%)}
+#pcGo.in i::after{transform:none;transition:transform .66s linear}
 @media (min-width:1700px){.ov .sheet .tiles{grid-template-columns:repeat(4,1fr)}#log{font-size:18px;padding-left:48px;padding-right:48px}}
 #pcHint{display:none;position:fixed;left:var(--sbw,300px);right:var(--shw,560px);bottom:0;padding:6px 0;background:#0b0807;border-top:1px solid #c9a24a33;text-align:center;font-size:11px;color:#8a7d6a;z-index:25;pointer-events:none}
 </style>
@@ -360,6 +379,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
  </div>
 </div>
 
+<div id="pcGo"><small id="pcGoS">Zaman akıyor</small><b id="pcGoT"></b><span id="pcGoU"></span><i></i></div>
 <div id="pcHint">Boşluk: İlerle · 1–5: Menüler · Esc: Geri · Olaylarda 1–9: Seçim</div>
 <div class="ov" id="ov"><div class="sheet"><div class="sh-h"><button class="x" id="shBack" aria-label="Hayat sayfasına dön" style="display:none;margin-right:10px">‹</button><h2 id="shT" style="flex:1"></h2><button class="x" id="shX" aria-label="Kapat">×</button></div><div class="sh-b" id="shB"></div></div></div>
 <div class="modal" id="modal"><div class="card" id="mcard"></div></div>
@@ -372,7 +392,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.14-0530';
+const APPV='2026.11.14-0600';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -5539,6 +5559,7 @@ function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';
   if(k==='ayar')h+=`<p class="note" style="text-align:center;margin-top:18px">Derin Dünya · Sürüm ${APPV}</p>`;
   if(k==='ayar'){const a=h.indexOf('<div class="sec">Ekran</div>'),b=h.indexOf('<div class="sec">Oyun menüsü</div>');if(a>=0&&b>a){const disp=h.slice(a,b);h=h.slice(0,a)+h.slice(b);h=h.replace('<div class="sec">Oyun</div>',disp+'<div class="sec">Oyun</div>')}}
   if(k==='ayar')h=h.replace('<div class="sec">Oyun</div>','<div class="sec">Oyun</div>'+row('data-new="1"','↺','Yeni hayat başlat','Bu karakter silinir','',false));
+  if(k==='ayar'&&isPC())h=h.replace('<div class="sec">İlerleme</div>','<div class="sec">İlerleme</div>'+row('data-x="gecis:"','🎬','Geçiş ekranı',gecisOn()?'Açık · İlerlerken mevsim ekranı görünür':'Kapalı · İlerleme anında olur','',false));
   $('shBack').style.display=(backTo&&k!=='hayat')?'':'none';
   {const isrc=k.startsWith('cat_')?(typeof RICO!=='undefined'&&RICO['c_'+k.slice(4)]):icoSrc(k);const sT=$('shT');if(isrc){let tt=String(T).replace(/^[^\p{L}\p{N}]+/u,'');if(!tt){try{const tl=hubTiles().find(x=>x[0]===k);if(tl)tt=tl[2]}catch(e){}}sT.textContent=tt;const im=document.createElement('img');im.src=isrc;im.alt='';im.className='shico';sT.prepend(im)}else sT.textContent=T}$('shB').innerHTML=h;$('ov').classList.add('on');$('shB').scrollTop=SCR[k]||0;
 }
@@ -5705,7 +5726,12 @@ let YR=0,YSTART=null;
 function finishYear(){if(YSTART===null||YR>0||Q.length||!S)return;if($('mg').classList.contains('on')){setTimeout(finishYear,400);return}const ents=S.log.splice(YSTART);if(ents.length){const ln=[],cnt={};ents.forEach(e=>e.lines.forEach(l=>{const key=l.t.replace(/[\d.,₺]+/g,'#');if(cnt[key]!==undefined){cnt[key]++;ln[cnt['_i'+key]].n=cnt[key];return}cnt[key]=1;cnt['_i'+key]=ln.length;ln.push({...l})}));ln.forEach(l=>{if(l.n>1)l.t+=` <small style="opacity:.6">(×${l.n})</small>`;delete l.n});S.log.push({age:ents[ents.length-1].age,lines:ln})}YSTART=null;save();render();scrollLog()}
 function stepYr(){if($('mg').classList.contains('on')){setTimeout(stepYr,400);return}let g=0;while(YR>0&&S&&S.alive&&!Q.length&&!$('mg').classList.contains('on')&&g<5){YR--;g++;ageUp()}if(YR===0)finishYear();else if(!Q.length)setTimeout(stepYr,400)}
 function advance(){if(!S||!S.alive)return;if(Q.length){showEv();return}if(!S.yearStep||S.age<14){ageUp();return}YR=4-(S.q||0);YSTART=S.log.length;stepYr()}
-$('nAge').onclick=advance;
+const gecisOn=()=>{try{return localStorage.getItem('mafya-gecis')!=='0'}catch(e){return true}};
+ACT.gecis=()=>{try{localStorage.setItem('mafya-gecis',gecisOn()?'0':'1')}catch(e){}openSheet('ayar')};
+{const _adv=advance;let busy=false;advance=function(){if(busy)return;if(!isPC()||!gecisOn()||!S||!S.alive||Q.length||(typeof CT!=='undefined'&&CT))return _adv();
+  const g=$('pcGo'),yr=S.yearStep&&S.age>=14,nq=((S.q||0)+1)%4,na=S.age+(yr||nq===0?1:0);busy=true;$('pcGoS').textContent='Zaman akıyor';$('pcGoT').textContent=yr?'Bir yıl':SEASONS[nq];$('pcGoU').textContent=`${S.first} ${S.last} · ${na} yaş · ${(S.birthYear||1996)+na}`;g.classList.add('on');void g.offsetWidth;g.classList.add('in');
+  setTimeout(()=>{try{_adv()}catch(e){console.error(e)}g.classList.remove('in');setTimeout(()=>{g.classList.remove('on');busy=false},180)},yr?900:680)}}
+$('nAge').onclick=()=>advance();
 /* ============ PC: kalıcı yan panel ve klavye kısayolları ============ */
 const isPC=()=>window.matchMedia('(min-width:1100px)').matches;
 const _closeSheet=closeSheet;
@@ -5776,14 +5802,14 @@ function showCreate(slot){
   drawCreate();$('create').classList.add('on');
 }
 function drawCreate(){const _sl=[...document.querySelectorAll('#createIn .avrow')].map(e=>e.scrollLeft);
-    $('createIn').innerHTML=`<div class="logo">Derin <span>Dünya</span></div><p class="tag">Sokaktan tahta bir ömür</p>
+    $('createIn').innerHTML=`<div class="cL"><div class="logo">Derin <span>Dünya</span></div><p class="tag">Sokaktan tahta bir ömür</p>
     <div class="avbig" style="margin:0 auto 14px">${avHTML(draft.look,40)}</div>
-    <div class="names"><input id="fn" value="${draft.first}" maxlength="14" aria-label="Ad" placeholder="Ad"><input id="ln" value="${draft.last}" maxlength="14" aria-label="Soyad" placeholder="Soyad"><button class="dice" id="rnd" aria-label="Rastgele isim">🎲</button></div>
+    <div class="names"><input id="fn" value="${draft.first}" maxlength="14" aria-label="Ad" placeholder="Ad"><input id="ln" value="${draft.last}" maxlength="14" aria-label="Soyad" placeholder="Soyad"><button class="dice" id="rnd" aria-label="Rastgele isim">🎲</button></div></div><div class="cR">
     ${avPicker(draft.look,'y')}<button class="row" id="avr" style="justify-content:center;margin-top:22px"><b>🎲 Rastgele görünüm</b></button>
     <div class="sec" style="margin:14px 0 6px">Hikâyen</div>
     ${crPick('origin','🌍','Memleket',ORIGINS,o=>o.n)}
     ${crPick('fam','🏠','Aile',FAMBG,o=>o.n)}
-    <button class="btn" id="start" style="margin-top:14px">Hayata başla</button>`;
+    <button class="btn" id="start" style="margin-top:14px">Hayata başla</button></div>`;
   document.querySelectorAll('#createIn .avrow').forEach((e,i)=>{if(_sl[i])e.scrollLeft=_sl[i]});
 }
 function crPick(key,ic,label,SRC,nm){const cur=draft[key];const op=draft.open===key;
@@ -5861,11 +5887,11 @@ ACT.yasal=()=>showYasal(false);
 document.addEventListener('click',e=>{if(e.target.id==='tYasal'){e.preventDefault();showYasal(false)}});
 function hideTitle(){$('title').classList.remove('on')}
 function drawTitle(){const P=PENDING;const cont=P&&(P.alive||(P.kids&&P.kids.length));
-  let h=`<img src="${LOGO}" alt="Derin Dünya" style="display:block;width:min(240px,64vw);aspect-ratio:1;margin:4px auto 0;filter:drop-shadow(0 8px 24px #000c)"><p class="tag" style="margin-top:12px">Sokaktan tahta bir ömür</p><p class="note" style="text-align:center;margin:-8px 0 8px;font-size:11px">Sürüm ${APPV}</p><p class="note" style="text-align:center;margin:0 0 10px;font-size:11px">Kurgudur. Gerçek kişi ve kurumlarla ilgisi yoktur. <a href="#" id="tYasal" style="color:var(--gold)">Yasal uyarı</a></p>`;
+  let h=`<div class="tL"><img class="tLogo" src="${LOGO}" alt="Derin Dünya" style="display:block;width:min(240px,64vw);aspect-ratio:1;margin:4px auto 0;filter:drop-shadow(0 8px 24px #000c)"><p class="tag" style="margin-top:12px">Sokaktan tahta bir ömür</p><p class="note" style="text-align:center;margin:-8px 0 8px;font-size:11px">Sürüm ${APPV}</p><p class="note" style="text-align:center;margin:0 0 10px;font-size:11px">Kurgudur. Gerçek kişi ve kurumlarla ilgisi yoktur. <a href="#" id="tYasal" style="color:var(--gold)">Yasal uyarı</a></p></div><div class="tR">`;
   if(cont)h+=`<button class="btn" id="tCont">Devam et · ${P.first} ${P.last}, ${P.age} yaş</button>`;
   h+='<div class="sec" style="margin-top:22px">Kayıt yuvaları</div><p class="note">Her yuvada ayrı bir oyun. Oynadığın yuva otomatik kaydedilir.</p>';
   ['slot1','slot2','slot3'].forEach((k,i)=>{const sl=SLOTS[k];h+=`<div class="slot"><button class="row" data-ts="${k}"><span class="ic">${sl?'💾':'➕'}</span><span class="tx"><b>${sl?sl.name:'Boş yuva '+(i+1)}</b><span>${sl?`${sl.age} yaş · ${sl.rank} · ${ago(sl.at)}${sl.alive?'':' · vefat etti'}`:'Yeni oyun başlat'}</span></span><span class="rt">${sl?'Yükle':'Yeni oyun'}</span></button>${sl?`<button class="tab" data-td="${k}">Sil</button>`:''}</div>`});
-  h+=`<div class="sec">Tema</div><div class="themes">${Object.entries(THEMES).map(([k,t])=>`<button class="th ${curTheme===k?'on':''}" data-tt="${k}" style="background:${t.panel};border-color:${t.gold};color:${t.ink}"><i style="background:${t.gold}"></i>${t.n}</button>`).join('')}</div>`;
+  h+=`<div class="sec">Tema</div><div class="themes">${Object.entries(THEMES).map(([k,t])=>`<button class="th ${curTheme===k?'on':''}" data-tt="${k}" style="background:${t.panel};border-color:${t.gold};color:${t.ink}"><i style="background:${t.gold}"></i>${t.n}</button>`).join('')}</div></div>`;
   $('titleIn').innerHTML=h}
 $('titleIn').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(b.id==='tCont'){UNDO.length=0;S=PENDING;ensure();hideTitle();render();scrollLog();if(!S.alive)showDead();else setTimeout(()=>{try{welcomeBack()}catch(e){console.error(e)}},300);return}
