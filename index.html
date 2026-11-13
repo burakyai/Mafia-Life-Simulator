@@ -392,7 +392,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.14-0730';
+const APPV='2026.11.14-0800';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -5418,7 +5418,9 @@ const lIco=l=>["yat","jet","heli"].includes(l.id)?icoImg(l.id):({kangal:"@kangal
 const REMO={'🌹':'aile','👛':'yanke','🚗':'araba','🤝':'harac','📦':'kacak','🔥':'baskin','💍':'kuyumcu','🚚':'zirhli','✈️':'altin','🏗':'ihale','🏴':'sokak','👊':'dovus','🍺':'meyhane','🏋':'spor','🩺':'doktor','🍾':'gece','⛵':'bodrum','💵':'rusvet','🃏':'kumar','🔒':'kilit'};
 const rIco=ic=>{const k=typeof ic==='string'&&ic[0]==='@'?ic.slice(1):REMO[ic];return k&&RICO[k]?`<img class="icimg" src="${RICO[k]}" alt="">`:ic};
 function row(attr,ic,t,d,rt,dis){return `<button class="row" ${attr} ${dis?'disabled':''}><span class="ic">${rIco(ic)}</span><span class="tx"><b>${t}</b><span>${d}</span></span>${rt?`<span class="rt">${rt}</span>`:''}</button>`}
-function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';k='varlik'}if(k==='varlik'&&vTab==='mulk')vTab='ozet';
+function openSheet(k){if(k==='gard')k='insan';
+  if(k==='insan'&&S&&S.alive&&typeof abOn==='function'&&abOn()){const d=typeof abD==='function'?abD():null;const yer=d&&d.n&&d.n!=='Yurt dışı'?` (${d.n})`:'';if(curSheet==='insan')closeSheet();
+    queue({title:'✈️ Yurt dışındasın',text:`Şu an yurt dışındasın${yer}. Türkiye'deki insanlarınla yüz yüze görüşemezsin; aramak, para göndermek ya da ziyarete gitmek için yurt dışı menüsünü kullan. Türkiye'ye dönünce İnsanlar bölümü yeniden açılır.`,choices:[{t:'🌍 Yurt dışı menüsünü aç',sub:'Telefon, para gönder, ziyaret',fn:()=>setTimeout(()=>{if(!Q.length)openSheet('dunya')},60)},{t:'Tamam',fn:()=>{}}]});return}if(k==='kuyumcu'){vTab='mucevher';k='varlik'}if(k==='varlik'&&vTab==='mulk')vTab='ozet';
   if(SALIAS[k]){const a=SALIAS[k];if(a[1])yTab=a[1];k=a[0]}
   curSheet=k;let T='',h='';
   if(k==='is'){
