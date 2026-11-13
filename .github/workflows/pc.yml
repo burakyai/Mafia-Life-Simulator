@@ -2,7 +2,7 @@ name: PC uygulaması
 
 # Oyunun Windows sürümünü GitHub'ın Windows sunucusunda derler.
 # - "Run workflow" düğmesiyle elle başlatılır.
-# - Derlenen oyunu açıp hatasız yüklendiğini sınar, sonra zip olarak "Artifacts" bölümüne koyar.
+# - Derlenen oyunu açıp hatasız yüklendiğini sınar, sonra oyun klasörünü "Artifacts" bölümüne koyar (indirince tek zip, içinde Derin Dünya.exe).
 on:
   workflow_dispatch:
   push:
@@ -50,6 +50,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: DerinDunya-Windows
-          path: pc/dist/*.zip
+          path: pc/dist/win-unpacked
           if-no-files-found: error
           retention-days: 30
