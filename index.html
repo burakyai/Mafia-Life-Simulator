@@ -330,7 +330,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.13-1430';
+const APPV='2026.11.13-1445';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -4748,7 +4748,7 @@ const GLEYE={"img/6469082200a6.webp":[185.4,173.2,186.3],"img/01dac52ec35b.webp"
 
 const GLC={klasik:'Klasik',tarz:'Tarz',gumus:'Gümüş işlemeli'};let glTab='klasik';
 const glPr=i=>Math.round(M(GLS[i].p/2.8)/100)*100;
-const GLDEF={};let GLADJ=null;
+const GLDEF={c0:[0,-2,.98],c1:[1,2,.92]};let GLADJ=null;
 function glGrp(src){if(!glGrp.m){const m={};try{Object.values(AVI).forEach(f=>m[f]='c0');Object.keys(AVN).forEach(c=>AVN[c].forEach(f=>m[f]='c'+c));Object.keys(AVK).forEach(k=>{if(k[0]==='t')m[AVK[k]]='t0'});Object.keys(AVNK).forEach(k=>{if(k[0]==='t')m[AVNK[k]]='t'+k[1]})}catch(e){}glGrp.m=m}return glGrp.m[src]||'c0'}
 function glAdj(g){if(!GLADJ){try{GLADJ=JSON.parse(localStorage.getItem('mafya-gladj')||'{}')}catch(e){GLADJ={}}}return GLADJ[g]||GLDEF[g]||[0,0,1]}
 function glOver(src,gl){const e=GLEYE[src],g=GLS[gl];if(!e||!g)return'';const A=glAdj(glGrp(src));const s=e[2]*A[2]/(g.fx[1]-g.fx[0]);const gx=(g.fx[0]+g.fx[1])/2*s,gy=(g.lc[1]+g.lc[3])/2*s;return `<img class="glo" src="img/gl${String(gl).padStart(2,'0')}.webp" alt="" style="left:${((e[0]+A[0]-gx)/3.6).toFixed(2)}%;top:${((e[1]+A[1]-gy)/3.6).toFixed(2)}%;width:${(300*s/3.6).toFixed(2)}%;height:auto">`}
