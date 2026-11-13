@@ -55,6 +55,8 @@ body{position:fixed;inset:0;width:100%;height:var(--vh,100%);overflow:hidden;tou
 .pimg{width:100%;height:100%;object-fit:cover;display:block}
 .avs{position:relative;display:block;width:100%;height:100%}.avs img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain}
 .avs img.glo{object-fit:fill!important;border:0!important;border-radius:0!important;box-shadow:none!important;max-width:none!important;max-height:none!important;background:none!important;filter:drop-shadow(0 1px 2px rgba(0,0,0,.45))!important;z-index:2}.av:has(>.avs),body.t-baba .av:has(>.avs){border:0;border-radius:0;background:none;box-shadow:none;overflow:visible}.av .avs{transform:none}.av .avs>img{filter:drop-shadow(0 3px 6px rgba(0,0,0,.55))}
+.avs img.tto{object-fit:fill!important;border:0!important;border-radius:0!important;box-shadow:none!important;max-width:none!important;max-height:none!important;background:none!important;filter:none!important;opacity:.8;mix-blend-mode:multiply;z-index:1}.avs img.tto.dr{opacity:.95;filter:drop-shadow(0 0 2px #ffd34a)!important;mix-blend-mode:normal}
+.ttg{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:6px 0}.ttg button{aspect-ratio:1;border-radius:10px;border:1.5px solid var(--line);background:#c9966f;padding:3px}.ttg button.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold2)}.ttg img{width:100%;height:100%;display:block}
 .avbig{width:min(230px,60vw);aspect-ratio:1;border-radius:18px;border:2px solid var(--gold);background:radial-gradient(circle at 50% 35%,#3b3134,#1a1517 70%);overflow:hidden;box-shadow:0 10px 30px #000c}.avbig .avs{transform:scale(1.05) translateY(4%)}
 .avrow{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;-webkit-overflow-scrolling:touch}.avt{flex:none;width:68px;height:68px;border-radius:12px;border:1.5px solid var(--line);background:var(--panel2);padding:0;overflow:hidden}.avt.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold2)}.avt .avs{transform:scale(1.25) translateY(8%)}
 .avcol{display:flex;gap:14px;flex-wrap:wrap;padding-bottom:18px}.aws{width:44px;height:44px;border-radius:50%;border:2px solid var(--line);position:relative}.aws.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold2)}.aws i{position:absolute;top:48px;left:50%;transform:translateX(-50%);font-size:10px;font-style:normal;color:var(--muted);white-space:nowrap}
@@ -342,7 +344,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.14-0100';
+const APPV='2026.11.14-0130';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -655,7 +657,7 @@ const AVNS={1:['Kıvırcık, dolgun sakal','Kısa kazıma, kirli sakal','Geriye 
 4:['Kıvırcık, dolgun sakal','Kısa dağınık, kirli sakal','Geriye dalgalı, kısa sakal','Yana taralı, sinek kaydı','Kıvırcık, bıyık','Uzun kıvırcık, gür sakal','Kazıma, kısa sakal','Geriye taralı, sinek kaydı','Dağınık kıvırcık, kısa sakal','Yana taralı, pala bıyık','Kısa saç, kirli sakal','Üstü kıvırcık, kısa sakal']};
 function avSrc(L,sc){if(L&&L.av===3){L.st=L.hair>=0?L.hair:(L.beard>=0?L.beard:-1);L.av=2;delete L.hair;delete L.beard}if(L&&L.ch>0&&AVN[L.ch])return AVN[L.ch][L.st>=0&&L.st<12?L.st:0];const T=sc?AVI:AVIC;return L.st<0?T.kel:(T[(L.hc||'kahve')+L.st]||T.kel)}
 const AVLATE=[2,4]; // olgun yüzlü karakterler: gençlik yüzü 32 yaşına kadar kalır
-function avHTML(L,age,opts){opts=opts||{};const hc=(L&&L.hc)||'kahve';const nk=L&&L.ch>0?L.ch:0;const src=(age!=null&&age<10?(nk&&AVNK['c'+nk]||AVK['c'+hc]):age!=null&&age<(AVLATE.includes(nk)?32:20)?(nk&&AVNK['t'+nk]||AVK['t'+hc]):avSrc(L,opts.yara))||avSrc(L,opts.yara);const gl=L&&typeof L.gl==='number'&&(age==null||age>=10)&&typeof glOver==='function'?glOver(src,L.gl):'';return `<span class="avs"${opts.jail?' style="filter:grayscale(.7) contrast(1.1)"':''}><img src="${src}" alt="">${gl}</span>`}
+function avHTML(L,age,opts){opts=opts||{};const hc=(L&&L.hc)||'kahve';const nk=L&&L.ch>0?L.ch:0;const src=(age!=null&&age<10?(nk&&AVNK['c'+nk]||AVK['c'+hc]):age!=null&&age<(AVLATE.includes(nk)?32:20)?(nk&&AVNK['t'+nk]||AVK['t'+hc]):avSrc(L,opts.yara))||avSrc(L,opts.yara);const gl=L&&typeof L.gl==='number'&&(age==null||age>=10)&&typeof glOver==='function'?glOver(src,L.gl):'';const tt=L&&L.tt&&L.tt.length&&(age==null||age>=10)&&typeof ttOver==='function'?ttOver(src,L.tt):'';return `<span class="avs"${opts.jail?' style="filter:grayscale(.7) contrast(1.1)"':''}><img src="${src}" alt="">${tt}${gl}</span>`}
 function avRand(hc){if(!hc&&ch(.6)){const c=R(1,AVCH.length-1);return {av:2,ch:c,st:R(0,11),hc:AVCH[c][1],outfit:'tisort',acc:[]}}return {av:2,ch:0,st:ch(.08)?-1:R(0,9),hc:hc||pick(['kahve','kahve','sari','kul','siyah','siyah']),outfit:'tisort',acc:[]}}
 function avPicker(L,pre,noCh){const c=L.ch||0;let h=noCh?'':`<div class="sec" style="margin:12px 0 6px">Karakter</div><div class="avrow">`;
   if(!noCh)AVCH.forEach((x,i)=>{h+=`<button class="avt ${c===i?'on':''}" data-${pre}h="${i}" aria-label="${x[0]}"><span class="avs"><img src="${i?AVN[i][0]:avSrc({st:0,hc:L.hc||'kahve'})}" alt=""></span></button>`});
@@ -674,7 +676,7 @@ const KEY='mafya-hayati-v1';
 function save(){if(S)S.savedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{const t=localStorage.getItem(KEY);return t?JSON.parse(t):null}catch(e){return null}}
 function fixHac(){if(!S)return;['look','owned'].forEach(k=>{const a=S[k]&&S[k].acc;if(a){const i=a.indexOf('hac');if(i>=0)a[i]='kartal'}})}
-function karizma(){if(S&&((S.look&&S.look.acc.includes('hac'))||(S.owned&&S.owned.acc.includes('hac'))))fixHac();if(typeof glFix==='function'&&typeof S.look.gl==='number')glFix();let k=(WARD.outfit.find(o=>o.id===S.look.outfit)||{k:0}).k;if(typeof S.look.gl==='number'&&typeof GLS!=='undefined'&&GLS[S.look.gl])k+=GLS[S.look.gl].k;S.look.acc.forEach(a=>{const it=WARD.acc.find(x=>x.id===a);if(it)k+=it.k});
+function karizma(){if(S&&((S.look&&S.look.acc.includes('hac'))||(S.owned&&S.owned.acc.includes('hac'))))fixHac();if(typeof glFix==='function'&&typeof S.look.gl==='number')glFix();let k=(WARD.outfit.find(o=>o.id===S.look.outfit)||{k:0}).k;if(typeof S.look.gl==='number'&&typeof GLS!=='undefined'&&GLS[S.look.gl])k+=GLS[S.look.gl].k;if(S.look.tt&&S.look.tt.length)k+=Math.min(3,S.look.tt.length);S.look.acc.forEach(a=>{const it=WARD.acc.find(x=>x.id===a);if(it)k+=it.k});
   if(abOn())k+=abCarK();else{const cc=S.car&&Array.isArray(S.cars)&&S.cars.find(x=>x.uid===S.car);if(cc&&CM(cc.mid))k+=CM(cc.mid).k}
   S.jewels.forEach(j=>{const x=JEWELS.find(y=>y.id===j.id);if(x)k+=x.k});{const ws=(S.watches||[]).map(o=>WATCHES.find(w=>w.id===o.id)).filter(Boolean).sort((a,b)=>b.k-a.k);if(ws.length)k+=ws[0].k+Math.min(4,ws.length-1)}
   (S.lux||[]).forEach(id=>{const l=LUX.find(x=>x.id===id);if(l)k+=l.k});if(S.origin==='istanbul')k+=1;k+=Math.round((S.fame||0)/10);k+=(S.city&&S.city!=='istanbul'?CITY().k:0)+(S.kb||0)+Math.round(((S.guz===undefined?50:S.guz)-50)/10);
@@ -1379,7 +1381,7 @@ const EXTRA={
     const hl=hMarket().filter(l=>hFilt==='all'||(hFilt==='har'?l.har!==undefined:HT(l.t).cls===hFilt));if(!hl.length)h+='<p class="note">Bu kategoride bu çeyrek ilan yok.</p>';
     hl.forEach(l=>{const t=HT(l.t);const lock=t.rank&&rank()<t.rank;const pr=hlPr(l);h+=row(`data-x="hl:${l.lid}"`,hIco(t),(l.har!==undefined?'🏚 Harap · ':'')+t.n,lock?`${RANKS[t.rank].n} rütbesi gerekir`:l.har!==undefined?`${Math.round(t.m2*l.q)} m² · ${l.yas} yıllık · durum %${l.har} · Restore edilirse ~${fmtS(t.p*S.hidx*l.q)}`:`${Math.round(t.m2*l.q)} m² · ${l.kat?l.kat+'. kat · ':''}${l.yas?l.yas+' yıllık':'Sıfır'} · Kira ~${fmtS(t.rent*S.hidx*l.q)}/yıl`,lock?'🔒':fmtS(pr),lock||!canPay(pr))});
     return['Emlakçı',h]},
-  avm:()=>{let h='<div class="sec">Mağazalar</div>'+row('data-go="gozluk"','🕶','Gözlükçü',S.age<16?'16 yaşından sonra':'37 model · yüzüne göre ayarlanır','›',S.age<16);
+  avm:()=>{let h='<div class="sec">Mağazalar</div>'+row('data-go="gozluk"','🕶','Gözlükçü',S.age<16?'16 yaşından sonra':'Yüzüne göre ayarlanır','›',S.age<16)+row('data-go="dovme"','🖋','Dövmeci',S.age<16?'16 yaşından sonra':'20 desen · yüzünde istediğin yere, istediğin boyda','›',S.age<16);
     SHOP.forEach(s=>{const bad=(s.home&&!S.home)||(s.partner&&!S.partner);h+=row(`data-x="avmbuy:${s.id}"`,'@s_'+s.id,s.n,bad?(s.home?'Önce bir evine yerleşmelisin':'Önce bir sevgilin olmalı'):`Mutluluk +${s.h}`,fmtS(s.p),bad||!canPay(s.p))});
     if(S.bank.card)h+=`<p class="note">Nakit yetmezse fark kredi kartından çekilir. Kalan kart limitin: ${fmt(cardAvail())}</p>`;
     return['Alışveriş merkezi',h]},
@@ -4912,6 +4914,26 @@ ACT.gmgla=k=>{const L={av:2,ch:GLT.ch,st:GLT.st,hc:GLT.ch?AVCH[GLT.ch][1]:'kahve
   if(k==='ch'){GLT.ch=(GLT.ch+1)%AVCH.length;GLT.st=0}else if(k==='st')GLT.st=(GLT.st+1)%(GLT.ch?12:10);else if(k==='gl'){do{GLT.gl=(GLT.gl+1)%GLS.length}while(glNo(GLT.gl))}else if(k==='teen')GLT.teen=GLT.teen?0:1;
   else{const A=glAdj(g).slice();if(k==='l')A[0]-=1;if(k==='r')A[0]+=1;if(k==='u')A[1]-=1;if(k==='d')A[1]+=1;if(k==='+')A[2]=Math.round((A[2]+.02)*100)/100;if(k==='-')A[2]=Math.round((A[2]-.02)*100)/100;GLADJ[g]=A;if(k==='0')delete GLADJ[g];try{localStorage.setItem('mafya-gladj',JSON.stringify(GLADJ))}catch(e){}render()}
   const sb=document.querySelector('.sh-b'),st=sb?sb.scrollTop:0;openSheet('gmgl');const sb2=document.querySelector('.sh-b');if(sb2)sb2.scrollTop=st};
+const TTS=[['Gözyaşı',6],['Çift gözyaşı',9],['Hilal',12],['Çift başlı kartal',30],['Çapraz oklar',16],['Çemberli oklar',20],['Yıldız',12],['Güneş',14],['Hançer',18],['Dikenli dal',14],['Kırık kalp',12],['Üç nokta',5],['Göz',18],['Ay ve yıldız',14],['Kuş',18],['Kanatlı kartal',30],['Üçlü ok',18],['Taç',22],['Kutup yıldızı',12],['Alev',16]].map(a=>({n:a[0],p:a[1]*1000}));
+const TTMAX=6,ttPr=i=>Math.round(M(TTS[i].p)/100)*100,ttDel=()=>Math.round(M(20000)/100)*100;let TTD=null,TTSTEP=.02;
+function ttOver(src,list){const e=GLEYE[src];if(!e)return'';const A=glAdj(glGrp(src)),U=e[2]*A[2],cx=e[0]+A[0],cy=e[1]+A[1];
+  return list.map(t=>{if(!t||!TTS[t.i])return'';const w=t.s*U,x=cx+t.x*U-w/2,y=cy+t.y*U-w/2;return `<img class="tto${t.dr?' dr':''}" src="img/tt${String(t.i).padStart(2,'0')}.webp" alt="" style="left:${(x/3.6).toFixed(2)}%;top:${(y/3.6).toFixed(2)}%;width:${(w/3.6).toFixed(2)}%;height:${(w/3.6).toFixed(2)}%">`}).join('')}
+EXTRA.dovme=()=>{if(S.age<16)return['🖋 Dövmeci','<p class="note">Dövmeci 16 yaşından küçüklere dövme yapmıyor.</p>'];const own=S.look.tt||[];if(!TTD)TTD={i:0,x:-.24,y:.24,s:.22};const full=own.length>=TTMAX,pr=ttPr(TTD.i);
+  const B=(x,t)=>`<button class="tab" data-x="tt:${x}" style="min-width:52px;font-size:18px">${t}</button>`;
+  let h=`<p class="note">Deseni seç, oklarla yüzünde istediğin yere taşı, artı ve eksiyle boyunu ayarla. Beğenince yaptır. En çok ${TTMAX} dövme; her dövme karizmanı artırır (en çok +3).</p><div class="avbig" style="margin:0 auto 8px;width:min(300px,78vw)">${avHTML({...S.look,gl:null,tt:full?own:[...own,{...TTD,dr:1}]},S.age)}</div>`;
+  if(full)h+=`<p class="note" style="text-align:center">Yüzünde yer kalmadı. Yeni dövme için birini lazerle sildir.</p>`;
+  else{h+=`<p class="note" style="text-align:center"><b>${TTS[TTD.i].n}</b> · ${fmt(pr)}</p><div class="tabs" style="justify-content:center">${B('l','⬅️')}${B('u','⬆️')}${B('d','⬇️')}${B('r','➡️')}${B('-','➖')}${B('+','➕')}</div>
+    <div class="tabs" style="justify-content:center"><button class="tab ${TTSTEP>.02?'on':''}" data-x="tt:step">${TTSTEP>.02?'Büyük adım':'Küçük adım'}</button><button class="tab" data-x="tt:mir">Karşı yanağa al</button></div>
+    <button class="btn" data-x="tt:buy" ${canPay(pr)&&!S.jail?'':'disabled'} style="width:100%;margin:6px 0">Yaptır · ${fmt(pr)}</button><div class="sec">Desenler</div><div class="ttg">${TTS.map((t,i)=>`<button class="${TTD.i===i?'on':''}" data-x="tt:p${i}" aria-label="${t.n}"><img src="img/tt${String(i).padStart(2,'0')}.webp" alt=""></button>`).join('')}</div>`}
+  if(own.length){h+=`<div class="sec">Yüzündeki dövmeler</div>`;own.forEach((t,j)=>{h+=row(`data-x="tt:x${j}"`,'🖋',TTS[t.i]?TTS[t.i].n:'Dövme','Lazerle sildir',fmtS(ttDel()),!canPay(ttDel()))})}
+  return['🖋 Dövmeci',h]};
+ACT.tt=k=>{k=String(k);S.look.tt=S.look.tt||[];const D=TTD||(TTD={i:0,x:-.24,y:.24,s:.22});const r2=v=>Math.round(v*100)/100;
+  if(k==='l')D.x=r2(Math.max(-.7,D.x-TTSTEP));else if(k==='r')D.x=r2(Math.min(.7,D.x+TTSTEP));else if(k==='u')D.y=r2(Math.max(-.75,D.y-TTSTEP));else if(k==='d')D.y=r2(Math.min(1.25,D.y+TTSTEP));
+  else if(k==='+')D.s=r2(Math.min(.8,D.s+TTSTEP*1.5));else if(k==='-')D.s=r2(Math.max(.1,D.s-TTSTEP*1.5));else if(k==='step')TTSTEP=TTSTEP>.02?.02:.06;else if(k==='mir')D.x=-D.x;
+  else if(k[0]==='p')D.i=Math.max(0,Math.min(TTS.length-1,+k.slice(1)));
+  else if(k==='buy'){if(S.age<16||S.jail||S.look.tt.length>=TTMAX||!pay(ttPr(D.i)))return;S.look.tt.push({i:D.i,x:D.x,y:D.y,s:D.s});add('happy',R(2,4));gainResp(1);log(`🖋 Yüzüne ${TTS[D.i].n} dövmesi yaptırdın.`,'good');TTD={i:D.i,x:-D.x,y:D.y,s:D.s};render()}
+  else if(k[0]==='x'){const j=+k.slice(1),t=S.look.tt[j];if(!t||!pay(ttDel()))return;S.look.tt.splice(j,1);log(`${TTS[t.i]?TTS[t.i].n:'Dövme'} dövmeni lazerle sildirdin.`,'dim');render()}
+  const sb=document.querySelector('.sh-b'),st=sb?sb.scrollTop:0;openSheet('dovme');const sb2=document.querySelector('.sh-b');if(sb2)sb2.scrollTop=st};
 const GLF=[0,2,3,6,10,16,29,31]; // kadın karakterlere ayrılan modeller
 const glNo=i=>GLF.includes(+i)&&!(S&&S.gender==='k');
 function glFix(){if(!S||S.gender==='k')return;let back=0;const n=[];if(S.gls&&S.gls.some(i=>GLF.includes(i))){S.gls=S.gls.filter(i=>{if(GLF.includes(i)){back+=glPr(i);n.push(GLS[i].n);return false}return true})}
