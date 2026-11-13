@@ -337,7 +337,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.13-1900';
+const APPV='2026.11.13-1910';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -4849,7 +4849,7 @@ ACT.glb=i=>{i=+i;const g=GLS[i];if(!g)return;S.gls=S.gls||[];
   if(S.age<16||S.jail)return;if(!pay(glPr(i)))return;S.gls.push(i);S.look.gl=i;add('happy',R(2,5));log(`🕶 ${g.n} aldın ve taktın.`,'good');if(glPr(i)>=M(5e4))news(`${S.first} ${S.last} yeni gözlüğüyle görüntülendi`,1);done()};
 
 /* ============ GM (yaratıcı) modu ============ */
-const GM_H='17bc903a9f9101250f3ae74c';
+const GM_H='ec3de83a81f47b4eb54b7ec1';
 const gmOK=()=>{try{return localStorage.getItem('mafya-gm')==='1'}catch(e){return false}};
 let GMP=[];
 const gmAt=()=>GMP.reduce((o,k)=>o&&o[k],S);
