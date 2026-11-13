@@ -392,7 +392,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.14-0700';
+const APPV='2026.11.14-0730';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -725,7 +725,7 @@ function save(){if(S)S.savedAt=Date.now();try{localStorage.setItem(KEY,JSON.stri
 function load(){try{const t=localStorage.getItem(KEY);return t?JSON.parse(t):null}catch(e){return null}}
 function fixHac(){if(!S)return;['look','owned'].forEach(k=>{const a=S[k]&&S[k].acc;if(a){const i=a.indexOf('hac');if(i>=0)a[i]='kartal'}})}
 function karizma(){if(S&&((S.look&&S.look.acc.includes('hac'))||(S.owned&&S.owned.acc.includes('hac'))))fixHac();if(typeof glFix==='function'&&typeof S.look.gl==='number')glFix();let k=(WARD.outfit.find(o=>o.id===S.look.outfit)||{k:0}).k;if(typeof S.look.gl==='number'&&typeof GLS!=='undefined'&&GLS[S.look.gl])k+=GLS[S.look.gl].k;if(S.look.tt&&S.look.tt.length)k+=Math.min(3,S.look.tt.length);S.look.acc.forEach(a=>{const it=WARD.acc.find(x=>x.id===a);if(it)k+=it.k});
-  if(abOn())k+=abCarK();else{const cc=S.car&&Array.isArray(S.cars)&&S.cars.find(x=>x.uid===S.car);if(cc&&CM(cc.mid))k+=CM(cc.mid).k}
+  if(abOn())k+=abCarK();else{const cc=S.car&&Array.isArray(S.cars)&&S.cars.find(x=>x.uid===S.car);if(cc&&CM(cc.mid))k+=CM(cc.mid).k+(typeof modK==='function'?modK(cc):0)}
   S.jewels.forEach(j=>{const x=JEWELS.find(y=>y.id===j.id);if(x)k+=x.k});{const ws=(S.watches||[]).map(o=>WATCHES.find(w=>w.id===o.id)).filter(Boolean).sort((a,b)=>b.k-a.k);if(ws.length)k+=ws[0].k+Math.min(4,ws.length-1)}
   (S.lux||[]).forEach(id=>{const l=LUX.find(x=>x.id===id);if(l)k+=l.k});if(S.origin==='istanbul')k+=1;k+=Math.round((S.fame||0)/10);k+=(S.city&&S.city!=='istanbul'?CITY().k:0)+(S.kb||0)+Math.round(((S.guz===undefined?50:S.guz)-50)/10);
   if(hasY('fotr'))k+=5;if(S.age<16)k=0;return k}
@@ -2123,7 +2123,7 @@ function migrateCars(){
   const map={hatch:'clio',sedan:'passat',klasik:'impala',cip:'lczirh',spor:'p911',limo:'limo'};
   if(S.cars.some(c=>typeof c==='string')){const cur=S.car;S.cars=S.cars.map((c,i)=>{if(typeof c!=='string')return c;const m=CM(map[c]||'clio');const col=pick(COLB);const o={uid:'c'+i+R(0,99999),mid:m.id,y:gYear()-3,km:45000,col:col[0],hex:col[1],val:Math.round(m.p*.8)};if(cur===c)S.car=o.uid;return o});if(typeof S.car==='string'&&!myCar(S.car))S.car=S.cars[0]?S.cars[0].uid:null}
 }
-function carYear(){S.cars.forEach(o=>{const m=CM(o.mid);o.km+=R(6,25)*1000;const f=m.c==='klasik'?1+R(2,9)/100:m.c==='super'?1-R(1,5)/100:1-R(6,12)/100;o.val=Math.round(o.val*f);if(o.mv){o.mv=Math.round(o.mv*f);o.cond=Math.max(40,o.cond-R(3,8));otoSync(o)}})}
+function carYear(){S.cars.forEach(o=>{const m=CM(o.mid);o.km+=R(6,25)*1000;const f=m.c==='klasik'?1+R(2,9)/100:m.c==='super'?1-R(1,5)/100:1-R(6,12)/100;o.val=Math.round(o.val*f);if(o.mv){o.mv=Math.round(o.mv*f);if(o.modv)o.modv=Math.round(o.modv*f);o.cond=Math.max(40,o.cond-R(3,8));otoSync(o)}})}
 /* ============ Oto alım satım (bireysel) ============ */
 const KUS=[['Temiz',1],['Boyalı parça',.93],['Değişen parça',.86],['Km düşürülmüş',.84],['Gizli ağır hasar',.66]];
 const otoLv=()=>Math.min(10,Math.floor(((S.oto&&S.oto.xp)||0)/2));
@@ -2143,6 +2143,13 @@ function otoFix(o){const m=CM(o.mid);const r=otoReal(o);const ops=[
     ...(o.kus===1?[['🎨','Boyalı parçayı düzelttir (lokal boya)',Math.round(o.mv*.035),0,1]]:[]),
     ...(o.kus===2?[['🔩','Orijinal parça taktır',Math.round(o.mv*.09),0,2]]:[])];
   queue({back:'varlik',title:`🧽 ${m.n} bakım`,text:`Durum %${o.cond}. Piyasa değeri ~${fmt(r)}. Bakımlı araba daha pahalı satılır. Çeyrekte bir işlem.`,choices:[...ops.map(([ic,t,c,up,k])=>({t:`${ic} ${t}`,sub:`${fmtS(c)}${up?` · Durum +${up}`:` · ${KUS[k][0]} kaydı silinir`}`,dis:!canPay(c)||(up&&o.cond>=100),fn:()=>{if(!pay(c))return;o.inv=(o.inv||0)+c;o.fq=QS();if(up)o.cond=Math.min(100,o.cond+up);else{o.mv=Math.round(o.mv/KUS[k][1]*(k===2?.97:.99));o.kus=0}otoSync(o);log(`${m.n}: ${t.toLowerCase()} yapıldı. Değeri ~${fmt(otoReal(o))}.`,'good')}})),{t:'Vazgeç',fn:()=>{}}]})}
+/* Modifiye: pahalı, arabanın piyasa değerini artırır. Her modifiye bir arabaya bir kez, çeyrekte bir işlem. */
+const MODS=[['kap','✨','Seramik kaplama ve renk değişimi',.04],['jant','🛞','Dövme jant ve performans lastiği',.06],['ses','🔊','Özel ses ve multimedya sistemi',.05],['isik','💡','Yıldızlı tavan ve ortam aydınlatması',.07],['kit','🏎','Karbon gövde kiti',.1],['ic','🪡','El dikimi deri iç döşeme',.12],['motor','⚙️','Motor ve egzoz paketi',.15],['altin','🥇','Altın kaplama detaylar',.2],['imza','🖋','Ünlü tasarımcı imzalı tek üretim paket',.35]];
+const modK=o=>Math.min(4,Math.floor(((o&&o.mods)||[]).length/2));
+function otoMod(o){const m=CM(o.mid);otoEns(o);const base=Math.max(1,o.mv-(o.modv||0));const done=o.mods||[];const busy=!S.premium&&o.mq===QS();const lo=S.premium?[1.15,1.35]:[.95,1.25];
+  queue({back:'varlik',title:`🛠 ${m.n} modifiye`,text:`Piyasa değeri ~${fmt(otoReal(o))}. Modifiyeler pahalıdır ama arabanın değerini kalıcı olarak artırır: harcadığın paranın %${Math.round(lo[0]*100)} ile %${Math.round(lo[1]*100)} arası değere eklenir, ustanın eline göre değişir. Her iki modifiye karizmaya +1 verir (en çok +4).${S.premium?' 👑 Dayı modu: sıra beklemezsin, en iyi usta çalışır.':busy?'<br><br>Araba bu çeyrek atölyede. Yeni işlem için sonraki çeyreği bekle.':' Çeyrekte bir işlem.'}`,choices:[
+    ...MODS.map(([id,ic,t,f])=>{const c=Math.round(base*f/1000)*1000,has_=done.includes(id);return{t:`${ic} ${t}${has_?' ✓':''}`,sub:has_?'Yapıldı':`${fmtS(c)} · Değere ~${fmtS(c*(lo[0]+lo[1])/2)} ekler`,dis:has_||busy||!canPay(c),fn:()=>{if(!pay(c))return;const g=Math.round(c*R(Math.round(lo[0]*100),Math.round(lo[1]*100))/100/1000)*1000;o.mods=[...done,id];o.mq=QS();o.inv=(o.inv||0)+c;o.mv+=g;o.modv=(o.modv||0)+g;otoSync(o);add('happy',R(2,5));log(`🛠 ${m.n}: ${t.toLowerCase()} yapıldı (${fmt(c)}). Değeri ${fmt(g)} arttı, şimdi ~${fmt(otoReal(o))}.`,g>=c?'good':'dim');if(S.premium)setTimeout(()=>{if(!Q.length)otoMod(o)},90)}}}),
+    {t:'Geri dön',fn:()=>setTimeout(()=>{if(!Q.length)ACT.mycar(o.uid)},60)}]})}
 function otoDone(o,price,quick){const p=price-(o.buy||price)-(o.inv||0);S.oto=S.oto||{xp:0,n:0,prof:0};S.oto.n++;S.oto.prof+=p;const lv0=otoLv();if(p>0&&!quick)S.oto.xp++;if(otoLv()>lv0)log(`🚗 Alım satım seviyen ${otoLv()} oldu. Piyasa tahminlerin daha isabetli.`,'gold');if(S.oto.xp===8&&p>0&&!quick&&!S.gal)log('🏪 Artık galerici olacak kadar tecrübelisin. Mahalle galerisini yarı fiyatına açabilirsin.','gold');return p}
 function otoSell(o,price,noter){const m=CM(o.mid);const fee=noter?M(3000):0;S.money+=price-fee;const p=otoDone(o,price,0);S.cars=S.cars.filter(x=>x!==o);if(S.car===o.uid)S.car=S.cars.length?S.cars[S.cars.length-1].uid:null;if(!S.cars.length&&has('sofor')){S.staff=S.staff.filter(x=>x.id!=='sofor');log('Araban kalmayınca şoförün işi bıraktı.','dim')}
   log(`🚗 ${m.n} ${fmt(price)}'ye satıldı${noter?' (noterde)':''}. ${p>=0?'Kâr':'Zarar'}: ${fmt(Math.abs(p))}.`,p>=0?'good':'bad')}
@@ -2184,10 +2191,11 @@ ACT.cl=lid=>{const l=cMarket().find(x=>x.lid===lid);if(!l)return;const m=CM(l.mi
 ACT.cnew=id=>{const m=CM(id);closeSheet();const pr=Math.round(m.p*1.05);
   queue({back:'galeri',title:`Sıfır ${m.n}`,text:`Hangi renk olsun? Fiyat ${fmt(pr)}. Renge dokun peşin al; kredili almak için en alttaki seçeneği kullan.`,choices:[...COLB.map(c=>({t:c[0],fn:()=>addCar(m,{y:gYear(),km:0,col:c[0],hex:c[1]},pr)})),{t:'🏦 Krediyle al (siyah)',sub:'Peşinat + aylık taksit',fn:()=>setTimeout(()=>carLoanBuy(m,{y:gYear(),km:0,col:'Siyah',hex:'#151517'},pr,'galeri'),40)},{t:'Vazgeç',fn:()=>{}}]})};
 ACT.mycar=uid=>{const o=myCar(uid);if(!o)return;const m=CM(o.mid);closeSheet();otoEns(o);otoSync(o);const v=Math.round(o.val);const lo=(S.loans||[]).some(l=>l.uid===o.uid);
-  queue({back:'varlik',title:m.n,text:`${o.y} · ${o.km.toLocaleString('tr-TR')} km · ${o.col}. Karizma +${m.k}.${S.car===uid?' Şu an bunu kullanıyorsun.':''}<br>📊 Piyasa değeri ~${fmt(otoReal(o))} · Durum %${o.cond}${o.kus?` · ${KUS[o.kus][0]}`:''}<br>Galerici hemen alırsa ${fmt(v)} verir.${o.ask?`<br>📢 İlanda: ${fmt(o.ask)}`:''}${o.buy?`<br>Alış ${fmt(o.buy)}${o.inv?` + masraf ${fmt(o.inv)}`:''}`:''}`,choices:[
+  queue({back:'varlik',title:m.n,text:`${o.y} · ${o.km.toLocaleString('tr-TR')} km · ${o.col}. Karizma +${m.k+modK(o)}${(o.mods||[]).length?` · 🛠 ${o.mods.length} modifiye`:''}.${S.car===uid?' Şu an bunu kullanıyorsun.':''}<br>📊 Piyasa değeri ~${fmt(otoReal(o))} · Durum %${o.cond}${o.kus?` · ${KUS[o.kus][0]}`:''}<br>Galerici hemen alırsa ${fmt(v)} verir.${o.ask?`<br>📢 İlanda: ${fmt(o.ask)}`:''}${o.buy?`<br>Alış ${fmt(o.buy)}${o.inv?` + masraf ${fmt(o.inv)}`:''}`:''}`,choices:[
     ...(S.car===uid?[]:[{t:'Bunu kullan',sub:'Karizman bu arabaya göre hesaplanır',fn:()=>{S.car=uid;log(`Artık ${m.n} ile geziyorsun.`,'dim')}}]),
     {t:o.ask?'📢 İlanı düzenle / kaldır':'📢 İlana koy',sub:lo?'Kredisi bitmeden satılamaz':'Alıcılar her çeyrek arar, pazarlık yaparsın',dis:lo||S.age<18,fn:()=>setTimeout(()=>otoList(o),40)},
     {t:'🧽 Bakım ve görünüm',sub:o.fq===QS()?'Bu çeyrek yapıldı':'Değerini artır',dis:o.fq===QS(),fn:()=>setTimeout(()=>otoFix(o),40)},
+    {t:'🛠 Modifiye atölyesi',sub:`${(o.mods||[]).length}/${MODS.length} modifiye${o.modv?` · Değere katkısı ~${fmtS(o.modv)}`:' · Pahalı ama arabanın değerini artırır'}`,dis:S.age<18,fn:()=>setTimeout(()=>otoMod(o),40)},
     {t:'Galericiye hemen sat',sub:lo?'Kredisi bitmeden satılamaz':fmt(v),dis:lo,fn:()=>{S.money+=v;otoDone(o,v,1);S.cars=S.cars.filter(x=>x!==o);if(S.car===uid)S.car=S.cars.length?S.cars[S.cars.length-1].uid:null;log(`${m.n} arabanı ${fmt(v)} karşılığında sattın.`);if(!S.cars.length&&has('sofor')){S.staff=S.staff.filter(x=>x.id!=='sofor');log('Araban kalmayınca şoförün işi bıraktı.','dim')}}},
     {t:'Vazgeç',fn:()=>{}}]})};
 
@@ -5446,7 +5454,7 @@ function openSheet(k){if(k==='gard')k='insan';if(k==='kuyumcu'){vTab='mucevher';
     if(vTab==='araba'){
       if(S.age<18)h+='<p class="note">Ehliyet 18 yaşında. Araba alamazsın.</p>';
       if(S.cars.length){const tv=S.cars.reduce((x,c)=>x+c.val,0),models=new Set(S.cars.map(c=>c.mid)).size;h+=`<div class="sec">Garajın · ${S.cars.length} araç · ${models}/${CAT.length} model</div><p class="note">Koleksiyon değeri: <b style="color:var(--gold)">${fmt(tv)}</b></p>`;
-        S.cars.forEach(o=>{const m=CM(o.mid);h+=`<button class="row" data-x="mycar:${o.uid}">${carPic(m,o.hex)}<span class="tx"><b>${m.n}${S.car===o.uid?' · 🔑':''}</b><span>${o.y} · ${o.km.toLocaleString('tr-TR')} km · ${o.col}</span></span><span class="rt">${fmtS(o.val)}</span></button>`})}
+        S.cars.forEach(o=>{const m=CM(o.mid);h+=`<button class="row" data-x="mycar:${o.uid}">${carPic(m,o.hex)}<span class="tx"><b>${m.n}${S.car===o.uid?' · 🔑':''}</b><span>${o.y} · ${o.km.toLocaleString('tr-TR')} km · ${o.col}${(o.mods||[]).length?' · 🛠 '+o.mods.length:''}</span></span><span class="rt">${fmtS(o.val)}</span></button>`})}
       else h+='<p class="note">Garajın boş.</p>';
       h+=row('data-go="galeri"','🚘','Araba galerisine git','İlanlar ve sıfır sipariş','›',S.jail||S.age<18);
     }
