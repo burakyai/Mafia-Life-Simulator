@@ -337,7 +337,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.13-2230';
+const APPV='2026.11.13-2300';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -668,7 +668,7 @@ const KEY='mafya-hayati-v1';
 function save(){if(S)S.savedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{const t=localStorage.getItem(KEY);return t?JSON.parse(t):null}catch(e){return null}}
 function fixHac(){if(!S)return;['look','owned'].forEach(k=>{const a=S[k]&&S[k].acc;if(a){const i=a.indexOf('hac');if(i>=0)a[i]='kartal'}})}
-function karizma(){if(S&&((S.look&&S.look.acc.includes('hac'))||(S.owned&&S.owned.acc.includes('hac'))))fixHac();let k=(WARD.outfit.find(o=>o.id===S.look.outfit)||{k:0}).k;if(typeof S.look.gl==='number'&&typeof GLS!=='undefined'&&GLS[S.look.gl])k+=GLS[S.look.gl].k;S.look.acc.forEach(a=>{const it=WARD.acc.find(x=>x.id===a);if(it)k+=it.k});
+function karizma(){if(S&&((S.look&&S.look.acc.includes('hac'))||(S.owned&&S.owned.acc.includes('hac'))))fixHac();if(typeof glFix==='function'&&typeof S.look.gl==='number')glFix();let k=(WARD.outfit.find(o=>o.id===S.look.outfit)||{k:0}).k;if(typeof S.look.gl==='number'&&typeof GLS!=='undefined'&&GLS[S.look.gl])k+=GLS[S.look.gl].k;S.look.acc.forEach(a=>{const it=WARD.acc.find(x=>x.id===a);if(it)k+=it.k});
   if(abOn())k+=abCarK();else{const cc=S.car&&Array.isArray(S.cars)&&S.cars.find(x=>x.uid===S.car);if(cc&&CM(cc.mid))k+=CM(cc.mid).k}
   S.jewels.forEach(j=>{const x=JEWELS.find(y=>y.id===j.id);if(x)k+=x.k});{const ws=(S.watches||[]).map(o=>WATCHES.find(w=>w.id===o.id)).filter(Boolean).sort((a,b)=>b.k-a.k);if(ws.length)k+=ws[0].k+Math.min(4,ws.length-1)}
   (S.lux||[]).forEach(id=>{const l=LUX.find(x=>x.id===id);if(l)k+=l.k});if(S.origin==='istanbul')k+=1;k+=Math.round((S.fame||0)/10);k+=(S.city&&S.city!=='istanbul'?CITY().k:0)+(S.kb||0)+Math.round(((S.guz===undefined?50:S.guz)-50)/10);
@@ -4837,7 +4837,7 @@ const GLDEF={c0:[0,-2,.98],c1:[1,2,.92],c2:[0,2,.88],c3:[1,4,1],t0:[2,4,.96],t1:
 function glGrp(src){if(!glGrp.m){const m={};try{Object.values(AVI).forEach(f=>m[f]='c0');Object.keys(AVN).forEach(c=>AVN[c].forEach(f=>m[f]='c'+c));Object.keys(AVK).forEach(k=>{if(k[0]==='t')m[AVK[k]]='t0'});Object.keys(AVNK).forEach(k=>{if(k[0]==='t')m[AVNK[k]]='t'+k[1]})}catch(e){}glGrp.m=m}return glGrp.m[src]||'c0'}
 function glAdj(g){if(!GLADJ){try{GLADJ=JSON.parse(localStorage.getItem('mafya-gladj')||'{}')}catch(e){GLADJ={}}}return GLADJ[g]||GLDEF[g]||[0,0,1]}
 function glOver(src,gl){const e=GLEYE[src],g=GLS[gl];if(!e||!g)return'';const A=glAdj(glGrp(src));const s=e[2]*A[2]/(g.fx[1]-g.fx[0]);const gx=(g.fx[0]+g.fx[1])/2*s,gy=(g.lc[1]+g.lc[3])/2*s;return `<img class="glo" src="img/gl${String(gl).padStart(2,'0')}.webp" alt="" style="left:${((e[0]+A[0]-gx)/3.6).toFixed(2)}%;top:${((e[1]+A[1]-gy)/3.6).toFixed(2)}%;width:${(300*s/3.6).toFixed(2)}%;height:auto">`}
-let GLT={ch:0,st:0,gl:0,teen:0};
+let GLT={ch:0,st:0,gl:1,teen:0};
 EXTRA.gmgl=()=>{if(!gmOK())return['',''];const L={av:2,ch:GLT.ch,st:GLT.st,hc:GLT.ch?AVCH[GLT.ch][1]:'kahve',gl:GLT.gl};const age=GLT.teen?16:30;const src=GLT.teen?(GLT.ch&&AVNK['t'+GLT.ch]||AVK['tkahve']):avSrc(L);const g=glGrp(src),A=glAdj(g);
   const code=Object.keys({...GLDEF,...(GLADJ||{})}).map(k=>{const a=glAdj(k);return `${k}:${a[0]},${a[1]},${a[2]}`}).join(' ')||'(değişiklik yok)';
   const B=(x,t)=>`<button class="tab" data-x="gmgla:${x}" style="min-width:52px;font-size:18px">${t}</button>`;
@@ -4849,16 +4849,21 @@ EXTRA.gmgl=()=>{if(!gmOK())return['',''];const L={av:2,ch:GLT.ch,st:GLT.st,hc:GL
   h+=`<div class="sec">Bana göndereceğin kod</div><p class="note" style="user-select:all;-webkit-user-select:all;font-family:monospace;font-size:15px;color:var(--gold);word-break:break-all">${code}</p>`;
   return['🕶 Gözlük oturtma',h]};
 ACT.gmgla=k=>{const L={av:2,ch:GLT.ch,st:GLT.st,hc:GLT.ch?AVCH[GLT.ch][1]:'kahve'};const src=GLT.teen?(GLT.ch&&AVNK['t'+GLT.ch]||AVK['tkahve']):avSrc(L);const g=glGrp(src);
-  if(k==='ch'){GLT.ch=(GLT.ch+1)%AVCH.length;GLT.st=0}else if(k==='st')GLT.st=(GLT.st+1)%(GLT.ch?12:10);else if(k==='gl')GLT.gl=(GLT.gl+1)%GLS.length;else if(k==='teen')GLT.teen=GLT.teen?0:1;
+  if(k==='ch'){GLT.ch=(GLT.ch+1)%AVCH.length;GLT.st=0}else if(k==='st')GLT.st=(GLT.st+1)%(GLT.ch?12:10);else if(k==='gl'){do{GLT.gl=(GLT.gl+1)%GLS.length}while(glNo(GLT.gl))}else if(k==='teen')GLT.teen=GLT.teen?0:1;
   else{const A=glAdj(g).slice();if(k==='l')A[0]-=1;if(k==='r')A[0]+=1;if(k==='u')A[1]-=1;if(k==='d')A[1]+=1;if(k==='+')A[2]=Math.round((A[2]+.02)*100)/100;if(k==='-')A[2]=Math.round((A[2]-.02)*100)/100;GLADJ[g]=A;if(k==='0')delete GLADJ[g];try{localStorage.setItem('mafya-gladj',JSON.stringify(GLADJ))}catch(e){}render()}
   const sb=document.querySelector('.sh-b'),st=sb?sb.scrollTop:0;openSheet('gmgl');const sb2=document.querySelector('.sh-b');if(sb2)sb2.scrollTop=st};
-EXTRA.gozluk=()=>{const own=S.gls||[];const on=S.look.gl;let h=`<p class="note">Her gözlük yüzüne göre ayarlanır. Aldığın gözlüğe dokunarak takıp çıkarabilirsin.${typeof on==='number'&&GLS[on]?` Şu an: <b>${GLS[on].n}</b>.`:''}</p>`;
+const GLF=[0,2,3,6,10,16,29,31]; // kadın karakterlere ayrılan modeller
+const glNo=i=>GLF.includes(+i)&&!(S&&S.gender==='k');
+function glFix(){if(!S||S.gender==='k')return;let back=0;const n=[];if(S.gls&&S.gls.some(i=>GLF.includes(i))){S.gls=S.gls.filter(i=>{if(GLF.includes(i)){back+=glPr(i);n.push(GLS[i].n);return false}return true})}
+  if(S.look&&typeof S.look.gl==='number'&&GLF.includes(S.look.gl))S.look.gl=null;
+  if(back>0){S.money+=back;log(`💵 Gözlükçü ${n.length>1?n.length+' gözlüğü':n[0]+' gözlüğünü'} geri aldı, ${fmt(back)} iade etti.`,'good')}}
+EXTRA.gozluk=()=>{glFix();const own=S.gls||[];const on=S.look.gl;let h=`<p class="note">Her gözlük yüzüne göre ayarlanır. Aldığın gözlüğe dokunarak takıp çıkarabilirsin.${typeof on==='number'&&GLS[on]?` Şu an: <b>${GLS[on].n}</b>.`:''}</p>`;
   h+='<div class="tabs">'+Object.entries(GLC).map(([id,n])=>`<button class="tab ${glTab===id?'on':''}" data-x="gltab:${id}">${n}</button>`).join('')+'</div><div class="grid">';
-  GLS.forEach((g,i)=>{if(g.c!==glTab)return;const mine=own.includes(i),w=on===i;const pv=S.look&&S.look.av?avatarSVG({...S.look,gl:i},Math.max(S.age,20)):`<img src="img/gl${String(i).padStart(2,'0')}.webp" style="width:90%">`;
+  GLS.forEach((g,i)=>{if(g.c!==glTab||glNo(i))return;const mine=own.includes(i),w=on===i;const pv=S.look&&S.look.av?avatarSVG({...S.look,gl:i},Math.max(S.age,20)):`<img src="img/gl${String(i).padStart(2,'0')}.webp" style="width:90%">`;
     h+=`<button class="it ${w?'on':''}" data-x="glb:${i}" ${!mine&&(!canPay(glPr(i))||S.age<16||S.jail)?'disabled':''}><div class="av">${pv}</div><b>${g.n}</b>${w?'<em class="g">Takılı</em>':mine?'<em class="k">Sende</em>':`<em>${fmtS(glPr(i))}</em>`}<em>Karizma +${g.k}</em></button>`});
   return['🕶 Gözlükçü',h+'</div>']};
 ACT.gltab=id=>{glTab=id;openSheet('gozluk')};
-ACT.glb=i=>{i=+i;const g=GLS[i];if(!g)return;S.gls=S.gls||[];
+ACT.glb=i=>{i=+i;const g=GLS[i];if(!g||glNo(i))return;S.gls=S.gls||[];
   if(S.gls.includes(i)){if(S.look.gl===i){S.look.gl=null;log(`${g.n} gözlüğünü çıkardın.`,'dim')}else{S.look.gl=i;log(`${g.n} gözlüğünü taktın.`,'dim')}return done()}
   if(S.age<16||S.jail)return;if(!pay(glPr(i)))return;S.gls.push(i);S.look.gl=i;add('happy',R(2,5));log(`🕶 ${g.n} aldın ve taktın.`,'good');if(glPr(i)>=M(5e4))news(`${S.first} ${S.last} yeni gözlüğüyle görüntülendi`,1);done()};
 
