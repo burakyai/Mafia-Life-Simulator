@@ -392,8 +392,8 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.14-1100';
-(function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
+const APPV='2026.11.15-0600';
+(function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='2026.11.15-0600']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
 const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
@@ -2401,21 +2401,22 @@ ACT.sestog=()=>{const on=!sesOn();try{localStorage.setItem('mafya-ses',on?'1':'0
 function mgW(base,ratio){if(!(typeof isPC==='function'&&isPC()))return Math.min(window.innerWidth,base);return Math.round(Math.max(base,Math.min(window.innerWidth-80,980,(window.innerHeight-230)/ratio)))}
 function mgShoot(cb,o){o=o||{};const p=o.p===undefined?.5:o.p;let box=$('ctBox');if(!box){box=document.createElement('div');box.id='ctBox';document.body.appendChild(box)}
   const W=mgW(560,570/1000),SX=300,SY=215,SW=1000,k=W/SW,Hh=Math.round(570*k);
-  const N=o.n||Math.round(6+(1-p)*8),HP=(o.hp||3+Math.round(p*2))+(S.premium?2:0),FIRE=Math.round(1900-(1-p)*800),MAXE=p<.4?4:3;
+  const r=o.r||1,al=o.al===undefined?2:o.al,rx=Math.max(0,r-1);
+  const N=o.n||Math.min(22,Math.round(6+(1-p)*8+rx*4)),HP=(o.hp||Math.max(2,3+Math.round(p*2)-(r>=1.8?1:0)))+(S.premium?2:0),FIRE=Math.max(750,Math.round((1900-(1-p)*800)/(1+rx*.2))),MAXE=r>=1.6?5:p<.4?4:3;
   const ph=Math.round(Hh*.27),pw=Math.round(ph*.6),yMin=Math.round((392-SY)*k)+ph*.35,yMax=Math.round((748-SY)*k);
   box.innerHTML=`<div class="ctHud" style="max-width:${W}px"><span id="ctHp"></span><b id="ctT">${o.title||'Çatışma'}</b><span id="ctLeft"></span></div>
   <div class="ctSt" id="ctSt" style="width:${W}px;height:${Hh}px"><div class="ctIn" style="left:0;width:${W}px;height:${Hh}px;background-size:${(1672*k).toFixed(1)}px ${(941*k).toFixed(1)}px;background-position:${(-SX*k).toFixed(1)}px ${(-SY*k).toFixed(1)}px">
     <img class="ctCar" src="img/ct_car.webp" alt="" draggable="false" style="left:${((1010-SX)*k).toFixed(1)}px;top:${((262-SY)*k).toFixed(1)}px;width:${(290*k).toFixed(1)}px">
     <div id="ctFx"></div><img class="ctM" id="ctA1" src="img/cs_pc1.webp" alt="" draggable="false" style="height:${Math.round(ph*.75)}px"><img class="ctM" id="ctA2" src="img/cs_pc2.webp" alt="" draggable="false" style="height:${Math.round(ph*.75)}px"><img id="ctP" class="ctM" src="img/cs_p0.webp" alt="" draggable="false" style="height:${ph}px"></div><div class="ctFlash" id="ctFlash"></div></div>
-  <div class="ctBot" style="max-width:${W}px"><p id="ctMsg">Parmağını yukarı aşağı kaydır: adamların kendiliğinden ateş eder. Mermilerden kaç, düşmanları indir.${kbHint('↑ ↓ ya da W S')}</p><button id="ctRun">Geri çekil</button></div>`;
+  <div class="ctBot" style="max-width:${W}px"><p id="ctMsg">${al?`Parmağını yukarı aşağı kaydır: sen ve ${al===1?'yanındaki adamın':'adamların'} kendiliğinden ateş eder.`:'<b>Yanında kimse yok, tek başınasın.</b> Parmağını yukarı aşağı kaydır, kendiliğinden ateş edersin.'} Mermilerden kaç, düşmanları indir.${kbHint('↑ ↓ ya da W S')}</p><button id="ctRun">Geri çekil</button></div>`;
   [3,4,5].forEach(i=>{new Image().src=`img/cs_ed${i}.webp`;new Image().src=`img/cs_e${i}.webp`});new Image().src='img/cs_pd0.webp';
   box.classList.add('on');ctSes(true);const fxl=$('ctFx'),pe=$('ctP');
-  const sw=ph*170/150,AL=[{x:W-pw*.55,y:yMin+2,f:700,id:'ctA1'},{x:W-pw*.55,y:yMax,f:1300,id:'ctA2'}],aw=ph*.75*150/112;
+  const sw=ph*170/150,AL=(al>=2?[{x:W-pw*.55,y:yMin+2,f:700,id:'ctA1'},{x:W-pw*.55,y:yMax,f:1300,id:'ctA2'}]:al===1?[{x:W-pw*.55,y:(yMin+yMax)/2,f:900,id:'ctA1'}]:[]),aw=ph*.75*150/112;['ctA1','ctA2'].forEach(id=>{if(!AL.some(a=>a.id===id)){const e=$(id);if(e)e.remove()}});
   const st={hp:HP,kill:0,over:0,raf:0,iv:0,t:0,py:(yMin+yMax)/2,px:W-pw*1.5,en:[],bl:[],pf:0,sp:400,inv:0,spawned:0,last:0};CT=st;
   const hud=()=>{$('ctHp').textContent='🧍'.repeat(Math.max(0,st.hp));$('ctLeft').textContent=`💀 ${st.kill}/${N}`};
   const mk=(cls,html)=>{const e=document.createElement(html||'i');e.className=cls;fxl.appendChild(e);return e};
   const place=(e,x,y)=>{e.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`};
-  const end=ok=>{if(st.over)return;st.over=1;ctSes(false);if(!ok&&st.hp<=0){pe.src='img/cs_pd0.webp';pe.style.height='auto';pe.style.width=(ph*1.05)+'px';pe.style.opacity=1;place(pe,st.px-ph*.5,st.py-ph*.55)}cancelAnimationFrame(st.raf);clearInterval(st.iv);$('ctMsg').innerHTML=ok?'<b style="color:var(--good)">Sokak temizlendi!</b>':'<b style="color:var(--blood)">Geri çekildiniz.</b>';setTimeout(()=>{box.classList.remove('on');box.innerHTML='';box.onpointerdown=box.onpointermove=null;CT=null;cb(ok)},ok?1100:900)};
+  const end=ok=>{if(st.over)return;st.over=1;ctSes(false);if(!ok&&st.hp<=0){pe.src='img/cs_pd0.webp';pe.style.height='auto';pe.style.width=(ph*1.05)+'px';pe.style.opacity=1;place(pe,st.px-ph*.5,st.py-ph*.55)}cancelAnimationFrame(st.raf);clearInterval(st.iv);$('ctMsg').innerHTML=ok?'<b style="color:var(--good)">Sokak temizlendi!</b>':st.hp<=0?'<b style="color:var(--blood)">Vuruldun.</b>':'<b style="color:var(--blood)">Geri çekildin.</b>';setTimeout(()=>{box.classList.remove('on');box.innerHTML='';box.onpointerdown=box.onpointermove=null;CT=null;cb(ok,!ok&&st.hp>0?'run':undefined)},ok?1100:900)};
   const spawn=()=>{const c=R(3,5);const e=mk('ctM','img');e.src=`img/cs_e${c}.webp`;e.style.height=ph+'px';e.draggable=false;const o_={e,c,x:-pw,tx:R(Math.round(pw*.6),Math.round(W*.34)),y:R(Math.round(yMin),Math.round(yMax)),vy:(ch(.5)?1:-1)*R(18,40)*k*2.4,ft:st.t+R(500,FIRE),dead:0};st.en.push(o_);st.spawned++};
   const shoot=(x,y,vx,vy,mine)=>{const e=mk(mine?'ctBl ctBm':'ctBl');st.bl.push({e,x,y,vx,vy,mine})};
   const step=ts=>{if(st.over)return;const dt=Math.min(.05,st.last?(ts-st.last)/1000:.016);st.last=ts;st.t+=dt*1000;
@@ -2437,7 +2438,7 @@ function mgShoot(cb,o){o=o||{};const p=o.p===undefined?.5:o.p;let box=$('ctBox')
   box.onpointerup=box.onpointercancel=()=>{ly=null};st.kd={};st.key=(c,dn)=>{if(c==='u'||c==='d')st.kd[c]=dn;else return false;return true};
   AL.forEach(a=>{const e=$(a.id);place(e,a.x-aw*.62,a.y-ph*.75);e.style.zIndex=Math.round(a.y)});
   $('ctRun').onclick=()=>end(false);hud();st.raf=requestAnimationFrame(step)}
-function miniGame(t,cb,opp){const done2=ok=>{cb(ok);afterChange();scrollLog()};if(t==='catisma')mgShoot(done2,opp);else if(t==='kasa')mgSafe(done2);else if(t==='kovala')mgChase(done2);else mgFight(done2,t==='dovus'&&!opp?{duel:1,lv:2,title:'Hesaplaşma'}:opp,t==='dovus')}
+function miniGame(t,cb,opp){const done2=(ok,x)=>{cb(ok,x);afterChange();scrollLog()};if(t==='catisma')mgShoot(done2,opp);else if(t==='kasa')mgSafe(done2);else if(t==='kovala')mgChase(done2);else mgFight(done2,t==='dovus'&&!opp?{duel:1,lv:2,title:'Hesaplaşma'}:opp,t==='dovus')}
 function mgSafe(cb){const code=[R(1,6),R(1,6),R(1,6)];let cur=[],hist=[],left=6;
   const draw=()=>mgOpen(`<h2>Kasayı aç</h2><p class="mgp">3 haneli şifre, rakamlar 1–6. <b>●</b> doğru rakam doğru yerde, <b>○</b> doğru rakam yanlış yerde. Kalan deneme: <b>${left}</b></p>
     <div class="mgh">${hist.map(h=>`<div><b>${h.g.join(' ')}</b><span>${'●'.repeat(h.a)}${'○'.repeat(h.b)}${!h.a&&!h.b?'—':''}</span></div>`).join('')}</div>
@@ -2478,7 +2479,7 @@ function mgFight(cb,opp,hard){let box=$('ctBox');if(!box){box=document.createEle
   const pop=(x,y,cls,txt)=>{const e=document.createElement('i');e.className=cls;if(txt)e.textContent=txt;e.style.left=x+'px';e.style.top=y+'px';e.style.zIndex=2000;fxl.appendChild(e);setTimeout(()=>e.remove(),420)};
   const end=ok=>{if(st.over)return;st.over=1;cancelAnimationFrame(st.raf);if(!ok&&st.hp<=0){fr(P,'d');place(P,cx,gy)}else fr(P,'i');
     $('ctMsg').innerHTML=ok?'<b style="color:var(--good)">Hepsini yere serdin!</b>':st.hp<=0?'<b style="color:var(--blood)">Yere serildin.</b>':'<b style="color:var(--blood)">Geri çekildin.</b>';
-    setTimeout(()=>{box.classList.remove('on');box.innerHTML='';box.onpointerdown=box.onpointermove=box.onpointerup=box.onpointercancel=null;CT=null;cb(ok)},ok?1100:1000)};
+    setTimeout(()=>{box.classList.remove('on');box.innerHTML='';box.onpointerdown=box.onpointermove=box.onpointerup=box.onpointercancel=null;CT=null;cb(ok,!ok&&st.hp>0?'run':undefined)},ok?1100:1000)};
   const spawn=()=>{const boss=D||(bossN&&st.spawned===N-1);let hh=0;for(const c of name)hh=(hh*31+c.charCodeAt(0))%997;const ty=D?(lv===3?TY[2]:TY[hh%4]):boss?TY[2]:TY[R(0,3)];const L=st.en.filter(e=>!e.dead&&e.s<0).length,Rr=st.en.filter(e=>!e.dead&&e.s>0).length;const s=L===Rr?(ch(.5)?-1:1):(L<Rr?-1:1);
     const o=mk(ty.k,D?(lv===3?1.12:1.04):ty.sc*(boss?1.08:1));o.s=s;o.d=W/2+sw*.22;o.y=gy+(D?0:R(-10,10)*k*2.2);o.hp=D?DHP:ty.hp+(boss?2:0)+(O.hpx||0)+(hard&&ch(.4)?1:0);o.v=D?74*k*2.3*DSP:(58+R(0,22))*k*2.3*ty.sp;o.duel=D;o.combo=0;o.hv=0;o.cy=0;o.state='walk';o.until=0;o.dead=0;o.kb=0;o.ph=R(0,600);
     const ex=document.createElement('u');ex.textContent='❗';o.el.appendChild(ex);o.ex=ex;if(boss&&(D?name:bossN)){const nm=document.createElement('s');nm.textContent=D?name:bossN;o.el.appendChild(nm)}
@@ -3582,6 +3583,24 @@ function sqPow(){const st=S.st;if(!st)return 0;let p=st.my?st.my.sq*(.3+.7*st.my
 function stPow(){return Math.round((hasY('tabanca')?1.1:1)*(15+rank()*12+karizma()*.6+(S.org?orgPow()*.25:0)+(has('tetikci')?10:0)+S.respect*.15+sqPow()))}
 const gPow=g=>Math.round(20+g.sol*.6);
 const winP=(g,b)=>{const a=stPow(),d=gPow(g);return clamp(.5+(a-d)/(a+d)*.9+(b||0),.07,.95)};
+const gRat=g=>gPow(g)/Math.max(1,stPow());
+const gMul=g=>clamp(1.6/(1+gRat(g)),.4,1.1);
+const ctAl=()=>{const n=totSq();return n<=0?0:n<10?1:2};
+const gTier=r=>r<.7?['Kolay','var(--good)']:r<1.1?['Dengeli','var(--gold)']:r<1.6?['Zor','#e8873a']:r<2.5?['Çok zor','var(--blood)']:['Ölümcül','var(--blood)'];
+function gLoseShop(g,n){const st=S.st;const pay=st.shops.filter(o=>o.st==='odeyor'&&shopT(o).il);let k=0;while(n-->0&&pay.length){const o=pay.splice(R(0,pay.length-1),1)[0];o.st='yok';o.gang=g.name;k++;log(`${shopT(o).ic} ${o.owner} artık ${g.name}'e haraç veriyor.`,'bad')}return k}
+function gTake(m){const b=Math.min(S.black||0,m);S.black=(S.black||0)-b;const rest=Math.min(Math.max(0,S.money),m-b);if(rest>0){fund(rest);S.money=Math.max(0,S.money-rest)}return b+rest}
+function gangLoss(g,r,big){const n=big?2:r>=1.5?2:r>=1?1:ch(.4)?1:0;gLoseShop(g,n);
+  if(r>=1||big){const tot=Math.max(0,S.money)+(S.black||0);const m=gTake(Math.min(Math.round(tot*R(big?6:3,big?12:8)/100),Math.round(R(200000,2e6)*S.cpi*(big?2:1))));if(m>0)log(`${g.name} kasandan ${fmt(m)} aldı.`,'bad')}
+  if(big){const ls=LTS().filter(m=>!m.jail).sort((a,b)=>(b.sq||0)-(a.sq||0));const m=ls[0];if(m){if(S.org&&ch(.25)){S.org.members=S.org.members.filter(y=>y!==m);if(m.relId){const rr=S.rels.find(z=>z.id===m.relId);if(rr)rr.dead=true}log(`🩸 Sağ kolun ${m.name} hesaplaşmada öldürüldü.`,'bad');add('happy',-10)}else{m.hurt=R(2,4);m.sq=Math.floor((m.sq||0)/2);log(`🩸 Sağ kolun ${m.name} ağır yaralandı, ekibinin yarısı dağıldı.`,'bad')}}}}
+const gInfo=g=>{const T=gTier(gRat(g)),al=ctAl();return `<br><br>Onlar güç ${gPow(g)} · Sen güç ${stPow()} · Zorluk <b style="color:${T[1]}">${T[0]}</b><br>${al?`Yanında ${al} adamın var.`:'<b>Yanında kimse yok.</b>'}`};
+function gDef(lo,hi,ttl){const g=S.st&&S.st.gw;if(!g)return;if(S.mgOff)return gangFight(lo,hi,'savunma');
+  setTimeout(()=>miniGame('catisma',(ok,x)=>gangFight(lo,hi,'savunma',ok,x),{p:winP(g,g.intel?.12:0),r:gRat(g),al:ctAl(),title:ttl}),60)}
+function gWarn(g,a,go){const r=gRat(g),T=gTier(r),al=ctAl(),p=winP(g,(g.intel?.12:0)+(a==='son'?.1:0));
+  const nm=a==='pusu'?'Pusu':a==='baskin'?'Baskın':a==='savunma'?'Savunma':'Son hesaplaşma';
+  queue({back:a==='savunma'?undefined:'sokak',title:`⚔️ ${nm} · ${g.name}`,text:`Onlar: <b>${g.sol} adam</b> · güç ${gPow(g)}<br>Sen: <b>${totSq()} adam</b> · güç ${stPow()}<br><br>Zorluk: <b style="color:${T[1]}">${T[0]}</b>${r>=1.1?` · onlar senden ${r.toFixed(1)} kat güçlü`:''}<br>${a==='son'?`${g.boss} ile teke tek dövüşeceksin.`:al?`Yanında ${al} adamın olacak.`:'<b>Yanında kimse yok: tek başına gireceksin.</b>'}${r>=1.6?`<br><br>Senden güçlü çeteye karşı kazansan bile kayıpları sınırlı kalır. Yenilirsen dükkân ve para kaybedersin.${a==='son'?' Sağ kolun da zarar görebilir.':''}`:''}${g.intel?'<br><br>🔍 Yerlerini biliyorsun: avantajlısın.':''}`,choices:[
+    {t:a==='savunma'?'Savun':'Saldır',sub:S.mgOff?`Şans %${Math.round(p*100)}`:'Çatışma başlar',fn:go},
+    ...(a==='savunma'?[]:[{t:'Hazırlan',sub:'Adam topla, silah al, yerlerini bul',fn:()=>setTimeout(()=>openSheet('sokak'),60)}]),
+    {t:a==='savunma'?'Geri çekil':'Vazgeç',sub:a==='savunma'?'Saygı −6 · Bir dükkân onlara geçer':'Hamle harcanmaz',fn:a==='savunma'?()=>{add('respect',-6);gLoseShop(g,1);log(`${g.name}'in önünden çekildin.`,'bad')}:()=>{}}]})}
 const SQW=1200,SQR=6000,SQA=3500;
 /* esnaf cezası */
 function kabadayi(o){const fam=pick(FAMILIES);const tot=S.money+(S.black||0);const m=Math.max(Math.round(R(50000,150000)*S.cpi),Math.round(tot*R(15,30)/100));
@@ -3612,7 +3631,7 @@ function streetQ(){if(S.age<16||S.jail||S.abroad)return;const st=stEnsure();
   // çete savaşı
   if(!st.gw){if(rank()>=1&&ch(.05+Math.min(.12,payers.length*.015)))setTimeout(()=>gangDeclare(),60);return}
   const g=st.gw;g.sol=Math.round(g.sol*1.04+Math.max(2,totSq()*.03));g.q++;
-  if(ch(.7))setTimeout(()=>gangHit(),60)}
+  if(ch(clamp(.5+.15*gRat(g),.5,.9)))setTimeout(()=>gangHit(),60)}
 function gangDeclare(name){const st=stEnsure();if(st.gw)return;let g;
   if(name){g=st.city.find(x=>x.name===name);if(!g){g=newGang();g.name=name;st.city.push(g)}}else g=pick(st.city);
   {const ms=totSq();if(ms>40)g.sol=Math.max(g.sol,Math.round(ms*R(90,160)/100))}st.gw={name:g.name,boss:g.boss,sol:g.sol,sol0:g.sol,q:0,intel:false};
@@ -3621,13 +3640,16 @@ function gangDeclare(name){const st=stEnsure();if(st.gw)return;let g;
     {t:'Ateşkes için para gönder',sub:`${fmtS(Math.round(gPow(g)*9000*S.cpi))} · Saygı −8`,dis:!canPay(Math.round(gPow(g)*9000*S.cpi)),fn:()=>{pay(Math.round(gPow(g)*9000*S.cpi));add('respect',-8);st.gw=null;log(`${g.name} çetesine para gönderdin. Sokak bunu konuşuyor.`,'bad')}}]})}
 function gangHit(){const st=S.st,g=st&&st.gw;if(!g||S.jail)return;
   const paying=st.shops.filter(o=>o.st==='odeyor'&&shopT(o).il);const types=[];
-  if(paying.length)types.push('dukkan','dukkan');types.push('pusu','kasa','araba','tehdit','sokak');if(LTS().some(m=>!m.jail&&!m.hurt))types.push('adam');if(S.home)types.push('ev');
+  if(paying.length)types.push('dukkan','dukkan','baskin',...(gRat(g)>=1.2?['baskin']:[]));types.push('pusu','kasa','araba','tehdit','sokak');if(LTS().some(m=>!m.jail&&!m.hurt))types.push('adam');if(S.home)types.push('ev');
   const t=pick(types);const ret={t:'Misilleme yap',sub:`Şans %${Math.round(winP(g)*100)} · Mermi harcar`,fn:()=>gangFight(.15,.3,'misilleme')};const ign={t:'Görmezden gel',sub:'Saygı −3',fn:()=>{add('respect',-3);log(`${g.name}'e cevap vermedin. Mahalle fısıldaşıyor.`,'bad')}};
   if(t==='dukkan'){const o=pick(paying);return queue({title:`🔥 ${shopT(o).n} basıldı`,text:`${g.name} gece ${o.owner}'in ${shopT(o).n.toLowerCase()} yerini bastı, duvara "${g.name}" yazdı. ${o.owner} aradı: "Beni korumak için para alıyordun!"`,choices:[
     {t:'Hasarı öde, koru',sub:fmtS(shopFee(o)*2)+' · Bağlılık +',dis:!canPay(shopFee(o)*2),fn:()=>{pay(shopFee(o)*2);o.mood=clamp(o.mood+20);log(`${o.owner}'in hasarını karşıladın.`,'good')}},ret,
     {t:'Kendi başının çaresine baksın',sub:'Ödemeyi keser',fn:()=>{o.st='korkuyor';o.mood=clamp(o.mood-20);add('respect',-4);log(`${o.owner} artık ${g.name}'den korkuyor, sana ödeme yapmıyor.`,'bad')}}]})}
-  if(t==='sokak')return queue({title:'💥 Sokak çatışması',text:`${g.name}'in adamlarıyla senin kadron ${pick(GDIST)}'da karşılaştı. Silahlar çekildi.`,choices:[
-    {t:'Çatış',sub:`Şans %${Math.round(winP(g)*100)} · Mermi harcar`,fn:()=>gangFight(.1,.22,'catisma')},
+  if(t==='baskin')return queue({title:`⚔️ ${g.name} mahallene dayandı`,text:`${g.boss}'in adamları haraç aldığın sokağa girdi, dükkânları tek tek geziyorlar.${gInfo(g)}`,choices:[
+    {t:'Savun',sub:'Çatışma başlar · Mermi harcar',fn:()=>gDef(.12,.25,`Savunma · ${g.name}`)},
+    {t:'Bırak alsınlar',sub:'Saygı −5 · 1–2 dükkân onlara geçer',fn:()=>{add('respect',-5);gLoseShop(g,R(1,2))}}]});
+  if(t==='sokak')return queue({title:'💥 Sokak çatışması',text:`${g.name}'in adamları ${pick(GDIST)}'da ${totSq()?'senin kadronla':'seninle'} karşılaştı. Silahlar çekildi.${gInfo(g)}`,choices:[
+    {t:'Çatış',sub:'Çatışma başlar · Mermi harcar',fn:()=>gDef(.1,.22,`Sokak çatışması · ${g.name}`)},
     {t:'Geri çekil',sub:'Saygı −4',fn:()=>{add('respect',-4);log('Kadronu geri çektin.','bad')}}]});
   if(t==='pusu')return queue({title:'🔪 Pusu',text:`Gece eve dönerken ${g.name}'in adamları sokağın başında seni bekliyordu.`,choices:[
     {t:'Dövüş',sub:`Şans %${Math.round(winP(g,-.05)*100)}`,fn:()=>{if(ch(winP(g,-.05))){g.sol=Math.max(0,g.sol-R(2,6));gainResp(5);hurt(R(3,10),'Sokak kavgası');log(`Pusudan sağ çıktın. ${g.name} adam kaybetti.`,'good');if(g.sol<=0)gangWin()}else{hurt(R(15,30),'Pusu');add('respect',-3);log(`${g.name} seni fena hırpaladı.`,'bad')}}},
@@ -3637,11 +3659,13 @@ function gangHit(){const st=S.st,g=st&&st.gw;if(!g||S.jail)return;
   if(t==='tehdit')return queue({title:'✉️ Tehdit mesajı',text:`Kapına bir zarf bırakmışlar: içinde bir mermi ve "${g.boss}" imzalı not: "Sıradaki senin kafanda."`,choices:[ret,{t:'Korumaları artır',sub:fmtS(Math.round(60000*S.cpi))+' · Sonraki saldırıda avantaj',dis:!canPay(Math.round(60000*S.cpi)),fn:()=>{pay(Math.round(60000*S.cpi));g.intel=true;log('Etrafına koruma diktin.','dim')}},{...ign,fn:()=>{add('happy',-6);log('Gece uyuyamadın.','bad')}}]});
   if(t==='adam'){const m=pick(LTS().filter(x=>!x.jail&&!x.hurt));return queue({title:`🩸 ${m.name} saldırıya uğradı`,text:`${g.name} senin adamın ${m.name}'i kahvenin önünde bıçakladı. Ekibi başsız kaldı.`,choices:[ret,ign].map(c=>({...c,fn:()=>{m.hurt=R(1,3);c.fn()}}))})}
   if(t==='ev')return queue({title:'🔥 Evine molotof',text:`Gece yarısı ${g.name} evinin camından içeri molotof attı.`,choices:[{...ret,t:'Kanla öde',sub:'Büyük misilleme · Polis dikkati +',fn:()=>{add('heat',6);gangFight(.25,.4,'misilleme')}},{t:'Polise git',sub:'Dikkat −5 · Saygı −8',fn:()=>{add('heat',-5);add('respect',-8);log('Polise gittin. Sokak "ispiyoncu" diyor.','bad')}}].map(c=>({...c,fn:()=>{add('happy',-8);(fund(Math.round(80000*S.cpi)),S.money=Math.max(0,S.money-Math.round(80000*S.cpi)));c.fn()}}))})}
-function gangFight(lo,hi,how,forced){const g=S.st.gw;if(!g)return;const p=winP(g,g.intel?.12:0);g.intel=false;armUse(how==='baskin'?14:8);
-  if(forced===undefined?ch(p):forced){const d=Math.max(2,Math.round(g.sol*(lo+Math.random()*(hi-lo))));g.sol=Math.max(0,g.sol-d);const myL=Math.round(d*R(5,25)/100);if(myL)sqLossN(myL);gainResp(4);add('heat',R(2,5));
-    log(`⚔️ ${g.name}'e ${how==='baskin'?'baskın':how==='catisma'?'çatışmada üstün geldin':'misilleme'}: ${d} adamları düştü${myL?`, sen ${myL} adam kaybettin`:''} (kalan ${g.sol}).`,'good');
+function gangFight(lo,hi,how,forced,x){const g=S.st.gw;if(!g)return;const p=winP(g,g.intel?.12:0),r=gRat(g),mul=gMul(g);g.intel=false;
+  if(x==='run'){add('respect',how==='savunma'?-6:-4);if(how==='savunma')gLoseShop(g,1);log(`Çatışmadan geri çekildin. Adamların sağ ama ${g.name} bunu sokakta anlatıyor.`,'bad');return}
+  armUse(how==='baskin'?14:8);
+  if(forced===undefined?ch(p):forced){const d=Math.max(1,Math.round(g.sol*(lo+Math.random()*(hi-lo))*mul));g.sol=Math.max(0,g.sol-d);const myL=Math.round(d*R(5,25)/100);if(myL)sqLossN(myL);gainResp(4);add('heat',R(2,5));
+    log(`⚔️ ${g.name}'e ${how==='baskin'?'baskın':how==='savunma'?'saldırıyı püskürttün':how==='catisma'?'çatışmada üstün geldin':'misilleme'}: ${d} adamları düştü${myL?`, sen ${myL} adam kaybettin`:''} (kalan ${g.sol}).${mul<.7?' Senden güçlüler, kayıpları sınırlı kaldı.':''}`,'good');
     if(how==='baskin'&&ch(.5)){const m=Math.round(R(40000,250000)*S.cpi);dirty(m);log(`Mekânlarından ${fmt(m)} çıktı.`,'good')}}
-  else{const myL=Math.max(1,Math.round(totSq()*R(5,15)/100));sqLossN(myL);hurt(R(5,18),'Çete çatışması');add('respect',-3);add('heat',R(3,7));log(`${g.name} hazırlıklıydı: ${myL} adamın düştü.`,'bad');if(LTS().length&&ch(.3)){const m=pick(LTS().filter(x=>!x.jail)||[]);if(m){m.hurt=R(1,3);log(`${m.name} yaralandı.`,'bad')}}}
+  else{const myL=Math.max(1,Math.round(totSq()*R(5,15)/100));sqLossN(myL);hurt(R(5,18),'Çete çatışması');add('respect',-3);add('heat',R(3,7));log(`${g.name} hazırlıklıydı: ${myL} adamın düştü.`,'bad');if(LTS().length&&ch(.3)){const m=pick(LTS().filter(x=>!x.jail)||[]);if(m){m.hurt=R(1,3);log(`${m.name} yaralandı.`,'bad')}}gangLoss(g,r,false)}
   if(g.sol<=0)gangWin()}
 function sqLossN(n){const st=S.st;const pool=[st.my,...LTS().filter(m=>!m.jail)];while(n>0&&pool.some(x=>(x.sq||0)>0)){const x=pick(pool.filter(y=>(y.sq||0)>0));x.sq--;n--}}
 function gangWin(){const st=S.st,g=st.gw;st.gw=null;st.won++;st.city=st.city.filter(x=>x.name!==g.name);const m=Math.round(R(150000,800000)*S.cpi*(1+g.sol0/150)*(wk('savas')?2:1));dirty(m);gainResp(15);
@@ -3693,14 +3717,18 @@ ACT.sq=id=>{const st=stEnsure();const me=id==='me';const m=me?null:LTS().find(x=
 ACT.gw=a=>{const st=S.st,g=st&&st.gw;if(!g)return;closeSheet();
   if(a==='intel'){if(!payB(Math.round(40000*S.cpi)))return;g.intel=true;log(`Muhbirler ${g.name}'in toplandığı depoyu söyledi.`,'dim');afterChange();setTimeout(()=>openSheet('sokak'),50);return}
   if(a==='baris'){const c=Math.round(gPow(g)*9000*S.cpi);if(!payB(c))return;add('respect',-10);log(`${g.name} ile barıştın.`,'bad');st.gw=null;afterChange();return}
-  if(!S.premium&&g.act===qnow())return;g.act=qnow();
-  const run=ok=>{if(!st.gw)return;
-    if(a==='pusu')gangFight(.15,.28,'pusu',ok);
-    else if(a==='baskin'){add('heat',6);gangFight(.22,.38,'baskin',ok)}
-    else if(a==='son'){if(ok===undefined?ch(winP(g,.1+(g.intel?.12:0))):ok){g.sol=0;gangWin()}else{hurt(R(15,35),'Hesaplaşma');g.sol=Math.round(g.sol*1.2);add('respect',-6);sqLossN(Math.round(totSq()*.1));log(`${g.boss} son hesaplaşmadan sağ çıktı. Sen hastanelik oldun.`,'bad')}}
+  if(!S.premium&&g.act===qnow())return;
+  const run=(ok,x)=>{if(!st.gw)return;
+    if(a==='pusu')gangFight(.15,.28,'pusu',ok,x);
+    else if(a==='baskin'){if(x!=='run')add('heat',6);gangFight(.22,.38,'baskin',ok,x)}
+    else if(a==='son'){if(x==='run'){add('respect',-8);log(`${g.boss}'in karşısından çekildin. Sokak bunu unutmaz.`,'bad')}
+      else if(ok===undefined?ch(winP(g,.1+(g.intel?.12:0))):ok){g.sol=0;gangWin()}
+      else{const r=gRat(g);hurt(R(15,35),'Hesaplaşma');g.sol=Math.round(g.sol*1.2);add('respect',-6);sqLossN(Math.round(totSq()*.1));log(`${g.boss} son hesaplaşmadan sağ çıktı. Sen hastanelik oldun.`,'bad');gangLoss(g,r,true)}}
     afterChange();if(S.premium&&st.gw)setTimeout(()=>{if(!Q.length)openSheet('sokak')},90)};
-  if(S.mgOff)return run(undefined);
-  const p=winP(g,(g.intel?.12:0)+(a==='son'?.1:0));if(a==='son')return miniGame('kavga',ok=>run(ok),{duel:1,lv:3,p,title:g.boss});miniGame('catisma',ok=>run(ok),{p:a==='son'?Math.max(.1,p-.15):p,title:a==='pusu'?`Pusu · ${g.name}`:a==='baskin'?`Baskın · ${g.name}`:`Son hesaplaşma · ${g.boss}`})};
+  gWarn(g,a,()=>{g.act=qnow();if(S.mgOff)return run(undefined);
+    const p=winP(g,(g.intel?.12:0)+(a==='son'?.1:0));
+    setTimeout(()=>{if(a==='son')return miniGame('kavga',(ok,x)=>run(ok,x),{duel:1,lv:3,p,title:g.boss});
+      miniGame('catisma',(ok,x)=>run(ok,x),{p,r:gRat(g),al:ctAl(),title:a==='pusu'?`Pusu · ${g.name}`:`Baskın · ${g.name}`})},60)})};
 ACT.shop=id=>{const st=stEnsure(),o=st.shops.find(x=>x.id===id);if(!o)return;const T=shopT(o);closeSheet();const f=shopFee(o);
   if(o.st==='odeyor'){const cap=shopCap(o),atCap=o.fee>=cap,vis=!S.premium&&o.vq===qnow(),zp=zamP(o),nf=Math.min(cap,Math.round(o.fee*(S.premium?1.5:1.2)));
     return queue({back:'sokak',title:`${T.ic} ${T.n} · ${o.owner}`,text:`Düzenli ödüyor: çeyrekte ${fmt(f)}. Memnuniyeti %${o.mood}.<br>Bu işletmenin ödeme gücü: çeyrekte en çok ${fmt(Math.round(cap*S.cpi))}${S.premium?' (👑 Dayı modu)':''}.${vis?'<br><br>Bu çeyrek buraya zaten uğradın. Yeni bir şey istemek için sonraki çeyreği bekle.':''}`,choices:[
