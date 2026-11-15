@@ -392,7 +392,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.15-1945';
+const APPV='2026.11.15-2000';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -4132,26 +4132,26 @@ const EVP=[
 [4,8,"","Yeni ayakkabı","Bayramlık ayakkabı aldılar. Yatağına koyup uyudun.",[["Bayramı bekle","",1,"p+5",""],["Hemen giy, sokağa çık","",1,"p+3","Çamura bastın, annen saçını yoldu."]]],
 [11,12,"","İlk aşk","Sıra arkadaşın sana mektup yazdı.",[["Cevap yaz","",.6,"p+7","Teneffüslerde el ele tutuştunuz.","p-4","Mektup elden ele dolaştı, rezil oldun."],["Görmezden gel","",1,"p-1",""]]],
 // ---- GENÇLİK (13-17)
-[13,17,"","İlk sigara","Okulun arkasında arkadaşlar sigara içiyor.",[["Sen de iç","",1,"r+1 h-2","Başın döndü ama havalı göründün."],["İçme","",1,"h+1",""]]],
-[13,17,"","Kopya","Sınavda yanındaki çocuk kâğıdını uzattı.",[["Kopya çek","",.6,"p+3","Geçtin.","p-5 r-1","Öğretmen yakaladı, sıfır verdi."],["Kendi bildiğini yaz","",.5,"p+2","Kıl payı geçtin.","p-2","Bütünlemeye kaldın."]]],
+[13,17,"okul","İlk sigara","Okulun arkasında arkadaşlar sigara içiyor.",[["Sen de iç","",1,"r+1 h-2","Başın döndü ama havalı göründün."],["İçme","",1,"h+1",""]]],
+[13,17,"okul","Kopya","Sınavda yanındaki çocuk kâğıdını uzattı.",[["Kopya çek","",.6,"p+3","Geçtin.","p-5 r-1","Öğretmen yakaladı, sıfır verdi."],["Kendi bildiğini yaz","",.5,"p+2","Kıl payı geçtin.","p-2","Bütünlemeye kaldın."]]],
 [14,17,"","Disko","Arkadaşlar gizlice diskoya gidiyor. Kapıda yaş soruyorlar.",[["Kimliği oynat","",.5,"p+7","Sabaha kadar dans ettin.","p-4","Kapıdan çevrildin."],["Gitme","",1,"",""]]],
 [14,17,"","Motor","Mahallede biri eski bir motosiklet satıyor.",[["Al","",1,"m-3000 p+6","Arka sokaklarda tozu dumana kattın."],["Geç","",1,"",""]]],
-[13,17,"","Okul kavgası","Diğer okulun çocukları okul çıkışı sizi bekliyor.",[["Kavgaya gir","",.5,"r+4 h-4","Kazandınız, adın duyuldu.","h-10 r-1","Hastanelik oldun."],["Arka kapıdan çık","",1,"r-2","Ödlek dediler."]]],
+[13,17,"okul","Okul kavgası","Diğer okulun çocukları okul çıkışı sizi bekliyor.",[["Kavgaya gir","",.5,"r+4 h-4","Kazandınız, adın duyuldu.","h-10 r-1","Hastanelik oldun."],["Arka kapıdan çık","",1,"r-2","Ödlek dediler."]]],
 [15,17,"","Gizli sevgili","Sevdiğin kızın abisi sizi gördü.",[["Abisiyle konuş","",.5,"r+3 p+4","Abi ‘adam gibi çocuk’ dedi.","h-6","Abi konuşmadı, vurdu."],["Kaç","",1,"p-3","Bir süre o sokaktan geçemedin."]]],
 [14,17,"","Yaz işi","Bir oto sanayide yaz için çırak arıyorlar.",[["Çalış","",1,"w+1500 h-3 r+1","Elin yağa bulandı ama yazın sonunda cebin doldu."],["Tatil yap","",1,"p+4",""]]],
 [13,16,"","Gitar","Bir arkadaşın gitar çalmayı öğretmeyi teklif etti.",[["Öğren","",.6,"p+5 f+1","Birkaç parça çalabiliyorsun, kızlar etrafında.","p-2","Parmakların acıdı, bıraktın."],["İlgilenmiyorum","",1,"",""]]],
 [15,17,"","Ehliyetsiz direksiyon","Babanın arabasının anahtarı masada duruyor.",[["Gizlice tur at","",.6,"p+6","Sahil yolunda bir tur attın, kimse fark etmedi.","x+5 p-6","Polis çevirdi, baban karakoldan aldı."],["Dokunma","",1,"",""]]],
-[14,17,"","Torbacı","Okul önünde biri ‘mal ister misin’ dedi.",[["Uzak dur","",1,"r+1","Yürüyüp geçtin."],["Polise ihbar et","",.7,"x-3","Adam ertesi gün ortadan kayboldu.","h-8","Ertesi gün adamın abileri seni buldu."]]],
+[14,17,"okul","Torbacı","Okul önünde biri ‘mal ister misin’ dedi.",[["Uzak dur","",1,"r+1","Yürüyüp geçtin."],["Polise ihbar et","",.7,"x-3","Adam ertesi gün ortadan kayboldu.","h-8","Ertesi gün adamın abileri seni buldu."]]],
 [13,17,"","Futbol seçmesi","Mahallenin amatör takımı seçme yapıyor.",[["Seçmeye katıl","",.5,"p+6 h+3","Takıma girdin, haftada üç antrenman.","p-3","Alınmadın."],["İzle","",1,"",""]]],
-[15,17,"","Okulu asmak","Arkadaşlar okulu asıp Boğaz'a inmeyi teklif ediyor.",[["Git","",.6,"p+6","Martılara simit attınız.","p-5","Müdür veliyi aradı."],["Derse gir","",1,"",""]]],
+[15,17,"okul","Okulu asmak","Arkadaşlar okulu asıp Boğaz'a inmeyi teklif ediyor.",[["Git","",.6,"p+6","Martılara simit attınız.","p-5","Müdür veliyi aradı."],["Derse gir","",1,"",""]]],
 [16,17,"","Kahvehane","Mahallenin kahvehanesinde okey masasına çağırdılar.",[["Otur","",.5,"w+500 r+1","Abileri yendin.","m-500","Elindeki harçlığı kaptırdın."],["Çay içip kalk","",1,"",""]]],
 [13,17,"","Dövme","Arkadaşın evde dövme makinesi yapmış.",[["Koluna dövme yaptır","",.6,"r+2 p+3","Koluna küçük bir kurt dövmesi yaptırdın.","h-5","Mikrop kaptı, kolun şişti."],["Hayır","",1,"",""]]],
-[14,17,"","Sınıf başkanlığı","Sınıf başkanlığına aday ol diyorlar.",[["Aday ol","",.5,"r+3 p+4","Seçildin, ilk vaadin: kantin indirimi.","p-3","Kaybettin."],["Uğraşamam","",1,"",""]]],
+[14,17,"okul","Sınıf başkanlığı","Sınıf başkanlığına aday ol diyorlar.",[["Aday ol","",.5,"r+3 p+4","Seçildin, ilk vaadin: kantin indirimi.","p-3","Kaybettin."],["Uğraşamam","",1,"",""]]],
 [15,17,"","İlk kalp kırıklığı","Sevdiğin kız başka biriyle görülmüş.",[["Yüzleş","",1,"p-6 r+1","Gerçek acıttı ama artık biliyorsun."],["Sustur kendini, spora git","",1,"h+3 p-2",""]]],
 [16,17,"","Gece bekçisi","Gece eve geç döndün. Kapıyı baban açtı.",[["Doğruyu söyle","",.6,"","Baban sadece ‘bir daha olmasın’ dedi.","p-4","Bir ay ev hapsi."],["Yalan söyle","",.5,"","Yemedi ama sesini çıkarmadı.","p-6","Yalanı ortaya çıktı."]]],
 [13,17,"","Mahalle düğünü","Mahallede düğün var, davul zurna çalıyor.",[["Halaya katıl","",1,"p+5",""],["Kenarda dur","",1,"",""]]],
 [14,17,"","Çalıntı telefon","Bir arkadaş sana ucuza telefon satmak istiyor. Belli ki çalıntı.",[["Al","",.7,"m-500 p+3 x+2","Ucuza son model telefonun oldu.","x+6 p-4","Polis telefonun izini sürdü, karakola çağrıldın."],["Alma","",1,"",""]]],
-[15,17,"","Dershane","Annen dershaneye yazdırmak istiyor.",[["Kabul et","",1,"m-2000 p-2","Hafta sonların gitti ama kafan açıldı."],["Reddet","",1,"p+2",""]]],
+[15,17,"okul","Dershane","Annen dershaneye yazdırmak istiyor.",[["Kabul et","",1,"m-2000 p-2","Hafta sonların gitti ama kafan açıldı."],["Reddet","",1,"p+2",""]]],
 // ---- YETİŞKİN GENEL (18+)
 [18,70,"","Trafik kazası","Kavşakta biri arabana arkadan vurdu.",[["Sakin konuş, tutanak tut","",1,"p-2","Sigorta işi halletti."],["İndir, dersini ver","",.6,"r+3 x+3","Adam özür dileyip kaçtı.","x+8 h-4","Kavga büyüdü, polis geldi."]]],
 [18,70,"","Komşu gürültüsü","Üst kattaki komşu her gece müzik açıyor.",[["Kibarca uyar","",.6,"p+2","Komşu özür diledi.","p-3","Daha da açtı."],["Kapısına dayan","",1,"r+2 x+1","Bir daha ses çıkmadı."]]],
@@ -4340,7 +4340,7 @@ function evFx(str,tt){if(!str)return;str.split(' ').forEach(tok=>{const m=tok.ma
   else if(k==='m'){const c=M(Math.abs(v));(fund(c),S.money=Math.max(0,S.money-c))}else if(k==='d'){{const b0=S.black||0,w0=S.money;dirty(M(v));if((S.black||0)>b0)log(`🖤 ${tt||'Bu iş'}: kara para kasana ${fmt(M(v))} girdi.`,'good');else if(S.money>w0)log(`💵 ${tt||'Bu iş'}: ${fmt(M(v))} doğrudan cüzdanına girdi.`,'good')}}else if(k==='w'){S.money+=M(v);log(`💵 ${tt||'Bu iş'}: kasana ${fmt(M(v))} girdi.`,'good')}})}
 const evCost=str=>{let c=0;(str||'').split(' ').forEach(t=>{const m=t.match(/^m-(\d+)$/);if(m)c+=M(+m[1])});return c};
 function evSub(c){const cost=evCost(c[3]);const parts=[];if(cost)parts.push(fmt(cost));if(c[2]<1)parts.push(`Şans %${Math.round(c[2]*100)}`);return c[1]||parts.join(' · ')}
-const EVT={fam:()=>!!S.family,nofam:()=>!S.family,org:()=>!!S.org,job:()=>!!S.job,nojob:()=>!S.job,part:()=>!!S.partner,nopart:()=>!S.partner,mar:()=>!!S.married,kids:()=>S.kids&&S.kids.length>0,car:()=>!!S.car||(S.cars&&S.cars.length>0),rich:()=>cashA()>=M(5e5),poor:()=>cashA()<M(2e4),street:()=>rank()>=1,boss:()=>!!S.boss,noboss:()=>!S.boss};
+const EVT={okul:()=>!S.jail&&!S.liseDone&&(S.age<15||S.school===true),fam:()=>!!S.family,nofam:()=>!S.family,org:()=>!!S.org,job:()=>!!S.job,nojob:()=>!S.job,part:()=>!!S.partner,nopart:()=>!S.partner,mar:()=>!!S.married,kids:()=>S.kids&&S.kids.length>0,car:()=>!!S.car||(S.cars&&S.cars.length>0),rich:()=>cashA()>=M(5e5),poor:()=>cashA()<M(2e4),street:()=>rank()>=1,boss:()=>!!S.boss,noboss:()=>!S.boss};
 EVP.forEach((e,i)=>{const[a0,a1,tags,title,text,chs]=e;const tl=tags?tags.split(' '):[];const jail=tl.includes('jail');
   EV(1,()=>{if(jail?!(S.jail>0&&!S.abroad):!okE())return false;if(S.age<a0||S.age>a1)return false;if((S.evs||[]).includes(i))return false;return tl.every(t=>t==='jail'||(EVT[t]?EVT[t]():true))},
     ()=>{S.evs=[...(S.evs||[]),i];return{title,text,choices:chs.map(c=>({t:c[0],sub:evSub(c),dis:evCost(c[3])>0&&!canPay(evCost(c[3])),fn:()=>{if(Math.random()<c[2]){evFx(c[3],title);if(c[4])log(c[4],/[+]/.test(c[3]||'')&&!/-/.test(c[3]||'')?'good':'dim')}else{evFx(c[5],title);if(c[6])log(c[6],'bad');if(c[6]&&/Patron seni (kovmakla tehdit etti|uyardı)/.test(c[6])&&S.job&&!S.jail&&typeof bossEv==='function'){const tehdit=/tehdit/.test(c[6]);const ev=bossEv(tehdit?['Patron tehdit etti','Patron seni odasına çağırdı, kapıyı kapattı: "Bir daha ağzını açarsan seni kapının önüne koyarım. Bu şehirde iş bulamazsın, anladın mı?"']:['Patron azarladı','Patron herkesin içinde üstüne yürüdü: "Müşteriyle böyle konuşulmaz! Bir daha görürsem kapının önündesin."']);if(ev)setTimeout(()=>queue(ev),80)}}}}))}})});
