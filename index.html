@@ -392,7 +392,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.15-0600';
+const APPV='2026.11.15-1530';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2462,7 +2462,7 @@ function mgFight(cb,opp,hard){let box=$('ctBox');if(!box){box=document.createEle
   const O=opp&&typeof opp==='object'?opp:{},D=!!O.duel,lv=Math.max(0,Math.min(3,O.lv||0)),bp=O.p===undefined?.5:Math.max(.05,Math.min(.95,O.p));
   const name=typeof opp==='string'?opp:(O.title||''),bossN=typeof opp==='string'?opp:(O.boss||''),N=D?1:(O.n||(hard?7:5)),MAXA=hard?3:2;
   const HP=Math.max(2,4+(S.health<40||S.age>=60?-1:0)+(S.health>=80&&S.age<50?1:0)+(S.premium?1:0));
-  const STOP=ph*.64,RANGE=ph*1.02,WIND=D?(lv===3?Math.round(640-(1-bp)*240):[700,620,540][lv]):(hard?560:680);
+  const STOP=ph*.64,RANGE=ph*1.02,WIND=D?(lv===3?Math.round(420-(1-bp)*120):[480,420,360][lv]):(hard?380:450);
   const DHP=D?(lv===3?Math.round(8+(1-bp)*7):[6,8,10][lv]):0,DSP=D?[1,1.1,1.2,1.3][lv]:1;
   const TY=[{k:'e0',hp:2,sp:1,sc:1},{k:'e1',hp:2,sp:1.05,sc:1},{k:'e2',hp:3,sp:.78,sc:1.08},{k:'e3',hp:1,sp:1.3,sc:.97}];
   box.innerHTML=`<div class="ctHud" style="max-width:${W}px"><span id="ctHp"></span><b id="ctT">${D?(lv===3?'Son yüzleşme':'Teke tek'):name?'Kavga · '+name:'Yumruk yumruğa'}</b><span id="ctLeft"></span></div>
@@ -2497,7 +2497,7 @@ function mgFight(cb,opp,hard){let box=$('ctBox');if(!box){box=document.createEle
     if(t>=st.sp&&st.spawned<N&&st.en.filter(e=>!e.dead).length<MAXA){spawn();st.sp=t+R(900,1700)-(hard?250:0)}
     [-1,1].forEach(s=>{let front=STOP;st.en.filter(e=>e.s===s&&!e.dead).sort((a,b)=>a.d-b.d).forEach((e,i)=>{const lim=i?front+ph*.5:STOP;
       if(e.kb>0){const m=Math.min(e.kb,ph*3.2*dt);e.d+=m;e.kb-=m}
-      const wind=()=>{const rage=e.duel?.72+.28*e.hp/DHP:1;e.hv=e.duel&&ch(.22)?1:0;e.ex.textContent=e.hv?'‼️':'❗';e.state='wind';e.until=t+WIND*(e.hv?1.4:1)*rage*R(88,116)/100;e.ex.classList.add('on')};
+      const wind=()=>{const rage=e.duel?.72+.28*e.hp/DHP:1;e.hv=e.duel&&ch(.22)?1:0;e.ex.textContent=e.hv?'‼️':'❗';e.state='wind';e.until=t+WIND*(e.hv?1.25:1)*rage*R(90,110)/100;e.ex.classList.add('on')};
       if(e.state==='hit'){if(t>=e.until){if(e.duel&&e.combo>=3){e.combo=0;e.state='circle'}else{e.state=e.duel&&e.d<=RANGE?'guard':'walk';e.until=t+R(260,520)/DSP;if(!e.duel)e.combo=0}}}
       else if(e.state==='circle'){e.d-=e.v*3.6*dt;const pr=Math.max(0,Math.min(1,(ph*1.25-e.d)/(ph*2.5)));e.cy=Math.sin(pr*Math.PI)*ph*.3;if(e.d<=-ph*1.25){e.s=-e.s;e.d=ph*1.25;e.cy=0;e.state='walk'}}
       else if(e.state==='walk'){e.combo=e.duel?e.combo:0;if(e.d>lim)e.d=Math.max(lim,e.d-e.v*dt);else if(i===0&&e.d<=STOP+1){if(e.duel){e.state='guard';e.until=t+R(180,520)/DSP}else wind()}}
