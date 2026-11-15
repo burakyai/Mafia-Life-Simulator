@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.16-0100';
+const APPV='2026.11.16-0200';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -732,7 +732,8 @@ function karizma(){if(S&&((S.look&&S.look.acc.includes('hac'))||(S.owned&&S.owne
   if(hasY('fotr'))k+=5;if(S.age<16)k=0;return k}
 function has(id){return S.staff.some(x=>x.id===id)}
 function friends(job,min=50){return S.friends.filter(f=>f.job===job&&f.rel>=min).length}
-function rank(){let i=0;RANKS.forEach((r,k)=>{if(S.respect>=r.r)i=k});const cap=S.org?5:!S.family?1:(S.boss?5:4);return Math.min(i,cap)}
+const inUW=()=>!!(S.family||S.org||S.uw||(S.stats&&S.stats.crimes>0)||(S.black||0)>0||(S.st&&S.st.shops&&S.st.shops.some(o=>o.st==='odeyor')));const rankN=i=>i===0&&!inUW()?'Sivil':RANKS[i].n;
+function rank(){if(S.age<14||!inUW())return 0;let i=0;RANKS.forEach((r,k)=>{if(S.respect>=r.r)i=k});const cap=S.org?5:!S.family?1:(S.boss?5:4);return Math.min(i,cap)}
 function fam(){return FAMILIES.find(f=>f.n===S.family)}
 function boss(){return S.boss?'Sen':(fam()?'Baba '+fam().b:'Mahalle abisi')}
 function rival(){const o=FAMILIES.filter(f=>f.n!==S.family);return pick(o).n}
@@ -847,13 +848,13 @@ function ageUp(){
   }
   if(kid)childhood();else adultYear(newYear);
   const rk=rank();
-  if(rk>S.lastRank)log(`Terfi! Yeni rütben: ${RANKS[rk].n}.`,'gold');
-  else if(rk<S.lastRank)log(`Saygın düştü. Rütben: ${RANKS[rk].n}.`,'bad');
+  if(rk>S.lastRank)log(`Terfi! Yeni rütben: ${rankN(rk)}.`,'gold');
+  else if(rk<S.lastRank)log(`Saygın düştü. Rütben: ${rankN(rk)}.`,'bad');
   S.lastRank=rk;
   {const ids=Object.keys(S.tips||{}).filter(k=>k!=='all'&&k!=='best');if(ids.length){let ok=0;ids.forEach(id=>{const t=S.tips[id];const up=S.px[id].p>t.p0;if(up===t.up)ok++});S.tipStats.ok+=ok;S.tipStats.n+=ids.length;log(`Ferdi'nin tüyoları: ${ok}/${ids.length} tuttu.`,ok/ids.length>=.5?'good':'bad')}}
   S.tips={};
   if(!kid)publishNews();
-  if(!S.log[S.log.length-1].lines.length)log(pick(['Sakin bir mevsim geçti.','Mahallede çay içip dedikodu dinledin.','Sokaklar sessizdi.','İşler yolunda gitti.']),'dim');
+  if(!S.log[S.log.length-1].lines.length&&!(kid&&Q.length))log(kid?pick(['Okul, sokak, akşam ezanında eve dönüş.','Mahallede top oynadın.','Bir yıl daha büyüdün.']):pick(inUW()?['Sakin bir mevsim geçti.','Mahallede çay içip dedikodu dinledin.','Sokaklar sessizdi.','İşler yolunda gitti.']:['Sakin bir mevsim geçti.','Mahallede çay içip dedikodu dinledin.','Günler birbirini kovaladı.']),'dim');
   afterChange(newYear);
   cloudSave();
   scrollLog();
@@ -1358,7 +1359,7 @@ function yearSystems(){
 /* ============ Kayıt sistemi ============ */
 let DB=null,UID=null,SLOTS={},cloudTimer=null,lastCloud=0;
 function snapshot(){const c=JSON.parse(JSON.stringify(S));c.log=c.log.slice(-40);return c}
-function payload(){return{v:1,at:Date.now(),name:`${S.first} ${S.last}`,age:S.age,rank:RANKS[rank()].n,alive:S.alive,json:JSON.stringify(snapshot())}}
+function payload(){return{v:1,at:Date.now(),name:`${S.first} ${S.last}`,age:S.age,rank:rankN(rank()),alive:S.alive,json:JSON.stringify(snapshot())}}
 function dataOf(r){if(!r)return null;if(typeof r.data==='function'){if(r.exists===false)return null;return r.data()||null}if(r.exists===false)return null;return r}
 async function putSlot(k,p){
   if(DB){await DB.collection('data/users/'+UID).doc(k).set(p)}
@@ -1574,7 +1575,7 @@ function inherit(id){
     premium:P.premium,autoMeet:P.autoMeet,q:P.q||0,tips:{},tipStats:P.tipStats,lux:[...(P.lux||[])],ach:P.ach,stats:P.stats,papers:P.papers,fame:Math.round((P.fame||0)/2),
     kids:(k.kids||[]).map(g=>({id:g.id,name:g.name,g:g.g,age:g.age,bornAt:Math.max(0,k.age-g.age),rel:R(65,90),look:g.look,crew:false})),partner:k.spouse||null,married:!!k.spouse,prel:k.spouse?70:null,siblings:P.kids.filter(x=>x!==k).map(x=>({name:x.name,g:x.g,age:x.age,look:x.look})),
     yad:(P.yad||[]).map(y=>({...y})),lb:{...(P.stats||{}),co:P.co?P.co.done||0:0},gen:(P.gen||1)+1,birthYear:(P.birthYear||1996)+k.bornAt,
-    tree:[...(P.tree||[]),{name:`${P.first} ${P.last}`,g:P.gender||'e',by:P.birthYear||1996,age:P.age,rank:RANKS[rank()].n,cause:P.cause,look:P.look,family:P.family,kids:P.kids.map(x=>x.name),heir:k.name,lk:P.lakapN||''}],
+    tree:[...(P.tree||[]),{name:`${P.first} ${P.last}`,g:P.gender||'e',by:P.birthYear||1996,age:P.age,rank:rankN(rank()),cause:P.cause,look:P.look,family:P.family,kids:P.kids.map(x=>x.name),heir:k.name,lk:P.lakapN||''}],
     log:[{age:k.age,q:k.age>=14?(P.q||0):undefined,lines:[]}]};
   S=N;ensure();
   const parentWord=(P.gender==='k'?'Annen':'Baban');
@@ -1588,7 +1589,7 @@ function tnode(n,cls){return `<div class="tn ${cls||''}"><div class="av" style="
 EXTRA.agac=()=>{
   let h='<p class="note">Soyunun hikâyesi. Her kuşak bir öncekinin mirasıyla başlar.</p><div class="tree">';
   (S.tree||[]).forEach((a,i)=>{h+=`<div class="gen"><div class="gl">${i+1}. kuşak</div>${tnode({name:a.name,age:a.age,look:a.look,sub:`${a.by} – ${a.by+a.age} · ${a.lk?'“'+a.lk+'”':a.rank}`},'dead')}</div><div class="tl"></div>`});
-  const me={name:`${S.first} ${S.last}`,age:S.age,look:S.look,sub:`${S.birthYear||1996} – · ${RANKS[rank()].n}`};
+  const me={name:`${S.first} ${S.last}`,age:S.age,look:S.look,sub:`${S.birthYear||1996} – · ${rankN(rank())}`};
   h+=`<div class="gen"><div class="gl">${(S.gen||1)}. kuşak · Sen</div><div class="row2">${tnode(me,'me')}${(S.siblings||[]).map(x=>tnode({emo:1,g:x.g,name:x.name,age:x.age,look:x.look,sub:x.g==='e'?'Erkek kardeşin':'Kız kardeşin'})).join('')}</div></div>`;
   const gks=S.kids.flatMap(k=>(k.kids||[]).map(g=>({...g,par:k.name})));
   if(S.kids.length){h+=`<div class="tl"></div><div class="gen"><div class="gl">${(S.gen||1)+1}. kuşak · Çocukların</div><div class="row2">${S.kids.map(k=>tnode({emo:1,g:k.g,name:k.name,age:k.age,look:k.look,sub:`${k.age} yaş${S.heir===k.id?' · Varis':''}`},S.heir===k.id?'me':'')).join('')}</div></div>`}
@@ -1851,7 +1852,7 @@ ACT.fjleave=()=>{if(!S.family||S.boss&&false)return;const fee=M([5e4,1e5,3e5,8e5
 function fjLeave(hit){const was=S.family;S.exFamily=was;S.family=null;S.boss=false;add('respect',-8);if(S.fj)S.fj.req=null;
   if(ch(hit))later('fjhunt',R(1,3),{fam:was})}
 function fjSheet(){const F=fjEnsure(),rk=rank(),now=QS();
-  let h=`<div class="sum"><div><span>Aile</span><b>${S.family}</b></div><div><span>Baba</span><b>${S.boss?'Sensin':(fam()?fam().b:'—')}</b></div><div><span>Rütben</span><b style="color:var(--gold)">${RANKS[rk].n}</b></div><div><span>İşlerden payın</span><b>%${Math.round(fjCut()*100)}</b></div><div><span>Sadakat</span><b style="color:${F.lo<30?'var(--bad)':'var(--good)'}">%${F.lo}</b></div><div><span>Aileye getirdiğin</span><b>${fmtS(F.brought)}</b></div></div>`;
+  let h=`<div class="sum"><div><span>Aile</span><b>${S.family}</b></div><div><span>Baba</span><b>${S.boss?'Sensin':(fam()?fam().b:'—')}</b></div><div><span>Rütben</span><b style="color:var(--gold)">${rankN(rk)}</b></div><div><span>İşlerden payın</span><b>%${Math.round(fjCut()*100)}</b></div><div><span>Sadakat</span><b style="color:${F.lo<30?'var(--bad)':'var(--good)'}">%${F.lo}</b></div><div><span>Aileye getirdiğin</span><b>${fmtS(F.brought)}</b></div></div>`;
   if(F.debt)h+=`<div class="sec">⚠️ Aileye borcun var</div>`+row('data-x="fjpay:"','🗡',`${fmt(F.debt)} cebe attın`,`Ödemezsen suikastçı gelir · ${Math.max(0,F.due-now)} çeyrek kaldı`,fmtS(Math.round(F.debt*1.2)),!canPayB(Math.round(F.debt*1.2)));
   if(S.boss)h+='<div class="sec">Aile senin</div><p class="note">Bu ailenin Babası sensin. Kimse sana emir veremez; işlerden gelen paranın yarısı senin, yarısı ailenin kasasına, ailenin kasası ve adamları emrinde.</p>';
   else h+='<div class="sec">Babanın isteği</div>';
@@ -3993,7 +3994,7 @@ function kuyumcuHTML(){let h='';const pk=GKG();const own=S.goldKg||0;const hst=S
   return h}
 /* ============ Kara para kasası ============ */
 const DLIM=()=>5e6;
-function dirty(m){m=Math.round(m||0);if(m<=0)return;
+function dirty(m){m=Math.round(m||0);if(m<=0)return;if(S.age>=14)S.uw=1;
   if(S.age<16){S.money+=m;return}
   if(m<1e6){if(ch(.03*m/1e6)){add('heat',R(6,10));log(`🚨 Kaynağı belirsiz ${fmt(m)} mali polisin gözüne battı; paraya el konuldu.`,'bad')}else S.money+=m;return}
   S.black=(S.black||0)+m;if(!S.blackTip){S.blackTip=1;setTimeout(()=>queue({title:'🖤 Kara para',text:'1 milyon liranın altındaki küçük kazançlar doğrudan cüzdanına girer; ufak bir yakalanma riskleri vardır. Daha büyük yasa dışı kazançlar <b>kara para kasasına</b> girer, cüzdanına değil. Kara parayla alışveriş yapamazsın; sadece sokak masraflarını (adam maaşı, silah, rüşvet) ödeyebilirsin.<br><br>Harcamak için önce <b>aklaman</b> gerekir: sarraf, kuyumcu, Kıbrıs kumarhaneleri ya da işletmelerin üzerinden. Her aklamada komisyon ve küçük bir yakalanma riski var.',choices:[{t:'Kara para kasasına git',fn:()=>setTimeout(()=>openSheet('kara'),60)},{t:'Tamam',fn:()=>{}}]}),0)}}
@@ -5965,7 +5966,7 @@ function openSheet(k){if(k==='gard')k='insan';
       <div><span>🎟 Bilet</span><b>${tix()}</b></div>
       <div><span>Kuşak</span><b>${S.gen||1}. kuşak · ${S.kids.length} çocuk</b></div>
       <div><span>Yaş</span><b>${S.age}</b></div>
-      <div><span>Rütbe</span><b>${RANKS[rk].n}</b></div>
+      <div><span>Rütbe</span><b>${rankN(rk)}</b></div>
       <div><span>Sonraki rütbe</span><b>${nx?(nx.r<=S.respect?(S.family?'Taht için fırsat bekle':'Bir aileye katıl'):nx.n+' · '+nx.r+' saygı'):'Zirvedesin'}</b></div>
       <div><span>Aile</span><b>${S.family?(S.boss?S.family+' (Baba)':S.family):(S.snitch?'Yok · İspiyoncu':'Yok')}</b></div>
       <div><span>İlişki</span><b>${S.partner?(S.married?'Evli: ':'Sevgili: ')+S.partner:'Bekâr'}</b></div>
@@ -6095,7 +6096,7 @@ function showDead(){const cause=S.cause;
       <div><span>Hanedan puanı</span><b style="color:var(--gold)">${dynScore()}${dynSave()?' · 🏆 YENİ REKOR':' · Rekor '+dynBest()}</b></div>
       <div><span>Ölüm nedeni</span><b>${cause}</b></div>
       <div><span>Yaş</span><b>${S.age}</b></div>
-      <div><span>Son rütbe</span><b>${RANKS[rk].n}</b></div>
+      <div><span>Son rütbe</span><b>${rankN(rk)}</b></div>
       <div><span>Aile</span><b>${S.family||'—'}</b></div>
       <div><span>Bıraktığı servet</span><b>${fmt(S.money)}</b></div>
       <div><span>En yüksek kasa</span><b>${fmt(S.peak)}</b></div>
@@ -6116,7 +6117,7 @@ function render(){try{qbar()}catch(e){}
   if(!S)return;const rk=rank();
   $('hav').innerHTML=avatarSVG(S.look,S.age,{jail:S.jail>0,mood:S.happy,jw:[...S.jewels.map(j=>j.id),...((S.watches||[]).length?['saat']:[])]});
   $('hname').textContent=`${S.first} ${S.last}`;
-  $('hsub').innerHTML=`${S.age} yaş${S.age>=14?' · '+SEASONS[S.q||0]:''} · <b>${RANKS[rk].n}</b>${S.org?' · '+S.org.name:S.family?' · '+S.family.replace(' Ailesi',''):''}`;
+  $('hsub').innerHTML=`${S.age} yaş${S.age>=14?' · '+SEASONS[S.q||0]:''} · <b>${rankN(rk)}</b>${S.org?' · '+S.org.name:S.family?' · '+S.family.replace(' Ailesi',''):''}`;
   $('hmoney').textContent=fmtS(S.money);{const hb=$('hblack');if(hb){hb.style.display='block';hb.textContent='🖤 '+fmtS(S.black||0)}}
   $('advSub').textContent=S.age<14||S.yearStep?'1 YIL':'3 AY';$('nUndo').disabled=!UNDO.length;$('nUndo').style.display=dayiOK()&&S.premium?'':'none';
   const bn=$('banner');
