@@ -392,7 +392,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.15-1545';
+const APPV='2026.11.15-1615';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2374,7 +2374,7 @@ Object.assign(HT('dubleks'),{cls:'daire',m2:220});Object.assign(HT('villa'),{cls
 const HCLS={daire:'Daire',villa:'Villa',yali:'Yalı ve köşk',yazlik:'Yazlık'};
 let hFilt='all';
 const hlPr=l=>Math.round(HT(l.t).p*S.hidx*l.q*(l.har!==undefined?.48+.2*l.har/100:1));
-function hMarket(){if(!S.hmarket||S.hmarket.q!==QS()){const out=[];for(let i=0;i<12;i++){const t=ch(.6)?pick(HOUSES.filter(x=>x.p*S.hidx<=Math.max(4e6,netWorth()*1.2))):pick(HOUSES);const har=t.id!=='gece'&&ch(.3);out.push({lid:'h'+i+R(0,99999),t:t.id,q:R(85,118)/100,kat:t.cls==='daire'?R(1,14):0,yas:har?R(35,90):R(0,40),...(har?{har:R(5,35)}:{})})}S.hmarket={q:QS(),items:out.sort((a,b)=>hlPr(a)-hlPr(b))}}return S.hmarket.items}
+function hMarket(){if(!S.hmarket||S.hmarket.q!==QS()){const out=[];for(let i=0;i<12;i++){const HM=HOUSES.filter(x=>!x.co);const t=ch(.6)?pick(HM.filter(x=>x.p*S.hidx<=Math.max(4e6,netWorth()*1.2))):pick(HM);const har=t.id!=='gece'&&ch(.3);out.push({lid:'h'+i+R(0,99999),t:t.id,q:R(85,118)/100,kat:t.cls==='daire'?R(1,14):0,yas:har?R(35,90):R(0,40),...(har?{har:R(5,35)}:{})})}S.hmarket={q:QS(),items:out.sort((a,b)=>hlPr(a)-hlPr(b))}}return S.hmarket.items}
 ACT.hf=c=>{hFilt=c;openSheet('emlak')};
 ACT.hl=lid=>{const l=hMarket().find(x=>x.lid===lid);if(!l)return;const t=HT(l.t);const pr=hlPr(l);const HR=l.har!==undefined;closeSheet();
   const buy=price=>{if(!pay(price))return;const o={uid:'h'+Date.now()+R(0,999),t:t.id,q:l.q*(price/pr),ten:null,...(HR?{har:1,cond:l.har,inv:price}:{})};S.houses.push(o);if(!S.home&&!HR)S.home=o.uid;S.hmarket.items=S.hmarket.items.filter(x=>x!==l);log(`${t.n} satın aldın.${S.home===o.uid?' Hemen taşındın.':''}`,'good');if(price>=1e7)news(`${S.first} ${S.last}, ${t.n} için servet ödedi`,2)};
@@ -3096,6 +3096,10 @@ const cFund=x=>0;
 const REG=[['esen','Esenyurt',.75,.72,1.3,'Ucuz arsa, alıcı bol, fiyat düşük'],['kartal','Kartal',1,1,1,'Dengeli'],['umr','Ümraniye',1.05,1.08,1,'Merkeze yakın, iyi talep'],['bey','Beykoz',1.2,1.3,.8,'Orman ve Boğaz, zengin alıcı'],['sar','Sarıyer',1.4,1.5,.7,'Lüks bölge, yavaş ama pahalı satış'],['bod','Bodrum',1.3,1.42,.75,'Yazlıkçı ve yabancı alıcı']];
 const TAS=[['ucuz','Ucuz taşeron',.92,.85,'Ucuz ve hızlı · kaza ve denetim riski yüksek'],['std','Standart taşeron',1,1,'Dengeli'],['kur','Kurumsal yüklenici',1.08,1,'Pahalı · kaza riski düşük · itibar +']];
 const RG=id=>REG.find(r=>r[0]===id)||REG[1];
+const COHK={apt:['Daire',9e6,120,4],lukapt:['Lüks daire',20e6,160,6],site:['Site dairesi',12e6,130,5],villa:['Villa',50e6,350,8],rezidans:['Rezidans dairesi',40e6,150,7],donusum:['Daire',7e6,110,4],sehir:['Daire',7e6,110,4]};
+const coHid=(reg,k)=>'co_'+reg+'_'+k;
+REG.forEach(r=>Object.entries(COHK).forEach(([k,[n,pr,m2,h]])=>{if(HOUSES.some(x=>x.id===coHid(r[0],k)))return;const bod=r[0]==='bod',cls=bod?'yazlik':k==='villa'?'villa':'daire';const P=Math.round(pr*r[3]/1e5)*1e5;
+  HOUSES.push({id:coHid(r[0],k),n:`${n}, ${r[1]}`,cls,p:P,rent:Math.round(P*.04/1e4)*1e4,h:h+(r[3]>=1.3?1:0),m2,co:1,ic:{daire:'🏢',villa:'🏡',yazlik:'🏖'}[cls]})}));
 let CPD=null;
 ACT.pstart=id=>{const t=PJ(id);closeSheet();CPD={id};pwReg()};
 function pwReg(){const t=PJ(CPD.id);queue({back:'insaat',title:`${t.n} · 1/5 Bölge`,text:`${t.d}. Projeyi nereye yapacaksın? Bölge arsa ve inşaat maliyetini, satış fiyatını ve satış hızını belirler.`,choices:[...REG.map(r=>({t:`📍 ${r[1]}`,sub:`Maliyet ×${r[2]} · Satış fiyatı ×${r[3]} · ${r[5]}`,fn:()=>{CPD.reg=r[0];setTimeout(pwLand,40)}})),{t:'Vazgeç',fn:()=>{CPD=null}}]})}
@@ -3168,7 +3172,7 @@ ACT.pj=uid=>{const p=S.co.projects.find(x=>x.uid===uid);if(!p)return;const t=PJ(
      {t:'👑 Yabancıya dövizle sat',sub:!S.premium?'Dayı Paketi':p.fy===S.age?'Bu yıl yapıldı':`Arap ve Rus alıcılar · ${Math.ceil(left*.3)} birim tam fiyat +%5 · yılda bir`,dis:S.premium&&p.fy===S.age,pr:true,fn:()=>{if(!S.premium)return dayiShop();const n=Math.ceil(left*.3);const m=pjCash(p,Math.round(n*pr*1.05));S.co.cash+=m;p.sold+=n;p.fy=S.age;S.taxInc=(S.taxInc||0)+Math.max(0,m-p.cost*n/p.units);log(`👑 ${t.n}: ${n} birim yabancı alıcılara dövizle satıldı, ${fmt(m)}.`,'gold');if(p.units-p.presold-p.sold<=0){p.state='done';S.co.done++}}},
      ...(t.res?[{t:'👑 Kuruma toptan kirala',sub:!S.premium?'Dayı Paketi':`Yurt, otel zinciri ya da kamu kurumu · çeyreklik ~${fmtS(pr*left*.012*(p.sh||1))} · boş daire gideri biter`,pr:true,fn:()=>{if(!S.premium)return dayiShop();p.state='rent';p.bulk=1;log(`👑 ${t.n}: kalan ${left} birim bir kuruma toptan kiralandı.`,'gold')}}]:[])]:[]),
     {t:'Hepsini hemen sat',sub:`%10 iskontoyla ${fmt(Math.round(left*pr*.9*.96*pjGlut(p)*(p.sh||1)))}`,fn:()=>{const m=pjCash(p,Math.round(left*pr*.9*.96*pjGlut(p)));if(p.def){S.co.cash+=p.def;p.def=0}S.co.cash+=m;p.sold+=left;S.taxInc=(S.taxInc||0)+Math.max(0,m-p.cost*left/p.units);p.state='done';S.co.done++;log(`${t.n}: kalan ${left} birim toptan satıldı, ${fmt(m)}.`,'gold')}},
-    ...(t.res&&left>0?[{t:'Bir daireyi kendine ayır',sub:'Evlerine eklenir',fn:()=>{p.sold++;S.houses.push({uid:'h'+Date.now(),t:t.id==='villa'?'zekeriya':'rezidans',q:1,ten:null});if(!S.home)S.home=S.houses[S.houses.length-1].uid;log(`${t.n}'den bir birimi kendine ayırdın.`,'good')}}]:[]),
+    ...(t.res&&left>0?[{t:'Bir daireyi kendine ayır',sub:'Evlerine eklenir',fn:()=>{p.sold++;S.houses.push({uid:'h'+Date.now(),t:COHK[t.id]?coHid(p.reg||'kartal',t.id):'rezidans',q:1,ten:null});if(!S.home)S.home=S.houses[S.houses.length-1].uid;log(`${t.n}'den bir birimi kendine ayırdın: ${HT(S.houses[S.houses.length-1].t).n}.`,'good')}}]:[]),
     {t:'Kapat',fn:()=>{}}]})};
 
 const KMJ=()=>PROJ.filter(t=>t.kamu);
