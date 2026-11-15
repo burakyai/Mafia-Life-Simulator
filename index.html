@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.16-0400';
+const APPV='2026.11.16-0500';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -5421,6 +5421,11 @@ const BXK={'Türkiye Amatör Şampiyonu':'tr','Türkiye Şampiyonu':'tr','Avrupa
 function boxCeremony(title,F){const k=BXK[title]||'tr';const an={tr:'Bayanlar baylar! Hakem kararı ve nakavtla...',eu:'Ladies and gentlemen... Avrupa\'nın yeni şampiyonu...',wr:'Ve yeeeni... dünya şampiyonu...'}[k];
   setTimeout(()=>queue({title:'🏆 Kemer töreni',text:`<div class="bxTor"><img src="img/bx_tor.webp" alt=""></div><img class="bxKm" src="img/bx_k_${k}.webp" alt=""><br>Spiker mikrofonu aldı: "${an} <b>${S.first} ${S.last}</b>!"<br><br>Hakem kemeri beline taktı. Salon ayakta, flaşlar patlıyor. ${F.n} köşesinde başını eğdi.<br><br><b style="color:var(--gold)">${title}</b>`,choices:[{t:'Kemeri havaya kaldır',fn:()=>{add('happy',8);log(`🏆 Kemeri havaya kaldırdın. Bu geceyi kimse unutmayacak.`,'gold')}},{t:'Kemeri annene götür',fn:()=>{add('happy',10);log(parEnsure().alive?'🏆 Kemeri annenin kucağına bıraktın. Gözleri doldu.':'🏆 Kemeri annenin mezarına götürdün.','gold')}}]}),700)}
 const BXF=['Ivan Drozdov','Marcus Bell','Diego Salazar','Kenji Mori','Tyrone Wade','Luca Ferri','Anton Weiss','Rafael Cortez','Sergei Volkov','Jamal Carter'];
+function boxEk(b,T,champ){const fin=!!T.title&&b.tw+1>=T.need;let k;
+  if(champ)k=pick(['e3','e4','e5','e7','e8'].filter(x=>x!==b.lek));
+  else if(fin)k={2:'e7',4:'e8',5:'e4',7:'e3'}[b.tier]||'e3';
+  else k=pick((b.tier>=6?['e5','e6','e7','e8','e4']:b.tier>=3?['e1','e2','e5','e6']:['e1','e2','e6']).filter(x=>x!==b.lek));
+  b.lek=k;return k}
 function atlE(){if(S.atl===undefined)S.atl=clamp(Math.round(55+gauss()*20),15,98);return S.atl}
 function boxE(){atlE();return S.box}
 const boxPow=b=>Math.round((b.g+b.h+b.d)/3+BXG[b.gear.e][2]);
@@ -5462,7 +5467,7 @@ ACT.boxtrain=()=>{const b=S.box;if(!b||(!S.premium&&b.tq===qnow()))return;closeS
     {t:'Sparring',fn:()=>{b.tq=qnow();up('g',.5);up('h',.5);up('d',.4);if(ch(.18)){hurt(R(5,12),'Sparring');log('Sparringde kaşın açıldı.','bad')}else log('Sparringde ortağını köşeye sıkıştırdın.','good')}}]})};
 /* maç akışı */
 ACT.boxfight=()=>{const b=S.box;if(!b||b.quit||(!S.premium&&b.fq===qnow()))return;closeSheet();const champ=b.belts.includes('Dünya Şampiyonu');const T=BXT[b.tier];
-  const F={n:T.pro&&b.tier>=5?pick(BXF):`${pick(NICK)} ${pick(NAMES)}`,pow:T.opp+R(-4,5)+(champ?R(0,6):0),ek:b.tier>=6?'e3':pick(b.tier>=3?['e1','e2','e2']:['e1','e1','e2']),st:pick(['baski','teknik','yumruk']),tip:pick(['kibirli','sakin','sinirli']),cs:0,ps:0,T,purse:M(T.purse)*(champ?1.5:1)};
+  const F={n:T.pro&&b.tier>=5?pick(BXF):`${pick(NICK)} ${pick(NAMES)}`,pow:T.opp+R(-4,5)+(champ?R(0,6):0),ek:boxEk(b,T,champ),st:pick(['baski','teknik','yumruk']),tip:pick(['kibirli','sakin','sinirli']),cs:0,ps:0,T,purse:M(T.purse)*(champ?1.5:1)};
   const stx={baski:'durmadan üstüne gelen, nefes aldırmayan bir dövüşçü',teknik:'mesafeyi iyi kullanan, hata bekleyen bir teknisyen',yumruk:'tek yumrukla maç bitiren ağır bir yumrukçu'}[F.st];
   if(T.pro&&!champ&&ch(.18))return queue({title:'🤫 Soyunma odasında bir teklif',text:`Maçtan önce takım elbiseli bir adam yanına geldi: "Üçüncü rauntta yatarsan ${fmt(F.purse*3)} senin. Kimse bilmeyecek."`,choices:[
     {t:'Kabul et',fn:()=>{b.fq=qnow();b.l++;b.tw=Math.max(0,b.tw-1);b.fix++;dirty(Math.round(F.purse*3));dosNote('Şikeli boks maçı · bahis çetesiyle bağlantı',6);add('respect',-3);log(`🥊 Üçüncü rauntta yere yattın. ${F.n} kazandı; zarf cebinde.`,'bad');news(`${S.first} ${S.last} şaibeli bir yenilgi aldı`,2)}},
