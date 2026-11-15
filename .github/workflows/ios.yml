@@ -11,6 +11,10 @@ on:
         description: "TestFlight'a yükle"
         type: boolean
         default: true
+      surum:
+        description: "Sürüm numarası (App Store'da görünen)"
+        type: string
+        default: "1.0.1"
   push:
     branches: [main]
     paths: ["app/**", ".github/workflows/ios.yml"]
@@ -69,7 +73,7 @@ jobs:
           BUILD_NO=$(( ${{ github.run_number }} + 100 ))
           xcodebuild -project App.xcodeproj -scheme App -configuration Release \
             -destination 'generic/platform=iOS' -archivePath $RUNNER_TEMP/App.xcarchive \
-            DEVELOPMENT_TEAM="$TEAM_ID" CURRENT_PROJECT_VERSION=$BUILD_NO \
+            DEVELOPMENT_TEAM="$TEAM_ID" CURRENT_PROJECT_VERSION=$BUILD_NO MARKETING_VERSION="${{ inputs.surum || '1.0.1' }}" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
             archive | tail -n 40
           sed -i '' "s/TEAM_ID_PLACEHOLDER/$TEAM_ID/" ../ExportOptions.plist
@@ -77,4 +81,4 @@ jobs:
             -exportOptionsPlist ../ExportOptions.plist -exportPath $RUNNER_TEMP/export \
             -allowProvisioningUpdates \
             -authenticationKeyPath "$KEY_PATH" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER_ID" | tail -n 40
-          echo "Yapı numarası $BUILD_NO TestFlight'a gönderildi." >> $GITHUB_STEP_SUMMARY
+          echo "Sürüm ${{ inputs.surum || '1.0.1' }} · yapı numarası $BUILD_NO TestFlight'a gönderildi." >> $GITHUB_STEP_SUMMARY

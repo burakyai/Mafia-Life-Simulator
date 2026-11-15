@@ -392,7 +392,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.15-2300';
+const APPV='2026.11.15-2340';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -5097,7 +5097,7 @@ ACT.glb=i=>{i=+i;const g=GLS[i];if(!g||glNo(i))return;S.gls=S.gls||[];
 
 /* ============ GM (yaratıcı) modu ============ */
 const GM_H='ec3de83a81f47b4eb54b7ec1';
-const gmOK=()=>{try{return localStorage.getItem('mafya-gm')==='1'}catch(e){return false}};
+const gmOK=()=>{try{return localStorage.getItem('mafya-gm')==='1'&&(!isApp()||isTestBuild())}catch(e){return false}};
 let GMP=[];
 const gmAt=()=>GMP.reduce((o,k)=>o&&o[k],S);
 const gmFmt=v=>typeof v==='number'?(Math.abs(v)>=1e4?fmt(v).replace('₺',''):String(Math.round(v*1000)/1000)):typeof v==='boolean'?(v?'✓ açık':'✗ kapalı'):v===null?'boş':String(v).slice(0,28);
@@ -5156,7 +5156,7 @@ ACT.gmdo=k=>{const full=o=>{if(!o)return};
   if(k==='bilet')tixSet(tix()+100);
   if(k==='ilerle'){closeSheet();for(let i=0;i<20&&S.alive;i++){Q.splice(0).forEach(x=>{try{const c=x.choices.filter(c=>!c.dis&&c.fn);c[c.length-1].fn()}catch(e){}});Q.length=0;try{$('modal').classList.remove('on')}catch(e){}ageUp()}Q.length=0;try{$('modal').classList.remove('on')}catch(e){}afterChange();render();toast('⏩ 5 yıl geçti');return}
   afterChange();toast('🛠 Uygulandı');openSheet('gm')};
-ACT.kodgir=()=>{closeSheet();window._nm='';queue({back:'ben',title:'🔑 Kod gir',text:`Elindeki kodu yaz.<input id="nmBox" autocomplete="off" autocapitalize="characters" placeholder="KOD" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:12px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gold2);background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box">`,choices:[{t:'🔑 Onayla',fn:()=>{const c=String((document.getElementById('nmBox')||{}).value||window._nm||'').trim().toUpperCase().replace(/\s+/g,'');if(!c)return;crypto.subtle.digest('SHA-256',new TextEncoder().encode(c)).then(b=>{const hx=[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,24);if(hx===GM_H){try{localStorage.setItem('mafya-gm','1')}catch(e){}toast('🛠 GM modu açıldı');GMP=[];setTimeout(()=>openSheet('gm'),80)}else dayiTry(c).then(ok=>{if(ok)dayiGrant();else toast('Kod geçersiz')})}).catch(()=>toast('Kod doğrulanamadı'))}},{t:'Vazgeç',fn:()=>{}}]})};
+ACT.kodgir=()=>{closeSheet();window._nm='';queue({back:'ben',title:'🔑 Kod gir',text:`Elindeki kodu yaz.<input id="nmBox" autocomplete="off" autocapitalize="characters" placeholder="KOD" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:12px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gold2);background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box">`,choices:[{t:'🔑 Onayla',fn:()=>{const c=String((document.getElementById('nmBox')||{}).value||window._nm||'').trim().toUpperCase().replace(/\s+/g,'');if(!c)return;crypto.subtle.digest('SHA-256',new TextEncoder().encode(c)).then(b=>{const hx=[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,24);if(hx===GM_H&&isApp()&&!isTestBuild()){toast('Geçersiz kod');return}if(hx===GM_H){try{localStorage.setItem('mafya-gm','1')}catch(e){}toast('🛠 GM modu açıldı');GMP=[];setTimeout(()=>openSheet('gm'),80)}else dayiTry(c).then(ok=>{if(ok)dayiGrant();else toast('Kod geçersiz')})}).catch(()=>toast('Kod doğrulanamadı'))}},{t:'Vazgeç',fn:()=>{}}]})};
 ACT.gmopen=()=>{GMP=[];openSheet('gm')};
 ACT.gmoff=()=>{try{localStorage.removeItem('mafya-gm')}catch(e){}toast('GM modu bu cihazda kapatıldı');openSheet('ben')};
 
