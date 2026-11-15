@@ -392,7 +392,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.15-1615';
+const APPV='2026.11.15-1945';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -3968,7 +3968,10 @@ function kuyumcuHTML(){let h='';const pk=GKG();const own=S.goldKg||0;const hst=S
   return h}
 /* ============ Kara para kasası ============ */
 const DLIM=()=>5e6;
-function dirty(m){m=Math.round(m||0);if(m<=0)return;S.black=(S.black||0)+m;if(!S.blackTip){S.blackTip=1;setTimeout(()=>queue({title:'🖤 Kara para',text:'Yasa dışı kazandığın her kuruş <b>kara para kasasına</b> girer, cüzdanına değil. Kara parayla alışveriş yapamazsın; sadece sokak masraflarını (adam maaşı, silah, rüşvet) ödeyebilirsin.<br><br>Harcamak için önce <b>aklaman</b> gerekir: sarraf, kuyumcu, Kıbrıs kumarhaneleri ya da işletmelerin üzerinden. Her aklamada komisyon ve küçük bir yakalanma riski var.',choices:[{t:'Kara para kasasına git',fn:()=>setTimeout(()=>openSheet('kara'),60)},{t:'Tamam',fn:()=>{}}]}),0)}}
+function dirty(m){m=Math.round(m||0);if(m<=0)return;
+  if(S.age<16){S.money+=m;return}
+  if(m<1e6){if(ch(.03*m/1e6)){add('heat',R(6,10));log(`🚨 Kaynağı belirsiz ${fmt(m)} mali polisin gözüne battı; paraya el konuldu.`,'bad')}else S.money+=m;return}
+  S.black=(S.black||0)+m;if(!S.blackTip){S.blackTip=1;setTimeout(()=>queue({title:'🖤 Kara para',text:'1 milyon liranın altındaki küçük kazançlar doğrudan cüzdanına girer; ufak bir yakalanma riskleri vardır. Daha büyük yasa dışı kazançlar <b>kara para kasasına</b> girer, cüzdanına değil. Kara parayla alışveriş yapamazsın; sadece sokak masraflarını (adam maaşı, silah, rüşvet) ödeyebilirsin.<br><br>Harcamak için önce <b>aklaman</b> gerekir: sarraf, kuyumcu, Kıbrıs kumarhaneleri ya da işletmelerin üzerinden. Her aklamada komisyon ve küçük bir yakalanma riski var.',choices:[{t:'Kara para kasasına git',fn:()=>setTimeout(()=>openSheet('kara'),60)},{t:'Tamam',fn:()=>{}}]}),0)}}
 function lqUse(k){S.lq=S.lq&&S.lq.q===QS()?S.lq:{q:QS(),u:{}};return S.lq.u[k]||0}
 function bizCap(){return Math.round((propLaund()*1.2e6+S.props.length*4e5)*Math.max(1,S.cpi))}
 const LMETH=[
@@ -4334,7 +4337,7 @@ const EVP=[
 if(!GAMBLE)for(let i=EVP.length-1;i>=0;i--)if(['Kumarhane gecesi','Kaçak yarış','Spor bahsi','Koğuş kumarı'].includes(EVP[i][3]))EVP.splice(i,1);
 function evFx(str,tt){if(!str)return;str.split(' ').forEach(tok=>{const m=tok.match(/^([a-zA-Z]+)([+-]?)(\d+)$/);if(!m)return;const k=m[1],v=(m[2]==='-'?-1:1)*+m[3];
   if(k==='h'){if(v<0)hurt(-v,tt);else add('health',v)}else if(k==='p')add('happy',v);else if(k==='r'){if(v>0)gainResp(v);else add('respect',v)}else if(k==='x')add('heat',v);else if(k==='f')S.fame=clamp((S.fame||0)+v);
-  else if(k==='m'){const c=M(Math.abs(v));(fund(c),S.money=Math.max(0,S.money-c))}else if(k==='d'){dirty(M(v));log(`🖤 ${tt||'Bu iş'}: kara para kasana ${fmt(M(v))} girdi.`,'good')}else if(k==='w'){S.money+=M(v);log(`💵 ${tt||'Bu iş'}: kasana ${fmt(M(v))} girdi.`,'good')}})}
+  else if(k==='m'){const c=M(Math.abs(v));(fund(c),S.money=Math.max(0,S.money-c))}else if(k==='d'){{const b0=S.black||0,w0=S.money;dirty(M(v));if((S.black||0)>b0)log(`🖤 ${tt||'Bu iş'}: kara para kasana ${fmt(M(v))} girdi.`,'good');else if(S.money>w0)log(`💵 ${tt||'Bu iş'}: ${fmt(M(v))} doğrudan cüzdanına girdi.`,'good')}}else if(k==='w'){S.money+=M(v);log(`💵 ${tt||'Bu iş'}: kasana ${fmt(M(v))} girdi.`,'good')}})}
 const evCost=str=>{let c=0;(str||'').split(' ').forEach(t=>{const m=t.match(/^m-(\d+)$/);if(m)c+=M(+m[1])});return c};
 function evSub(c){const cost=evCost(c[3]);const parts=[];if(cost)parts.push(fmt(cost));if(c[2]<1)parts.push(`Şans %${Math.round(c[2]*100)}`);return c[1]||parts.join(' · ')}
 const EVT={fam:()=>!!S.family,nofam:()=>!S.family,org:()=>!!S.org,job:()=>!!S.job,nojob:()=>!S.job,part:()=>!!S.partner,nopart:()=>!S.partner,mar:()=>!!S.married,kids:()=>S.kids&&S.kids.length>0,car:()=>!!S.car||(S.cars&&S.cars.length>0),rich:()=>cashA()>=M(5e5),poor:()=>cashA()<M(2e4),street:()=>rank()>=1,boss:()=>!!S.boss,noboss:()=>!S.boss};
