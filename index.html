@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.16-0600';
+const APPV='2026.11.16-0800';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1939,7 +1939,7 @@ EXTRA.gazete=()=>{let h=`<p class="note">Ünün: <b style="color:var(--gold)">%$
 const ACH=[
   ['ilkis','İlk iş','İlk suçunu işle',()=>S.stats.crimes>=1],['milyon','İlk milyon','Kasanda ₺1 milyon gör',()=>S.peak>=1e6],
   ['milyar','Milyarder','Net servetin ₺1 milyarı geçsin',()=>netWorth()>=1e9],['hapis','Koğuş tecrübesi','Hapse gir',()=>S.stats.jailed>=1],
-  ['baba','Baba','En yüksek rütbeye ulaş',()=>rank()===5],['aile','Kendi kanınla','Kendi aileni kur',()=>!!S.org],['ringsokak','Ringden Sokağa','Boksu bırakıp boksör çeteni kur',()=>!!(S.org&&S.org.boxer)],['kemer','Kemer sahibi','Bir boks kemeri kazan',()=>!!(S.box&&S.box.belts&&S.box.belts.length)],['dunyasamp','Dünya Şampiyonu','Dünya boks şampiyonu ol',()=>!!(S.box&&S.box.belts&&S.box.belts.includes('Dünya Şampiyonu'))],
+  ['baba','Baba','En yüksek rütbeye ulaş',()=>rank()===5],['aile','Kendi kanınla','Kendi aileni kur',()=>!!S.org],['ringsokak','Ringden Sokağa','Boksu bırakıp boksör çeteni kur',()=>!!(S.org&&S.org.boxer)],['kemer','Kemer sahibi','Bir boks kemeri kazan',()=>!!(S.box&&S.box.belts&&S.box.belts.length)],['dunyasamp','Dünya Şampiyonu','Dünya boks şampiyonu ol',()=>bxWorld()>=1],['ikisiklet','İki Sikletin Kralı','İki ayrı siklette dünya şampiyonu ol',()=>bxWorld()>=2],['efsane','Efsane','Üç ayrı siklette dünya şampiyonu ol',()=>bxWorld()>=3],
   ['mekan3','Bölge hâkimi','3 mekânı kontrol et',()=>S.org&&S.org.turf.length>=3],['sehir','Şehrin sahibi','10 mekânı kontrol et',()=>S.org&&S.org.turf.length>=10],
   ['evli','Kurulu düzen','Evlen',()=>S.married],['cocuk','Soy devam ediyor','Çocuk sahibi ol',()=>S.kids.length>=1],
   ['kusak3','Üç kuşak','3. kuşağa ulaş',()=>(S.gen||1)>=3],['yali','Boğaz manzarası','Bir yalı ya da köşk al',()=>S.houses.some(o=>HT(o.t).cls==='yali')],['koleksiyon','Koleksiyoner','Garajında 10 farklı model olsun',()=>new Set(S.cars.map(c=>c.mid)).size>=10],
@@ -5429,7 +5429,15 @@ const BXS=[['Eski şort',0,0],['Saten boks şortu',8000,1],['İsim işlemeli şo
 const BXC=[['Antrenör yok',0,1],['Mahalle hocası',60000,1.25],['Eski milli boksör',600000,1.6],['Dünya şampiyonu yetiştirmiş hoca',6e6,2]];
 const BXK={'Türkiye Amatör Şampiyonu':'tr','Türkiye Şampiyonu':'tr','Avrupa Şampiyonu':'eu','Dünya Şampiyonu':'wr'};
 function boxCeremony(title,F){const k=BXK[title]||'tr';const an={tr:'Bayanlar baylar! Hakem kararı ve nakavtla...',eu:'Ladies and gentlemen... Avrupa\'nın yeni şampiyonu...',wr:'Ve yeeeni... dünya şampiyonu...'}[k];
-  setTimeout(()=>queue({title:'🏆 Kemer töreni',text:`<div class="bxTor"><img src="img/bx_tor.webp" alt=""></div><img class="bxKm" src="img/bx_k_${k}.webp" alt=""><br>Spiker mikrofonu aldı: "${an} <b>${S.first} ${S.last}</b>!"<br><br>Hakem kemeri beline taktı. Salon ayakta, flaşlar patlıyor. ${F.n} köşesinde başını eğdi.<br><br><b style="color:var(--gold)">${title}</b>`,choices:[{t:'Kemeri havaya kaldır',fn:()=>{add('happy',8);log(`🏆 Kemeri havaya kaldırdın. Bu geceyi kimse unutmayacak.`,'gold')}},{t:'Kemeri annene götür',fn:()=>{add('happy',10);log(parEnsure().alive?'🏆 Kemeri annenin kucağına bıraktın. Gözleri doldu.':'🏆 Kemeri annenin mezarına götürdün.','gold')}}]}),700)}
+  setTimeout(()=>queue({title:'🏆 Kemer töreni',text:`<div class="bxTor"><img src="img/bx_tor.webp" alt=""></div><img class="bxKm" src="img/bx_k_${k}.webp" alt=""><br>Spiker mikrofonu aldı: "${an} <b>${S.first} ${S.last}</b>!"<br><br>Hakem kemeri beline taktı. Salon ayakta, flaşlar patlıyor. ${F.n} köşesinde başını eğdi.<br><br><b style="color:var(--gold)">${WC[S.box.wc]} · ${title}</b>`,choices:[{t:'Kemeri havaya kaldır',fn:()=>{add('happy',8);log(`🏆 Kemeri havaya kaldırdın. Bu geceyi kimse unutmayacak.`,'gold')}},{t:'Kemeri annene götür',fn:()=>{add('happy',10);log(parEnsure().alive?'🏆 Kemeri annenin kucağına bıraktın. Gözleri doldu.':'🏆 Kemeri annenin mezarına götürdün.','gold')}}]}),700)}
+const WC=['Tüy siklet','Hafif siklet','Orta siklet','Hafif ağır siklet','Ağır siklet'];
+const BXMN=[['Menajer yok',0,0],['Mahalle menajeri',150000,.1],['Tanınmış menajer',2e6,.15],['Dünya çapında promotör',2.5e7,.2]];
+const BXSP=['Yıldırım Spor Giyim','Boğaz Enerji İçeceği','Anadolu Sigorta Grubu','Kartal Saat','Marmara Otomotiv','Demir Protein'];
+function bxM(b){if(!b)return b;if(b.nat===undefined){b.nat=clamp(Math.round(2+gauss()*1.1),0,4);b.wc=b.nat}if(!b.cls)b.cls={};if(b.man===undefined)b.man=0;if(b.dodge===undefined)b.dodge=0;
+  b.belts=(b.belts||[]).map(x=>typeof x==='string'?{t:x,w:b.wc}:x);return b}
+const bxHas=(b,t,w)=>b.belts.some(x=>x.t===t&&x.w===(w===undefined?b.wc:w));
+const bxChamp=b=>{bxM(b);return bxHas(b,'Dünya Şampiyonu')};
+const bxWorld=()=>{const b=S.box;if(!b||!b.belts)return 0;bxM(b);return new Set(b.belts.filter(x=>x.t==='Dünya Şampiyonu').map(x=>x.w)).size};
 const BXF=['Ivan Drozdov','Marcus Bell','Diego Salazar','Kenji Mori','Tyrone Wade','Luca Ferri','Anton Weiss','Rafael Cortez','Sergei Volkov','Jamal Carter'];
 function boxEk(b,T,champ){const fin=!!T.title&&b.tw+1>=T.need;let k;
   if(champ)k=pick(['e3','e4','e5','e7','e8'].filter(x=>x!==b.lek));
@@ -5438,10 +5446,10 @@ function boxEk(b,T,champ){const fin=!!T.title&&b.tw+1>=T.need;let k;
   b.lek=k;return k}
 function atlE(){if(S.atl===undefined)S.atl=clamp(Math.round(55+gauss()*20),15,98);return S.atl}
 function boxE(){atlE();return S.box}
-const boxPow=b=>Math.round((b.g+b.h+b.d)/3+BXG[b.gear.e][2]);
+const boxPow=b=>{bxM(b);return Math.round((b.g+b.h+b.d)/3+BXG[b.gear.e][2]-3*Math.abs(b.wc-b.nat))};
 const atlW=()=>{const a=atlE();return a>=85?'Doğuştan atlet':a>=70?'Çok yetenekli':a>=50?'Ortalama üstü':a>=35?'Sıradan':'Hantal'};
 function boxJoin(kid){atlE();if(S.box&&!S.box.quit)return;if(S.box){S.box.quit=false;log('🥊 Eldivenleri yeniden taktın.','good');return}
-  const a=S.atl;S.box={g:Math.round(8+a/8),h:Math.round(8+a/8),d:Math.round(8+a/10),w:0,l:0,ko:0,tier:0,tw:0,belts:[],tq:-1,fq:-1,coach:0,gear:{e:0,s:0},fix:0,quit:false};
+  const a=S.atl;S.box={g:Math.round(8+a/8),h:Math.round(8+a/8),d:Math.round(8+a/10),w:0,l:0,ko:0,tier:0,tw:0,belts:[],tq:-1,fq:-1,coach:0,gear:{e:0,s:0},fix:0,quit:false};bxM(S.box);
   log(kid?'🥊 Boks salonuna yazıldın. Cemal Usta ilk gün ip atlattı, akşam kolların tutmuyordu.':'🥊 Boks salonuna yazıldın. İlk gün torbanın önünde nefesin kesildi.','good')}
 const _kz0=karizma;karizma=function(){return _kz0()+(S&&S.box&&S.box.gear?BXS[S.box.gear.s][2]:0)};
 function boxShopRows(){if(!S.box)return'';const b=S.box;let h='<div class="sec">🥊 Boks malzemeleri</div>';
@@ -5449,12 +5457,12 @@ function boxShopRows(){if(!S.box)return'';const b=S.box;let h='<div class="sec">
   BXS.forEach((x,i)=>{if(i)h+=row(`data-x="boxgear:s${i}"`,'🩳',x[0],b.gear.s>=i?'Sende var':'',b.gear.s>=i?'✓':fmtS(M(x[1])),b.gear.s>=i||!canPay(M(x[1])))});return h}
 ACT.boxgear=k=>{const b=S.box;if(!b)return;const t=k[0],i=+k.slice(1),L=t==='e'?BXG:BXS;if(!pay(M(L[i][1])))return;b.gear[t]=i;log(`${L[i][0]} aldın.`,'good');afterChange();openSheet('avm')};
 const bxBar=(n,v)=>`<div><span>${n}</span><b>${Math.round(v)}</b></div>`;
-EXTRA.boks=()=>{atlE();const b=S.box;let h='';
+EXTRA.boks=()=>{atlE();const b=bxM(S.box);let h='';
   if(!b){h+=`<p class="note">Salona yazıl, antrenman yap, amatör maçlara çık. Yeteneğin ve çalışman yeterse profesyonel olur, Türkiye'den dünya kemerine kadar yürürsün. Her maçtan önce kampa girer, tartıda rakibinle yüz yüze gelirsin.</p><div class="sum"><div><span>Fiziğin</span><b>${atlW()}</b></div></div>`;
     h+=row('data-x="boxjoin:"','🥊','Boks salonuna yazıl',S.age<10?'10 yaşından sonra':S.age>30?'Bu yaştan sonra ancak hobi olur':'','',S.age<10||!!S.jail);return['🥊 Boks',h]}
-  const T=BXT[b.tier],champ=b.belts.includes('Dünya Şampiyonu');
-  h+=`<div class="sum"><div><span>Fiziğin</span><b>${atlW()}</b></div>${bxBar('Güç',b.g)}${bxBar('Hız',b.h)}${bxBar('Dayanıklılık',b.d)}<div><span>Rekor</span><b>${b.w} G · ${b.l} M · ${b.ko} nakavt</b></div><div><span>Aşama</span><b style="color:var(--gold)">${champ?'Dünya Şampiyonu · unvan savunması':T.n}</b></div>${champ?'':`<div><span>Bu aşamada</span><b>${b.tw}/${T.need} galibiyet</b></div>`}<div><span>Antrenör</span><b>${BXC[b.coach][0]}</b></div></div>`;
-  if(b.belts.length)h+='<div class="bxBl">'+b.belts.map(t=>`<div><img src="img/bx_k_${BXK[t]||'tr'}.webp" alt=""><span>${t}</span></div>`).join('')+'</div>';
+  const T=BXT[b.tier],champ=bxChamp(b);
+  h+=`<div class="sum"><div><span>Fiziğin</span><b>${atlW()}</b></div>${bxBar('Güç',b.g)}${bxBar('Hız',b.h)}${bxBar('Dayanıklılık',b.d)}<div><span>Rekor</span><b>${b.w} G · ${b.l} M · ${b.ko} nakavt</b></div><div><span>Aşama</span><b style="color:var(--gold)">${champ?'Dünya Şampiyonu · unvan savunması':T.n}</b></div>${champ?'':`<div><span>Bu aşamada</span><b>${b.tw}/${T.need} galibiyet</b></div>`}<div><span>Siklet</span><b>${WC[b.wc]}${b.wc===b.nat?'':b.wc>b.nat?' · yapının üstünde':' · yapının altında'}</b></div><div><span>Antrenör</span><b>${BXC[b.coach][0]}</b></div><div><span>Menajer</span><b>${BXMN[b.man][0]}${b.man?` · %${Math.round(BXMN[b.man][2]*100)} pay`:''}</b></div>${b.sp?`<div><span>Sponsor</span><b>${b.sp.n} · yılda ${fmtS(b.sp.pay)} · ${b.sp.to-S.age+1} yıl</b></div>`:''}</div>`;
+  if(b.belts.length)h+='<div class="bxBl">'+b.belts.map(x=>`<div><img src="img/bx_k_${BXK[x.t]||'tr'}.webp" alt=""><span>${WC[x.w]}<br>${x.t}</span></div>`).join('')+'</div>';
   if(b.quit){h+='<p class="note">Eldivenleri astın.</p>'+row('data-x="boxjoin:"','🥊','Ringe geri dön',S.age>38?'Yaşın geçti':'','',S.age>38||!!S.jail);return['🥊 Boks',h]}
   const tq=!S.premium&&b.tq===qnow(),fq=!S.premium&&b.fq===qnow();
   h+='<div class="sec">Salon</div>'+row('data-x="boxtrain:"','🏋️','Antrenman yap',tq?'Bu çeyrek çalıştın':'Çeyrekte bir kez','',tq||!!S.jail);
@@ -5462,6 +5470,8 @@ EXTRA.boks=()=>{atlE();const b=S.box;let h='';
   h+='<div class="sec">Ring</div>';
   const proLock=T.pro&&S.age<18;
   h+=row('data-x="boxfight:"','🥊',champ?'Unvanını savun':`Maça çık: ${T.n}`,proLock?'Profesyonel lisans 18 yaşında':fq?'Bu çeyrek dövüştün':S.health<40?'Bu sağlıkla doktor izin vermez':T.purse?`Maç ücreti ${fmtS(M(T.purse))}`:'Amatör maç',' ',proLock||fq||!!S.jail||S.health<40);
+  {const nm=b.man+1;if(BXMN[nm]&&BXT[b.tier].pro)h+=row('data-x="boxman:"','💼',`Menajer tut: ${BXMN[nm][0]}`,`Kazancından %${Math.round(BXMN[nm][2]*100)} pay alır`,fmtS(M(BXMN[nm][1])),!canPay(M(BXMN[nm][1])))}
+  h+=row('data-x="boxwc:"','⚖️','Siklet değiştir',b.wy===S.age?'Bu yıl değiştirdin':`Doğal sikletin ${WC[b.nat]}`,'›',b.wy===S.age);
   h+=row('data-x="boxquit:"','🚪','Boksu bırak','','',false);
   return['🥊 Boks',h]};
 ACT.boxjoin=()=>{boxJoin(false);afterChange();openSheet('boks')};
@@ -5476,20 +5486,45 @@ ACT.boxtrain=()=>{const b=S.box;if(!b||(!S.premium&&b.tq===qnow()))return;closeS
     {t:'Koşu ve kondisyon',fn:()=>{b.tq=qnow();const x=up('d',1.1);add('health',2);log(x>2?'Sabah koşusunda kimse sana yetişemedi.':'Ciğerlerin yandı ama bitirdin.','good')}},
     {t:'Sparring',fn:()=>{b.tq=qnow();up('g',.5);up('h',.5);up('d',.4);if(ch(.18)){hurt(R(5,12),'Sparring');log('Sparringde kaşın açıldı.','bad')}else log('Sparringde ortağını köşeye sıkıştırdın.','good')}}]})};
 /* maç akışı */
-ACT.boxfight=()=>{const b=S.box;if(!b||b.quit||(!S.premium&&b.fq===qnow()))return;closeSheet();const champ=b.belts.includes('Dünya Şampiyonu');const T=BXT[b.tier];
+ACT.boxfight=()=>{const b=bxM(S.box);if(!b||b.quit||(!S.premium&&b.fq===qnow()))return;closeSheet();const champ=bxChamp(b);const T=BXT[b.tier];
   const F={n:T.pro&&b.tier>=5?pick(BXF):`${pick(NICK)} ${pick(NAMES)}`,pow:T.opp+R(-4,5)+(champ?R(0,6):0),ek:boxEk(b,T,champ),st:pick(['baski','teknik','yumruk']),tip:pick(['kibirli','sakin','sinirli']),cs:0,ps:0,T,purse:M(T.purse)*(champ?1.5:1)};
   const stx={baski:'durmadan üstüne gelen, nefes aldırmayan bir dövüşçü',teknik:'mesafeyi iyi kullanan, hata bekleyen bir teknisyen',yumruk:'tek yumrukla maç bitiren ağır bir yumrukçu'}[F.st];
+  if(champ)return boxDeal(F,stx);
   if(T.pro&&!champ&&ch(.18))return queue({title:'🤫 Soyunma odasında bir teklif',text:`Maçtan önce takım elbiseli bir adam yanına geldi: "Üçüncü rauntta yatarsan ${fmt(F.purse*3)} senin. Kimse bilmeyecek."`,choices:[
-    {t:'Kabul et',fn:()=>{b.fq=qnow();b.l++;b.tw=Math.max(0,b.tw-1);b.fix++;dirty(Math.round(F.purse*3));dosNote('Şikeli boks maçı · bahis çetesiyle bağlantı',6);add('respect',-3);log(`🥊 Üçüncü rauntta yere yattın. ${F.n} kazandı; zarf cebinde.`,'bad');news(`${S.first} ${S.last} şaibeli bir yenilgi aldı`,2)}},
+    {t:'Kabul et',fn:()=>{b.fq=qnow();b.l++;b.tw=Math.max(0,b.tw-1);b.fix++;if(b.sp&&ch(.6)){log(`📉 ${b.sp.n} şaibeli maçtan sonra sponsorluğu feshetti.`,'bad');b.sp=null}dirty(Math.round(F.purse*3));dosNote('Şikeli boks maçı · bahis çetesiyle bağlantı',6);add('respect',-3);log(`🥊 Üçüncü rauntta yere yattın. ${F.n} kazandı; zarf cebinde.`,'bad');news(`${S.first} ${S.last} şaibeli bir yenilgi aldı`,2)}},
     {t:'Reddet',fn:()=>{gainResp(2);log('Adamı kapıdan kovdun.','dim');if(ch(.3))later&&later('dusman',R(2,6),{n:'Bahisçi '+pick(NAMES)});setTimeout(()=>boxCamp(F,stx),60)}}]});
   boxCamp(F,stx)};
-function boxCamp(F,stx){const b=S.box;b.fq=qnow();
+ACT.boxman=()=>{const b=S.box,nm=b.man+1;if(!BXMN[nm]||!pay(M(BXMN[nm][1])))return;b.man=nm;log(`💼 ${BXMN[nm][0]} artık işlerine bakıyor.`,'good');afterChange();openSheet('boks')};
+ACT.boxwc=()=>{const b=bxM(S.box);if(b.wy===S.age)return;closeSheet();
+  queue({back:'boks',title:'⚖️ Siklet değiştir',text:`Şu an ${WC[b.wc]} sikletindesin. Doğal yapın ${WC[b.nat]}. Her sikletin kendi sıralaması ve kendi kemerleri var. Yılda bir kez değiştirebilirsin.`,choices:[
+    ...WC.map((n,i)=>({t:`${i===b.wc?'✅ ':''}${n}`,sub:b.cls[i]?`${BXT[b.cls[i].tier].n}`:i===b.wc?BXT[b.tier].n:'',dis:i===b.wc,fn:()=>{b.cls[b.wc]={tier:b.tier,tw:b.tw};const prev=b.tier;b.wc=i;if(b.cls[i]){b.tier=b.cls[i].tier;b.tw=b.cls[i].tw}else{b.tier=clamp(prev-2,0,6);b.tw=0}b.wy=S.age;b.dodge=0;log(`⚖️ ${n} sikletine geçtin. Yeni aşaman: ${BXT[b.tier].n}.`,'gold');news(`${S.first} ${S.last} siklet değiştirdi: ${n}`,1)}})),
+    {t:'Vazgeç',fn:()=>{}}]})};
+function boxSponsor(){const b=S.box;if(!b||b.sp||b.quit)return;const nm=pick(BXSP);const base=Math.round(M(400000)*(1+(S.fame||0)/15)*(1+b.tier/2)*(1+bxWorld()));
+  const sign=(pay,yrs)=>{b.sp={n:nm,pay:Math.round(pay),to:S.age+yrs-1};log(`🤝 ${nm} ile ${yrs} yıllık sponsorluk imzaladın: yılda ${fmt(pay)}.`,'gold')};
+  queue({title:`🤝 Sponsorluk teklifi · ${nm}`,text:`${nm} seni marka yüzü yapmak istiyor. Masada iki sözleşme var.`,choices:[
+    {t:`3 yıllık · yılda ${fmtS(base)}`,fn:()=>sign(base,3)},
+    {t:`1 yıllık · yılda ${fmtS(base*1.6)}`,fn:()=>sign(base*1.6,1)},
+    {t:'Daha fazlasını iste',fn:()=>{if(ch(.35+b.man*.15)){sign(base*2,2)}else log(`${nm} masadan kalktı.`,'bad')}},
+    {t:'Reddet',fn:()=>log(`${nm} teklifini geri çevirdin.`,'dim')}]})}
+function boxDeal(F,stx){const b=S.box,T=F.T;const base=M(T.purse)*1.5;
+  const rv=[{k:'kolay',t:'Sıralamada sekizinci, adı pek duyulmamış bir rakip',dp:-9,mp:.55},{k:'zorunlu',t:'Federasyonun zorunlu rakibi, sıralamanın bir numarası',dp:2,mp:1},{k:'super',t:'Bütün dünyanın beklediği yenilgisiz yıldız',dp:9,mp:2.2}];
+  queue({title:'🗂 Unvan savunması · Rakip',text:`Organizatör üç isimle geldi. Kiminle dövüşeceksin?${b.dodge>=2?'<br><br>⚠️ Federasyon yazı gönderdi: zorunlu rakibinden kaçmaya devam edersen kemerin elinden alınacak.':''}`,choices:rv.map(r=>({t:r.t,fn:()=>{
+    if(r.k==='kolay'){b.dodge++;if(b.dodge>=3){b.belts=b.belts.filter(x=>!(x.t==='Dünya Şampiyonu'&&x.w===b.wc));b.tier=6;b.tw=1;b.dodge=0;log('📜 Federasyon, zorunlu rakibinden kaçtığın için kemerini elinden aldı.','bad');news(`${S.first} ${S.last}'ın kemeri masa başında alındı`,3);return}}else b.dodge=0;
+    F.pow+=r.dp;F.purse=base*r.mp;if(r.k==='super')S.fame=clamp((S.fame||0)+2);setTimeout(()=>boxDeal2(F,stx),60)}}))})}
+function boxDeal2(F,stx){const b=S.box;const offer=Math.round(F.purse);
+  queue({title:'💰 Unvan savunması · Ücret',text:`Organizatör masaya ${fmt(offer)} koydu.${b.man?` ${BXMN[b.man][0]} yanında oturuyor.`:' Masada tek başınasın.'}`,choices:[
+    {t:'Kabul et',fn:()=>setTimeout(()=>boxCamp(F,stx),60)},
+    {t:'Daha fazlasını iste',fn:()=>{const x=Math.random(),p=.4+b.man*.13+(S.fame||0)/400;if(x<p){F.purse=offer*1.35;log(`Organizatör homurdandı ama ${fmt(F.purse)}'ye imza attı.`,'good')}else if(x<p+.3){F.purse=offer*.9;log('Organizatör geri adım atmadı; biraz da kıstı.','bad')}else{F.purse=offer*.7;F.cs-=1;log('Organizatör kızdı: maç başka şehre alındı, şartlar kötüleşti.','bad')}setTimeout(()=>boxCamp(F,stx),60)}},
+    {t:'Sabit ücret yerine gelir payı iste',fn:()=>{const k=(.5+Math.random()*1.3)*(.6+(S.fame||0)/120);F.purse=offer*k;log(k>=1.1?`Salon doldu, yayın rekor kırdı: payına ${fmt(F.purse)} düştü.`:k>=.85?`Gelir payın ${fmt(F.purse)} etti.`:`Biletler satılmadı. Payına ${fmt(F.purse)} düştü.`,k>=1?'good':'bad');setTimeout(()=>boxCamp(F,stx),60)}},
+    ...(inUW()?[{t:'Organizatörü adamlarınla "ikna et"',fn:()=>{F.purse=offer*1.6;add('heat',5);dosNote('Boks organizatörüne baskı',4);log(`Organizatör ${fmt(F.purse)}'yi titreyen elle imzaladı.`,'bad');setTimeout(()=>boxCamp(F,stx),60)}}]:[])]})}
+function boxCamp(F,stx){const b=S.box;b.fq=qnow();F.purse=Math.round(F.purse*(1+.15*b.man)*(1-BXMN[b.man][2]));
   const steps=[];
   steps.push({title:'🏕 Kamp · Plan',text:`Rakibin ${F.n}: ${stx}. Kampta neye ağırlık vereceksin?`,choices:[
     ['Kondisyona yüklen',()=>{F.cs+=F.st==='baski'?4:1;log(F.st==='baski'?'Kampın sonunda on raunt nefessiz gidebiliyordun.':'Kondisyonun iyi ama rakip seni koşturacak biri değil.','dim')}],
     ['Gard ve savunma çalış',()=>{F.cs+=F.st==='yumruk'?4:1;log(F.st==='yumruk'?'Gardın duvar gibi oldu.':'Savunman sağlam, ama rakibin derdi başka.','dim')}],
     ['Rakibin maçlarını izle',()=>{F.cs+=F.st==='teknik'?4:1;log(F.st==='teknik'?'Adamın her hamlesini ezberledin.':'Videolardan pek bir şey çıkmadı.','dim')}]]});
-  steps.push({title:'⚖️ Kamp · Kilo',text:'Tartıya on gün var, üç kilo fazlan duruyor.',choices:[
+  const dn=Math.max(0,b.nat-b.wc);if(dn)F.cs-=dn*2;
+  steps.push({title:'⚖️ Kamp · Kilo',text:dn?`Tartıya on gün var. ${WC[b.wc]} sınırı senin yapına göre çok aşağıda: ${3+dn*4} kilo fazlan duruyor, vücudun direniyor.`:'Tartıya on gün var, üç kilo fazlan duruyor.',choices:[
     ['Saunaya gir, aç kal',()=>{F.cs-=1;add('health',-4);log('Kiloyu verdin ama bacakların titriyor.','dim')}],
     ['Diyetisyenle çalış',()=>{if(canPay(M(20000))){pay(M(20000));F.cs+=2;log('Kilon tam, enerjin yerinde.','good')}else{F.cs-=1;log('Diyetisyene verecek paran yoktu, kendi başına uğraştın.','dim')}}],
     ['Son haftaya bırak',()=>{if(ch(.45)){F.cs-=3;add('health',-6);log('Son gece terden kurudun. Tartıdan zor geçtin.','bad')}else{F.cs+=1;log('Şansın yaver gitti, kilon kendiliğinden düştü.','dim')}}]]});
@@ -5512,19 +5547,19 @@ function boxFace(F){const qs=[...BXQ].sort(()=>Math.random()-.5).slice(0,2);
   const next=()=>{const q=qs.shift();if(!q)return setTimeout(()=>boxGo(F),60);queue({title:`👁 Yüz yüze · ${F.n}`,text:`${tx}<br><br>${q[0]}`,choices:q[1].map(([t,k])=>({t,fn:()=>{const v=BXM[F.tip][k];F.ps+=v;if(k==='itis'){S.fame=clamp((S.fame||0)+1)}
     log(v>=3?`${F.n} bir an gözünü kaçırdı. Salon bunu gördü.`:v>0?`${F.n} ne diyeceğini bilemedi.`:v===0?'Kimse geri adım atmadı.':`${F.n} güldü. Bu raundu o aldı.`,v>0?'good':v<0?'bad':'dim');setTimeout(next,60)}}))})};next()}
 function boxGo(F){const b=S.box,T=F.T;const my=boxPow(b)+F.cs*1.6+F.ps*1.4;const p=clamp(.5+(my-F.pow)/70,.06,.94);const tot=F.cs+F.ps;
-  const fin=(ok,x)=>{const champ=b.belts.includes('Dünya Şampiyonu');
+  const fin=(ok,x)=>{const champ=bxChamp(b);
     if(ok){b.w++;if(ch(.6))b.ko++;const m=Math.round(F.purse);if(m){S.money+=m;S.taxInc=(S.taxInc||0)+m}S.fame=clamp((S.fame||0)+(T.pro?4:1));gainResp(T.pro?3:1);add('happy',6);
-      log(`🥊 ${F.n} karşısında kazandın!${m?` Maç ücreti ${fmt(m)}.`:''}`,'gold');
+      log(`🥊 ${F.n} karşısında kazandın!${m?` Maç ücreti ${fmt(m)}.`:''}`,'gold');if(T.pro&&!b.sp&&ch(.45))setTimeout(boxSponsor,1200);
       if(champ){news(`${S.first} ${S.last} dünya unvanını korudu`,3)}
-      else if(BXT[b.tier]===T){b.tw++;if(b.tw>=T.need){if(T.title&&!b.belts.includes(T.title)){b.belts.push(T.title);boxCeremony(T.title,F);log(`🏆 ${T.title} oldun!`,'gold');news(`${S.first} ${S.last}: ${T.title}`,T.pro?4:2)}
+      else if(BXT[b.tier]===T){b.tw++;if(b.tw>=T.need){if(T.title&&!bxHas(b,T.title)){b.belts.push({t:T.title,w:b.wc});boxCeremony(T.title,F);log(`🏆 ${T.title} oldun!`,'gold');news(`${S.first} ${S.last}: ${WC[b.wc]} ${T.title}`,T.pro?4:2)}
         if(b.tier<BXT.length-1){b.tier++;b.tw=0;log(`Yeni aşama: ${BXT[b.tier].n}.`,'good')}}}}
-    else{b.l++;if(!champ)b.tw=Math.max(0,b.tw-1);else{b.belts=b.belts.filter(t=>t!=='Dünya Şampiyonu');b.tier=6;b.tw=1;news(`${S.first} ${S.last} dünya kemerini kaybetti`,3)}
+    else{b.l++;if(!champ)b.tw=Math.max(0,b.tw-1);else{b.belts=b.belts.filter(x=>!(x.t==='Dünya Şampiyonu'&&x.w===b.wc));b.dodge=0;b.tier=6;b.tw=1;news(`${S.first} ${S.last} dünya kemerini kaybetti`,3)}
       const m=Math.round(F.purse*.3);if(m){S.money+=m;S.taxInc=(S.taxInc||0)+m}hurt(x==='run'?R(3,8):R(8,18),'Boks maçı');add('happy',-6);
       log(x==='run'?`🥊 Köşen havlu attı. ${F.n} kazandı.`:`🥊 ${F.n} seni nakavt etti.${m?` Teselli ücreti ${fmt(m)}.`:''}`,'bad')}
     afterChange();try{checkAch()}catch(e){}};
   if(S.mgOff)return fin(ch(p));
-  miniGame('kavga',(ok,x)=>fin(ok,x),{box:1,belt:!!(T.title&&b.tw+1>=T.need)||b.belts.includes('Dünya Şampiyonu'),duel:1,lv:b.tier<2?0:b.tier<4?1:b.tier<6?2:3,p,title:F.n,ek:F.ek,hpb:tot>=7?1:tot<=-2?-1:0})}
-function boxYear(){const b=S.box;if(!b)return;if(S.age>=34){['g','h','d'].forEach(k=>b[k]=Math.max(5,b[k]-(S.age>=40?3:1.5)))}
+  miniGame('kavga',(ok,x)=>fin(ok,x),{box:1,belt:!!(T.title&&b.tw+1>=T.need)||bxChamp(b),duel:1,lv:b.tier<2?0:b.tier<4?1:b.tier<6?2:3,p,title:F.n,ek:F.ek,hpb:tot>=7?1:tot<=-2?-1:0})}
+function boxYear(){const b=S.box;if(!b)return;bxM(b);if(b.sp){if(S.jail){log(`📉 ${b.sp.n} hapse girdiğin için sponsorluğu feshetti.`,'bad');b.sp=null}else if(b.quit||S.age>b.sp.to){log(`${b.sp.n} ile sponsorluk sözleşmen sona erdi.`,'dim');b.sp=null}else{const m=Math.round(b.sp.pay*(1-BXMN[b.man][2]));S.money+=m;S.taxInc=(S.taxInc||0)+m;log(`🤝 ${b.sp.n} sponsorluk ödemesi: ${fmt(m)}.`,'good')}}if(S.age>=34){['g','h','d'].forEach(k=>b[k]=Math.max(5,b[k]-(S.age>=40?3:1.5)))}
   if(!b.quit&&S.age>=42){b.quit=true;log('🥊 Doktorlar lisansını yenilemedi. Eldivenleri astın.','dim')}}
 /* ============ Sağ kol ============ */
 const SKR={az:['Az tutsun',.1],orta:['Orta',.25],cok:['Bol tutsun',.5]};
