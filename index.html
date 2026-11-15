@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.16-0500';
+const APPV='2026.11.16-0600';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -467,7 +467,7 @@ const JEWELS=[
   {id:'yakut',n:'Osmanlı yakut yüzük',ic:'🔴',p:2000000,k:7,rank:4}
 ];
 const STAFF=[
-  {id:'sofor',n:'Şoför',ic:'🧢',sal:343000,d:'Kaçışlarda +%20 şans, mutluluk +. Araba gerekir.'},
+  {id:'sofor',n:'Şoför',ic:'🧢',sal:343000,d:'Kaçışlarda +%20 şans, mutluluk +. Arabalarının bakımını yaptırır. Araba gerekir.'},
   {id:'koruma',n:'Koruma',ic:'🕶',sal:514000,d:'Pusularda karşılık şansı +%20, yaralar azalır'},
   {id:'asci',n:'Özel aşçı',ic:'🍲',sal:309000,d:'Her yıl sağlık +3'},
   {id:'muhasebe',n:'Muhasebeci',ic:'📒',sal:411000,d:'Mali Şube derdi biter, dikkat her yıl −3'},
@@ -2130,7 +2130,18 @@ function migrateCars(){
   const map={hatch:'clio',sedan:'passat',klasik:'impala',cip:'lczirh',spor:'p911',limo:'limo'};
   if(S.cars.some(c=>typeof c==='string')){const cur=S.car;S.cars=S.cars.map((c,i)=>{if(typeof c!=='string')return c;const m=CM(map[c]||'clio');const col=pick(COLB);const o={uid:'c'+i+R(0,99999),mid:m.id,y:gYear()-3,km:45000,col:col[0],hex:col[1],val:Math.round(m.p*.8)};if(cur===c)S.car=o.uid;return o});if(typeof S.car==='string'&&!myCar(S.car))S.car=S.cars[0]?S.cars[0].uid:null}
 }
-function carYear(){S.cars.forEach(o=>{const m=CM(o.mid);o.km+=R(6,25)*1000;const f=m.c==='klasik'?1+R(2,9)/100:m.c==='super'?1-R(1,5)/100:1-R(6,12)/100;o.val=Math.round(o.val*f);if(o.mv){o.mv=Math.round(o.mv*f);if(o.modv)o.modv=Math.round(o.modv*f);o.cond=Math.max(40,o.cond-R(3,8));otoSync(o)}})}
+function sofE(){if(!S.sofor)S.sofor={bakim:true,garaj:false,rep:null};return S.sofor}
+function carYear(){const SF=has('sofor')?sofE():null;S.cars.forEach(o=>{const m=CM(o.mid);o.km+=R(6,25)*1000;let f=m.c==='klasik'?1+R(2,9)/100:m.c==='super'?1-R(1,5)/100:1-R(6,12)/100;if(SF&&SF.garaj&&f<1)f=1-(1-f)*.6;o.val=Math.round(o.val*f);if(o.mv){o.mv=Math.round(o.mv*f);if(o.modv)o.modv=Math.round(o.modv*f);o.cond=Math.max(40,o.cond-R(3,8));otoSync(o)}});if(SF)sofYear(SF)}
+function sofYear(SF){let n=0,cost=0,skip=0;const gc=SF.garaj?Math.round(S.cars.length*M(40000)):0;
+  if(SF.bakim)S.cars.forEach(o=>{otoEns(o);if(o.cond>=100)return;const c=Math.round(otoReal(o)*.00075*(100-o.cond));fund(c);if(cashA()>=c){spend(c);o.inv=(o.inv||0)+c;o.cond=100;otoSync(o);n++;cost+=c}else skip++});
+  if(gc){fund(gc);if(cashA()>=gc){spend(gc);cost+=gc}else SF.garaj=false}
+  const avg=S.cars.length?Math.round(S.cars.reduce((t,o)=>t+(o.cond||85),0)/S.cars.length):0;SF.rep={y:gYear(),n,cost,skip,avg,cars:S.cars.length};
+  if(S.cars.length&&(n||gc||skip))log(`🧢 Şoförün ${n?`${n} arabanın bakımını yaptırdı`:'arabalarla ilgilendi'}${cost?`: ${fmt(cost)}`:''}.${skip?` ${skip} araba için para yetmedi.`:''} Garaj ortalama durum %${avg}.`,skip?'bad':'dim')}
+ACT.sofor=k=>{const SF=sofE();if(k==='bakim')SF.bakim=!SF.bakim;if(k==='garaj')SF.garaj=!SF.garaj;closeSheet();
+  queue({back:'varlik',title:'🧢 Şoförünün görevleri',text:`Şoförün neyle ilgilensin?${SF.rep?`<br><br>Son rapor (${SF.rep.y}): ${SF.rep.n} araca bakım, toplam masraf ${fmt(SF.rep.cost)}, garaj ortalama durum %${SF.rep.avg}.`:''}`,choices:[
+    {t:`${SF.bakim?'✅':'⬜️'} Arabaların bakımı`,sub:'Her yıl bütün arabaları servise götürür, durumları %100 olur · Masrafı senden',fn:()=>setTimeout(()=>ACT.sofor('bakim'),40)},
+    {t:`${SF.garaj?'✅':'⬜️'} Kapalı garaj ve detaylı temizlik`,sub:`Arabalar daha yavaş değer kaybeder · Araba başı yılda ${fmtS(M(40000))}`,fn:()=>setTimeout(()=>ACT.sofor('garaj'),40)},
+    {t:'Tamam',fn:()=>{}}]})};
 /* ============ Oto alım satım (bireysel) ============ */
 const KUS=[['Temiz',1],['Boyalı parça',.93],['Değişen parça',.86],['Km düşürülmüş',.84],['Gizli ağır hasar',.66]];
 const otoLv=()=>Math.min(10,Math.floor(((S.oto&&S.oto.xp)||0)/2));
@@ -3161,7 +3172,6 @@ function coQuarter(){const co=S.co;if(!co)return;
 ACT.pj=uid=>{const p=S.co.projects.find(x=>x.uid===uid);if(!p)return;const t=PJ(p.t);closeSheet();
   if(p.state==='build'){pjEnsure(p);const rem=Math.round(p.cost-p.paid),inst=Math.round(p.cost*.8/t.q),avail=Math.floor(p.units*.3)-p.presold,left=p.endT-Date.now(),sp=Math.round(p.cost*.05);
     return queue({back:'insaat',title:t.n,text:`${pjStage(p)[1]} aşamasında (%${pjPct(p)})${p.reg?` · 📍 ${RG(p.reg)[1]}`:''}${p.land==='kat'?' · Kat karşılığı':''}${p.contract?` · Hakediş ${fmt(p.contract)}`:''}<br>Kalan süre: <b><span data-cd="${p.endT}">${fmtT(left)}</span></b> (gerçek saat). Taksitler ${Math.min(p.prog,t.q)}/${t.q} ödendi, çeyreklik ${fmt(inst)}. Kalan ödeme ${fmt(rem)}; süre bitince kalan borç tek seferde ödenir.${p.delay?` ${p.delay} taksit gecikti.`:''} ${p.launder?`Projeye gömülen kayıt dışı para: ${fmt(p.launder)}.`:''}${p.loan?`<br>🏦 Banka kredisi: ${fmt(p.loan)} (taksitlerin %70'i bankadan)`:''}`,choices:[
-      ...(S.premium&&left>0?[{t:'👑 Dayı: hemen bitir',sub:'Beklemeden teslim',fn:()=>{p.endT=Date.now();pjCheck(p)}}]:[]),
       ...(left>0?[{t:`🎟 ${tixNeed(left)} bilet: hemen bitir`,sub:`Elinde ${tix()} bilet · 1 bilet = 30 dk${rem>0?` · Kalan borç ${fmtS(rem)} de ödenir`:''}`,dis:rem>0&&!cCan(rem),fn:()=>{if(!tixUse(tixNeed(p.endT-Date.now())))return;p.endT=Date.now();pjCheck(p);log(`🎟 Biletle ${t.n} inşaatı hemen bitti.`,'dim')}}]:[]),
       {t:'⚡ Ekstra vardiya',sub:left>0?`${fmtS(sp)} · Kalan süre yarıya iner`:'İnşaat bitti',dis:left<=0||!cCan(sp),fn:()=>{if(!cPay(sp))return;p.endT=Date.now()+Math.round((p.endT-Date.now())/2);log(`${t.n}: vardiyalar ikiye çıktı, kalan süre yarıya indi.`,'good')}},
       ...(left<=0&&rem>0?[{t:'Kalan borcu öde, teslim al',sub:fmtS(rem),dis:!cCan(rem),fn:()=>{pjCheck(p)}}]:[]),
@@ -5578,8 +5588,8 @@ function skCollect(force){const k=S.sagkol;if(!k)return 0;let tot=0;k.took={};k.
 function sagkolQ(){const k=S.sagkol;if(!k||!S.premium)return;
   const c=Math.round(k.sal/4);fund(c);if(cashA()>=c)spend(c);else{k.loy=clamp(k.loy-15);log(`${k.name} maaşını alamadı.`,'bad')}
   let g=0;if(k.sik==='ceyrek'||S.q===0)g=skCollect();
-  const B=skBoxes();const lines=B.map(([id,ic,n,box])=>`${ic} ${n}: kasa ${fmtS(box.cash||0)}${k.prof&&k.prof[id]!==undefined?`, kâr ${fmtS(k.prof[id])}`:''}${k.took&&k.took[id]?`, toplanan ${fmtS(k.took[id])}`:''}`);
-  log(`🫱 ${k.name} raporu — ${lines.join(' · ')||'Şirket yok'}${g?` · Sana getirdiği: ${fmt(g)}`:''}`,g?'good':'dim');
+  const B=skBoxes();const sfL=(()=>{const SF=has('sofor')&&S.sofor;if(!SF||!S.cars.length)return'';const avg=Math.round(S.cars.reduce((t,o)=>t+(o.cond||85),0)/S.cars.length);return ` · 🧢 Şoför: ${S.cars.length} araç, ortalama durum %${avg}${SF.bakim?'':' (bakım görevi kapalı)'}${S.q===0&&SF.rep?`, bu yıl bakım masrafı ${fmtS(SF.rep.cost)}`:''}`})();const lines=B.map(([id,ic,n,box])=>`${ic} ${n}: kasa ${fmtS(box.cash||0)}${k.prof&&k.prof[id]!==undefined?`, kâr ${fmtS(k.prof[id])}`:''}${k.took&&k.took[id]?`, toplanan ${fmtS(k.took[id])}`:''}`);
+  log(`🫱 ${k.name} raporu — ${lines.join(' · ')||'Şirket yok'}${sfL}${g?` · Sana getirdiği: ${fmt(g)}`:''}`,g?'good':'dim');
   k.prev={};B.forEach(([id,ic,n,box])=>k.prev[id]=box.cash||0);
   if(S.q===0)k.loy=clamp(k.loy+1)}
 EV(1,()=>!S.jail&&S.premium&&S.sagkol&&(S.sagkol.skim||0)>0,()=>{const k=S.sagkol;const z=k.skim;return{title:'🕵️ Sağ kolunun hesabı',text:`Muhasebecin, ${k.name}'in topladığı paralardan yaklaşık ${fmt(z)} eksik getirdiğini fark etti.`,choices:[
@@ -5878,7 +5888,7 @@ function openSheet(k){if(k==='gard')k='insan';
     }
     if(vTab==='araba'){
       if(S.age<18)h+='<p class="note">Ehliyet 18 yaşında. Araba alamazsın.</p>';
-      if(S.cars.length){const tv=S.cars.reduce((x,c)=>x+c.val,0),models=new Set(S.cars.map(c=>c.mid)).size;h+=`<div class="sec">Garajın · ${S.cars.length} araç · ${models}/${CAT.length} model</div><p class="note">Koleksiyon değeri: <b style="color:var(--gold)">${fmt(tv)}</b></p>`;
+      if(S.cars.length){const tv=S.cars.reduce((x,c)=>x+c.val,0),models=new Set(S.cars.map(c=>c.mid)).size;h+=`<div class="sec">Garajın · ${S.cars.length} araç · ${models}/${CAT.length} model</div><p class="note">Koleksiyon değeri: <b style="color:var(--gold)">${fmt(tv)}</b></p>`;h+=has('sofor')?row('data-x="sofor:"','🧢','Şoförünün görevleri',`Bakım ${sofE().bakim?'açık':'kapalı'} · Garaj ${sofE().garaj?'açık':'kapalı'}`,'›',false):row('data-x="nop:"','🧢','Şoförün yok','Şoför tutarsan arabalarının bakımını o yaptırır','',true);
         S.cars.forEach(o=>{const m=CM(o.mid);h+=`<button class="row" data-x="mycar:${o.uid}">${carPic(m,o.hex)}<span class="tx"><b>${m.n}${S.car===o.uid?' · 🔑':''}</b><span>${o.y} · ${o.km.toLocaleString('tr-TR')} km · ${o.col}${(o.mods||[]).length?' · 🛠 '+o.mods.length:''}</span></span><span class="rt">${fmtS(o.val)}</span></button>`})}
       else h+='<p class="note">Garajın boş.</p>';
       h+=row('data-go="galeri"','🚘','Araba galerisine git','İlanlar ve sıfır sipariş','›',S.jail||S.age<18);
