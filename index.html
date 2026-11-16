@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.16-1100';
+const APPV='2026.11.16-1200';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2489,7 +2489,7 @@ function mgFight(cb,opp,hard){let box=$('ctBox');if(!box){box=document.createEle
   (BX?['p_i','p_l1','p_l2','p_r','p_h','p_d','p_v','p_vb',...['i','l','r','h','d'].map(f=>(O.ek||'e1')+'_'+f)]:['p_i','p_l1','p_l2','p_r','p_h','p_d'].concat(...TY.map(t=>['i','l','r','h','d'].filter(f=>!(t.k==='e0'&&f==='l')).map(f=>t.k+'_'+f)))).forEach(f=>{new Image().src=`img/${PX}_${f}.webp`});
   box.classList.add('on');const fxl=$('ctFx');
   const mk=(kk,sc)=>{const el=document.createElement('div');el.className='kgM';el.style.width=sw+'px';el.style.height=sh+'px';const im=document.createElement('img');im.draggable=false;im.alt='';el.appendChild(im);fxl.appendChild(el);return{el,im,k:kk,sc:sc||1,fr:'',fl:null}};
-  const fr=(o,f,flip)=>{if(o.fr!==f){o.fr=f;o.im.src=`img/${PX}_${o.k}_${f}.webp`;if(o.ov)o.ov.forEach(([im,pre])=>{if(f==='vb'){im.style.display='none'}else{im.style.display='';im.src=`img/${pre}_${f}.webp`}})}if(o.fl!==!!flip){o.fl=!!flip;const t=`scale(${flip?-o.sc:o.sc},${o.sc})`;o.im.style.transform=t;if(o.ov)o.ov.forEach(([im])=>im.style.transform=t)}};
+  const fr=(o,f,flip)=>{if(o.fr!==f){o.fr=f;o.im.src=`img/${PX}_${o.k}_${f}.webp`;if(o.ov)o.ov.forEach(([im,pre])=>{im.src=`img/${pre}_${f}.webp`})}if(o.fl!==!!flip){o.fl=!!flip;const t=`scale(${flip?-o.sc:o.sc},${o.sc})`;o.im.style.transform=t;if(o.ov)o.ov.forEach(([im])=>im.style.transform=t)}};
   const place=(o,x,y,dy)=>{o.el.style.transform=`translate(${(x-sw/2).toFixed(1)}px,${(y-sh*272/280+(dy||0)).toFixed(1)}px)`;o.el.style.zIndex=Math.round(y)};
   const P=mk('p');if(BX&&S.box&&S.box.look){const L=S.box.look;P.ov=[];[['g','bx_pg'],['s','bx_ps']].forEach(([k,pre])=>{if(L[k]){const im=document.createElement('img');im.draggable=false;im.alt='';im.style.cssText='position:absolute;left:0;top:0';P.el.appendChild(im);P.ov.push([im,pre+'_'+L[k]])}})}fr(P,'i');
   const st={hp:HP,kill:0,over:0,raf:0,t:0,last:0,en:[],sp:500,spawned:0,lock:0,pf:0,ps:0,ph_:0,phs:0,alt:0,shake:0};CT=st;
@@ -5443,8 +5443,9 @@ const BXG=[['Mahalle işi eldiven',0,0],['Deri antrenman eldiveni',15000,3],['Pr
 const BXS=[['Eski şort',0,0],['Saten boks şortu',8000,1],['İsim işlemeli şort',90000,2],['Altın kemerli şampiyon şortu',1200000,4]];
 const BXC=[['Antrenör yok',0,1],['Mahalle hocası',60000,1.25],['Eski milli boksör',600000,1.6],['Dünya şampiyonu yetiştirmiş hoca',6e6,2]];
 const BXK={'Türkiye Amatör Şampiyonu':'tr','Türkiye Şampiyonu':'tr','Avrupa Şampiyonu':'eu','Dünya Şampiyonu':'wr'};
+function bxTorH(){const L=(S.box&&S.box.look)||{};const o=src=>`<img src="img/${src}.webp" alt="" style="position:absolute;left:0;top:0;height:128px;margin:0">`;return `<span style="position:relative;display:inline-block;height:128px;margin-bottom:14px"><img src="img/bx_tor.webp" alt="" style="height:128px;margin:0;display:block">${L.g?o('bx_torg_'+L.g):''}${L.s?o('bx_tors_'+L.s):''}</span>`}
 function boxCeremony(title,F){const k=BXK[title]||'tr';const an={tr:'Bayanlar baylar! Hakem kararı ve nakavtla...',eu:'Ladies and gentlemen... Avrupa\'nın yeni şampiyonu...',wr:'Ve yeeeni... dünya şampiyonu...'}[k];
-  setTimeout(()=>queue({title:'🏆 Kemer töreni',text:`<div class="bxTor"><img src="img/bx_tor.webp" alt=""></div><img class="bxKm" src="img/bx_k_${k}.webp" alt=""><br>Spiker mikrofonu aldı: "${an} <b>${S.first} ${S.last}</b>!"<br><br>Hakem kemeri beline taktı. Salon ayakta, flaşlar patlıyor. ${F.n} köşesinde başını eğdi.<br><br><b style="color:var(--gold)">${WC[S.box.wc]} · ${title}</b>`,choices:[{t:'Kemeri havaya kaldır',fn:()=>{add('happy',8);log(`🏆 Kemeri havaya kaldırdın. Bu geceyi kimse unutmayacak.`,'gold')}},{t:'Kemeri annene götür',fn:()=>{add('happy',10);log(parEnsure().alive?'🏆 Kemeri annenin kucağına bıraktın. Gözleri doldu.':'🏆 Kemeri annenin mezarına götürdün.','gold')}}]}),700)}
+  setTimeout(()=>queue({title:'🏆 Kemer töreni',text:`<div class="bxTor">${bxTorH()}</div><img class="bxKm" src="img/bx_k_${k}.webp" alt=""><br>Spiker mikrofonu aldı: "${an} <b>${S.first} ${S.last}</b>!"<br><br>Hakem kemeri beline taktı. Salon ayakta, flaşlar patlıyor. ${F.n} köşesinde başını eğdi.<br><br><b style="color:var(--gold)">${WC[S.box.wc]} · ${title}</b>`,choices:[{t:'Kemeri havaya kaldır',fn:()=>{add('happy',8);log(`🏆 Kemeri havaya kaldırdın. Bu geceyi kimse unutmayacak.`,'gold')}},{t:'Kemeri annene götür',fn:()=>{add('happy',10);log(parEnsure().alive?'🏆 Kemeri annenin kucağına bıraktın. Gözleri doldu.':'🏆 Kemeri annenin mezarına götürdün.','gold')}}]}),700)}
 const WC=['Tüy siklet','Hafif siklet','Orta siklet','Hafif ağır siklet','Ağır siklet'];
 const BXMN=[['Menajer yok',0,0],['Mahalle menajeri',150000,.1],['Tanınmış menajer',2e6,.15],['Dünya çapında promotör',2.5e7,.2]];
 const BXSP=['Yıldırım Spor Giyim','Boğaz Enerji İçeceği','Anadolu Sigorta Grubu','Kartal Saat','Marmara Otomotiv','Demir Protein'];
