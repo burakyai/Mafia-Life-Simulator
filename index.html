@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.16-1900';
+const APPV='2026.11.16-2300';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -885,7 +885,8 @@ const PARF={zengin:{lo:300000,hi:1500000,p:.85,inh:[8e6,25e6]},mafya:{lo:150000,
 function parEnsure(){if(!S.par){S.par={alive:S.famBg!=='yetim',rel:R(60,85),ask:-1,vis:-1,die:Math.max(R(44,66),S.age+R(4,15))}}return S.par}
 function parYear(){const P=parEnsure();if(!P.alive||S.age<18)return;P.rel=clamp(P.rel-1);
   if(S.famBg==='yoksul'&&ch(.25)&&S.money>M(20000)){const m=Math.round(R(5000,20000)*S.cpi);queue({title:'Ailen zor durumda',text:`Annen aradı: kira birikmiş, ${fmt(m)} lazım.`,choices:[{t:'Gönder',sub:fmt(m)+' · Aile bağı +, mutluluk +',dis:!canPay(m),fn:()=>{if(!pay(m))return;P.rel=clamp(P.rel+12);add('happy',5);log(`Ailene ${fmt(m)} gönderdin. Annen dua etti.`,'good')}},{t:'Şimdi olmaz',sub:'Aile bağı −',fn:()=>{P.rel=clamp(P.rel-12);add('happy',-3);log('Ailenin yardım isteğini geri çevirdin.','bad')}}]})}
-  if(S.age>=P.die){P.alive=false;const f=PARF[S.famBg];let t=`Ailenin büyükleri hayatını kaybetti. Cenazede bütün mahalle vardı.`;add('happy',-15);
+  try{parEvt()}catch(e){console.error(e)}
+  if(parDeaths()){const f=PARF[S.famBg];let t=`🕯 Ailenin büyüklerinden kimse kalmadı. Baba evinin anahtarı artık sende.`;
     if(f&&f.inh[1]){const m=Math.round(R(f.inh[0],f.inh[1])*S.cpi*(.5+P.rel/100));S.money+=m;t+=` Mirastan sana ${fmt(m)} kaldı.`}
     log(t,'gold')}}
 function parAsk(){const P=parEnsure(),f=PARF[S.famBg];if(!f||!P.alive||P.ask===S.age)return;P.ask=S.age;closeSheet();
@@ -896,7 +897,7 @@ function parAsk(){const P=parEnsure(),f=PARF[S.famBg];if(!f||!P.alive||P.ask===S
   else{P.rel=clamp(P.rel-5);log(S.famBg==='zengin'?'Baban bu sefer reddetti: "Önce kendi ayaklarının üstünde dur."':'Ailen bu sefer yardım edemedi.','bad')}
   afterChange()};
 function parVis(){const P=parEnsure();if(!P.alive||P.vis===S.age*4+(S.q||0))return;P.vis=S.age*4+(S.q||0);P.rel=clamp(P.rel+8);add('happy',4);closeSheet();
-  log(pick(['Annenin yemeğini yedin, eski günlerden konuştunuz.','Babanla kahvede tavla oynadın.','Ailenle bayram sofrasına oturdun.']),'good');afterChange()};
+  {const Q_=parPpl(),m=!Q_.mom||Q_.mom.alive,d=!Q_.dad||Q_.dad.alive;log(pick([...(m?['Annenin yemeğini yedin, eski günlerden konuştunuz.']:[]),...(d?['Babanla kahvede tavla oynadın.']:[]),...(m&&d?['Ailenle bayram sofrasına oturdun.']:[])]),'good')}afterChange()};
 function parSend(){const P=parEnsure();if(!P.alive)return;const m=Math.round(Math.max(20000,S.money*.01)*S.cpi/S.cpi);if(!pay(m))return;P.rel=clamp(P.rel+15);add('happy',3);if(S.famBg==='yoksul')add('respect',2);closeSheet();
   log(`Ailene ${fmt(m)} gönderdin. ${S.famBg==='zengin'?'Baban gülümsedi: "Artık sen bize mi bakıyorsun?"':'Evde bayram havası.'}`,'good');afterChange()};
 function adultYear(ny){if(ny)try{parYear()}catch(e){}
@@ -4410,7 +4411,7 @@ function evSub(c){const cost=evCost(c[3]);const parts=[];if(cost)parts.push(fmt(
 const EVT={par:()=>parEnsure().alive,okul:()=>!S.jail&&!S.liseDone&&(S.age<15||S.school===true),fam:()=>!!S.family,nofam:()=>!S.family,org:()=>!!S.org,job:()=>!!S.job,nojob:()=>!S.job,part:()=>!!S.partner,nopart:()=>!S.partner,mar:()=>!!S.married,kids:()=>S.kids&&S.kids.length>0,car:()=>!!S.car||(S.cars&&S.cars.length>0),rich:()=>cashA()>=M(5e5),poor:()=>cashA()<M(2e4),street:()=>rank()>=1,boss:()=>!!S.boss,noboss:()=>!S.boss};
 EVP.forEach((e,i)=>{const[a0,a1,tags,title,text,chs]=e;const tl=tags?tags.split(' '):[];const jail=tl.includes('jail');const n0=EVENTS.length;queueMicrotask(()=>{if(EVENTS[n0])EVENTS[n0].evp=a0});
   EV(1,()=>{if(jail?!(S.jail>0&&!S.abroad):!okE())return false;if(S.age<a0||S.age>a1)return false;if((S.evs||[]).includes(i))return false;return tl.every(t=>t==='jail'||(EVT[t]?EVT[t]():true))},
-    ()=>{S.evs=[...(S.evs||[]),i];return{title,text,choices:chs.map(c=>({t:c[0],sub:evSub(c),dis:evCost(c[3])>0&&!canPay(evCost(c[3])),fn:()=>{if(Math.random()<c[2]){evFx(c[3],title);if(c[4])log(c[4],/[+]/.test(c[3]||'')&&!/-/.test(c[3]||'')?'good':'dim')}else{evFx(c[5],title);if(c[6])log(c[6],'bad');if(c[6]&&/Patron seni (kovmakla tehdit etti|uyardı)/.test(c[6])&&S.job&&!S.jail&&typeof bossEv==='function'){const tehdit=/tehdit/.test(c[6]);const ev=bossEv(tehdit?['Patron tehdit etti','Patron seni odasına çağırdı, kapıyı kapattı: "Bir daha ağzını açarsan seni kapının önüne koyarım. Bu şehirde iş bulamazsın, anladın mı?"']:['Patron azarladı','Patron herkesin içinde üstüne yürüdü: "Müşteriyle böyle konuşulmaz! Bir daha görürsem kapının önündesin."']);if(ev)setTimeout(()=>queue(ev),80)}}}}))}})});
+    ()=>{S.evs=[...(S.evs||[]),i];return{title,text,choices:chs.map(c=>({t:c[0],sub:evSub(c),dis:evCost(c[3])>0&&!canPay(evCost(c[3])),fn:()=>{if(title==='Kayıp kedi'&&c[0]==='Eve götür'){try{const cc=R(0,8);petAdd(pick(PETN[cc]),cc,1)}catch(e){console.error(e)}}if(Math.random()<c[2]){evFx(c[3],title);if(c[4])log(c[4],/[+]/.test(c[3]||'')&&!/-/.test(c[3]||'')?'good':'dim')}else{evFx(c[5],title);if(c[6])log(c[6],'bad');if(c[6]&&/Patron seni (kovmakla tehdit etti|uyardı)/.test(c[6])&&S.job&&!S.jail&&typeof bossEv==='function'){const tehdit=/tehdit/.test(c[6]);const ev=bossEv(tehdit?['Patron tehdit etti','Patron seni odasına çağırdı, kapıyı kapattı: "Bir daha ağzını açarsan seni kapının önüne koyarım. Bu şehirde iş bulamazsın, anladın mı?"']:['Patron azarladı','Patron herkesin içinde üstüne yürüdü: "Müşteriyle böyle konuşulmaz! Bir daha görürsem kapının önündesin."']);if(ev)setTimeout(()=>queue(ev),80)}}}}))}})});
 
 /* ============ Yeni heyecanlı olaylar ============ */
 const BIG=()=>Math.round(Math.max(1e5*S.cpi,Math.min(netWorth()*.04,4e8))/1000)*1000;
@@ -5372,6 +5373,60 @@ ACT.mbcap=a=>{const mb=S.mybank;if(!mb)return;const v=mbVal(mb);
   if(a==='sell'){if(!mb.pub||mb.own<=.1)return;const g=Math.round(v*.05);mb.own=Math.round((mb.own-.05)*1000)/1000;S.money+=g;log(`${mb.pub.tk}: %5 hisse sattın, ${fmt(g)}.`,'good');return mbRe()}
   if(a==='exit'){closeSheet();const g=Math.round(v*mb.own);return queue({back:'bankam',title:`🏁 ${mb.name}'ı sat`,text:`Payının tamamı için teklif: <b>${fmt(g)}</b>. Banka yeni sahibiyle yoluna devam eder; hissesi borsada işlem görür, istersen oradan alıp satarsın.`,choices:[{t:'Sat',sub:fmt(g),fn:()=>{const tk=mb.pub?mb.pub.tk:mbTicker(mb.name),lots=mb.pub?mb.pub.lots:1e7,pr=Math.max(.5,+(v/lots).toFixed(2));S.money+=g;S.taxInc=(S.taxInc||0)+Math.round(g*.15);S.xst=[...(S.xst||[]),{id:tk,n:mb.name,p:pr,v:.24,d:.09}];xstSync();S.px[tk]={p:pr,h:(mb.pub&&mb.pub.h?mb.pub.h.slice(-8):[pr]),n:gauss()};S.mybank=null;gainResp(6);log(`🏁 ${mb.name}'ı ${fmt(g)}'ye sattın. Hissesi ${tk} koduyla borsada.`,'gold');news(`${mb.name} el değiştirdi`,3)}},{t:'Vazgeç',fn:()=>{}}]})}
   if(a==='wash'){if(mb.washQ||(S.black||0)<=0)return;const mx=Math.min(S.black||0,Math.round(Math.max(M(5e6),mb.dep*.03)));return closeSheet(),amountModal('🖤 Kendi bankandan akla',`Kara para sahte hesaplardan geçip temiz olarak kasana girer. %6 kesinti. Tutar büyüdükçe denetim riski artar; şu an %${Math.min(100,Math.round(mb.aud||0))}.`,mx,x=>{S.black-=x;const g=Math.round(x*.94);S.money+=g;mb.washQ=1;mb.aud=Math.min(100,(mb.aud||0)+10+x/Math.max(1,mb.dep)*500);add('heat',2);log(`🖤 ${fmt(x)} kara para ${mb.name} üzerinden aklandı; kasana ${fmt(g)} girdi.`,'good')},'bankam')}};
+/* ============ Anne, baba ve evcil hayvanlar ============ */
+const MOMN=['Fatma','Ayşe','Emine','Hatice','Zeynep','Hacer','Sevim','Nermin','Gülsüm','Şükran','Meryem','Saadet','Nuran','Türkan'];
+function parPpl(){const P=parEnsure();if(S.famBg==='yetim')return P;if(!P.mom){const al=!!P.alive;P.mom={name:pick(MOMN),d:R(20,30),alive:al,die:Math.max(S.age+1,P.die+R(0,7))};P.dad={name:pick([...NAMES,...SHOPN]),d:R(23,34),alive:al,die:Math.max(S.age+1,P.die+R(-3,3))}}return P}
+const parAge=x=>S.age+x.d;
+function parAv(x,g){const pc=npcPic(x,Math.max(30,parAge(x)),g,'');return pc?`<img class="famimg" src="${pc}" alt=""${x.alive?'':' style="filter:grayscale(1) brightness(.6)"'}>`:(g==='k'?'👩':'🧔')}
+function parCardsH(){const P=parPpl();if(!P.mom)return'';const c=(x,g,t)=>`<div style="flex:1;min-width:0;display:flex;align-items:center;gap:10px"><span class="famav">${parAv(x,g)}</span><span style="min-width:0"><b style="font-size:15.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${x.name}${g==='e'?'':' '}</b><span style="font-size:12.5px;color:var(--dim)">${t} · ${x.alive?parAge(x)+' yaşında':'Vefat etti'}</span></span></div>`;
+  return `<div style="display:flex;gap:10px;margin:0 0 10px">${c(P.mom,'k','Annen')}${c(P.dad,'e','Baban')}</div>`}
+function parDeaths(){const P=parPpl();if(!P.mom||S.age<18)return false;let last=false;[['mom','Annen'],['dad','Baban']].forEach(([k,t])=>{const x=P[k];if(x.alive&&S.age>=x.die){x.alive=false;add('happy',-12);const o=P[k==='mom'?'dad':'mom'];if(o.alive){P.rel=clamp(P.rel+5);log(`🕯 ${t} ${x.name} hayatını kaybetti. Cenazede bütün mahalle vardı. ${k==='mom'?'Baban':'Annen'} artık yalnız.`,'bad')}else last=true}});
+  P.alive=P.mom.alive||P.dad.alive;return last}
+const PAREV=[
+{id:'yemek',c:P=>P.mom.alive,e:P=>({title:`Annen ${P.mom.name} aradı`,text:`"Pazar günü kuru fasulye yaptım, baban da seni sordu. Kaç zamandır yüzünü görmüyoruz. Gelecek misin?"`,choices:[
+  {t:'Git, sofraya otur',fn:()=>{P.rel=clamp(P.rel+10);add('happy',6);add('health',2);log(`Annenin sofrasına oturdun. ${P.mom.name} tabağını üç kere doldurdu.`,'good')}},
+  {t:'"Bu hafta olmaz anne"',fn:()=>{P.rel=clamp(P.rel-6);log(`${P.mom.name}: "İşin bitmez senin." Telefonu yavaşça kapattı.`,'dim')}}]})},
+{id:'hasta',c:P=>P.dad.alive&&parAge(P.dad)>=55,e:P=>{const m=Math.round(Math.max(M(40000),Math.min(netWorth()*.003,M(40000)*40))/1000)*1000;return{title:`Baban ${P.dad.name} hastanede`,text:`${P.mom.alive?'Annen ağlayarak aradı':'Komşu aradı'}: baban gece fenalaşmış, hastaneye kaldırmışlar. Doktor ameliyat diyor.`,choices:[
+  {t:'Özel hastaneye aldır, başında bekle',sub:fmt(m),dis:!canPay(m),fn:()=>{pay(m);P.rel=clamp(P.rel+15);P.dad.die+=R(2,5);add('happy',2);log(`Baban ameliyattan çıktı. Gözünü açınca ilk seni sordu.`,'good')}},
+  {t:'Devlet hastanesinde kalsın, ziyaretine git',fn:()=>{P.rel=clamp(P.rel+5);if(ch(.5))P.dad.die+=R(1,2);log(`Koridorda sabahladın. ${P.dad.name} elini sıktı, bir şey demedi.`,'dim')}},
+  {t:'"İşim var, yarın uğrarım"',fn:()=>{P.rel=clamp(P.rel-15);add('happy',-4);log(`Ertesi gün gittiğinde baban yüzünü duvara dönmüştü.`,'bad')}}]}}},
+{id:'is',c:P=>P.dad.alive&&inUW(),e:P=>({title:`Baban ${P.dad.name} seni karşısına aldı`,text:`"Mahallede senin için konuşulanları duyuyorum. Ben sana bu soyadını alnım açık verdim. Ne iş yapıyorsun sen?"`,choices:[
+  {t:'Doğruyu söyle',fn:()=>{if(S.yol==='kabadayi'||ch(.3)){P.rel=clamp(P.rel+8);log(`${P.dad.name} uzun uzun baktı: "Kimsenin hakkını yeme, yeter." Sırtını sıvazladı.`,'good')}else{P.rel=clamp(P.rel-14);add('happy',-4);log(`${P.dad.name} ayağa kalktı: "Benim böyle bir evladım yok." Kapıyı gösterdi.`,'bad')}}},
+  {t:'"Ticaret yapıyorum baba"',fn:()=>{if(ch(.5)){log(`${P.dad.name} inanmış gibi yaptı.`,'dim')}else{P.rel=clamp(P.rel-8);log(`${P.dad.name}: "Bana yalan söyleme." Çayını bırakıp kalktı.`,'dim')}}},
+  {t:'Sus, önüne bak',fn:()=>{P.rel=clamp(P.rel-4);log(`Sustun. Baban da sustu. Annen ikinize çay koydu.`,'dim')}}]})},
+{id:'evlen',c:P=>P.mom.alive&&!S.married&&S.age>=25,e:P=>({title:`Annen ${P.mom.name} yine sordu`,text:S.partner?`"${S.partner} iyi biri, belli. Daha ne bekliyorsun? Ben torun sevmeden gitmek istemiyorum."`:`"Komşunun kızı öğretmen olmuş, çok da hanım hanımcık. Bir çay içseniz? Ben torun sevmeden gitmek istemiyorum."`,choices:[
+  {t:'"Düşünüyorum anne, söz"',fn:()=>{P.rel=clamp(P.rel+5);log(`${P.mom.name} gülümsedi: "Söz verdin, unutma."`,'dim')}},
+  {t:'Güldür, konuyu değiştir',fn:()=>{add('happy',2);log(`Anneni güldürdün. Konu şimdilik kapandı.`,'dim')}},
+  {t:'"Karışma artık"',fn:()=>{P.rel=clamp(P.rel-9);log(`${P.mom.name} gözlerini kaçırdı. Mutfağa gitti.`,'bad')}}]})},
+{id:'ev',c:P=>P.alive&&cashA()>=M(2e6),e:P=>{const m=Math.round(Math.max(M(600000),Math.min(netWorth()*.02,M(600000)*30))/1000)*1000;return{title:'Ailenin evi dökülüyor',text:`Baba evinin çatısı akıyor, sobası tütüyor. ${P.mom.alive?P.mom.name:P.dad.name} hiçbir şey istemedi senden ama gördün.`,choices:[
+  {t:'Evi baştan yaptır',sub:fmt(m),dis:!canPay(m),fn:()=>{pay(m);P.rel=clamp(P.rel+18);add('happy',6);gainResp(1);log(`Ustalar bir ayda evi yeniledi. ${P.mom.alive?'Annen':'Baban'} her gelen misafire "evladım yaptırdı" diyor.`,'good')}},
+  {t:'Çatıyı yaptır',sub:fmt(Math.round(m/5)),dis:!canPay(Math.round(m/5)),fn:()=>{pay(Math.round(m/5));P.rel=clamp(P.rel+7);log(`Çatı yapıldı. Bu kış ev kuru geçecek.`,'good')}},
+  {t:'Görmemiş gibi yap',fn:()=>{P.rel=clamp(P.rel-5);add('happy',-2);log(`Çıkarken kapı gıcırdadı. Dönüp bakmadın.`,'dim')}}]}}},
+{id:'gurur',c:P=>P.alive&&((S.fame||0)>=30||netWorth()>=M(5e7)),e:P=>({title:'Ailen seninle gurur duyuyor',text:`${P.dad.alive?`Baban ${P.dad.name} kahvede herkese senin resmini göstermiş.`:`Annen ${P.mom.name} komşulara hep seni anlatıyormuş.`} Bu akşam aradılar: "Sadece sesini duymak istedik."`,choices:[
+  {t:'Uzun uzun konuş',fn:()=>{P.rel=clamp(P.rel+8);add('happy',6);log(`Bir saat konuştunuz. Kapatırken "Allah'a emanet ol" dediler.`,'good')}},
+  {t:'"Toplantıdayım, sonra ararım"',fn:()=>{P.rel=clamp(P.rel-5);log(`Sonra aramadın.`,'dim')}}]})}
+];
+function parEvt(){const P=parPpl();if(!P.mom||!P.alive||S.age<18||!okE()||!ch(.35))return;const L=P.evL||[];const pool=PAREV.filter(x=>!L.includes(x.id)&&x.c(P));if(!pool.length)return;const x=pick(pool);P.evL=[...L,x.id].slice(-3);queue(x.e(P))}
+/* --- evcil hayvan --- */
+const PETC=['Tekir','Sarman','Kara','Van kedisi','Üç renkli','Smokinli','Duman','Siyam','Uzun tüylü tekir'];
+const PETN=[['Tekir','Çizgi','Zeytin'],['Sarman','Limon','Karamel'],['Kömür','Zifir','Gece'],['Pamuk','Kar','İnci'],['Boncuk','Benek','Fıstık'],['Paşa','Smokin','Efe'],['Duman','Gümüş','Bulut'],['Prens','Mavi','Sultan'],['Aslan','Tüylü','Minnoş']];
+const petAge=p=>Math.max(0,Math.floor((QS()-p.born)/4));
+const petImg=p=>`<img class="famimg" src="img/pet_${petAge(p)<1?'y':'k'}${p.c}.webp" alt=""${p.dead?' style="filter:grayscale(1) brightness(.6)"':''}>`;
+const pets=()=>S.pets||(S.pets=[]);const petsAlive=()=>pets().filter(p=>!p.dead);
+function petAdd(nm,c,kitten){const p={id:'p'+Date.now()+R(0,999),t:'kedi',name:nm,c,born:QS()-(kitten?0:R(4,12)),life:R(13,19),pq:-1};pets().push(p);add('happy',6);return p}
+function petOffer(text,kitten,onNo){const c=R(0,8);const ns=PETN[c];queue({title:'Bir kedi',text:`${text}<div style="display:flex;justify-content:center;margin-top:12px"><span class="famav" style="width:96px;height:96px">${petImg({c,born:kitten?QS():QS()-8})}</span></div>`,choices:[...ns.map(n=>({t:`Eve al, adı ${n} olsun`,fn:()=>{petAdd(n,c,kitten);log(`🐾 ${n} artık ailenin bir parçası. ${PETC[c]} bir kedi; ilk gece ayakucunda uyudu.`,'gold')}})),{t:'Mama ver, yoluna git',fn:()=>{add('happy',1);log('Kediye mama verdin. Arkandan bir süre baktı.','dim');if(onNo)onNo()}}]})}
+function petsH(){const ps=pets();if(!ps.length)return'';let h='<div class="sec">Evcil hayvanların</div>';ps.forEach(p=>{h+=`<div style="display:flex;align-items:center;gap:12px;margin:0 0 10px"><span class="famav">${petImg(p)}</span><span><b style="font-size:17px">${p.name}</b><span style="display:block;font-size:12.5px;color:var(--dim)">${PETC[p.c]} kedi · ${p.dead?'Artık yok':petAge(p)<1?'Yavru':petAge(p)+' yaşında'}${p.sick&&!p.dead?' · Hasta':''}</span></span></div>`;
+  if(!p.dead){h+=row(`data-x="pet:${p.id}:sev"`,'❤️',`${p.name} ile vakit geçir`,p.pq===QS()?'Bu çeyrek ilgilendin':'Kucağına al, oyna','',p.pq===QS()||!!S.jail);if(p.sick)h+=row(`data-x="pet:${p.id}:vet"`,'🩺','Veterinere götür','Hasta, bakıma ihtiyacı var',fmtS(petVetC()),!canPay(petVetC())||!!S.jail)}});return h}
+const petVetC=()=>M(6000);
+ACT.pet=a=>{const[id,op]=a.split(':');const p=pets().find(x=>x.id===id);if(!p||p.dead)return;if(op==='sev'){if(p.pq===QS())return;p.pq=QS();add('happy',3);log(pick([`${p.name} kucağına kıvrıldı, mırlamaya başladı.`,`${p.name} ile ip oynadınız, perdeleri yine indirdi.`,`${p.name} başını eline sürttü.`,`${p.name} omzuna tırmandı, oradan dünyayı seyretti.`]),'good')}
+  else if(op==='vet'){if(!p.sick||!pay(petVetC()))return;p.sick=0;p.life+=1;log(`🩺 ${p.name} veterinerde iğnesini oldu. Eve dönünce küs küs baktı ama iyileşti.`,'good')}done()};
+function petYear(){petsAlive().forEach(p=>{const a=petAge(p);
+  if(p.sick){if(ch(.45)){p.dead=1;add('happy',-10);log(`🕯 ${p.name} hastalığı atlatamadı. Mama kabı köşede boş duruyor.`,'bad');return}p.sick=0}
+  if(a>=p.life){p.dead=1;add('happy',-10);log(`🕯 ${p.name} ${a} yaşında, uykusunda gitti. Ardında bir avuç tüy ve çok güzel yıllar bıraktı.`,'bad');return}
+  if(ch(a>=10?.25:.1)){p.sick=1;log(`🐾 ${p.name} halsiz, yemiyor içmiyor. Veterinere götürmen lazım.`,'bad');return}
+  if(ch(.5)){add('happy',2);log(pick([`🐾 ${p.name} bu yıl da evin efendisiydi.`,`🐾 ${p.name} sabahları seni patisiyle uyandırıyor.`,`🐾 ${p.name} balkondan mahalleyi izliyor, komşular ona selam veriyor.`,`🐾 ${p.name} misafirin ceketine yerleşti, kalkmadı.`]),'dim')}})
+  if(!petsAlive().length&&S.age>=9&&!S.jail&&!S.abroad&&(S.petQ||0)<=QS()&&ch(.12)){S.petQ=QS()+R(12,24);petOffer(pick(['Yağmurlu bir gece kapının önünde bir kedi buldun. Sırılsıklam olmuş, titriyor. Sana bakıp miyavladı.','Arabanın altından bir miyavlama geliyor. Eğilip baktın: bir kedi, gözlerini sana dikmiş.','Kasabın önünde bir kedi peşine takıldı. Sokağın sonuna kadar yürüdü seninle, dönüp gitmedi.']),false)}}
+{const _au2=ageUp;ageUp=function(){const a0=S&&S.alive?S.age:null;const r=_au2.apply(this,arguments);try{if(S&&S.alive&&a0!==null&&S.age!==a0)petYear()}catch(e){console.error(e)}return r}}
 /* ============ Yol ayrımı: Mafya / Kabadayı ============ */
 const KRANK=['Delikanlı','Mahalle Abisi','Kabadayı','Racon Kesen','Ağa','Baba Kabadayı'];
 const isKab=()=>!!S&&S.yol==='kabadayi';
@@ -6203,10 +6258,11 @@ function openSheet(k){if(k==='gard')k='insan';if(typeof k==='string'&&/^bk_my\d+
     else h+=row('','🔒','Herkesle görüş · Otomatik görüşme','Dayı moduna özel. Normal oyunda herkesle tek tek ilgilenirsin.','',true);
     {const P=parEnsure(),f=PARF[S.famBg];h+=`<div class="sec">Ailen · ${FAMBG[S.famBg].n}${P.alive?' · Bağ %'+P.rel:''}</div>`;
      if(S.famBg==='yetim')h+='<p class="note">Yetim büyüdün. Arkanda bir aile yok; her kuruşu kendin kazanırsın.</p>';
-     else if(!P.alive)h+='<p class="note">Ailenin büyükleri artık hayatta değil.</p>';
-     else{h+=row('data-x="parvis:"','🏠','Ailene uğra','Aile bağı +, mutluluk +','',!!S.jail||P.vis===S.age*4+(S.q||0));
+     else if(!P.alive)h+=parCardsH()+'<p class="note">Ailenin büyükleri artık hayatta değil.</p>';
+     else{h+=parCardsH();h+=row('data-x="parvis:"','🏠','Ailene uğra','Aile bağı +, mutluluk +','',!!S.jail||P.vis===S.age*4+(S.q||0));
        if(S.age>=16)h+=row('data-x="parask:"','💵','Ailenden para iste',P.ask===S.age?'Bu yıl zaten istedin':`${fmtS(Math.round(f.lo*S.cpi))}–${fmtS(Math.round(f.hi*S.cpi))} · Şans %${Math.round(clamp(f.p+(P.rel-60)/200,.1,.95)*100)}${S.famBg==='polis'?' · Polis dikkatin yüksekse reddeder':''}`,'',P.ask===S.age||!!S.jail);
        if(S.age>=18)h+=row('data-x="parsend:"','🎁','Ailene para gönder','Aile bağı +15, mutluluk +',fmtS(Math.max(20000,Math.round(S.money*.01))),cashA()<20000);}}
+    h+=petsH();
     if(S.partner){
       h+=`<div class="sec">${S.married?'Eşin':'Sevgilin'} · İlişki %${prel()}</div><div style="display:flex;align-items:center;gap:12px;margin:0 0 10px"><span class="famav">${wifeAv()}</span><b style="font-size:17px">${S.partner}</b></div>`+(S.premium&&S.gender!=='k'?row('data-x="wlook:"','👑','Görünümünü değiştir','Dayı modu · 39 farklı yüz','›',false):'');
       h+=row('data-x="pmenu:"','💞',`${S.partner} ile ilgilen`,'Sohbet, yemek, hediye, tatil, sürpriz…','›',!!S.jail);
