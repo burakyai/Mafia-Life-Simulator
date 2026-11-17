@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.18-0130';
+const APPV='2026.11.18-0150';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -3044,7 +3044,8 @@ function clubQuarter(){const c=S.club;if(!c)return;const L=LEAGUES[c.lv];
 }
 function tMarket(){const c=S.club;if(!c.market||c.market.q!==QS()){const base=LEAGUES[c.lv].base;c.market={q:QS(),items:Array.from({length:9},()=>{const p=fixName(mkPlayer(base+R(-3,14)));p.price=Math.round(pVal(p.r,p.age)*R(95,130)/100/1000)*1000;return p})}}return c.market.items}
 ACT.buyclub=lv=>{const L=LEAGUES[+lv];closeSheet();const names=[`${pick(TOWNS)} ${pick(SUF)}`,`${S.last} ${pick(['Gücü','FK','Atletik'])}`,`${pick(['Haliç','Boğaziçi','Galata','Moda','Kartal','Fener Koyu'])} ${pick(SUF)}`];
-  queue({back:'kulup',title:`${L.n} kulübü satın al`,text:`Kulüp ${fmt(L.price)}. Kadro ve borçsuz kasa dahil. Kulübün adı ne olsun?`,choices:[...names.map(n=>({t:n,sub:fmt(L.price),dis:!canPay(L.price),fn:()=>{pay(L.price);S.club={name:n,lv:+lv,cash:Math.round(L.rev*.3),squad:genSquad(L.base),coach:null,morale:0,hist:[],trophies:0};kitE();newSeason(S.club);gainResp(4);log(`${n} artık senin. Başkan ${S.first} ${S.last}!`,'gold');news(`${S.first} ${S.last} ${n}'i satın aldı`,2)}})),{t:'Vazgeç',fn:()=>{}}]})};
+  const buy=n=>{if(S.club||!canPay(L.price))return;pay(L.price);S.club={name:n,lv:+lv,cash:Math.round(L.rev*.3),squad:genSquad(L.base),coach:null,morale:0,hist:[],trophies:0};kitE();newSeason(S.club);gainResp(4);log(`${n} artık senin. Başkan ${S.first} ${S.last}!`,'gold');news(`${S.first} ${S.last} ${n}'i satın aldı`,2)};
+  queue({back:'kulup',title:`${L.n} kulübü satın al`,text:`Kulüp ${fmt(L.price)}. Kadro ve borçsuz kasa dahil. Kulübün adı ne olsun? Kendin yaz ya da önerilerden birini seç.`+NAMEBOX(names[1]),choices:[{t:'✍️ Yazdığım adla al',sub:fmt(L.price),dis:!canPay(L.price),fn:()=>{const n=typedName();if(!n){toast('Önce bir ad yaz');setTimeout(()=>ACT.buyclub(lv),80);return}buy(n)}},...names.map(n=>({t:n,sub:fmt(L.price),dis:!canPay(L.price),fn:()=>buy(n)})),{t:'Vazgeç',fn:()=>{}}]})};
 ACT.tbuy=id=>{const c=S.club,p=tMarket().find(x=>x.id===id);if(!p)return;closeSheet();
   queue({back:'transfer',title:p.n,text:`${p.pos} · ${p.age} yaş · Güç ${p.r}. Bonservis ${fmt(p.price)}, yıllık maaş ${fmt(Math.round(pVal(p.r,p.age)*.12))}. Kulüp kasası: ${fmt(c.cash)}.`,
     prem:{t:'Dayının menajeri',sub:`%30 indirim · ${fmt(Math.round(p.price*.7))}`,fn:()=>tSign(p,Math.round(p.price*.7))},
@@ -5554,7 +5555,7 @@ const KJOBS=[
 ACT.kjob=id=>{const j=KJOBS.find(x=>x.id===id);if(!j||!isKab())return;if(S.jail||S.abroad){toast('Şu an mahallede değilsin.');return}if(S.age<j.age||rank()<j.rank)return;if(!useAct('k_'+j.id,j.n))return;const fin=ok=>{const r=j.fn(ok);log(`${j.n}: ${r[0]}`,r[1]);if(ok)S.stats.crimes++;done()};if(j.p)return fin(ch(j.p()));kFight(j.n,j.lv,kPw(j.lv),fin)};
 function kJobsH(){let h='<div class="sec">Mahalle işleri</div>';KJOBS.forEach(j=>{const la=S.age<j.age,lr=rank()<j.rank,dn=actDone('k_'+j.id);h+=row(`data-x="kjob:${j.id}"`,la||lr?'🔒':j.ic,j.n,la?`${j.age} yaşında açılır`:lr?`${KRANK[j.rank]} olunca açılır`:j.d,la||lr?'🔒':dn?'Bitti':'',la||lr||dn)});
   const c=CRIMES.find(x=>x.id==='baskin'),la=S.age<c.age,lr=rank()<c.rank;h+=row('data-c="baskin"',la||lr?'🔒':c.ic,'Çete mekânını bas',la?`${c.age} yaşında açılır`:lr?`${KRANK[c.rank]} olunca açılır`:'Mahalleye musallat olan çetenin yerini dağıt',la||lr?'🔒':actDone('baskin')?'Bitti':'',la||lr||actDone('baskin'));
-  h+='<div class="sec">Şirket</div>'+gsRow();return h+'<p class="note">Kabadayı hırsızlığa, kaçakçılığa, soyguna girmez. Yasadışı para yalnızca korumadan gelir.</p>'}
+  return h+'<p class="note">Kabadayı hırsızlığa, kaçakçılığa, soyguna girmez. Yasadışı para yalnızca korumadan gelir.</p>'}
 /* --- sokak ekranı --- */
 const kHuzH=()=>{const v=S.huzur===undefined?50:S.huzur;return `<div class="sec">🕊️ Mahalle Huzuru · %${v}</div><div class="bar" style="margin:0 0 6px"><i style="width:${v}%;background:${v>=55?'var(--good)':v>=30?'var(--gold)':'var(--blood)'}"></i></div><p class="note" style="margin-top:0">${kHzT()}.</p>`};
 function kShopsH(st){const lg=st.shops.filter(o=>!shopT(o).il),il=st.shops.filter(o=>shopT(o).il);const pay=lg.filter(o=>o.st==='odeyor'),tot=pay.reduce((a,o)=>a+shopFee(o),0);let h='';
@@ -5693,7 +5694,7 @@ function kCityH(){if(!isKab())return'';const t=S.kT||0,g=kTGoal();
   if(t>=1){const L=kcEnsure(),p=kcPay(),tot=p.reduce((a,c)=>a+kcFee(c),0);
     h+=`<div class="sec">🏙️ Şehrin büyükleri · ${p.length}/${L.length}</div><p class="note">Her biri büyük bir dertle gelir. Derdini temiz çözersen himayene girer; pis yoldan çözersen para büyük, ama mahalle unutmaz. Çeyrekte ${fmt(tot)}.</p>`;
     L.forEach(c=>{const T=kcT(c),vis=c.vq===qnow();h+=row(`data-x="kcli:${c.id}"`,T.ic,`${T.n} · ${c.owner}`,`${c.st==='odeyor'?`Himayende${c.sec?' · Şirket sözleşmeli':''}${c.yz?' · Pis anlaşma':''} · Memnuniyet %${c.mood}`:c.st==='kizgin'?'Sana kırgın':T.own+' · Derdi var'}${vis?' · Bu çeyrek uğradın':''}`,c.st==='odeyor'?'+'+fmtS(kcFee(c)):'',false)})}
-  return h+'<div class="sec">🛡️ Şirket</div>'+gsRow()}
+  return h}
 function kcAttack(c){if(!isKab()||S.jail||c.st!=='odeyor')return;const T=kcT(c),n=`${pick(NICK)} ${pick(NAMES)}`,city=pick(['Ankara','İzmir','Adana','Bursa','Trabzon','Diyarbakır','Samsun','Antalya','Mersin','Kocaeli']);
   queue({title:`${T.ic} ${c.owner} telefonda`,text:`${(S.kT||0)>=2?`${city}'dan ${n} adında bir kabadayı`:`Şehrin öbür yakasından ${n}`}, ${T.n.toLocaleLowerCase('tr-TR')} için "bundan sonra beni muhatap alacaksın" demiş. ${c.owner} soruyor: "Arkamda mısın?"`,choices:[
     {t:'Git, yüz yüze konuş',fn:()=>kFight(n,3,kPw(3),ok=>{if(ok){c.mood=clamp(c.mood+20);gainResp(4);log(`${n} ile ${c.owner}'in kapısında karşılaştınız. ${n} geri çekildi.`,'gold')}else{hurt(R(10,24),n+' ile kavga');c.st='yok';c.sec=0;add('respect',-4);log(`${n} seni dağıttı. ${c.owner} artık onu muhatap alıyor.`,'bad')}done()})},
@@ -5720,13 +5721,18 @@ const GCT=[
  {k:'set',n:'Dizi seti güvenliği',ic:'🎬',nd:[6,14],dur:[2,4],rep:15},
  {k:'fabrika',n:'Fabrika güvenliği',ic:'🏭',nd:[10,24],dur:[8,12],rep:20},
  {k:'avm',n:'AVM özel güvenlik',ic:'🛍️',nd:[16,40],dur:[8,16],rep:35},
- {k:'stad',n:'Stadyum maç günü güvenliği',ic:'🏟️',nd:[30,80],dur:[4,8],rep:50},
+ {k:'fuar',n:'Uluslararası fuar güvenliği',ic:'🎪',nd:[150,400],dur:[1,2],rep:40},
+ {k:'hastane',n:'Hastane zinciri güvenliği',ic:'🏥',nd:[80,200],dur:[8,16],rep:45},
+ {k:'stad',n:'Stadyum maç günü güvenliği',ic:'🏟️',nd:[60,250],dur:[4,8],rep:50},
+ {k:'kampus',n:'Üniversite kampüsü güvenliği',ic:'🏫',nd:[100,300],dur:[8,16],rep:55},
+ {k:'havalimani',n:'Havalimanı güvenliği',ic:'✈️',nd:[300,900],dur:[12,20],rep:75},
+ {k:'metro',n:'Metro ve toplu taşıma güvenliği',ic:'🚇',nd:[400,1200],dur:[12,20],rep:85},
  {k:'vip',n:'İş insanı yakın koruma',ic:'🎩',nd:[6,12],dur:[4,8],rep:65,vip:2}];
 const GVIP=['Şarkıcı','Futbolcu','Oyuncu','Sunucu','Rapçi','Voleybolcu'];
 const gsCtT=c=>GCT.find(x=>x.k===c.k)||GCT[0];
 const gsUsed=()=>{const g=S.gsec;if(!g)return 0;return (g.ct||[]).reduce((a,c)=>a+c.nd,0)+(S.kc||[]).filter(c=>c.sec&&c.st==='odeyor').length*KCSTAFF};
 const gsFree=()=>S.gsec?Math.max(0,S.gsec.staff-gsUsed()):0;
-const gsCap=()=>S.gsec?40+Math.round(S.gsec.rep*3)+(S.kT||0)*60:0;
+const gsCap=()=>S.gsec?100+Math.round(S.gsec.rep*15)+(S.kT||0)*1500:0;
 const gsWage=()=>Math.round(GSW*(1+(S.gsec?S.gsec.tr:0)/200)*S.cpi);
 const gsCanFound=()=>isKab()&&rank()>=2&&S.age>=21;
 const gsFoundC=()=>M(1500000);
@@ -5734,7 +5740,7 @@ const gsHireC=n=>Math.round(n*7000*S.cpi);
 const gsTrainC=()=>Math.round(Math.max(M(80000),(S.gsec?S.gsec.staff:0)*25000*S.cpi));
 const gsWho=v=>v===1?`${pick(GVIP)} ${pick(ch(.5)?NAMES:GIRLS)} ${pick(KSOY)}`:v===2?`${pick(NAMES)} ${pick(KSOY)}`:'';
 function gsOffer(){const g=S.gsec,pool=GCT.filter(x=>x.rep<=g.rep+5),x=pick(pool),nd=R(x.nd[0],x.nd[1]);return{id:'gc'+R(0,999999),k:x.k,nd,dur:R(x.dur[0],x.dur[1]),fee:Math.round(nd*R(15000,24000)*(1+g.rep/120)*(x.vip?1.6:1)),who:gsWho(x.vip)}}
-function gsEnsure(){const g=S.gsec;if(!g)return;if(!g.ct)g.ct=[];if(!g.of)g.of=[];while(g.of.length<3)g.of.push(gsOffer())}
+function gsEnsure(){const g=S.gsec;if(!g)return;if(!g.ct)g.ct=[];if(!g.of)g.of=[];while(g.of.length<3+(S.kT||0))g.of.push(gsOffer())}
 function gsDeal(k,nd,dur,who,mul){const g=S.gsec;if(!g)return;gsEnsure();const c={id:'gc'+R(0,999999),k,nd,dur,fee:Math.round(nd*R(18000,26000)*(1+g.rep/120)*(mul||1)),who};const T=gsCtT(c);
   if(gsFree()>=nd){c.left=dur;g.ct.push(c);g.rep=clamp(g.rep+3);log(`${T.ic} ${T.n}${who?' ('+who+')':''} artık ${g.n} korumasında: ${dur} çeyrek, çeyrekte ${fmt(Math.round(c.fee*S.cpi))}.`,'good')}
   else{g.of.unshift(c);log(`${T.ic} ${T.n}${who?' ('+who+')':''} teklifi şirketin listesinde bekliyor. Boşta ${nd} personel gerekiyor.`,'dim')}}
@@ -5743,11 +5749,13 @@ EXTRA.gsec=()=>{const g=S.gsec;let h='';
   if(!g){h+=`<p class="note">Kendi özel güvenlik şirketini kur: konserlere, sitelere, fabrikalara, dizi setlerine güvenlik; sanatçılara, futbolculara, iş insanlarına yakın koruma. Mahallenin işsiz gençlerine iş, sana da temiz para.<br><br>Ruhsat, ofis ve ilk ekipman: <b>${fmt(gsFoundC())}</b>.</p>`;
     h+=row('data-x="gsec:kur"','🛡️','Şirketi kur',gsCanFound()?'Özel güvenlik ruhsatı al':isKab()?`${KRANK[2]} rütbesi ve 21 yaş gerekir`:'Bu şirketi yalnızca kabadayılar kurar',fmtS(gsFoundC()),!gsCanFound()||!canPay(gsFoundC()));return['Güvenlik şirketi',h]}
   gsEnsure();const used=gsUsed(),kcs=(S.kc||[]).filter(c=>c.sec&&c.st==='odeyor'),inc=g.ct.reduce((a,c)=>a+Math.round(c.fee*S.cpi),0)+kcs.reduce((a,c)=>a+Math.round(kcFee(c)*.8),0);
-  h+=`<p class="note"><b>${g.n}</b> · ${g.founded} yaşında kurdun.<br>Personel <b>${g.staff}</b>/${gsCap()} (boşta ${Math.max(0,g.staff-used)}) · Eğitim %${g.tr} · İtibar %${g.rep}<br>Çeyreklik gelir ${fmt(inc)} · Maaşlar ${fmt(g.staff*gsWage())}</p>`;
+  h+=`<p class="note"><b>${g.n}</b> · ${g.founded} yaşında kurdun.<br>Personel <b>${g.staff.toLocaleString('tr-TR')}</b>/${gsCap().toLocaleString('tr-TR')} (boşta ${Math.max(0,g.staff-used).toLocaleString('tr-TR')}) · Eğitim %${g.tr} · İtibar %${g.rep}<br>Çeyreklik gelir ${fmt(inc)} · Maaşlar ${fmt(g.staff*gsWage())}</p>`;
   h+='<div class="sec">👥 Personel</div>';
-  [5,20].forEach(n=>{const can=g.staff+n<=gsCap();h+=row(`data-x="gsec:al:${n}"`,'🧑‍🤝‍🧑',`${n} genç işe al`,can?`Mahallenin işsiz gençleri · Kişi başı çeyrekte ${fmtS(gsWage())} maaş`:'Kapasite dolu · İtibarın ve namın büyüdükçe artar',fmtS(gsHireC(n)),!can||!canPay(gsHireC(n)))});
+  [10,100,1000].forEach(n=>{const can=g.staff+n<=gsCap();h+=row(`data-x="gsec:al:${n}"`,'🧑‍🤝‍🧑',`${n} genç işe al`,can?`Mahallenin işsiz gençleri · Kişi başı çeyrekte ${fmtS(gsWage())} maaş`:'Kapasite dolu · İtibarın ve namın büyüdükçe artar',fmtS(gsHireC(n)),!can||!canPay(gsHireC(n)))});
+  h+=row('data-x="gsec:yaz"','✍️','İstediğin kadar kişi al',`Sayıyı sen yaz · En fazla ${Math.max(0,gsCap()-g.staff).toLocaleString('tr-TR')} kişi daha`,'',g.staff>=gsCap());
+  h+=row('data-x="gsec:ad"','🪧','Şirketin adını değiştir',g.n,'',false);
   h+=row('data-x="gsec:egit"','🎓','Personele eğitim ver',g.trY===S.age?'Bu yıl verdin':g.tr>=100?'Eğitim tam':'Yakın koruma, ilk yardım, olay yönetimi · Olaylarda başarı artar, maaşlar da',g.trY===S.age||g.tr>=100?'':fmtS(gsTrainC()),g.trY===S.age||g.tr>=100||!canPay(gsTrainC()));
-  h+=row('data-x="gsec:cik"','📉','5 kişiyi işten çıkar',g.staff-used>=5?'Boştaki personelden':'Boşta yeterli personel yok','',g.staff-used<5);
+  [10,100].forEach(n=>{h+=row(`data-x="gsec:cik:${n}"`,'📉',`${n} kişiyi işten çıkar`,g.staff-used>=n?'Boştaki personelden':'Boşta yeterli personel yok','',g.staff-used<n)});
   h+=`<div class="sec">📑 Sözleşmeler · ${g.ct.length+kcs.length}</div>`;
   if(!g.ct.length&&!kcs.length)h+='<p class="note">Henüz aktif sözleşme yok.</p>';
   g.ct.forEach(c=>{const T=gsCtT(c);h+=row(`data-x="gsec:fesih:${c.id}"`,T.ic,`${T.n}${c.who?' · '+c.who:''}`,`${c.nd} personel · ${c.left} çeyrek kaldı`,'+'+fmtS(Math.round(c.fee*S.cpi)),false)});
@@ -5756,13 +5764,21 @@ EXTRA.gsec=()=>{const g=S.gsec;let h='';
   g.of.forEach(c=>{const T=gsCtT(c),ok=g.staff-used>=c.nd;h+=row(`data-x="gsec:imza:${c.id}"`,T.ic,`${T.n}${c.who?' · '+c.who:''}`,`${c.nd} personel · ${c.dur} çeyrek${ok?'':' · Boşta yeterli personel yok'}`,'+'+fmtS(Math.round(c.fee*S.cpi)),!ok)});
   return['Güvenlik şirketi',h]};
 const gsBack=()=>setTimeout(()=>{if(!Q.length)openSheet('gsec')},60);
+function gsHire(n){const g=S.gsec;if(!g)return;n=Math.min(n,gsCap()-g.staff);if(n<=0||!pay(gsHireC(n)))return;g.staff+=n;if(isKab())kHz(Math.min(6,Math.ceil(n/25)));log(n>=500?`🧑‍🤝‍🧑 ${n.toLocaleString('tr-TR')} kişiye iş verdin. Mahallelerde işsiz genç kalmadı; gazeteler "${g.n} istihdam rekoru kırdı" diye yazıyor.`:`🧑‍🤝‍🧑 ${n} gence iş verdin. Anneleri kapına baklava yolladı.`,'good');if(n>=500)news(`${g.n} ${n.toLocaleString('tr-TR')} kişiye iş verdi`,1)}
+{const _sk=EXTRA.sirket;EXTRA.sirket=()=>{const r=_sk();if(Array.isArray(r)&&(S.gsec||isKab()))r[1]+='<div class="sec">🛡️ Güvenlik şirketi</div>'+gsRow();return r}}
 ACT.gsec=a=>{const i=a.indexOf(':'),op=i<0?a:a.slice(0,i),x=i<0?'':a.slice(i+1);const g=S.gsec;
   if(op==='kur'){if(g||!gsCanFound()||!canPay(gsFoundC()))return;const ns=[`${S.last} Güvenlik`,'Kalkan Özel Güvenlik',`${pick(['Demir','Kartal','Aslan','Tunç','Kale'])} Koruma`];closeSheet();
-    queue({back:'gsec',title:'🛡️ Şirketin adı',text:'Ruhsat başvurun hazır. Ofisin kapısına hangi tabela asılsın?',choices:[...ns.map(n=>({t:n,fn:()=>{if(S.gsec||!pay(gsFoundC()))return;S.gsec={n,staff:0,tr:10,rep:5,ct:[],of:[],founded:S.age};gsEnsure();gainResp(2);news(`${S.first} ${S.last} özel güvenlik şirketi kurdu: ${n}`,1);log(`🛡️ ${n} kuruldu. Ofisin kapısında boyası daha kurumamış bir tabela var. Şimdi gençleri işe al.`,'gold');gsBack()}})),{t:'Vazgeç',fn:()=>{}}]});return}
+    const mk=n=>{if(S.gsec||!pay(gsFoundC()))return;S.gsec={n,staff:0,tr:10,rep:5,ct:[],of:[],founded:S.age};gsEnsure();gainResp(2);news(`${S.first} ${S.last} özel güvenlik şirketi kurdu: ${n}`,1);log(`🛡️ ${n} kuruldu. Ofisin kapısında boyası daha kurumamış bir tabela var. Şimdi gençleri işe al.`,'gold');gsBack()};
+    queue({back:'gsec',title:'🛡️ Şirketin adı',text:'Ruhsat başvurun hazır. Ofisin kapısına hangi tabela asılsın? Adı kendin yaz ya da önerilerden birini seç.'+NAMEBOX(`${S.last} Güvenlik`),choices:[{t:'✍️ Yazdığım adla kur',fn:()=>{const n=typedName();if(!n){toast('Önce bir ad yaz');setTimeout(()=>ACT.gsec('kur'),80);return}mk(n)}},...ns.map(n=>({t:n,fn:()=>mk(n)})),{t:'Vazgeç',fn:()=>{}}]});return}
   if(!g)return;gsEnsure();
-  if(op==='al'){const n=+x||5;if(g.staff+n>gsCap()||!pay(gsHireC(n)))return;g.staff+=n;if(isKab())kHz(Math.min(3,Math.ceil(n/10)));log(`🧑‍🤝‍🧑 Mahalleden ${n} gence iş verdin. Anneleri kapına baklava yolladı.`,'good')}
+  if(op==='al'){gsHire(+x||10)}
+  else if(op==='yaz'){const mx=gsCap()-g.staff;if(mx<=0)return;closeSheet();window._nm='';
+    queue({back:'gsec',title:'🧑‍🤝‍🧑 Kaç kişi alalım?',text:`En fazla <b>${mx.toLocaleString('tr-TR')}</b> kişi daha alabilirsin. Kişi başı işe alım ${fmt(gsHireC(1))}, maaş çeyrekte ${fmt(gsWage())}.<input id="nmBox" inputmode="numeric" autocomplete="off" placeholder="Örn. 2500" oninput="window._nm=this.value" style="display:block;width:100%;margin-top:12px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gold,#c9a14a);background:#0008;color:var(--text,#eee);font-size:18px;font-family:inherit;box-sizing:border-box">`,choices:[
+      {t:'✍️ İşe al',fn:()=>{const n=parseInt(String((document.getElementById('nmBox')||{}).value||window._nm||'').replace(/\D/g,''),10);if(!(n>0)){toast('Bir sayı yaz');setTimeout(()=>ACT.gsec('yaz'),80);return}gsHire(Math.min(n,mx));afterChange();gsBack()}},
+      {t:'Vazgeç',fn:gsBack}]});return}
+  else if(op==='ad'){closeSheet();window._nm='';queue({back:'gsec',title:'🪧 Şirketin yeni adı',text:`Şu an: <b>${g.n}</b>`+NAMEBOX(g.n),choices:[{t:'✍️ Kaydet',fn:()=>{const n=typedName();if(n){g.n=n;log(`🪧 Şirketin tabelası değişti: ${n}.`,'dim')}gsBack()}},{t:'Vazgeç',fn:gsBack}]});return}
   else if(op==='egit'){if(g.trY===S.age||g.tr>=100||!pay(gsTrainC()))return;g.trY=S.age;g.tr=clamp(g.tr+R(12,20));log(`🎓 Personel yakın koruma ve olay yönetimi eğitimi aldı. Eğitim %${g.tr}.`,'good')}
-  else if(op==='cik'){if(g.staff-gsUsed()<5)return;g.staff-=5;if(isKab())kHz(-1);log('5 personeli işten çıkardın.','dim')}
+  else if(op==='cik'){const n=+x||10;if(g.staff-gsUsed()<n)return;g.staff-=n;if(isKab())kHz(-Math.min(5,Math.ceil(n/50)));log(`${n} personeli işten çıkardın.`,'dim')}
   else if(op==='imza'){const k=g.of.findIndex(c=>c.id===x);if(k<0)return;const c=g.of[k];if(gsFree()<c.nd)return;g.of.splice(k,1);c.left=c.dur;g.ct.push(c);const T=gsCtT(c);log(`📑 ${T.n}${c.who?' ('+c.who+')':''} sözleşmesi imzalandı: ${c.dur} çeyrek, çeyrekte ${fmt(Math.round(c.fee*S.cpi))}.`,'good')}
   else if(op==='fesih'){const c=g.ct.find(z=>z.id===x);if(!c)return;closeSheet();const T=gsCtT(c);
     queue({back:'gsec',title:`${T.ic} ${T.n}`,text:`${c.who?c.who+' · ':''}${c.nd} personel, ${c.left} çeyrek kaldı, çeyrekte ${fmt(Math.round(c.fee*S.cpi))}.<br><br>Sözleşmeyi erken bitirirsen personel boşa çıkar ama şirketin itibarı düşer.`,choices:[{t:'Sözleşmeyi feshet',fn:()=>{g.ct=g.ct.filter(z=>z!==c);g.rep=clamp(g.rep-5);log(`${T.n} sözleşmesi feshedildi.`,'dim');gsBack()}},{t:'Geri dön',fn:gsBack}]});return}
@@ -6459,7 +6475,7 @@ function closeSheet(){if(curSheet){LASTSH=curSheet;LASTT=(($('shT')&&$('shT').te
 function qbar(){const l=$('qLeft'),b=$('qBack');if(!l||!S)return;l.innerHTML='';if(LASTSH&&S.alive){b.style.display='';b.textContent='↩ '+(LASTT||'Son menü')}else b.style.display='none'}
 document.addEventListener('click',e=>{if(e.target.closest('#qBack')&&LASTSH){openSheet(LASTSH)}});
 const PARENT={berber:'cat_kisisel',meslek:'is',egitim:'meslek',ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
-try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'is'});
+try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'sirket'});
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
 $('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeSheet()});
@@ -6482,7 +6498,7 @@ function openSheet(k){if(k==='gard')k='insan';if(typeof k==='string'&&/^bk_my\d+
     if(S.abroad)h+='<p class="note">Yurt dışındasın. Suç işleri Türkiye\'ye dönünce açılır.</p>';
     if(S.jail){h+='<div class="sec">Koğuş</div>';JAIL.filter(a=>!a.prem||S.premium).forEach(a=>{const c=a.dyn?Math.round(a.dyn()):0;h+=row(`data-j="${a.id}"`,a.ic,a.n,a.d,c?fmtS(c):'',(c&&cashA()<c)||(!S.premium&&HEALIDS.includes(a.id)&&healLeft()<=0))})}
     else{
-      if(S.age>=16)h+='<div class="sec">İş hayatı</div>'+row('data-go="meslek"','💼',S.job?S.job.n:'İş ilanları',S.job?`Çeyreklik maaş ${fmtS(Math.round(S.job.sal*.25*(1+Math.min(.5,(S.job.q||0)*.01))))}${S.job.svc?' · Performans %'+S.job.perf:''}`:'Garson, tamirci, kurye, kasiyer… Maaşlı bir işe gir','›',false)+(S.gsec&&S.yol!=='kabadayi'?gsRow():'');
+      if(S.age>=16)h+='<div class="sec">İş hayatı</div>'+row('data-go="meslek"','💼',S.job?S.job.n:'İş ilanları',S.job?`Çeyreklik maaş ${fmtS(Math.round(S.job.sal*.25*(1+Math.min(.5,(S.job.q||0)*.01))))}${S.job.svc?' · Performans %'+S.job.perf:''}`:'Garson, tamirci, kurye, kasiyer… Maaşlı bir işe gir','›',false);
       if(S.age>=14){        if(S.yol!=='kabadayi')h+='<div class="sec">Suç dünyası</div>';
         if(S.yol==='kabadayi')h+=kJobsH();else CRIMES.forEach(c=>{const lockA=S.age<c.age,lockR=rank()<c.rank;
           const d=lockA?`${c.age} yaşında açılır`:lockR?`${RANKS[c.rank].n} rütbesi gerekir`:c.d;
