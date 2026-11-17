@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.17-1000';
+const APPV='2026.11.17-1200';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1895,7 +1895,8 @@ EXTRA.org=()=>{
   return['Kendi ailen',h]};
 EXTRA.rakip=()=>{let h=`<p class="note">${S.org?`Senin gücün: <b style="color:var(--gold)">${orgPow()}</b>. Güç; adamlarının sayısına, gücüne, sadakatine, saygına ve karizmana bağlıdır.`:'Kendi aileni kurmadan da onlarla kavga edebilirsin; mekân basmak için önce aileni kurmalısın.'}</p>`;
   S.rivals.forEach(r=>{const cmp=S.org?orgPow()-r.pow:0;h+=`<button class="row" data-x="riv:${r.id}"><span class="ic">${rIco(r.war?'⚔️':'🐍')}</span><span class="tx"><b>${r.n}</b><span>${r.dead?'Dağıldı':r.boss.name} · Güç ${r.pow} · ${r.venues.length} mekân${r.ally?' · <b style="color:var(--good)">Müttefik</b>':''}${r.war?' · <b style="color:var(--blood)">Savaşta</b>':''}</span>${S.org?`<span class="risk ${cmp>10?'r1':cmp>-10?'r2':'r3'}">${cmp>10?'Senden zayıf':cmp>-10?'Denk':'Senden güçlü'}</span>`:''}</span><span class="rt">›</span></button>`});
-  return['Düşman çeteler',h]};
+  if(S.age>=16)h+=gNetListH();
+  return['Aileler ve çeteler',h]};
 ACT.bot=k=>{if(k==='auto')BOTMAN=null;else BOTMAN=Math.max(0,Math.min(300,(BOTMAN!==null?BOTMAN:BOT)+(k==='+'?20:-20)));try{BOTMAN===null?localStorage.removeItem('mafya-bot'):localStorage.setItem('mafya-bot',BOTMAN)}catch(e){}layout();openSheet('ben')};
 ACT.found=()=>foundOrg();
 ACT.nop=()=>{};
@@ -3608,7 +3609,7 @@ function stEnsure(){if(!S.st)S.st={shops:[],gw:null,won:0};const st=S.st;
   SHOPT.filter(x=>x.rk<=rank()&&(!x.kb||S.yol==='kabadayi')).forEach(x=>{if(!st.shops.some(o=>o.t===x.t))st.shops.push({id:'sh'+R(0,999999),t:x.t,owner:pick(SHOPN)+' '+pick(SHOPE),fee:Math.round(x.fee*R(85,120)/100),st:'yok',gang:x.il&&ch(.55)?gName():null,vq:-1,mood:R(40,70)})});
   while(st.city.length<12)st.city.push(newGang());
   if(S.org)S.org.members.forEach(m=>{if(m.sq===undefined){m.sq=R(3,8);m.ar=R(40,70)}});
-  return st}
+  try{gNetEnsure(st)}catch(e){console.error(e)}return st}
 function newGang(){return{name:gName(),sol:Math.max(R(15,60)+rank()*R(15,55),S&&S.st?Math.round(totSq()*R(70,140)/100):0),boss:`${pick(NICK)} ${pick(NAMES)}`}}
 /* kadro */
 const LTS=()=>S.org?S.org.members:(S.family&&S.fj&&S.fj.fam===S.family&&S.fj.sqs)||[];
@@ -3651,7 +3652,7 @@ function kabadayi(o){
 function sqLoss(f,quiet){const st=S.st;let lost=0;const cut=x=>{const d=Math.round(x*f*R(60,140)/100);lost+=d;return Math.max(0,x-d)};st.my.sq=cut(st.my.sq);LTS().forEach(m=>{m.sq=cut(m.sq||0)});if(lost&&!quiet)log(`Sokak kadrondan ${lost} adam kaybettin.`,'bad');return lost}
 function armUse(d){const st=S.st;st.my.ar=Math.max(0,st.my.ar-d);LTS().forEach(m=>{m.ar=Math.max(0,(m.ar||0)-d)})}
 /* çeyrek */
-function streetQ(){if(S.age<16||S.jail||S.abroad)return;const st=stEnsure();
+function streetQ(){if(S.age<16||S.jail||S.abroad)return;const st=stEnsure();try{gNetQ(st)}catch(e){console.error(e)}
   // kadro maaşı
   const n=totSq()-famSq();if(n){const c=Math.round(n*SQW*S.cpi*(1+Math.max(0,n-100)/150)*(st.gw?1.5:1));const fromB=Math.min(S.black||0,c);S.black=(S.black||0)-fromB;const cr=c-fromB;fund(cr);if(cashA()>=cr){spend(cr);S.sqMiss=0;log(`🔫 Sokak kadron (${n} adam) maaşı${st.gw?' ve savaş primi':''}: ${fmt(c)}.`,'dim')}else{S.sqMiss=(S.sqMiss||0)+1;const d=sqLoss(.15,1);log(S.sqMiss>1?`Kadro maaşı ${S.sqMiss}. çeyrektir ödenmiyor: ${d} adam daha gitti.`:`Kadrona maaş ödeyemedin, ${d} adam ekibi bıraktı.`,'bad')}}
   armUse(st.gw?12:4);
@@ -3679,8 +3680,8 @@ function gangTruce(){const st=S.st,g=st&&st.gw;if(!g||S.jail)return;const win=g.
     {t:'Ateşkesi kabul et',sub:win?`${fmtS(m)} · Saygı +4 · Savaş biter`:'Savaş biter · Bir süre kimse saldırmaz',fn:()=>{gEnd();if(win){dirty(m);gainResp(4);log(`🕊 ${g.name} ile ateşkes: ${g.boss} geri çekildi, ${fmt(m)} gönderdi.`,'good')}else log(`🕊 ${g.name} ile ateşkes yapıldı. Sokaklar sakinledi.`,'dim')}},
     {t:'Reddet, sonuna kadar',sub:'Saygı +2 · Savaş sürer',fn:()=>{gainResp(2);log(`${g.boss}'in ateşkes teklifini geri çevirdin.`,'dim')}}]})}
 function gangDeclare(name){const st=stEnsure();if(st.gw)return;let g;
-  if(name){g=st.city.find(x=>x.name===name);if(!g){g=newGang();g.name=name;st.city.push(g)}}else g=pick(st.city);
-  {const ms=totSq();if(ms>40)g.sol=Math.max(g.sol,Math.round(ms*R(90,160)/100))}st.gw={name:g.name,boss:g.boss,sol:g.sol,sol0:g.sol,q:0,intel:false};
+  if(name){g=st.city.find(x=>x.name===name);if(!g){g=newGang();g.name=name;st.city.push(g)}}else{g=gNetPick(st);if(!g)return}
+  {const ms=totSq();if(ms>40)g.sol=Math.max(g.sol,Math.round(ms*R(90,160)/100))}st.gw={name:g.name,boss:g.boss,sol:g.sol,sol0:g.sol,q:0,intel:false};try{gNetWar(g)}catch(e){console.error(e)}
   queue({title:`⚔️ ${g.name} savaş açtı`,text:`${g.name} çetesinin lideri ${g.boss} haber saldı: "Bu sokaklar artık bizim. ${S.first}'in adamlarını gördüğümüz yerde dağıtacağız."<br><br>Onları yenene kadar işletmelerine, adamlarına, sana saldıracaklar. Savaş süresince kadron savaş primi ve mühimmat ister.<br><br>Onlar: <b>${g.sol} adam</b> · güç ${gPow(g)}<br>Sen: <b>${totSq()} adam</b> · güç ${stPow()}`,choices:[
     {t:'Savaşa hazırız',sub:'Sokak savaşı menüsü İşler\'de',fn:()=>{add('respect',2);log(`⚔️ ${g.name} çetesiyle savaş başladı.`,'bad')}},
     {t:'Ateşkes için para gönder',sub:`${fmtS(Math.round(gPow(g)*9000*S.cpi))} · Saygı −8`,dis:!canPay(Math.round(gPow(g)*9000*S.cpi)),fn:()=>{pay(Math.round(gPow(g)*9000*S.cpi));add('respect',-8);gEnd();log(`${g.name} çetesine para gönderdin. Sokak bunu konuşuyor.`,'bad')}}]})}
@@ -3738,7 +3739,7 @@ EXTRA.sokak=()=>{const st=stEnsure();let h='';
     h+=row('data-x="gw:pusu"','🔪','Pusu kur',used?'Bu çeyrek hamleni yaptın':`Adamlarının %15–28'ini düşür · Şans %${Math.round(winP(g,g.intel?.12:0)*100)}`,'',used);
     h+=row('data-x="gw:baskin"','🔥','Mekânlarını bas',used?'Bu çeyrek hamleni yaptın':'Adamlarının %22–38\'ini düşür · Ganimet · Çok mermi','',used||rank()<2);
     if(g.sol<=g.sol0*.3)h+=row('data-x="gw:son"','⚔️','Son hesaplaşma',`${g.boss} ile yüz yüze · Kazanırsan çete biter`,'',used);
-    h+=row('data-x="gw:baris"','🕊️','Barış teklif et','Saygı −10 · Savaş biter',fmtS(Math.round(gPow(g)*9000*S.cpi)),!canPayB(Math.round(gPow(g)*9000*S.cpi)));}
+    h+=row('data-x="gw:baris"','🕊️','Barış teklif et','Saygı −10 · Savaş biter',fmtS(Math.round(gPow(g)*9000*S.cpi)),!canPayB(Math.round(gPow(g)*9000*S.cpi)));h+=gNetWarRow()}
   // kadro
   const n=totSq();h+=`<div class="sec">🔫 Sokak kadron · ${n} adam</div><p class="note">Ailendeki her üyenin kendi sokak ekibi var. Kadro büyüdükçe savaşta ve haraçta güçlenirsin. Her çeyrek adam başı ${fmt(Math.round(SQW*S.cpi))} maaş${st.gw?' (savaşta ×1,5)':''}; silahlar zamanla eskir, savaşta mermi hızla biter. Toplam güç: <b>${stPow()}</b></p>`;
   {const c=fullCost();if(S.premium)h+=row('data-x="sqfull:dayi"','👑','Dayı modu: kadroyu fulle','Üyelerin gücü 10/10, bütün ekipler tam kadro, silahlar %100, sadakat %100 · Ücretsiz','',false);
@@ -3753,11 +3754,9 @@ EXTRA.sokak=()=>{const st=stEnsure();let h='';
   il.forEach(o=>h+=shRow(o));
   h+=`<div class="sec">🏪 Meşru esnaf</div><p class="note">⚠️ Namuslu esnaftan haraç alınmaz. El sürersen büyük kabadayı aileler paranın bir kısmına çöker.</p>`;lg.forEach(o=>h+=shRow(o))}
   // şehir
-  h+=`<div class="sec">🏙️ Şehrin sokak çeteleri</div><p class="note">İstanbul'da yüzlerce sokak çetesi var; en güçlüleri bunlar.${st.won?` Sen bugüne kadar ${st.won} çete dağıttın.`:''}</p>`;
-  [...st.city].sort((a,b)=>b.sol-a.sol).forEach(c=>h+=row(`data-x="gang:${encodeURIComponent(c.name)}"`,'🏴',c.name,`Lider ${c.boss} · ${c.sol} adam${st.gw&&st.gw.name===c.name?' · SAVAŞTASIN':''}`,'',!!st.gw));
+  h+=`<div class="sec">🏙️ Şehrin sokak çeteleri</div><p class="note">Çoğu büyük ailelerden birine bağlı; onlara dokunmak aileye dokunmaktır. Bağımsız olanları, yeterince güçlüysen çatışmadan diz çöktürebilirsin.${st.won?` Bugüne kadar ${st.won} çete dağıttın.`:''}</p>`+gNetListH();
   return [st.gw?'Sokak savaşı':S.yol==='kabadayi'?'Mahalle':'Sokak',h]};
-ACT.gang=nm=>{if(S.jail){toast('Hapisteyken sokak işlerine karışamazsın.');return}const st=stEnsure();const c=st.city.find(x=>x.name===decodeURIComponent(nm));if(!c||st.gw)return;closeSheet();
-  queue({back:'sokak',title:`🏴 ${c.name}`,text:`Lider ${c.boss}. ${c.sol} adam, güç ${gPow(c)}. Senin gücün ${stPow()}.`,choices:[{t:'⚔️ Savaş aç',sub:`Kazanma şansı her çatışmada %${Math.round(winP(c)*100)}`,fn:()=>{gainResp(3);gangDeclare(c.name)}},{t:'Vazgeç',fn:()=>{}}]})};
+ACT.gang=nm=>{if(S.jail){toast('Hapisteyken sokak işlerine karışamazsın.');return}const st=stEnsure();const c=st.city.find(x=>x.name===decodeURIComponent(nm));if(!c)return;closeSheet();gNetDlg(c)};
 function fullCost(){const st=stEnsure();let c=0;[[st.my,null],...LTS().filter(m=>!m.jail).map(m=>[m,m])].forEach(([o,m])=>{const add=Math.max(0,sqCap(m)-(o.sq||0));c+=sqAddCost(o,!m,add)/S.cpi+(sqCap(m))*(100-((o.sq||0)*(o.ar||0)/Math.max(1,sqCap(m))))/100*SQA});return Math.round(c*S.cpi)}
 ACT.sqfull=a=>{const st=stEnsure();const back=(a||'').includes('org')?'org':'sokak';a=(a||'').split('|')[0];const dayi=a==='dayi';if(dayi&&!S.premium)return;if(!dayi){const c=fullCost();if(!c||!payB(c))return}
   let n=0;if(dayi)LTS().filter(m=>!m.jail).forEach(m=>{m.str=10});[[st.my,null],...LTS().filter(m=>!m.jail).map(m=>[m,m])].forEach(([o,m])=>{n+=Math.max(0,sqCap(m)-(o.sq||0));o.sq=sqCap(m);o.ar=100;if(m&&dayi){m.loy=100;m.hurt=0}});
@@ -5374,6 +5373,73 @@ ACT.mbcap=a=>{const mb=S.mybank;if(!mb)return;const v=mbVal(mb);
   if(a==='sell'){if(!mb.pub||mb.own<=.1)return;const g=Math.round(v*.05);mb.own=Math.round((mb.own-.05)*1000)/1000;S.money+=g;log(`${mb.pub.tk}: %5 hisse sattın, ${fmt(g)}.`,'good');return mbRe()}
   if(a==='exit'){closeSheet();const g=Math.round(v*mb.own);return queue({back:'bankam',title:`🏁 ${mb.name}'ı sat`,text:`Payının tamamı için teklif: <b>${fmt(g)}</b>. Banka yeni sahibiyle yoluna devam eder; hissesi borsada işlem görür, istersen oradan alıp satarsın.`,choices:[{t:'Sat',sub:fmt(g),fn:()=>{const tk=mb.pub?mb.pub.tk:mbTicker(mb.name),lots=mb.pub?mb.pub.lots:1e7,pr=Math.max(.5,+(v/lots).toFixed(2));S.money+=g;S.taxInc=(S.taxInc||0)+Math.round(g*.15);S.xst=[...(S.xst||[]),{id:tk,n:mb.name,p:pr,v:.24,d:.09}];xstSync();S.px[tk]={p:pr,h:(mb.pub&&mb.pub.h?mb.pub.h.slice(-8):[pr]),n:gauss()};S.mybank=null;gainResp(6);log(`🏁 ${mb.name}'ı ${fmt(g)}'ye sattın. Hissesi ${tk} koduyla borsada.`,'gold');news(`${mb.name} el değiştirdi`,3)}},{t:'Vazgeç',fn:()=>{}}]})}
   if(a==='wash'){if(mb.washQ||(S.black||0)<=0)return;const mx=Math.min(S.black||0,Math.round(Math.max(M(5e6),mb.dep*.03)));return closeSheet(),amountModal('🖤 Kendi bankandan akla',`Kara para sahte hesaplardan geçip temiz olarak kasana girer. %6 kesinti. Tutar büyüdükçe denetim riski artar; şu an %${Math.min(100,Math.round(mb.aud||0))}.`,mx,x=>{S.black-=x;const g=Math.round(x*.94);S.money+=g;mb.washQ=1;mb.aud=Math.min(100,(mb.aud||0)+10+x/Math.max(1,mb.dep)*500);add('heat',2);log(`🖤 ${fmt(x)} kara para ${mb.name} üzerinden aklandı; kasana ${fmt(g)} girdi.`,'good')},'bankam')}};
+/* ============ Çete ağı: aileler, bağlı ve bağımsız sokak çeteleri ============ */
+const gCity=()=>(S.st&&S.st.city)||[];
+const gFam=g=>g&&g.pat?S.rivals.find(r=>r.id===g.pat&&!r.dead):null;
+const gRelT=g=>{const v=g.rel||0;return v>=40?'Dost':v>=10?'Yakın':v>-10?'Mesafeli':v>-40?'Soğuk':'Kin tutuyor'};
+const gRel=(g,v)=>{g.rel=Math.max(-100,Math.min(100,(g.rel||0)+v))};
+const gTag=g=>g.vas?'Sana bağlı':gFam(g)?`${gFam(g).n}'ne bağlı`:'Bağımsız';
+function gNetEnsure(st){if(!S.rivals)return;const live=S.rivals.filter(r=>!r.dead);
+  st.city.forEach(g=>{if(g.pat===undefined)g.pat=live.length&&ch(.65)?pick(live).id:null;if(g.rel===undefined)g.rel=0;
+    if(g.pat&&!S.rivals.some(r=>r.id===g.pat&&!r.dead)){g.pat=null;g.sol=Math.max(8,Math.round(g.sol*.7))}});
+  const ok=st.city.filter(g=>!g.vas);st.shops.forEach(o=>{if(o.gang&&!st.city.some(c=>c.name===o.gang)&&!(st.gw&&st.gw.name===o.gang))o.gang=ok.length?pick(ok).name:null})}
+function gNetPick(st){const c=st.city.filter(g=>!g.vas&&(g.rel||0)<40&&!(gFam(g)&&gFam(g).ally));if(!c.length)return null;const w=[];c.forEach(g=>{const f=gFam(g);const n=1+((g.rel||0)<-10?2:0)+(f&&f.war?3:0);for(let i=0;i<n;i++)w.push(g)});return pick(w)}
+function gNetWar(g){gRel(g,-30);const f=gFam(g),w=S.st.gw;if(f&&w){w.sol=Math.round(w.sol*1.15);w.sol0=w.sol;w.pat=f.id;setTimeout(()=>log(`${g.name} tek başına değil: arkasında ${f.n} var. Takviye yolladılar.`,'bad'),40)}}
+function gNetWon(w,pat){if(!w)return;const f=pat&&S.rivals.find(r=>r.id===pat&&!r.dead);const K=S.st.kon;if(K&&K.g===w.name){const r=S.rivals.find(x=>x.id===K.f);S.st.kon=null;dirty(K.m);if(r)r.ang=Math.max(0,(r.ang||0)-2);log(`${r?r.n:'Aile'} sözünü tuttu: ${w.name} işi için ${fmt(K.m)} gönderdi.`,'gold')}
+  if(!f)return;f.ang=(f.ang||0)+1;f.pow=Math.max(Math.round(f.base*.6),f.pow-R(3,7));log(`${f.n} sokaktaki çetesini kaybetti. ${f.boss?f.boss.name:'Reis'} bunu unutmayacak.`,'bad');
+  if(f.ang>=2&&!f.war&&!f.ally){f.ang=0;if(S.org){f.war=true;log(`⚔️ ${f.n}, çetelerini dağıttığın için sana savaş ilan etti!`,'bad');news(`${f.n} ile ${S.first} ${S.last} arasında savaş`,3)}else makeThreat()}}
+{const _gw0=gangWin;gangWin=function(){const st=S.st,w=st&&st.gw;const c=w&&st.city.find(x=>x.name===w.name);const pat=(c&&c.pat)||(w&&w.pat);const r=_gw0.apply(this,arguments);try{gNetWon(w,pat)}catch(e){console.error(e)}return r}}
+const gVasFee=g=>Math.round(gPow(g)*600*S.cpi/1000)*1000;
+function gSubmit(c,how){const st=S.st;c.vas=1;c.rel=Math.max(c.rel||0,15);c.pat=null;
+  if(S.yol==='kabadayi'){let n=0;st.shops.forEach(o=>{if(shopT(o).il&&o.gang===c.name&&o.st!=='kapali'){o.st='kapali';o.kq=qnow();o.gang=null;n++}});kHz(3+n*2);gainResp(5);log(`${c.boss} başını eğdi: "${S.first} Abi, senin mahallende işimiz olmaz." ${c.name} çekildi${n?`, ${n} pis iş kapandı`:''}.`,'gold')}
+  else{st.shops.forEach(o=>{if(shopT(o).il&&o.gang===c.name){o.gang=null;if(o.st!=='odeyor'){o.st='odeyor';o.mood=clamp(o.mood+5)}}});gainResp(6);log(`${c.boss} ${how||'diz çöktü'}. ${c.name} artık sana bağlı: çeyrekte ${fmt(gVasFee(c))} gönderecek.`,'gold')}
+  S.stats.crimes++}
+function gNetDlg(c){const st=S.st,f=gFam(c),R_=stPow()/Math.max(1,gPow(c)),str=R_>=2?'Senden çok zayıflar.':R_>=1.3?'Senden zayıflar.':R_>=.85?'Güçleriniz denk.':R_>=.55?'Senden güçlüler.':'Senden çok güçlüler.';
+  const head=`Lider ${c.boss}. ${c.sol} adam, güç ${gPow(c)}. Senin gücün ${stPow()}. ${str}<br>${c.vas?'<b>Sana bağlı.</b>':f?`<b>${f.n}</b>'ne bağlı${f.ally?' (müttefikin)':f.war?' (savaştasınız)':''}. Onlara dokunmak aileye dokunmaktır.`:'<b>Bağımsız çete.</b> Arkalarında kimse yok.'} Tutum: ${gRelT(c)}.`;
+  const ch_=[];
+  if(c.vas){ch_.push({t:'Adam iste',dis:c.rq===S.age,sub:c.rq===S.age?'Bu yıl istedin':'',fn:()=>{c.rq=S.age;const n=Math.max(1,Math.round(c.sol*.08));c.sol=Math.max(5,c.sol-n);st.my.sq=Math.min(sqCap(null),st.my.sq+n);gRel(c,-5);log(`${c.boss} ${n} adamını ekibine yolladı.`,'good')}});
+    ch_.push({t:'Serbest bırak',fn:()=>{c.vas=0;gRel(c,10);log(`${c.name} çetesini serbest bıraktın.`,'dim')}})}
+  else{
+    if(!f){const p=clamp((R_-1)*.5+(c.rel||0)/400+karizma()/300,0,.92);ch_.push({t:'Gözdağı ver',sub:'Çatışmadan diz çöktür',dis:st.gw&&st.gw.name===c.name,fn:()=>{if(ch(p)){gSubmit(c)}else{gRel(c,-20);add('respect',-1);log(`${c.boss} yüzüne güldü: "Sen kimsin de bize ayar veriyorsun?"`,'bad');if(R_<1.3&&!st.gw&&ch(.6))setTimeout(()=>gangDeclare(c.name),80)}}})}
+    else if(!f.ally){const m=Math.round(gPow(c)*20000*S.cpi/1000)*1000;ch_.push({t:'Aileden kopar',sub:fmt(m),dis:!canPayB(m),fn:()=>{payB(m);if(ch(clamp(.35+(c.rel||0)/200+S.respect/300,.1,.9))){c.pat=null;gRel(c,20);f.ang=(f.ang||0)+1;log(`${c.boss} parayı aldı, ${f.n} ile bağını kopardı. Artık arkalarında kimse yok.`,'gold')}else{gRel(c,-10);f.ang=(f.ang||0)+1;log(`${c.boss} parayı aldı ama ${f.n}'ne haber uçurdu.`,'bad')}}})}
+    ch_.push({t:'⚔️ Savaş aç',dis:!!st.gw||!!(f&&f.ally),sub:f&&f.ally?'Müttefikinin çetesi':st.gw?'Zaten savaştasın':'',fn:()=>{gainResp(3);gangDeclare(c.name)}})}
+  ch_.push({t:'Vazgeç',fn:()=>{}});queue({back:'sokak',title:`🏴 ${c.name}`,text:head,choices:ch_})}
+ACT.gwt=()=>{const st=S.st,w=st&&st.gw;if(!w||S.jail)return;const c=st.city.find(x=>x.name===w.name);closeSheet();if(!c)return;if(ch(clamp(.3+(1-w.sol/Math.max(1,w.sol0))*.8,.1,.9))){gEnd();c.sol=w.sol;gSubmit(c,'teslim oldu')}else{w.tq=qnow();log(`${w.boss} teslim çağrını geri çevirdi: "Son adamıma kadar."`,'bad')}done()};
+const gNetWarRow=()=>{const st=S.st,w=st&&st.gw;if(!w||w.pat||w.sol>w.sol0*.6)return'';const c=st.city.find(x=>x.name===w.name);if(!c||gFam(c))return'';return row('data-x="gwt:"','🕊️','Teslim ol çağrısı yap',w.tq===qnow()?'Bu çeyrek reddettiler':'Arkalarında kimse yok, adamları azaldı','',w.tq===qnow())};
+function gNetListH(){const st=stEnsure();const r_=g=>row(`data-x="gang:${encodeURIComponent(g.name)}"`,g.vas?'🤝':'🏴',g.name,`Lider ${g.boss} · ${g.sol} adam · ${gRelT(g)}${g.vas&&S.yol!=='kabadayi'?' · +'+fmtS(gVasFee(g)):''}${st.gw&&st.gw.name===g.name?' · SAVAŞTASIN':''}`,'›',false);let h='';
+  const vs=st.city.filter(g=>g.vas);if(vs.length){h+='<div class="sec">Sana bağlı çeteler</div>';vs.forEach(g=>h+=r_(g))}
+  S.rivals.filter(r=>!r.dead).forEach(r=>{const gs=st.city.filter(g=>!g.vas&&g.pat===r.id);if(!gs.length)return;h+=`<div class="sec">${r.n}'nin sokak çeteleri</div>`;gs.forEach(g=>h+=r_(g))});
+  const ind=st.city.filter(g=>!g.vas&&!gFam(g));if(ind.length){h+='<div class="sec">Bağımsız çeteler</div><p class="note">Arkalarında aile yok. Yeterince güçlüysen çatışmadan gözdağıyla diz çöktürebilirsin.</p>';ind.forEach(g=>h+=r_(g))}
+  return h}
+/* çeyrek ve yıl */
+function gNetQ(st){if(!S.rivals)return;gNetEnsure(st);const w=st.gw;
+  if(S.yol!=='kabadayi'){const vs=st.city.filter(g=>g.vas);if(vs.length){const s=vs.reduce((a,g)=>a+gVasFee(g),0);dirty(s);log(`🏴 Sana bağlı ${vs.length} çete ${fmt(s)} gönderdi.`,'good')}}
+  if(w&&w.pat&&S.rivals.some(r=>r.id===w.pat&&!r.dead))w.sol=Math.round(w.sol*1.05);
+  st.city.forEach(g=>{if(g.vas&&gPow(g)>stPow()*1.1&&ch(.3)){g.vas=0;gRel(g,-30);log(`${g.name} zayıfladığını gördü, bağını kopardı. ${g.boss} artık haraç göndermiyor.`,'bad')}});
+  if(!w&&(st.pz||0)<=qnow()&&rank()>=1){const wf=st.city.filter(g=>!g.vas&&gFam(g)&&gFam(g).war);if(wf.length&&ch(.15))setTimeout(()=>gangDeclare(pick(wf).name),70)}
+  if(st.kon&&st.kon.q<qnow()){const r=S.rivals.find(x=>x.id===st.kon.f);st.kon=null;if(r)log(`${r.n} beklemekten sıkıldı, işi başkasına verdi.`,'dim')}
+  if(S.q===0){st.city.forEach(g=>{if(g.rel>0)g.rel=Math.max(0,g.rel-3);else if(g.rel<0)g.rel=Math.min(0,g.rel+3)});try{gNetWorld(st)}catch(e){console.error(e)}}}
+function gNetWorld(st){const free=st.city.filter(g=>!(st.gw&&st.gw.name===g.name));const live=S.rivals.filter(r=>!r.dead);if(free.length<3)return;
+  if(ch(.9)){const k=R(0,4);
+    if(k===0){const a=pick(free),b=pick(free.filter(x=>x!==a));const [wn,ls]=gPow(a)*R(70,130)>gPow(b)*R(70,130)?[a,b]:[b,a];ls.sol=Math.max(4,Math.round(ls.sol*.65));wn.sol=Math.round(wn.sol*1.1);
+      if(ls.sol<12&&!ls.vas){st.city=st.city.filter(x=>x!==ls);st.shops.forEach(o=>{if(o.gang===ls.name)o.gang=wn.vas?null:wn.name});log(`🏴 ${wn.name}, ${ls.name} çetesini sokaktan sildi. ${ls.boss} şehri terk etti.`,'dim');news(`${ls.name} çetesi dağıldı`,1)}else log(`🏴 ${wn.name} ile ${ls.name} gece boyu çatıştı. ${ls.name} ağır kayıp verdi.`,'dim')}
+    else if(k===1&&live.length){const g=pick(free.filter(x=>!x.vas&&!gFam(x)));if(g){const r=pick(live);g.pat=r.id;g.sol=Math.round(g.sol*1.15);log(`🏴 ${g.name} artık ${r.n}'nin kanatları altında.`,'dim')}}
+    else if(k===2){const g=pick(free);const old=g.boss;g.boss=`${pick(NICK)} ${pick(NAMES)}`;g.rel=Math.round((g.rel||0)/2);log(`🏴 ${g.name} çetesinde ${old} devrildi. Yeni lider ${g.boss}.`,'dim');if(g.vas&&ch(.4)){g.vas=0;log(`${g.boss} eski anlaşmaları tanımıyor: ${g.name} artık sana bağlı değil.`,'bad')}}
+    else if(k===3&&live.length>=2){const a=pick(live),b=pick(live.filter(x=>x!==a));const d=R(3,8);a.pow+=d;b.pow=Math.max(Math.round(b.base*.6),b.pow-d);const g=pick(st.city.filter(x=>x.pat===b.id&&!x.vas));if(g)g.pat=a.id;log(`🐍 ${a.n} ile ${b.n} arasında hesaplaşma: ${b.n} geriledi${g?`, ${g.name} taraf değiştirdi`:''}.`,'dim');news(`${a.n} ile ${b.n} arasında kanlı gece`,2)}
+    else{const g=pick(free.filter(x=>!x.vas));if(g){g.sol=Math.round(g.sol*1.2);log(`🏴 ${g.name} adam topluyor: kadrosu ${g.sol}'e çıktı.`,'dim')}}}
+  if(!ch(.4)||S.jail||S.abroad||rank()<1)return;const k=R(0,2);
+  if(k===0&&live.length>=2&&!st.kon&&!st.gw){const f=pick(live.filter(r=>!r.war));const tg=f&&pick(st.city.filter(g=>!g.vas&&gFam(g)&&g.pat!==f.id));if(f&&tg){const m=Math.round(gPow(tg)*45000*S.cpi/1000)*1000;const mf=S.yol!=='kabadayi';
+    queue({title:`${f.n}'nden haber`,text:`${f.boss?f.boss.name:'Reis'} aracı yolladı: "${tg.name} başımızı ağrıtıyor. Arkalarındaki aileyle açıktan kapışmak istemiyoruz. ${mf?'Onları sen bitir':'Mahallene de bulaşıyorlar; onları sen bitir'}, ${fmt(m)} senin."<br><br>${tg.name}: ${tg.sol} adam, güç ${gPow(tg)}. ${gFam(tg).n}'ne bağlı.`,choices:[
+      {t:'İşi al',fn:()=>{st.kon={g:tg.name,f:f.id,m,q:qnow()+8};f.ang=Math.max(0,(f.ang||0)-1);log(`${f.n} ile anlaştın: ${tg.name} iki yıl içinde bitecek.`,'dim');setTimeout(()=>{if(!S.st.gw)gangDeclare(tg.name)},80)}},
+      {t:'"Kimsenin tetikçisi değilim"',fn:()=>{gainResp(2);log(`${f.n}'nin teklifini geri çevirdin.`,'dim')}}]})}}
+  else if(k===1&&!st.gw){const g=pick(st.city.filter(x=>!x.vas&&!gFam(x)&&(x.rel||0)>=0&&gPow(x)<stPow()*.8));if(g)queue({title:`${g.boss} kapına geldi`,text:`${g.name} çetesinin lideri ${g.boss} tek başına geldi, silahını masaya bıraktı: "Aileler bizi yutacak. Senin kanatlarının altına girmek istiyoruz. Ne dersen o."`,choices:[
+      {t:'Kanatlarının altına al',fn:()=>gSubmit(g,'kendi ayağıyla geldi')},
+      {t:'"Herkes kendi yolunu çizer"',fn:()=>{gRel(g,-5);log(`${g.boss} silahını alıp gitti.`,'dim')}}]})}
+  else{const cs=free.filter(x=>!x.vas);const a=pick(cs),b=pick(cs.filter(x=>x!==a));if(a&&b&&!st.gw){const weak=gPow(a)<gPow(b)?a:b,strong=weak===a?b:a;
+    queue({title:`${weak.name} yardım istiyor`,text:`${strong.name} ile ${weak.name} savaşta. Zayıf düşen ${weak.boss} haber yolladı: "Bu gece yanımızda olursan bunu ölene kadar unutmayız."`,choices:[
+      {t:'Yanlarında dur',fn:()=>kFight(`${strong.name} baskını`,2,kPw(2),ok=>{if(ok){gRel(weak,45);gRel(strong,-35);strong.sol=Math.max(6,Math.round(strong.sol*.75));gainResp(4);log(`${strong.name} püskürtüldü. ${weak.boss}: "Bir sözün yeter."`,'gold')}else{hurt(R(8,18),'Çete çatışması');gRel(weak,15);gRel(strong,-35);log(`Gece kötü bitti. ${strong.name} seni de unutmayacak.`,'bad')}done()})},
+      {t:'Karışma',fn:()=>{weak.sol=Math.max(5,Math.round(weak.sol*.7));gRel(weak,-10);log(`${weak.name} o gece ağır kayıp verdi.`,'dim')}},
+      ...(S.yol!=='kabadayi'?[{t:'İkisi boğuşurken dükkânlarına çök',fn:()=>{const o=st.shops.find(x=>shopT(x).il&&x.st!=='odeyor'&&(x.gang===weak.name||x.gang===strong.name));if(o){o.gang=null;o.st='odeyor';gRel(weak,-25);gRel(strong,-25);S.stats.crimes++;log(`${shopT(o).ic} Kargaşada ${o.owner} sana bağlandı. İki çete de bunu gördü.`,'good')}else log('Çökecek dükkân bulamadın.','dim')}}]:[])]})}}}
 /* ============ Anne, baba ve evcil hayvanlar ============ */
 const MOMN=['Fatma','Ayşe','Emine','Hatice','Zeynep','Hacer','Sevim','Nermin','Gülsüm','Şükran','Meryem','Saadet','Nuran','Türkan'];
 function parPpl(){const P=parEnsure();if(S.famBg==='yetim')return P;if(!P.mom){const al=!!P.alive;P.mom={name:pick(MOMN),d:R(20,30),alive:al,die:Math.max(S.age+1,P.die+R(0,7))};P.dad={name:pick([...NAMES,...SHOPN]),d:R(23,34),alive:al,die:Math.max(S.age+1,P.die+R(-3,3))}}return P}
