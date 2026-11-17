@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.16-2300';
+const APPV='2026.11.17-1000';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -4665,10 +4665,11 @@ const PACKS={
   sohret:{n:'Şöhret Paketi',ic:'🎤',id:'com.burakyoruk.derindunya.sohret',p:'₺99,99',f:['Müzik şirketi kur, sanatçı keşfet ve yönet','Konser ve sahne organizasyonları','Reklam anlaşmaları ve marka yüzlüğü']},
   spor:{n:'Spor Paketi',ic:'⚽',id:'com.burakyoruk.derindunya.spor',p:'₺99,99',f:['Futbol kulübü satın al, başkan ol','Transfer pazarı, kadro ve teknik direktör','Lig, kupa ve şampiyonluk yarışı']},
   yapim:{n:'Yapım Paketi',ic:'🎬',id:'com.burakyoruk.derindunya.yapim',p:'₺99,99',f:['Kendi yapım şirketini kur: dizi, film, belgesel','Adını koy, afişini seç, senarist, yönetmen ve oyuncuları belirle','Reyting, gişe, yurt dışı satış, yeni sezonlar','CEO, CFO, CMO ve yaratıcı direktörden kadro','Festival ödülleri, set olayları, RTÜK, skandallar']},
+  boks:{n:'Boks Paketi',ic:'🥊',id:'com.burakyoruk.derindunya.boks',p:'₺99,99',solo:1,f:['Salona yazıl, amatörden dünya şampiyonluğuna yüksel','5 siklet, 8 kademe, birden fazla siklette kemer','Antrenör, menajer, sponsor ve ücret pazarlıkları','Maç öncesi yüz yüze, ringde dövüş mini oyunu, kemer töreni','Eldiven ve şort renklerini seç']},
   patron:{n:'Patron Paketi',ic:'👔',id:'com.burakyoruk.derindunya.patron',p:'₺249,99',f:['İş, Emlak, Şöhret, Spor ve Yapım paketlerinin hepsi','Kendi bankanı kur: faizler, ürünler, kadro, şubeler, halka arz','Tek tek almaktan çok daha ucuz']}};
 Object.entries(PACKS).forEach(([k,v])=>IAP['pk_'+k]=v.id);
 const pkOwn=k=>{try{return localStorage.getItem('mafya-pk-'+k)==='1'}catch(e){return false}};
-const packOK=k=>pkOwn(k)||pkOwn('patron');
+const packOK=k=>pkOwn(k)||(!(PACKS[k]&&PACKS[k].solo)&&pkOwn('patron'));
 function pkGrant(k,silent){const was=packOK(k);try{localStorage.setItem('mafya-pk-'+k,'1')}catch(e){}if(!was&&!silent){toast(`${PACKS[k].ic} ${PACKS[k].n} açıldı`);if(S)log(`${PACKS[k].ic} ${PACKS[k].n} açıldı!`,'gold')}if(S)afterChange()}
 function pkSync(list,announce){let n=0;Object.entries(PACKS).forEach(([k,v])=>{if((list||[]).some(t=>t.productIdentifier===v.id)){if(!pkOwn(k))n++;pkGrant(k,!announce)}});return n}
 function pkShop(k){closeSheet();const P=PACKS[k];const pr=iapPrice(P.id,P.p);const own=packOK(k);
@@ -5770,7 +5771,7 @@ function boxShopRows(){if(!S.box)return'';const b=S.box;let h='<div class="sec">
   BXS.forEach((x,i)=>{if(i)h+=row(`data-x="boxgear:s${i}"`,'🩳',x[0],b.gear.s>=i?'Sende var':'',b.gear.s>=i?'✓':fmtS(M(x[1])),b.gear.s>=i||!canPay(M(x[1])))});return h}
 ACT.boxgear=k=>{const b=S.box;if(!b)return;const t=k[0],i=+k.slice(1),L=t==='e'?BXG:BXS;if(!pay(M(L[i][1])))return;b.gear[t]=i;log(`${L[i][0]} aldın.`,'good');afterChange();openSheet('avm')};
 const bxBar=(n,v)=>`<div><span>${n}</span><b>${Math.round(v)}</b></div>`;
-EXTRA.boks=()=>{atlE();const b=bxM(S.box);let h='';
+EXTRA.boks=()=>{if(!packOK('boks'))return pkLock('boks','Boks');atlE();const b=bxM(S.box);let h='';
   if(!b){h+=`<p class="note">Salona yazıl, antrenman yap, amatör maçlara çık. Yeteneğin ve çalışman yeterse profesyonel olur, Türkiye'den dünya kemerine kadar yürürsün. Her maçtan önce kampa girer, tartıda rakibinle yüz yüze gelirsin.</p><div class="sum"><div><span>Fiziğin</span><b>${atlW()}</b></div></div>`;
     h+=row('data-x="boxjoin:"','🥊','Boks salonuna yazıl',S.age<10?'10 yaşından sonra':S.age>30?'Bu yaştan sonra ancak hobi olur':'','',S.age<10||!!S.jail);return['🥊 Boks',h]}
   const T=BXT[b.tier],champ=bxChamp(b);
@@ -6218,7 +6219,7 @@ function openSheet(k){if(k==='gard')k='insan';if(typeof k==='string'&&/^bk_my\d+
           h+=row(`data-c="${c.id}"`,lockA||lockR?'🔒':c.ic,c.n,d+(lockA||lockR?'':'<br>'+riskTag(failP(c))),lockA||lockR?'🔒':actDone(c.id)?'Bitti':fmtS(c.m[1]),lockA||lockR||actDone(c.id))});
       }else h+='<p class="note">Suç dünyası 14 yaşında açılır. Şimdilik çocukluğunu yaşa.</p>';
       if(!S.family&&S.age>=16&&S.yol!=='kabadayi')h=h.replace('<div class="sec">Suç dünyası</div>','<div class="sec">Aile</div>'+row('data-f="1"','🌹','Bir aileye katıl',S.snitch?'İspiyoncu geçmişin kapıları zorlaştırır':'En az 10 saygı gerekir','',false)+'<div class="sec">Suç dünyası</div>');
-      if(S.age>=14)h+='<div class="sec">Sokak</div>'+(S.age>=16?(()=>{const st=stEnsure();const n=st.shops.filter(o=>o.st==='odeyor'&&shopT(o).il).length;return (st.gw?row('data-go="sokak"','⚔️',`Savaş: ${st.gw.name}`,`${st.gw.sol} adamları kaldı · Onları bitir`,'›',false):'')+(S.yol==='kabadayi'?row('data-go="sokak"','🤝','Mahalle: koruma ve kadro',`${st.shops.filter(o=>o.st==='odeyor'&&!shopT(o).il).length} esnaf himayende · Huzur %${S.huzur===undefined?50:S.huzur}`,'›',false):row('data-go="sokak"','🏴','Sokak: haraç ve kadro',`${n} işletme haraç veriyor · ${totSq()} adamlık kadro`,'›',false))})():'')+row('data-go="boks"','🥊','Boks',S.box&&!S.box.quit?`${BXT[S.box.tier].n} · ${S.box.w} galibiyet, ${S.box.l} yenilgi`:S.box?'Eldivenleri astın':'Salona yazıl, ringe çık','›',false)+row('data-x="dovus:"','👊','Sokak dövüşü',S.mgOff?'Saygı + · Risk':'Mini oyun · Saygı +','',false);
+      if(S.age>=14)h+='<div class="sec">Sokak</div>'+(S.age>=16?(()=>{const st=stEnsure();const n=st.shops.filter(o=>o.st==='odeyor'&&shopT(o).il).length;return (st.gw?row('data-go="sokak"','⚔️',`Savaş: ${st.gw.name}`,`${st.gw.sol} adamları kaldı · Onları bitir`,'›',false):'')+(S.yol==='kabadayi'?row('data-go="sokak"','🤝','Mahalle: koruma ve kadro',`${st.shops.filter(o=>o.st==='odeyor'&&!shopT(o).il).length} esnaf himayende · Huzur %${S.huzur===undefined?50:S.huzur}`,'›',false):row('data-go="sokak"','🏴','Sokak: haraç ve kadro',`${n} işletme haraç veriyor · ${totSq()} adamlık kadro`,'›',false))})():'')+row('data-go="boks"','🥊','Boks',!packOK('boks')?'Boks Paketi ile açılır':S.box&&!S.box.quit?`${BXT[S.box.tier].n} · ${S.box.w} galibiyet, ${S.box.l} yenilgi`:S.box?'Eldivenleri astın':'Salona yazıl, ringe çık','›',false)+row('data-x="dovus:"','👊','Sokak dövüşü',S.mgOff?'Saygı + · Risk':'Mini oyun · Saygı +','',false);
       h+='<div class="sec">Hayat</div>';
       LIFE.filter(a=>(GAMBLE||a.id!=='kumar')&&S.age>=(a.min||0)&&(a.max===undefined||S.age<=a.max)).forEach(a=>{let c=a.cost||(a.dyn?Math.round(a.dyn()):0);if(a.id==='doktor'&&friends('doktor',30))c=0;h+=row(`data-l="${a.id}"`,a.ic,a.n,a.d,c?fmtS(c):'',(c&&(['rusvet','kumar'].includes(a.id)?!canPayB(c):cashA()<c))||(!S.premium&&HEALIDS.includes(a.id)&&healLeft()<=0)||actDone('l_'+a.id))});
     }
