@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.18-0150';
+const APPV='2026.11.18-0215';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -5732,7 +5732,7 @@ const GVIP=['Şarkıcı','Futbolcu','Oyuncu','Sunucu','Rapçi','Voleybolcu'];
 const gsCtT=c=>GCT.find(x=>x.k===c.k)||GCT[0];
 const gsUsed=()=>{const g=S.gsec;if(!g)return 0;return (g.ct||[]).reduce((a,c)=>a+c.nd,0)+(S.kc||[]).filter(c=>c.sec&&c.st==='odeyor').length*KCSTAFF};
 const gsFree=()=>S.gsec?Math.max(0,S.gsec.staff-gsUsed()):0;
-const gsCap=()=>S.gsec?100+Math.round(S.gsec.rep*15)+(S.kT||0)*1500:0;
+const gsCap=()=>{const g=S.gsec;if(!g)return 0;g.repMax=Math.max(g.repMax||0,g.rep);return Math.max(g.staff,100+Math.round(g.repMax*15)+(S.kT||0)*1500)};
 const gsWage=()=>Math.round(GSW*(1+(S.gsec?S.gsec.tr:0)/200)*S.cpi);
 const gsCanFound=()=>isKab()&&rank()>=2&&S.age>=21;
 const gsFoundC=()=>M(1500000);
@@ -5785,9 +5785,9 @@ ACT.gsec=a=>{const i=a.indexOf(':'),op=i<0?a:a.slice(0,i),x=i<0?'':a.slice(i+1);
   done()};
 function gsQ(){const g=S.gsec;if(!g)return;gsEnsure();let inc=0;
   g.ct.forEach(c=>{inc+=Math.round(c.fee*S.cpi);c.left--;const T=gsCtT(c),nm=`${T.n}${c.who?' ('+c.who+')':''}`;
-    if(ch(.08+(T.vip?.06:0))){if(ch(clamp(.35+g.tr/150+g.rep/400,.2,.95))){g.rep=clamp(g.rep+R(2,5));log(`🛡️ ${nm}: ${pick(['kalabalık kapıyı zorladı, ekibin olaysız dağıttı','biri saldırmaya çalıştı, ekibin anında etkisiz hale getirdi','sahneye çıkmaya çalışan birini ekibin nazikçe indirdi','bir hırsızlık girişimini ekibin daha kapıda durdurdu'])}. Haberlerde şirketin adı geçti.`,'good')}
-      else{g.rep=clamp(g.rep-R(4,8));const lost=ch(.5);if(lost)c.left=0;log(`⚠️ ${nm}: ekibin bir olayda geç kaldı.${lost?' Müşteri sözleşmeyi bitirdi.':''}`,'bad')}}
-    else if(ch(.5))g.rep=clamp(g.rep+1)});
+    if(ch(.08+(T.vip?.06:0))){if(ch(clamp(.45+g.tr/150+g.rep/400,.25,.95))){g.rep=clamp(g.rep+R(1,3));log(`🛡️ ${nm}: ${pick(['kalabalık kapıyı zorladı, ekibin olaysız dağıttı','biri saldırmaya çalıştı, ekibin anında etkisiz hale getirdi','sahneye çıkmaya çalışan birini ekibin nazikçe indirdi','bir hırsızlık girişimini ekibin daha kapıda durdurdu'])}. Haberlerde şirketin adı geçti.`,'good')}
+      else{g.rep=clamp(g.rep-R(1,3));const lost=ch(.4);if(lost)c.left=0;log(`⚠️ ${nm}: ekibin bir olayda geç kaldı.${lost?' Müşteri sözleşmeyi bitirdi.':''}`,'bad')}}
+    else if(ch(.35))g.rep=clamp(g.rep+1)});
   g.ct.filter(c=>c.left<=0).forEach(c=>{const T=gsCtT(c);if(g.rep>=15&&ch(.45)&&c.dur>1){c.left=c.dur;log(`📑 ${T.n}${c.who?' ('+c.who+')':''} sözleşmeyi yeniledi.`,'good')}});g.ct=g.ct.filter(c=>c.left>0);
   (S.kc||[]).forEach(c=>{if(c.sec&&c.st==='odeyor')inc+=Math.round(kcFee(c)*.8)});
   const w=g.staff*gsWage(),net=inc-w;
