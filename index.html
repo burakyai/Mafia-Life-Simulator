@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.18-0215';
+const APPV='2026.11.18-0235';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -732,7 +732,7 @@ function karizma(){if(S&&((S.look&&S.look.acc.includes('hac'))||(S.owned&&S.owne
   if(hasY('fotr'))k+=5;if(S.age<16)k=0;return k}
 function has(id){return S.staff.some(x=>x.id===id)}
 function friends(job,min=50){return S.friends.filter(f=>f.job===job&&f.rel>=min).length}
-const inUW=()=>!!(S.yol||S.family||S.org||S.uw||(S.stats&&S.stats.crimes>0)||(S.black||0)>0||(S.st&&S.st.shops&&S.st.shops.some(o=>o.st==='odeyor')));const rankN=i=>i===0&&!inUW()?'Sivil':S.yol==='kabadayi'?(S.kTitle&&i>=5?'Türkiye\'nin Kabadayısı':KRANK[i]):RANKS[i].n;
+const inUW=()=>!!(S.yol||S.family||S.org||S.uw||(S.stats&&S.stats.crimes>0)||(S.black||0)>0||(S.st&&S.st.shops&&S.st.shops.some(o=>o.st==='odeyor')));const rankN=i=>i===0&&!inUW()?'Sivil':S.yol==='kabadayi'?(S.kTitle&&i>=5?'Son Kabadayı':KRANK[i]):RANKS[i].n;
 function rank(){if(S.age<14||!inUW())return 0;let i=0;RANKS.forEach((r,k)=>{if(S.respect>=r.r)i=k});const cap=S.yol==='kabadayi'?(S.org?5:3):S.org?5:!S.family?1:(S.boss?5:4);return Math.min(i,cap)}
 function fam(){return FAMILIES.find(f=>f.n===S.family)}
 function boss(){return S.boss?'Sen':(fam()?'Baba '+fam().b:'Mahalle abisi')}
@@ -5690,7 +5690,7 @@ function kCli(id){const c=(S.kc||[]).find(x=>x.id===id);if(!c||!isKab())return;i
     {t:'Vazgeç',fn:()=>{}}]})}
 ACT.kcli=id=>kCli(id);
 function kCityH(){if(!isKab())return'';const t=S.kT||0,g=kTGoal();
-  let h=`<div class="sec">🗺️ Namın · ${KTN[t]}</div><p class="note">${t===0?'Adın şimdilik mahallede geçiyor.':t===1?'Adın şehrin her yerinde geçiyor. Fabrikatörler, müteahhitler, kulüp başkanları kapına geliyor.':'Adın ülkenin her yerinde geçiyor. Holdingler, limanlar, başka şehirlerin kabadayıları seni tanıyor.'}${g?` Bir sonraki aşama için: <b>${g.txt}</b>.`:S.kTitle?' Sen artık <b>Türkiye\'nin Kabadayısı</b>sın.':' Son basamak <b>Türkiye\'nin Kabadayısı</b> unvanı: saygın ve mahallenin huzuru zirvede olmalı, himayende en az 4 büyük bulunmalı.'}</p>`;
+  let h=`<div class="sec">🗺️ Namın · ${KTN[t]}</div><p class="note">${t===0?'Adın şimdilik mahallede geçiyor.':t===1?'Adın şehrin her yerinde geçiyor. Fabrikatörler, müteahhitler, kulüp başkanları kapına geliyor.':'Adın ülkenin her yerinde geçiyor. Holdingler, limanlar, başka şehirlerin kabadayıları seni tanıyor.'}${g?` Bir sonraki aşama için: <b>${g.txt}</b>.`:S.kTitle?' Sen artık <b>Son Kabadayı</b>sın.':' Son basamak <b>Son Kabadayı</b> unvanı: saygın ve mahallenin huzuru zirvede olmalı, himayende en az 4 büyük bulunmalı.'}</p>`;
   if(t>=1){const L=kcEnsure(),p=kcPay(),tot=p.reduce((a,c)=>a+kcFee(c),0);
     h+=`<div class="sec">🏙️ Şehrin büyükleri · ${p.length}/${L.length}</div><p class="note">Her biri büyük bir dertle gelir. Derdini temiz çözersen himayene girer; pis yoldan çözersen para büyük, ama mahalle unutmaz. Çeyrekte ${fmt(tot)}.</p>`;
     L.forEach(c=>{const T=kcT(c),vis=c.vq===qnow();h+=row(`data-x="kcli:${c.id}"`,T.ic,`${T.n} · ${c.owner}`,`${c.st==='odeyor'?`Himayende${c.sec?' · Şirket sözleşmeli':''}${c.yz?' · Pis anlaşma':''} · Memnuniyet %${c.mood}`:c.st==='kizgin'?'Sana kırgın':T.own+' · Derdi var'}${vis?' · Bu çeyrek uğradın':''}`,c.st==='odeyor'?'+'+fmtS(kcFee(c)):'',false)})}
@@ -5708,8 +5708,8 @@ function kCityQ(){if(!isKab()||S.jail||S.abroad||S.age<16)return;const g=kTGoal(
   if(d){dirty(d);log(`🏙️ Şehrin büyüklerinden ${fmt(d)} koruma parası geldi.`,'good');add('heat',1)}
   p.forEach(c=>{c.mood=clamp(c.mood+((S.huzur||0)>=55?1:-2)-(qnow()-(c.vq||0)>8?2:0));if(c.mood<10&&ch(.35)){c.st='kizgin';c.sec=0;log(`${kcT(c).ic} ${c.owner}: "Bizi unuttun." Himayenden çıktı.`,'bad')}});
   if(p.length&&(S.kcAtQ||0)<=qnow()&&ch(.15)){S.kcAtQ=qnow()+3;const c=pick(p);setTimeout(()=>kcAttack(c),80)}
-  if(S.kT>=2&&!S.kTitle&&S.respect>=92&&(S.huzur||0)>=70&&kcPay().length>=4){S.kTitle=1;news(`${S.first} ${S.last}: Türkiye'nin Kabadayısı`,3);
-    setTimeout(()=>queue({title:"Türkiye'nin Kabadayısı",text:'Mahallenin yaşlıları, şehrin büyükleri, başka şehirlerin kabadayıları aynı sofrada buluştu. Başköşeye seni oturttular. En yaşlıları kalktı, elini tuttu:<br><br>"Bu memlekette racon artık senden sorulur."<br><br>Artık <b>Türkiye\'nin Kabadayısı</b>sın.',choices:[{t:'Bu yük benim omzumda',fn:()=>{gainResp(5);add('happy',8)}}]}),120)}
+  if(S.kT>=2&&!S.kTitle&&S.respect>=92&&(S.huzur||0)>=70&&kcPay().length>=4){S.kTitle=1;news(`${S.first} ${S.last}: Son Kabadayı`,3);
+    setTimeout(()=>queue({title:'Son Kabadayı',text:'Mahallenin yaşlıları, şehrin büyükleri, başka şehirlerin kabadayıları aynı sofrada buluştu. Başköşeye seni oturttular. En yaşlıları kalktı, elini tuttu:<br><br>"Bu memlekette racon artık senden sorulur."<br><br>Bu memleketin <b>Son Kabadayı</b>sı artık sensin.',choices:[{t:'Bu yük benim omzumda',fn:()=>{gainResp(5);add('happy',8)}}]}),120)}
   kYzCheck()}
 {const _yc=kYzCheck;kYzCheck=function(){const was=isKab();_yc.apply(this,arguments);if(was&&!isKab())(S.kc||[]).forEach(c=>{if(c.st==='odeyor'&&!c.yz)c.st='kizgin';c.sec=0})}}
 /* --- güvenlik şirketi --- */
