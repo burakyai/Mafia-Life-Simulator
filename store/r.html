@@ -1,0 +1,4 @@
+<!doctype html><meta charset="utf-8"><title>r</title><script>
+addEventListener('message',async e=>{try{const u=new URL(String(e.data),location.href);if(u.origin!==location.origin)return;const r=await fetch(u);const b=await r.arrayBuffer();e.source.postMessage({u:String(e.data),b},e.origin,[b])}catch(x){e.source.postMessage({err:String(x)},e.origin)}});
+if(opener)opener.postMessage('ready','*');
+</script>
