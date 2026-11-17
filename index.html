@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.17-2100';
+const APPV='2026.11.17-2130';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -5134,7 +5134,7 @@ function glFix(){if(!S||S.gender==='k')return;let back=0;const n=[];if(S.gls&&S.
   if(S.look&&typeof S.look.gl==='number'&&GLF.includes(S.look.gl))S.look.gl=null;
   if(back>0){S.money+=back;log(`💵 Gözlükçü ${n.length>1?n.length+' gözlüğü':n[0]+' gözlüğünü'} geri aldı, ${fmt(back)} iade etti.`,'good')}}
 const HATS=[{"id": "kasket", "n": "Tweed kasket", "p": 3500, "k": 1, "kw": 1.22, "kb": 0.3, "r": 0.6267}, {"id": "fotr", "n": "Siyah fötr", "p": 18000, "k": 2, "kw": 1.55, "kb": 0.27, "r": 0.6733}, {"id": "bere", "n": "Yün bere", "p": 1500, "k": 1, "kw": 1.14, "kb": 0.26, "r": 0.7767}, {"id": "cap", "n": "Siyah şapka", "p": 1200, "k": 0, "kw": 1.2, "kb": 0.19, "r": 0.9033}, {"id": "kalpak", "n": "Karakul kalpak", "p": 25000, "k": 2, "kw": 1.14, "kb": 0.32, "r": 0.6833}];
-const HATHAIR={0:{0:2,4:3,7:9,8:6},1:{0:7,5:3,8:1,10:4},2:{4:5,11:10},3:{5:0,6:1,7:2,9:11,10:4},4:{5:3,8:6}};
+const HATHAIR={0:{0:2,4:3,7:9,8:6},1:{0:7,5:3,8:1,10:4},2:{4:5,11:10},3:{3:4,5:0,6:1,7:2,9:11,10:4},4:{2:3,5:3,8:6}};
 const hatSt=L=>{const m=HATHAIR[L.ch>0?L.ch:0];return m&&m[L.st]!==undefined?m[L.st]:L.st};
 function hatFix(){if(!S||!S.hats||!S.hats.includes('panama'))return;S.hats=S.hats.filter(x=>x!=='panama');if(S.look&&S.look.hat==='panama')S.look.hat=null;const m=Math.round(M(9000/2.8)/100)*100;S.money+=m;log(`🎩 Hasır panama artık satılmıyor; şapkacı ${fmt(m)} iade etti.`,'dim')}
 const hatPr=h=>Math.round(M(h.p/2.8)/100)*100;
