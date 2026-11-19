@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.20-0240';
+const APPV='2026.11.20-0330';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -846,6 +846,7 @@ function ageUp(){
     if(S.partner)add('happy',3);
     if(S.props.includes('kosk'))add('happy',4);
   }
+  try{okulTick(newYear)}catch(e){console.error(e)}
   if(kid)childhood();else adultYear(newYear);
   const rk=rank();
   if(rk>S.lastRank)log(`Terfi! Yeni rütben: ${rankN(rk)}.`,'gold');
@@ -1978,7 +1979,7 @@ function eduQuarter(){
 ACT.lise=()=>{if(S.lise||S.school)return;S.lise=4;log('Açık liseye kaydoldun. Bir yıl sürecek.','dim');done()};
 ACT.uni=id=>{const d=DEPTS.find(x=>x.id===id);closeSheet();
   queue({back:'egitim',title:d.n,text:`${d.q/4} yıl sürer, yıllık harç ${fmt(d.fee)}. ${d.d}. Giriş sınavında başarı; zekâna, çalışmana ve biraz da şansa bağlı.`,prem:{t:'Dayının rektör arkadaşı',sub:'Sınavsız kayıt',fn:()=>{S.edu={d:id,left:d.q};log(`${d.n} kaydın "özel kontenjandan" yapıldı.`,'gold')}},choices:[
-    {t:'Sınava gir',sub:'Şans %55',fn:()=>{if(ch(.55)){S.edu={d:id,left:d.q};log(`${d.n} sınavını kazandın! Öğrencisin.`,'good')}else log(`${d.n} sınavını kazanamadın. Seneye tekrar dene.`,'bad')}},
+    {t:'Sınava gir',sub:`Şans %${Math.round(uniP()*100)}`,fn:()=>{if(ch(uniP())){S.edu={d:id,left:d.q};log(`${d.n} sınavını kazandın! Öğrencisin.`,'good')}else log(`${d.n} sınavını kazanamadın. Seneye tekrar dene.`,'bad')}},
     {t:'Vazgeç',fn:()=>{}}]})};
 ACT.unidrop=()=>{log('Okulu bıraktın.','dim');S.edu=null;done()};
 ACT.job=id=>{const d=DEPTS.find(x=>x.id===id);S.job={id:d.job,n:d.jn,sal:d.sal,q:0};log(`${d.jn} olarak işe başladın. Gündüz ${d.jn.toLowerCase()}, gece başka biri.`,'gold');done()};
@@ -2086,7 +2087,7 @@ EXTRA.harita=()=>{
   MAPD.d.forEach(([d,pth,lx,ly])=>{const o=own[d];const fill=o?(o.me?'#e6b54c':MCOL[o.r]):'#6f666a';const war=o&&!o.me&&RV(o.r).war;
     svg+=`<g ${o&&!o.me?`data-x="riv:${o.r}"`:o&&o.me&&!(o.v&&o.v.dist)?'':`data-x="semt:${d}"`} style="cursor:pointer"><path d="${pth}" fill="${fill}" style="mix-blend-mode:multiply"/>${o?`<path d="${pth}" fill="${fill}" fill-opacity=".22"/>`:''}</g>`;
     if(war)wr+=`<path d="${pth}" fill="none" stroke="#ff4d43" stroke-width="5" stroke-dasharray="10 7" pointer-events="none"><animate attributeName="stroke-opacity" values="1;.25;1" dur="1.4s" repeatCount="indefinite"/></path>`});
-  svg+=`<image href="img/map_top.webp" width="${MAPD.w}" height="${MAPD.h}" pointer-events="none"/>${wr}</svg><img src="img/map_top.webp" alt="" style="display:none" onload="var p=this.parentNode;p.scrollLeft=window._mapSL!==undefined?window._mapSL:(p.scrollWidth-p.clientWidth)*.5"></div>`;
+  svg+=`<image href="img/map_top.webp" width="${MAPD.w}" height="${MAPD.h}" pointer-events="none"/>${wr}${(()=>{const x=MAPD.d.find(z=>z[0]===S.ilce);return x?`<text x="${x[2]}" y="${x[3]-16}" text-anchor="middle" font-size="26" pointer-events="none">📍</text>`:''})()}</svg><img src="img/map_top.webp" alt="" style="display:none" onload="var p=this.parentNode;p.scrollLeft=window._mapSL!==undefined?window._mapSL:(p.scrollWidth-p.clientWidth)*.5"></div>`;
   const mine=Object.values(own).filter(o=>o&&o.me).length;
   let h=`<p class="note">${S.org?`${S.org.name} ${mine} ilçeyi kontrol ediyor.`:'Henüz bir semtin yok.'} Haritayı sağa sola kaydır. Gri ilçeler tarafsız: dokun ve ele geçir. Rakip ilçeye dokununca savaş seçenekleri, kendi ilçene dokununca savunma ve yatırım açılır. Kırmızı çizgiyle yanıp sönen ilçelerde savaş var.</p>${svg}<div class="legend"><span><i style="background:#d2a94f"></i>${S.org?S.org.name:'Sen'}</span>${S.rivals.map(r=>`<span><i style="background:${MCOL[r.id]}"></i>${r.n}${r.war?' ⚔️':''}</span>`).join('')}<span><i style="background:#6f666a"></i>Tarafsız</span></div>`;
   return['Mafya savaşı haritası',h]};
@@ -4380,6 +4381,97 @@ IE(2,()=>!!S.kTitle,()=>({title:'Anadolu\'dan bir mektup',text:'Uzak bir şehird
  {t:'Gence bir oda ve harçlık ayarla',sub:fmt(M(5000)),dis:!canPay(M(5000)),fn:()=>{pay(M(5000));yon('m',4);gainResp(1);log('Genç her ay bir kere uğruyor, notlarını gösteriyor.','good')}},
  {t:'Mektuba güzel bir cevap yaz',fn:()=>{yon('z',2);log('Cevabını köyde kahvede yüksek sesle okumuşlar.','dim')}}]}));
 
+/* ============ Doğum ilçesi ============ */
+const ILT={zengin:['Beşiktaş','Sarıyer','Kadıköy','Bakırköy','Adalar','Ataşehir'],sert:['Bağcılar','Esenler','Sultangazi','Gaziosmanpaşa','Esenyurt','Sultanbeyli','Bayrampaşa','Güngören','Zeytinburnu','Kağıthane','Beyoğlu'],esnaf:['Fatih','Üsküdar','Eyüpsultan','Ümraniye','Şişli'],kir:['Silivri','Çatalca','Şile','Arnavutköy','Beykoz','Çekmeköy']};
+const ILB={zengin:'Varlıklı semt · İyi okullar, sakin sokaklar',sert:'Sert mahalle · Sokak erken öğretir',esnaf:'Esnaf semti · Çarşı, cami avlusu, komşuluk',kir:'Şehrin kıyısı · Temiz hava, geniş arazi',orta:'Orta halli semt · Apartmanlar, pazar, okul yolu'};
+const ilT=n=>Object.keys(ILT).find(k=>ILT[k].includes(n))||'orta';
+const ILCE={};MAPD.d.map(x=>x[0]).sort((a,b)=>a.localeCompare(b,'tr')).forEach(n=>{ILCE[n]={n,b:ILB[ilT(n)]}});
+const ilEk=n=>{const l=n.toLocaleLowerCase('tr-TR'),v=(l.match(/[aeıioöuü]/g)||['e']).pop(),h=/[fstkçşhp]$/.test(l);return n+"'"+(h?'t':'d')+('aıou'.includes(v)?'a':'e')};
+function ilceStart(){const t=ilT(S.ilce);if(t==='zengin')add('happy',4);if(t==='kir')add('health',5);log(`📍 ${ilEk(S.ilce)} büyüyeceksin. ${ILB[t].split(' · ')[1]}.`,'dim')}
+/* ============ Okul hayatı ============ */
+const OKN=['Cumhuriyet','Atatürk','Mimar Sinan','Namık Kemal','Yunus Emre','Mehmet Akif','Barbaros','Piri Reis','Ziya Gökalp','Halide Edib'];
+const DERS=['Türkçe','Matematik','Fen Bilgisi','Sosyal Bilgiler','Beden Eğitimi','Müzik','İngilizce','Tarih','Fizik','Edebiyat'];
+const OKLV={ilk:['İlkokulu',6],orta:['Ortaokulu',10],lise:['Lisesi',14]};
+const okLv=a=>a>=14?'lise':a>=10?'orta':'ilk';
+const inSchool=()=>!!S&&S.alive&&S.age>=6&&S.age<18&&!S.jail&&!S.liseDone&&(S.age<15||S.school===true);
+const okJob=()=>pick(['sokak','esnaf','polis','doktor','avukat','esnaf','sokak','isinsani']);
+function okKid(){const g=ch(.5)?'e':'k';return{id:'ok'+R(0,999999),name:`${pick(g==='e'?NAMES:GIRLS)} ${pick(SURN)}`,g,not:R(25,95),pop:R(15,90),rel:R(30,60),job:okJob(),q:-1}}
+function okNew(lv){const old=S.okul,keep=old?old.cls.filter(c=>c.rel>=60).sort((a,b)=>b.rel-a.rel).slice(0,3):[];const t=ilT(S.ilce);
+  const O={lv,n:`${S.ilce} ${pick(OKN)} ${OKLV[lv][0]}`,not:old?old.not:clamp(R(45,70)+(t==='zengin'?6:0)+(S.famBg==='zengin'?5:S.famBg==='polis'?4:0)),pop:old?clamp(old.pop+R(-8,8)):clamp(R(30,55)+Math.round(karizma()/3)+(t==='sert'?4:0)),dis:old?Math.max(0,old.dis-1):0,cls:[...keep],tch:[],q:{}};
+  while(O.cls.length<9)O.cls.push(okKid());
+  const ds=lv==='ilk'?DERS.slice(0,5):lv==='orta'?DERS.slice(0,7):[DERS[1],DERS[9],DERS[8],DERS[7],DERS[6],DERS[4]];
+  ds.slice(0,lv==='ilk'?3:5).forEach(d=>O.tch.push({id:'t'+R(0,999999),name:`${pick(ch(.5)?NAMES:GIRLS)} ${pick(SURN)}`,d,rel:R(40,65),sert:ch(.3)?1:0,q:-1}));
+  O.mud={name:`${pick(NAMES)} ${pick(SURN)}`,rel:50};S.okul=O;return O}
+function okulEns(){if(!inSchool())return null;const lv=okLv(S.age);if(!S.okul||S.okul.lv!==lv){const first=!S.okul;okNew(lv);log(first?`🎒 Okul çağın geldi. ${S.okul.n}'na yazıldın. Önlüğün bir beden büyük.`:`🎒 ${S.okul.n}'na başladın. Yeni sınıf, yeni öğretmenler.`,'gold')}return S.okul}
+const okNotT=n=>n>=85?'Takdir':n>=70?'Teşekkür':n>=50?'Orta':n>=35?'Zayıf':'Sınıfta kalma sınırında';
+const okPopT=p=>p>=80?'Okulun yıldızı':p>=60?'Sevilen biri':p>=40?'Sıradan':p>=20?'Pek tanınmıyor':'Dışlanan';
+function okDis(n,why){const O=S.okul;O.dis+=n;log(`📋 Disiplin defterine yazıldın: ${why}. (${O.dis}/5)`,'bad');try{parEnsure().rel=clamp(parEnsure().rel-4)}catch(e){}
+  if(O.dis>=5){if(S.age>=14){S.school=false;S.okAtildi=1;log(`🚪 ${O.n}'ndan atıldın. Müdür tasdiknameni eline tutuşturdu.`,'bad');add('respect',3);closeSheet()}else{O.dis=2;const n0=O.n;okNew(O.lv);S.okul.dis=2;log(`🚪 ${n0} seni başka okula sürdü. Yeni okulun: ${S.okul.n}.`,'bad')}}}
+function okulTick(ny){if(!S||!S.alive)return;
+  if(S.okul&&!S.okul.done&&(S.liseDone||S.age>=18||(S.age>=15&&S.school===false))){const O=S.okul;O.done=1;if(S.liseDone||(S.age>=18&&S.school!==false)){S.lisNot=Math.round(O.not);log(`🎓 Lise diploma notun: ${S.lisNot}. ${okNotT(S.lisNot)} belgesiyle mezun oldun.`,'dim')}
+    O.cls.filter(c=>c.rel>=70&&!c.fr).forEach(c=>{if(S.friends.length<MAXF){c.fr=1;S.friends.push({id:c.id,name:c.name,job:c.job,rel:c.rel});log(`${c.name} ile okuldan sonra da görüşmeye devam ediyorsunuz.`,'dim')}});return}
+  const O=okulEns();if(!O||!ny)return;
+  const tr=O.tch.reduce((a,t)=>a+t.rel,0)/Math.max(1,O.tch.length);
+  O.not=clamp(Math.round(O.not+R(-9,-2)+(tr-50)/10+Math.min(3,O.cal||0)-(O.asti||0)*2));O.pop=clamp(O.pop+R(-3,3));O.cal=0;O.asti=0;
+  O.cls.forEach(c=>{c.not=clamp(c.not+R(-6,6));c.pop=clamp(c.pop+R(-6,6));c.rel=clamp(c.rel-R(0,3))});O.tch.forEach(t=>{t.rel=clamp(t.rel+R(-3,2))});
+  const sinif=S.age-OKLV[O.lv][1]+1,T=okNotT(O.not);
+  log(`📜 Karne günü (${sinif}. sınıf): ortalaman ${O.not}. ${O.not>=85?'Takdir belgesi aldın, annen buzdolabına astı.':O.not>=70?'Teşekkür belgesi aldın.':O.not>=50?'Karne idare eder.':O.not>=35?'Karnede kırmızılar var. Baban uzun uzun baktı.':'Karne felaket. Evde bu akşam sessizlik var.'}`,O.not>=70?'good':O.not>=50?'dim':'bad');
+  try{const P=parEnsure();if(P.alive)P.rel=clamp(P.rel+(O.not>=70?3:O.not<40?-4:0))}catch(e){}
+  if(O.not>=85)add('happy',3);if(O.not<35)add('happy',-3)}
+const okUse=k=>{const O=S.okul;if(O.q[k]===QS())return false;O.q[k]=QS();return true};
+const okUsed=k=>S.okul.q[k]===QS();
+const okN=k=>{const O=S.okul;if(!O.qn||O.qn.q!==QS())O.qn={q:QS(),c:0,t:0};return O.qn[k]};const okInc=k=>{okN(k);S.okul.qn[k]++};
+ACT.okul=op=>{const O=okulEns();if(!O)return;
+  if(op==='calis'){if(!okUse('c'))return;O.not=clamp(O.not+Math.max(1,Math.round(R(2,5)*(1.15-O.not/100))));O.cal=(O.cal||0)+1;add('happy',-1);log(pick(['Akşam yemeğinden sonra masaya oturdun, ödevleri bitirdin.','Kütüphanede iki saat çalıştın. Formüller yerine oturmaya başladı.','Test kitabının yarısını bitirdin.']),'good')}
+  else if(op==='as'){if(!okUse('a'))return;O.not=clamp(O.not-R(2,5));O.asti=(O.asti||0)+1;add('happy',4);O.pop=clamp(O.pop+1);
+    if(ch(.3)){log('Okulu astın ama müdür yardımcısı seni simitçinin önünde yakaladı.','bad');okDis(1,'Okuldan kaçmak')}else log(pick(['Okulu asıp sahile indin. Simit, çay, martılar.','İnternet kafede bütün günü geçirdin.','Halı sahada maç yaptınız, kimse fark etmedi.']),'dim')}
+  else if(op==='kopya'){if(!okUse('k'))return;if(ch(.68)){O.not=clamp(O.not+R(4,9));yon('k',2);log('Sınavda kopya çektin. Kâğıt elden ele dolaştı, kimse görmedi.','dim')}else{O.not=clamp(O.not-8);log('Kopya çekerken yakalandın. Kâğıdın alındı, sınavın sıfır sayıldı.','bad');okDis(1,'Sınavda kopya')}}
+  else if(op==='revir'){if(!okUse('r'))return;add('health',3);log('Revire gittin. Hemşire ateşine baktı, bir ders boyunca yatırdı.','dim')}
+  else if(op==='birak'){if(S.age<15)return;closeSheet();queue({back:'okul',title:'Okulu bırak',text:'Okulu bırakırsan geri dönüş zor. Diplomasız kalırsın, üniversite kapısı kapanır.',choices:[{t:'Okulu bırak',fn:()=>{S.school=false;add('respect',4);log('🎒 Çantayı bir kenara attın. Okul defteri kapandı.','bad')}},{t:'Vazgeç',fn:()=>setTimeout(()=>{if(!Q.length)openSheet('okul')},60)}]});return}
+  done()};
+const okBack=()=>setTimeout(()=>{if(!Q.length&&inSchool())openSheet('okul')},60);
+ACT.okc=id=>{const O=okulEns();if(!O)return;const c=O.cls.find(x=>x.id===id);if(!c)return;closeSheet();const used=c.q===QS()||okN('c')>=3,lise=O.lv==='lise',me=S.gender==='k'?'k':'e';
+  const U=f=>()=>{c.q=QS();okInc('c');f();afterChange();okBack()};
+  queue({back:'okul',title:`${c.g==='e'?'👦':'👧'} ${c.name}`,text:`Not ortalaması ${c.not} · ${okPopT(c.pop)} · Aranız %${c.rel}${c.fr?' · Arkadaşın':''}${c.sev?' · Okul aşkın':''}${c.q===QS()?'<br><br>Bu dönem onunla yeterince vakit geçirdin.':used?'<br><br>Bu dönem sınıfta yeterince dolaştın; teneffüs bitti.':''}`,choices:[
+   {t:'Sohbet et',dis:used,fn:U(()=>{c.rel=clamp(c.rel+R(5,10));add('happy',1);log(`${c.name} ile teneffüste ${pick(['maç','çizgi film','öğretmenler','yaz tatili'])} hakkında konuştunuz.`,'dim')})},
+   ...(!c.fr?[{t:'Arkadaşlık teklif et',dis:used,fn:U(()=>{if(c.rel>=55&&ch(.5+c.rel/250)){c.fr=1;c.rel=clamp(c.rel+10);O.pop=clamp(O.pop+2);if(S.friends.length<MAXF)S.friends.push({id:c.id,name:c.name,job:c.job,rel:c.rel});log(`${c.name} artık arkadaşın. Sıraya adlarınızı kazıdınız.`,'good')}else{c.rel=clamp(c.rel-3);log(`${c.name} omuz silkti: "Bakarız."`,'dim')}})}]:[]),
+   {t:'Birlikte ders çalış',dis:used,fn:U(()=>{const g=c.not>O.not?R(3,6):R(1,3);O.not=clamp(O.not+g);c.rel=clamp(c.rel+6);if(c.not<O.not)c.not=clamp(c.not+3);log(c.not>O.not?`${c.name} sana konuyu baştan anlattı. Kafana oturdu.`:`${c.name}'e sen anlattın. Anlatırken sen de öğrendin.`,'good')})},
+   {t:'Sınavda kopya iste',dis:used||c.not<=O.not,fn:U(()=>{if(c.rel>=50&&ch(.7)){O.not=clamp(O.not+R(4,8));log(`${c.name} kâğıdını hafifçe sana çevirdi.`,'dim')}else if(ch(.4)){log(`${c.name} öğretmene söyledi.`,'bad');c.rel=clamp(c.rel-15);okDis(1,'Kopya istemek')}else{c.rel=clamp(c.rel-5);log(`${c.name} kâğıdını koluyla kapattı.`,'dim')}})},
+   {t:'Harçlığınla bir şey ısmarla',sub:fmt(M(50)),dis:used||!canPay(M(50)),fn:U(()=>{pay(M(50));c.rel=clamp(c.rel+R(8,14));log(`${c.name}'e kantinden tost ısmarladın.`,'good')})},
+   {t:'Dalga geç',dis:used,fn:U(()=>{c.rel=clamp(c.rel-R(12,20));yon('s',2);if(c.pop>O.pop){O.pop=clamp(O.pop-R(3,7));log(`${c.name} ile dalga geçtin ama o daha popüler. Gülen sen olmadın.`,'bad')}else{O.pop=clamp(O.pop+R(1,4));log(`${c.name} ile dalga geçtin. Arka sıralar güldü, o başını eğdi.`,'dim')}if(ch(.2))okDis(1,'Arkadaşına zorbalık')})},
+   ...(c.g==='e'?[{t:'Kavga et',dis:used,fn:U(()=>{const win=ch(clamp(.5+(S.health-70)/200+(S.box?.15:0),.2,.9));c.rel=clamp(c.rel-20);if(win){O.pop=clamp(O.pop+R(3,8));add('respect',1);log(`Teneffüste ${c.name} ile kapıştınız. Sen ayakta kaldın.`,'good')}else{hurt(R(2,6),'Okul kavgası');O.pop=clamp(O.pop-3);log(`${c.name} seni yere serdi. Dudağın patladı.`,'bad')}if(ch(.5))okDis(1,'Kavga çıkarmak')})}]:[]),
+   ...(lise&&S.age>=15&&c.g!==me&&!c.sev&&!S.partner?[{t:'Çıkma teklif et',dis:used,fn:U(()=>{if(c.rel>=60&&ch(.35+O.pop/250+karizma()/300)){c.sev=1;c.rel=clamp(c.rel+15);add('happy',8);O.pop=clamp(O.pop+3);log(`${c.name} kızararak "olur" dedi. Okul çıkışında birlikte yürüdünüz.`,'gold')}else{c.rel=clamp(c.rel-6);add('happy',-3);log(`${c.name} "Arkadaş kalalım" dedi.`,'dim')}})}]:[]),
+   {t:'Geri dön',fn:okBack}]})};
+ACT.okt=id=>{const O=okulEns();if(!O)return;const mud=id==='mud',t=mud?O.mud:O.tch.find(x=>x.id===id);if(!t)return;closeSheet();const used=t.q===QS()||okN('t')>=2;const U=f=>()=>{t.q=QS();okInc('t');f();afterChange();okBack()};
+  if(mud)return queue({back:'okul',title:`🏫 Müdür ${t.name}`,text:`Okulun müdürü. Seninle arası %${t.rel}. Disiplin defterinde ${O.dis} kaydın var.`,choices:[
+    {t:'Odasına uğra, hal hatır sor',dis:used,fn:U(()=>{t.rel=clamp(t.rel+R(4,8));log('Müdür seni görünce şaşırdı: "Bu sefer bir şey yapmadın mı?"','dim')})},
+    {t:'Kaydımın silinmesini rica et',dis:used||O.dis<1,fn:U(()=>{if(ch(.2+t.rel/150)){O.dis--;log('Müdür defterden bir satırı çizdi: "Son kez."','good')}else{t.rel=clamp(t.rel-4);log('Müdür gözlüğünün üstünden baktı: "Kayıt kayıttır."','dim')}})},
+    {t:'Geri dön',fn:okBack}]});
+  queue({back:'okul',title:`👩‍🏫 ${t.name}`,text:`${t.d} öğretmeni${t.sert?' · Sert biri, not kırar':''}. Seninle arası %${t.rel}.${used?'<br><br>Bu dönem onunla yeterince muhatap oldun.':''}`,choices:[
+    {t:'Derse katıl, parmak kaldır',dis:used,fn:U(()=>{t.rel=clamp(t.rel+R(4,9));O.not=clamp(O.not+R(1,3));log(`${t.d} dersinde parmak kaldırdın. ${t.name} "Aferin" dedi.`,'good')})},
+    {t:'Gözüne girmeye çalış',dis:used,fn:U(()=>{t.rel=clamp(t.rel+R(6,12));O.pop=clamp(O.pop-2);log(`${t.name}'in çantasını taşıdın, tahtayı sildin. Arka sıralar "yalaka" diye fısıldadı.`,'dim')})},
+    {t:'Notuna itiraz et',dis:used,fn:U(()=>{if(ch(.3+t.rel/200-(t.sert?.15:0))){O.not=clamp(O.not+R(3,6));log(`${t.name} kâğıdı yeniden okudu, notunu yükseltti.`,'good')}else{t.rel=clamp(t.rel-8);log(`${t.name}: "Bir daha itiraz edersen düşürürüm."`,'bad')}})},
+    {t:'Öğretmenler Günü\'nde çiçek götür',sub:fmt(M(80)),dis:used||!canPay(M(80)),fn:U(()=>{pay(M(80));t.rel=clamp(t.rel+R(8,14));log(`${t.name} çiçeği masasındaki vazoya koydu.`,'good')})},
+    {t:'Dersi kaynat',dis:used,fn:U(()=>{O.pop=clamp(O.pop+R(2,5));t.rel=clamp(t.rel-R(6,12));log(`${t.d} dersini ${pick(['bitmeyen sorularla','camdaki arıyla','"hocam siz gençken" muhabbetiyle'])} kaynattın. Sınıf sana minnettar.`,'dim');if(t.sert&&ch(.4))okDis(1,'Dersi sabote etmek')})},
+    {t:'Geri dön',fn:okBack}]})};
+const okBar=(lab,v,col)=>`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:8px"><span>${lab}</span><b style="color:var(--ink)">${v}</b></div><div class="bar" style="margin:4px 0 0"><i style="width:${v}%;background:${col}"></i></div>`;
+EXTRA.okul=()=>{const O=okulEns();if(!O)return['Okul','<p class="note">Şu an bir okula gitmiyorsun.</p>'];const sinif=S.age-OKLV[O.lv][1]+1;
+  let h=`<div class="card" style="padding:14px;margin-bottom:10px"><b style="font-size:16px">🏫 ${O.n}</b><div class="note" style="margin:2px 0 0">${sinif}. sınıf · ${okNotT(O.not)} · ${okPopT(O.pop)}${O.dis?` · Disiplin ${O.dis}/5`:''}</div>${okBar('Not ortalaması',O.not,O.not>=70?'var(--good)':O.not>=50?'var(--gold)':'var(--blood)')}${okBar('Popülerlik',O.pop,'var(--gold)')}</div>`;
+  h+='<div class="sec">✏️ Yapılacaklar</div>';
+  h+=row('data-x="okul:calis"','📚','Ders çalış',okUsed('c')?'Bu dönem çalıştın':'Ödev, test, tekrar','',okUsed('c'));
+  h+=row('data-x="okul:as"','🏃','Okulu as',okUsed('a')?'Bu dönem astın':'Sahil, halı saha, internet kafe','',okUsed('a'));
+  h+=row('data-x="okul:kopya"','🤫','Sınavda kopya çek',okUsed('k')?'Bu dönem denedin':'Yakalanırsan disipline gidersin','',okUsed('k'));
+  h+=row('data-x="okul:revir"','🩺','Revire git',okUsed('r')?'Bu dönem gittin':'Biraz dinlen','',okUsed('r'));
+  h+=`<div class="sec">🧑‍🤝‍🧑 Sınıfım · ${O.cls.length} kişi</div><p class="note">Her dönem en fazla 3 arkadaşınla ve 2 öğretmeninle vakit geçirebilirsin.</p>`;
+  O.cls.slice().sort((a,b)=>b.rel-a.rel).forEach(c=>{h+=row(`data-x="okc:${c.id}"`,c.g==='e'?'👦':'👧',c.name+(c.sev?' ❤️':c.fr?' · arkadaşın':''),`Not ${c.not} · ${okPopT(c.pop)} · Aranız %${c.rel}`,'›',false)});
+  h+='<div class="sec">👩‍🏫 Öğretmenler</div>';
+  O.tch.forEach(t=>{h+=row(`data-x="okt:${t.id}"`,'📖',t.name,`${t.d}${t.sert?' · Sert':''} · Aranız %${t.rel}`,'›',false)});
+  h+=row('data-x="okt:mud"','🏫',`Müdür ${O.mud.name}`,`Aranız %${O.mud.rel}`,'›',false);
+  if(S.age>=15)h+='<div class="sec">Diğer</div>'+row('data-x="okul:birak"','🚪','Okulu bırak','Diplomasız kalırsın','',false);
+  return['Okul',h]};
+const uniP=()=>S.lisNot!==undefined?clamp(.2+S.lisNot/100*.7,.15,.92):.55;
+{const _e=ensure;ensure=function(){const r=_e.apply(this,arguments);try{if(S&&!S.ilce)S.ilce=pick(Object.keys(ILCE))}catch(e){}return r}}
+
 /* ============ Finans: Yatırımlarım ============ */
 const INV=[
  {k:'dtah',n:'Devlet tahvili',ic:'📜',g:'Tahvil',d:'Düşük ama sağlam getiri',mu:.006,sd:.004},
@@ -4591,8 +4683,8 @@ ACT.semt=d=>{if(!S.org){toast('Semt ele geçirmek için önce kendi aileni kur (
       ...(def<3?[{t:'🛡 Savunmayı güçlendir',sub:`${fmt(up)} · Baskın riski −%25`,dis:!canPay(up),fn:()=>{pay(up);v.def=def+1;log(`${d} savunması güçlendi: ${v.def}/3.`,'good')}}]:[]),
       {t:'💼 Semte yatırım yap',sub:`${fmt(inv)} · Gelir +%25`,dis:!canPay(inv),fn:()=>{pay(inv);v.inc=Math.round(v.inc*1.25);log(`${d}'e yatırım yaptın. Yeni gelir ${fmt(v.inc)}/yıl.`,'good')}},
       {t:'Semti bırak',fn:()=>{S.org.turf=S.org.turf.filter(x=>x!==v);add('respect',-6);log(`${d}'ten çekildin.`,'bad')}},{t:'Kapat',fn:()=>{}}]})}
-  const s=semtS(d);const p=battleP(s.pow);const c=Math.round(s.pow*25000*S.cpi);const inc=Math.round((300000+s.pow*9000)*S.cpi);
-  queue({back:'harita',title:d,text:`Tarafsız semt. ${s.gang} tutuyor (güç ${s.pow}). Ele geçirirsen yıllık ~${fmt(inc)} haraç.${S.org.intel===QS()?'':' Keşif yaparsan şansın artar.'}`,
+  const s=semtS(d);const p=battleP(s.pow,d===S.ilce?.12:0);const c=Math.round(s.pow*25000*S.cpi);const inc=Math.round((300000+s.pow*9000)*S.cpi);
+  queue({back:'harita',title:d,text:`${d===S.ilce?'Doğup büyüdüğün ilçe; halk senden yana. ':''}Tarafsız ilçe. ${s.gang} tutuyor (güç ${s.pow}). Ele geçirirsen yıllık ~${fmt(inc)} haraç.${S.org.intel===QS()?'':' Keşif yaparsan şansın artar.'}`,
     prem:{t:'Dayının adamları semti teslim alsın',sub:'Kayıpsız',fn:()=>{takeSemt(d,inc)}},
     choices:[{t:'⚔️ Semte gir',sub:`${fmt(c)} · Şans %${Math.round(p*100)}`,dis:!canPay(c),fn:()=>{pay(c);if(ch(p)){takeSemt(d,inc);add('heat',8)}else{casualties(1);s.pow+=5;add('heat',10);log(`${d} baskını püskürtüldü. ${s.gang} daha da bilendi.`,'bad')}}},
       {t:'🤝 Mahalle çetesini satın al',sub:`${fmt(c*3)} · Kesin, kansız`,dis:!canPay(c*3),fn:()=>{pay(c*3);takeSemt(d,inc)}},
@@ -7043,7 +7135,7 @@ function closeSheet(){if(curSheet){LASTSH=curSheet;LASTT=(($('shT')&&$('shT').te
 function qbar(){const l=$('qLeft'),b=$('qBack');if(!l||!S)return;l.innerHTML='';if(LASTSH&&S.alive){b.style.display='';b.textContent='↩ '+(LASTT||'Son menü')}else b.style.display='none'}
 document.addEventListener('click',e=>{if(e.target.closest('#qBack')&&LASTSH){openSheet(LASTSH)}});
 const PARENT={berber:'cat_kisisel',meslek:'is',egitim:'meslek',ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
-try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'sirket',sm_kare:'sosyal',sm_dongu:'sosyal',sm_ekran:'sosyal',sm_gundem:'sosyal'});
+try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'sirket',okul:'is',sm_kare:'sosyal',sm_dongu:'sosyal',sm_ekran:'sosyal',sm_gundem:'sosyal'});
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
 $('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeSheet()});
@@ -7066,6 +7158,7 @@ function openSheet(k){if(k==='gard')k='insan';if(typeof k==='string'&&/^bk_my\d+
     if(S.abroad)h+='<p class="note">Yurt dışındasın. Suç işleri Türkiye\'ye dönünce açılır.</p>';
     if(S.jail){h+='<div class="sec">Koğuş</div>';JAIL.filter(a=>!a.prem||S.premium).forEach(a=>{const c=a.dyn?Math.round(a.dyn()):0;h+=row(`data-j="${a.id}"`,a.ic,a.n,a.d,c?fmtS(c):'',(c&&cashA()<c)||(!S.premium&&HEALIDS.includes(a.id)&&healLeft()<=0))})}
     else{
+      if(inSchool()){const O=okulEns();h+='<div class="sec">Okul</div>'+row('data-go="okul"','🎒',O.n,`Not ${O.not} · ${okPopT(O.pop)}`,'›',false)}
       if(S.age>=16)h+='<div class="sec">İş hayatı</div>'+row('data-go="meslek"','💼',S.job?S.job.n:'İş ilanları',S.job?`Çeyreklik maaş ${fmtS(Math.round(S.job.sal*.25*(1+Math.min(.5,(S.job.q||0)*.01))))}${S.job.svc?' · Performans %'+S.job.perf:''}`:'Garson, tamirci, kurye, kasiyer… Maaşlı bir işe gir','›',false);
       if(S.age>=14){        if(S.yol!=='kabadayi')h+='<div class="sec">Suç dünyası</div>';
         if(S.yol==='kabadayi')h+=kJobsH();else CRIMES.forEach(c=>{const lockA=S.age<c.age,lockR=rank()<c.rank;
@@ -7446,7 +7539,7 @@ const PRESETS=[
 {n:'Karakter 14',y:'img/1fbabcf93c49.webp',yc:'img/1ce803365bd0.webp',k:'img/3518fed3cafe.webp',kc:'img/ebd4bc786b3b.webp',f:'img/b946bb0d9dd2.webp',c:'img/2303409c21b2.webp',look:{skin:1,hair:'klasik',hairColor:'siyah',beard:'biyik'}},
 {n:'Karakter 15',y:'img/5082c54cf7a3.webp',yc:'img/960a487c8a76.webp',k:'img/cb5a765909dd.webp',kc:'img/dec7ade5ba7d.webp',f:'img/3e90bff3c481.webp',c:'img/3173eca31b7a.webp',look:{skin:0,hair:'undercut',hairColor:'kahve',beard:'kisasakal'}}];
 function showCreate(slot){
-  draft={slot:slot||null,pi:0,look:avRand(),first:pick(NAMES),last:pick(SURN),origin:null,fam:null,open:null};
+  draft={slot:slot||null,pi:0,look:avRand(),first:pick(NAMES),last:pick(SURN),origin:null,fam:null,ilce:null,open:null};
   drawCreate();$('create').classList.add('on');
 }
 function drawCreate(){const _sl=[...document.querySelectorAll('#createIn .avrow')].map(e=>e.scrollLeft);
@@ -7457,6 +7550,7 @@ function drawCreate(){const _sl=[...document.querySelectorAll('#createIn .avrow'
     <div class="sec" style="margin:14px 0 6px">Hikâyen</div>
     ${crPick('origin','🌍','Memleket',ORIGINS,o=>o.n)}
     ${crPick('fam','🏠','Aile',FAMBG,o=>o.n)}
+    ${crPick('ilce','📍','Doğduğun ilçe',ILCE,o=>o.n)}
     <button class="btn" id="start" style="margin-top:14px">Hayata başla</button></div>`;
   document.querySelectorAll('#createIn .avrow').forEach((e,i)=>{if(_sl[i])e.scrollLeft=_sl[i]});
 }
@@ -7475,7 +7569,7 @@ $('createIn').addEventListener('click',e=>{
   else if(b.id==='start'){
     const f=(draft.first||'').trim()||pick(NAMES),l=(draft.last||'').trim()||pick(SURN);
     const look={...draft.look,av:2,outfit:'tisort',acc:[]};
-    UNDO.length=0;newLife(f,l,look,draft.origin||pick(Object.keys(ORIGINS)),draft.fam||pick(Object.keys(FAMBG)));S.slot=draft.slot;cloudSave(true);$('create').classList.remove('on');render();scrollLog();return;
+    UNDO.length=0;newLife(f,l,look,draft.origin||pick(Object.keys(ORIGINS)),draft.fam||pick(Object.keys(FAMBG)));S.ilce=draft.ilce||pick(Object.keys(ILCE));try{ilceStart()}catch(e){}S.slot=draft.slot;cloudSave(true);$('create').classList.remove('on');render();scrollLog();return;
   }else return;
   drawCreate();
 });
