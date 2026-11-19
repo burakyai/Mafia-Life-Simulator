@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.20-0330';
+const APPV='2026.11.20-0345';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -4410,7 +4410,7 @@ function okDis(n,why){const O=S.okul;O.dis+=n;log(`📋 Disiplin defterine yazı
 function okulTick(ny){if(!S||!S.alive)return;
   if(S.okul&&!S.okul.done&&(S.liseDone||S.age>=18||(S.age>=15&&S.school===false))){const O=S.okul;O.done=1;if(S.liseDone||(S.age>=18&&S.school!==false)){S.lisNot=Math.round(O.not);log(`🎓 Lise diploma notun: ${S.lisNot}. ${okNotT(S.lisNot)} belgesiyle mezun oldun.`,'dim')}
     O.cls.filter(c=>c.rel>=70&&!c.fr).forEach(c=>{if(S.friends.length<MAXF){c.fr=1;S.friends.push({id:c.id,name:c.name,job:c.job,rel:c.rel});log(`${c.name} ile okuldan sonra da görüşmeye devam ediyorsunuz.`,'dim')}});return}
-  const O=okulEns();if(!O||!ny)return;
+  const O=okulEns();if(!O)return;if(!ny){if(S.age>=14)O.not=clamp(O.not-R(2,5));return}
   const tr=O.tch.reduce((a,t)=>a+t.rel,0)/Math.max(1,O.tch.length);
   O.not=clamp(Math.round(O.not+R(-9,-2)+(tr-50)/10+Math.min(3,O.cal||0)-(O.asti||0)*2));O.pop=clamp(O.pop+R(-3,3));O.cal=0;O.asti=0;
   O.cls.forEach(c=>{c.not=clamp(c.not+R(-6,6));c.pop=clamp(c.pop+R(-6,6));c.rel=clamp(c.rel-R(0,3))});O.tch.forEach(t=>{t.rel=clamp(t.rel+R(-3,2))});
