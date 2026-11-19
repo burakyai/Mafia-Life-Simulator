@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.19-2130';
+const APPV='2026.11.19-2345';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2895,23 +2895,156 @@ EXTRA.muzik=()=>{const l=S.label;let h='';
   return['Müzik şirketi',h]};
 
 /* ============ Sosyal medya ============ */
-const fmtF=n=>n>=1e6?(n/1e6).toLocaleString('tr-TR',{maximumFractionDigits:1})+' Mn':n>=1e3?(n/1e3).toLocaleString('tr-TR',{maximumFractionDigits:1})+' B':String(n);
-function smGain(mult){const sm=S.sm;const luxS=(S.lux||[]).length*2+(curCar()?CM(curCar().mid).k:0);const base=(karizma()*60+(S.fame||0)*250+luxS*300+sm.f*.02)*mult*(sm.ver?1.3:1);const dim=Math.pow(.6,sm.pq===QS()?sm.pc:0);const g=Math.round(base*dim*R(60,140)/100);if(sm.pq!==QS()){sm.pq=QS();sm.pc=0}sm.pc++;sm.f+=g;return g}
-ACT.post=k=>{const sm=S.sm;let g;
-  if(k==='normal'){g=smGain(1);log(`Bir paylaşım yaptın: +${fmtF(g)} takipçi.`,'good')}
-  if(k==='luks'){g=smGain(2.2);add('heat',4);log(`Lüks hayatını paylaştın: +${fmtF(g)} takipçi. Mali Şube de beğendi.`,'good')}
-  if(k==='canli'){g=smGain(1.4);add('happy',4);log(`Canlı yayın açtın: +${fmtF(g)} takipçi.`,'good')}
+const fmtF=n=>n>=1e6?(n/1e6).toLocaleString('tr-TR',{maximumFractionDigits:1})+' Mn':n>=1e3?(n/1e3).toLocaleString('tr-TR',{maximumFractionDigits:1})+' B':String(Math.round(n));
+const PLAT=[
+ {k:'kare',n:'Kare',d:'Fotoğraf ve hikâye',w:'takipçi',g:'linear-gradient(135deg,#5f3dc4,#22b8cf)',gl:'▣'},
+ {k:'dongu',n:'Döngü',d:'Kısa video',w:'takipçi',g:'linear-gradient(135deg,#e64980,#f08c00)',gl:'∞'},
+ {k:'ekran',n:'Ekran',d:'Uzun video, izlenmeden gelir',w:'abone',g:'linear-gradient(135deg,#e8590c,#fab005)',gl:'◉'},
+ {k:'gundem',n:'Gündem',d:'Yazı, tartışma, nüfuz',w:'takipçi',g:'linear-gradient(135deg,#2b8a3e,#94d82d)',gl:'❝'}];
+const plT=k=>PLAT.find(x=>x.k===k);
+const plLogo=(P,sz)=>`<span style="display:inline-flex;align-items:center;justify-content:center;width:${sz}px;height:${sz}px;border-radius:${Math.round(sz*.28)}px;background:${P.g};color:#fff;font-size:${Math.round(sz*.55)}px;font-weight:800;line-height:1;flex:none;box-shadow:0 2px 8px #0008">${P.gl}</span>`;
+const SMT=[[1e7,'Mega yıldız'],[2e6,'Ünlü'],[25e4,'Fenomen'],[1e4,'Mikro fenomen']];
+const smTier=()=>{const f=S.sm.f;for(let i=0;i<SMT.length;i++)if(f>=SMT[i][0])return SMT.length-i;return 0};
+const smTierN=()=>{const t=smTier();return t?SMT[SMT.length-t][1]:'Sıradan hesap'};
+const smHandle=()=>'@'+(S.first+S.last).toLocaleLowerCase('tr-TR').replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u').replace(/[^a-z0-9]/g,'');
+function smEns(){const sm=S.sm=S.sm||{f:0,ver:false};if(!sm.p){sm.p={kare:{f:Math.round((sm.f||0)*.55)},dongu:{f:Math.round((sm.f||0)*.25)},ekran:{f:Math.round((sm.f||0)*.1),vids:[]},gundem:{f:Math.round((sm.f||0)*.1)}}}
+  if(!sm.p.ekran.vids)sm.p.ekran.vids=[];if(!sm.feed)sm.feed={kare:[],dongu:[],ekran:[],gundem:[]};if(sm.iz===undefined)sm.iz=0;if(sm.act===undefined)sm.act=0;
+  const sum=PLAT.reduce((a,P)=>a+sm.p[P.k].f,0),d=Math.round((sm.f||0)-sum);if(d){if(sum>0&&d<0)PLAT.forEach(P=>{sm.p[P.k].f=Math.max(0,Math.round(sm.p[P.k].f*(sm.f/sum)))});else sm.p.kare.f=Math.max(0,sm.p.kare.f+d)}
+  sm.f=PLAT.reduce((a,P)=>a+sm.p[P.k].f,0);return sm}
+const smSum=()=>{const sm=S.sm;PLAT.forEach(P=>{sm.p[P.k].f=Math.max(0,Math.min(5e7,Math.round(sm.p[P.k].f)))});sm.f=PLAT.reduce((a,P)=>a+sm.p[P.k].f,0)};
+function smIz(v){const sm=S.sm;if(v>0){if(sm.gizli)v*=.5;if(sm.ajans)v*=.6;if(!(inUW()&&S.age>=16))v*=.25}sm.iz=clamp(Math.round((sm.iz+v)*10)/10)}
+const smIzT=()=>{const z=S.sm.iz;return z>=80?'Paylaşımların dosyaya giriyor':z>=60?'Siber Suçlar profilini izliyor':z>=30?'Hesabın dikkat çekmeye başladı':'Kimsenin gözü üstünde değil'};
+/* paylaşım türleri: m çarpan, iz dijital iz, vr viral şansı */
+const SMP={
+ kare:[
+  {id:'gunluk',n:'Gündelik bir fotoğraf',ic:'📷',d:'Çay, simit, mahalle, gün batımı',m:1,iz:0,vr:.04,c:['Boğaz\'da çay.','Mahallenin kedisi yine kapıda.','Pazar kahvaltısı.','Akşamüstü, Galata.','Annemin eli.']},
+  {id:'luks',n:'Lüks hayatını paylaş',ic:'💸',d:'Araba, saat, yat, şampanya',m:2.2,iz:6,vr:.08,heat:3,c:['Yeni oyuncak geldi.','Çalışan kazanır.','Bodrum, sezon açıldı.','Bileğimdeki ev parası.','Hayat kısa.']},
+  {id:'ekip',n:'Adamlarınla poz ver',ic:'🕶️',d:'Kalabalık, takım elbise, sert bakışlar',uw:1,m:2.6,iz:12,vr:.12,resp:1,c:['Kardeşlik.','Biz bir aileyiz.','Sözümüz senettir.','Arkamı soran olursa.']},
+  {id:'hayir',n:'Yaptığın bir iyiliği paylaş',ic:'🤲',d:'Aşevi, burs, mahalleye yardım',m:1.5,iz:-3,vr:.07,hz:1,cost:1,c:['Paylaşınca çoğalır.','Mahallemiz için.','Kimse aç yatmasın.']},
+  {id:'hikaye',n:'Mekândan hikâye at',ic:'🍸',d:'Gece hayatı, konum açık',m:1.3,iz:4,vr:.05,hap:2,c:['Bu gece buradayız.','Masa bizim.','Gece uzun.']}],
+ dongu:[
+  {id:'trend',n:'Trend videosu çek',ic:'🎵',d:'Akıma katıl, müziğe uy',m:2,iz:0,vr:.14,c:['Bu akımı ben de denedim.','Olmadı ama eğlendik.','Ritim tuttu.']},
+  {id:'komik',n:'Komik video',ic:'😂',d:'Mahalle esprileri, kahve muhabbeti',m:1.6,iz:0,vr:.1,hap:2,c:['Kahvede bir gün.','Dayımın tavla taktikleri.','Anneler versus pazar.']},
+  {id:'canli',n:'Canlı yayın aç',ic:'🔴',d:'Hayranlar hediye gönderir',m:1.2,iz:2,vr:.03,gift:1,hap:3,c:['Canlı yayındaydık.','Sorularınızı cevapladım.']},
+  {id:'gosteri',n:'Gösteriş videosu',ic:'🔥',d:'Para destesi, silah, konvoy',uw:1,m:3.2,iz:15,vr:.2,heat:4,resp:1,c:['Konvoy yola çıktı.','Sayın bakalım.','Bize her yer mahalle.']}],
+ ekran:[
+  {id:'vlog',n:'Vlog çek',ic:'🎥',d:'Bir günün, sokağın, sofran',vid:1,pc:8000,m:.8,q:1,iz:1,vr:.06,c:['Benimle bir gün','Mahallemi geziyoruz','Sokak lezzetleri turu','Soru cevap: her şeyi sordunuz']},
+  {id:'tur',n:'Lüks turu videosu',ic:'🏎️',d:'Garaj, ev, saat koleksiyonu',vid:1,pc:20000,m:1.2,q:1.6,iz:7,vr:.1,heat:2,c:['Garaj turu','Evimi geziyoruz','Saat koleksiyonum','Bir günde ne kadar harcıyorum?']},
+  {id:'hayat',n:'"Hayat hikâyem" belgeseli',ic:'🎬',d:'Çocukluğun, sokak, bugünlere nasıl geldin',vid:1,pc:120000,m:2.2,q:3,iz:10,vr:.18,uwiz:14,yr:1,c:['Hayat hikâyem: sıfırdan buraya','Kimsenin bilmediği yıllar','Sokaktan zirveye']},
+  {id:'sponsor',n:'Sponsorlu video',ic:'🤝',d:'Marka parayı peşin öder',vid:1,pc:15000,m:.6,q:.8,iz:0,vr:.03,sp:1,c:['Bu videonun sponsoru…','Denedim, anlatıyorum','İş birliği']}],
+ gundem:[
+  {id:'yorum',n:'Gündeme yorum yap',ic:'💬',d:'Maç, dizi, zam, trafik',m:.9,iz:0,vr:.08,c:['Bu maç böyle bitmezdi.','Simit yine zamlanmış.','Trafik değil, sınav.','Herkes haklı, kimse suçlu değil.']},
+  {id:'sert',n:'Sert bir çıkış yap',ic:'⚡',d:'Çok konuşulur, linç de yiyebilirsin',m:2,iz:3,vr:.2,linc:.2,c:['Kimse kusura bakmasın ama…','Söylenmeyeni söylüyorum.','Bunu yazınca kızacaksınız.']},
+  {id:'laf',n:'Rakibine laf at',ic:'🎯',d:'İsim vermeden, herkes anlar',uw:1,m:1.8,iz:8,vr:.12,resp:2,thr:.12,c:['Bazıları aslan postu giymiş.','İsim vermiyorum, o kendini bilir.','Meydan boş değil.']},
+  {id:'duyuru',n:'Mahalleye duyuru',ic:'📣',d:'Kayıp ilanı, yardım çağrısı, teşekkür',m:.8,iz:-1,vr:.04,hz:1,c:['Kayıp kedi bulundu, teşekkürler.','Kan aranıyor, paylaşalım.','Esnafımıza destek olalım.']}]};
+function smGain(k,mult){const sm=S.sm,pf=sm.p[k].f;const luxS=(S.lux||[]).length*2+(curCar()?CM(curCar().mid).k:0);
+  const base=(karizma()*50+(S.fame||0)*220+luxS*260+Math.pow(pf,.75)*.25+Math.pow(sm.f,.7)*.05+120)*mult*(sm.ver?1.3:1)*(1+Math.min(1,sm.act/40))*(sm.gizli&&k==='kare'?.5:1)*(k==='dongu'?1.35:k==='ekran'?1.1:1);
+  const dim=Math.pow(.7,sm.pq===QS()?sm.pc:0)*Math.max(.03,1-pf/4e7);return Math.max(1,Math.round(base*dim*R(60,140)/100))}
+function smFeed(k,o){const F=S.sm.feed[k];F.unshift(o);if(F.length>6)F.pop()}
+function smTierCheck(t0){const t=smTier();if(t>t0){const n=smTierN();S.fame=clamp((S.fame||0)+6);news(`${S.first} ${S.last} artık bir ${n.toLocaleLowerCase('tr-TR')}`,t>=3?2:1);
+  setTimeout(()=>queue({title:`📱 ${n}`,text:t===1?'Hesapların on binleri geçti. Sokakta tek tük tanıyan çıkıyor, markalar küçük tekliflerle yazmaya başladı.<br><br>Artık bir <b>mikro fenomen</b>sin.':t===2?'Çeyrek milyon kişi seni izliyor. Lokantada hesap gelmiyor, çocuklar fotoğraf istiyor. Büyük markalar sıraya girdi.<br><br>Artık bir <b>fenomen</b>sin.':t===3?'Milyonlar seni takip ediyor. Televizyonlar davet ediyor, adın magazin sayfalarında.<br><br>Artık bir <b>ünlü</b>sün. Bu kadar göz önünde olmanın bir bedeli de var: attığın her adım izleniyor.':'On milyonu geçtin. Ülkede seni tanımayan kalmadı.<br><br>Artık bir <b>mega yıldız</b>sın.',choices:[{t:'Devam',fn:()=>{}}]}),120)}}
+ACT.smp=a=>{const [k,id]=a.split(':');const sm=smEns(),T=(SMP[k]||[]).find(x=>x.id===id),P=plT(k);if(!T||!P)return;if(S.jail){toast('Cezaevinde telefon yok.');return}
+  if(T.uw&&!(inUW()&&S.age>=16))return;if(T.sp){if(sm.spq===QS()){toast('Bu çeyrek sponsorlu video çektin');return}sm.spq=QS()}if(T.yr&&sm['y_'+id]===S.age){toast('Bu yıl zaten çektin');return}
+  const pc=T.pc?Math.round(T.pc*S.cpi):0;if(T.cost&&!canPay(kBig(5000,.0005)))return toast('Paylaşacak bir iyilik için önce elini cebine atman lazım');if(pc&&!pay(pc))return;
+  if(T.cost)pay(kBig(5000,.0005));if(T.yr)sm['y_'+id]=S.age;
+  const t0=smTier();let g=smGain(k,T.m);const cap=pick(T.c);let viral=ch(T.vr*(1+Math.min(.6,sm.act/60)));if(viral)g=Math.round(g*R(3,8));
+  if(sm.pq!==QS()){sm.pq=QS();sm.pc=0}sm.pc++;sm.act=Math.min(60,sm.act+1.5);
+  sm.p[k].f+=g;smSum();
+  let iz=T.iz+(T.uwiz&&inUW()?T.uwiz:0);if(iz>0&&sm.pc>3)iz+=1;smIz(iz);
+  if(T.heat&&inUW())add('heat',T.heat);if(T.hap)add('happy',T.hap);if(T.resp&&ch(.6))gainResp(T.resp);if(T.hz){yon('m',1);if(isKab())kHz(T.hz)}
+  let extra='';
+  if(T.gift&&sm.gq!==QS()){sm.gq=QS();const m=Math.round(sm.p.dongu.f*R(4,22)/100);if(m>0){S.money+=m;S.taxInc=(S.taxInc||0)+m;extra+=` Hayranların ${fmt(m)} değerinde hediye gönderdi.`}}
+  if(T.sp){const m=Math.round(Math.max(M(20000),sm.p.ekran.f*R(60,160)/100));S.money+=m;S.taxInc=(S.taxInc||0)+m;extra+=` Sponsor ${fmt(m)} ödedi.`}
+  let v=0;if(T.vid){v=Math.round((sm.p.ekran.f*R(20,70)/100+g*R(3,8)+R(200,900))*T.q*(viral?R(5,15):1));sm.p.ekran.vids.unshift({t:cap,v,nv:v,q:QS(),k:T.q});if(sm.p.ekran.vids.length>12)sm.p.ekran.vids.pop()}
+  smFeed(k,{t:cap,e:T.ic,l:T.vid?v:Math.round(sm.p[k].f*R(3,12)/100+g*R(2,6)),v:viral?1:0,q:QS()});
+  log(`${T.ic} ${P.n}: ${T.vid?`"${cap}" yayında`:`"${cap}"`} · +${fmtF(g)} ${P.w}.${viral?' 🚀 Paylaşım patladı, her yerde dönüyor!':''}${extra}`,viral?'gold':'good');
+  if(T.linc&&ch(T.linc)){const l=Math.round(sm.p.gundem.f*R(3,9)/100);sm.p.gundem.f=Math.max(0,sm.p.gundem.f-l);smSum();add('happy',-4);log(`💬 Gündem'de linç yedin: ${fmtF(l)} kişi takibi bıraktı. İki gün etiketten inmedin.`,'bad')}
+  if(T.thr&&ch(T.thr)&&typeof makeThreat==='function'){makeThreat();log('🎯 Laf yerine ulaştı. Biri bunu kişisel almış.','bad')}
   if(sm.f>=1e6&&!sm.m1){sm.m1=1;S.fame=clamp((S.fame||0)+10);news(`${S.first} ${S.last} 1 milyon takipçiye ulaştı`,1)}
+  const E=sm.p.ekran;[[1e5,'gumus','Gümüş'],[1e6,'altin','Altın'],[1e7,'elmas','Elmas']].forEach(([n,key,nm])=>{if(E.f>=n&&!E['pl_'+key]){E['pl_'+key]=1;add('happy',6);log(`🏆 Ekran'dan kargo geldi: ${nm} Plaket. ${fmtF(n)} aboneyi geçtin, duvara astın.`,'gold')}});
+  smTierCheck(t0);done()};
+ACT.post=k=>ACT.smp(k==='luks'?'kare:luks':k==='canli'?'dongu:canli':'kare:gunluk');
+ACT.tik=()=>{if(S.sm.ver||!pay(M(20000)))return;S.sm.ver=true;log('Hesapların onaylandı. Mavi tik artık senin.','good');done()};
+const smAdOK=()=>S.sm.p.kare.f>=20000;
+ACT.reklam=()=>{const sm=smEns();if(sm.aq===QS()||!smAdOK())return;if(sm.iz>=70){toast('Markalar şu an seninle yan yana görünmek istemiyor');return}sm.aq=QS();const m=Math.round(sm.p.kare.f*R(50,200)/100*(1+smTier()*.1));S.money+=m;S.taxInc=(S.taxInc||0)+m;smFeed('kare',{t:'#işbirliği',e:'🤝',l:Math.round(sm.p.kare.f*R(2,6)/100),q:QS()});log(`${pick(['Bir saat markası','Bir enerji içeceği','Bir otomobil bayisi','Bir parfüm','Bir giyim markası','Bir telefon markası'])} ile Kare'de reklam anlaşması: ${fmt(m)}.`,'good');done()};
+ACT.smx=op=>{const sm=smEns();
+  if(op==='sil'){if(sm.silQ===QS())return;sm.silQ=QS();sm.iz=clamp(sm.iz-25);PLAT.forEach(P=>{sm.p[P.k].f=Math.round(sm.p[P.k].f*.97);sm.feed[P.k]=sm.feed[P.k].slice(0,2)});smSum();log('🧹 Riskli paylaşımlarını tek tek sildin. Bazı takipçiler "neden sildin?" diye gitti.','dim')}
+  else if(op==='gizli'){sm.gizli=!sm.gizli;log(sm.gizli?'🔒 Kare hesabını gizliye aldın. Yeni takipçi daha yavaş gelir ama meraklı gözler de azalır.':'🔓 Kare hesabını herkese açtın.','dim')}
+  else if(op==='ajans'){if(sm.ajans){sm.ajans=0;log('Sosyal medya ajansıyla yollarını ayırdın.','dim')}else{const c=smAjC();if(!pay(c))return;sm.ajans=1;log(`🧑‍💻 Bir sosyal medya ajansıyla anlaştın (çeyrekte ${fmt(c)}). Paylaşımların yayına girmeden kontrol ediliyor, riskli olanlar ayıklanıyor.`,'good')}}
+  else if(op==='kamu'){if(sm.kamuY===S.age||sm.p.gundem.f<100000)return;sm.kamuY=S.age;if(ch(.6+Math.min(.25,sm.p.gundem.f/2e7))){add('heat',-10);gainResp(1);log('📣 Gündem\'de "bana kumpas kuruluyor" diye yazdın. Etiket bir gece listede kaldı, dosyan biraz yavaşladı.','good')}else{add('heat',5);smIz(8);log('📣 Kampanya ters tepti. Eski paylaşımların tek tek kazılıp önüne kondu.','bad')}}
   done()};
-ACT.tik=()=>{if(!pay(M(20000)))return;S.sm.ver=true;log('Hesabın onaylandı. Mavi tik artık senin.','good');done()};
-ACT.reklam=()=>{const sm=S.sm;if(sm.aq===QS())return;sm.aq=QS();const m=Math.round(sm.f*R(50,200)/100);S.money+=m;S.taxInc=(S.taxInc||0)+m;log(`${pick(['Bir saat markası','Bir enerji içeceği','Bir otomobil bayisi','Bir parfüm','Bir bahis sitesi'])} ile reklam anlaşması: ${fmt(m)}.`,'gold');done()};
-function smQuarter(){const sm=S.sm;if(sm.f>0){sm.f=Math.round(sm.f*.985);S.fame=clamp(Math.max(S.fame||0,Math.log10(Math.max(1,sm.f))*6-12))}}
-EXTRA.sosyal=()=>{const sm=S.sm;let h=`<div class="sum"><div><span>Takipçi</span><b style="color:var(--gold)">${fmtF(sm.f)}${sm.ver?' ✔️':''}</b></div><div><span>Ün</span><b>%${Math.round(S.fame||0)}</b></div></div>`;
-  h+='<p class="note">Karizman, ünün, araban ve lüks oyuncakların takipçi kazandırır. Aynı çeyrekte peş peşe paylaşım yaptıkça etkisi azalır.</p>';
-  h+=row('data-x="post:normal"','📷','Paylaşım yap','Takipçi +','',false)+row('data-x="post:canli"','🔴','Canlı yayın aç','Takipçi + · Mutluluk +','',false)+row('data-x="post:luks"','💸','Lüks hayatını paylaş','Takipçi ++ · Dikkat +','',false);
-  h+=row('data-x="tik:"','✔️','Mavi tik al','Takipçi kazancı %30 artar',sm.ver?'✓':fmtS(M(20000)),sm.ver||sm.f<100000||!canPay(M(20000)));
-  h+=row('data-x="reklam:"','🤝','Reklam anlaşması',sm.f<50000?'50 B takipçiden itibaren':sm.aq===QS()?'Bu çeyrek anlaşma yaptın':'Takipçine göre ödeme','',sm.f<50000||sm.aq===QS());
+const smAjC=()=>Math.round(Math.max(M(40000),S.sm.f*.02));
+const smCPM=()=>Math.round(350*S.cpi);
+const SMEV=[
+ {c:()=>true,e:()=>{const sm=S.sm,P=pick(PLAT),g=Math.round(Math.max(2000,sm.p[P.k].f*R(8,25)/100));return{title:'🚀 Viral oldun',text:`Aylar önce attığın sıradan bir paylaşım ${P.n}'de bir anda patladı. Herkes onu konuşuyor, altına yüzlerce yorum yağıyor.`,choices:[
+   {t:'Dalgayı sür, peş peşe paylaş',fn:()=>{sm.p[P.k].f+=Math.round(g*1.5);smSum();sm.act=Math.min(60,sm.act+6);smIz(4);log(`${P.n}: dalgayı sürdün, +${fmtF(Math.round(g*1.5))} ${P.w}.`,'gold')}},
+   {t:'Sessiz kal, kendiliğinden yürüsün',fn:()=>{sm.p[P.k].f+=g;smSum();log(`${P.n}: +${fmtF(g)} ${P.w}.`,'good')}}]}}},
+ {c:()=>S.sm.f>=50000,e:()=>{const sm=S.sm,m=Math.round(Math.max(M(30000),sm.f*.05));return{title:'🔓 Hesabın çalındı',text:`Sabah uyandığında hesaplarına giremedin. Profilinde kripto reklamları dönüyor. Bir mesaj geldi: "Hesabı geri istiyorsan ${fmt(m)}."`,choices:[
+   {t:'Fidyeyi öde',sub:fmt(m),dis:!canPay(m),fn:()=>{pay(m);log('Hesaplar bir saat içinde geri geldi. Şifreni bu sefer doğum tarihin yapmadın.','dim')}},
+   {t:'Platforma başvur, bekle',fn:()=>{const l=Math.round(sm.f*R(5,12)/100);PLAT.forEach(P=>{sm.p[P.k].f=Math.round(sm.p[P.k].f*(1-l/Math.max(1,sm.f)))});smSum();log(`Hesaplar iki haftada geri geldi. O arada ${fmtF(l)} takipçi gitti.`,'bad')}},
+   ...(inUW()&&S.age>=16&&rank()>=2?[{t:'Hesabı çalanı buldur',fn:()=>{if(ch(.6)){gainResp(2);log('Adamların çocuğu bir internet kafede buldu. Şifreyi kendi eliyle geri yazdı, özür videosu bile çekti.','gold')}else{const l=Math.round(sm.f*.06);sm.p.kare.f=Math.max(0,sm.p.kare.f-l);smSum();log('İz yurt dışına çıkıyordu. Hesap geç geldi.','dim')}}}]:[])]}}},
+ {c:()=>S.sm.f>=100000,e:()=>({title:'🎭 Sahte hesap',text:'Senin adına açılmış sahte bir hesap takipçilerinden "acil borç" istiyor. Birkaç kişi para göndermiş bile.',choices:[
+   {t:'Duyuru yap, mağdurların parasını öde',sub:fmt(kBig(15000,.001)),dis:!canPay(kBig(15000,.001)),fn:()=>{pay(kBig(15000,.001));yon('z',3);gainResp(1);S.sm.p.kare.f+=Math.round(S.sm.p.kare.f*.03);smSum();log('Parayı cebinden ödedin. "Adam gibi adam" yorumları yağdı.','good')}},
+   {t:'Sadece duyuru yap',fn:()=>{log('Duyuruyu yaptın. Sahte hesap bir hafta sonra kapandı.','dim')}}]})},
+ {c:()=>S.sm.f>=30000,e:()=>{const n=`${pick(NAMES)} ${pick(SURN)}`,sm=S.sm;return{title:'🥊 Fenomen kapışması',text:`${n} adında bir fenomen canlı yayında seni tiye aldı: "Onun takipçisinin yarısı bot." Klip her yerde dönüyor.`,choices:[
+   {t:'Aynı tonda cevap ver',fn:()=>{if(ch(.5+karizma()/250)){const g=Math.round(sm.p.dongu.f*.12+3000);sm.p.dongu.f+=g;smSum();log(`Cevabın onunkinden çok izlendi: +${fmtF(g)} takipçi. ${n} videoyu sildi.`,'gold')}else{const l=Math.round(sm.p.dongu.f*.06);sm.p.dongu.f-=l;smSum();add('happy',-3);log(`Cevabın tutmadı, ${fmtF(l)} takipçi gitti.`,'bad')}}},
+   {t:'Ortak yayın teklif et',fn:()=>{const g=Math.round(sm.f*.05+2000);sm.p.dongu.f+=g;smSum();add('happy',3);log(`${n} ile ortak yayın yaptınız. İki tarafın hayranları da kazandı: +${fmtF(g)}.`,'good')}},
+   ...(inUW()&&S.age>=16?[{t:'Kapısına birkaç kişi yolla',fn:()=>{yon('s',5);smIz(10);add('heat',4);log(`${n} ertesi gün özür videosu yayınladı. Videodaki morluğu herkes fark etti, kimin yaptığını da.`,'bad')}}]:[]),
+   {t:'Umursama',fn:()=>{yon('z',1);log('Cevap vermedin. Üç gün sonra herkes başka bir şeyi konuşuyordu.','dim')}}]}}},
+ {c:()=>inUW()&&S.age>=16&&S.sm.iz>=25,e:()=>({title:'🕰️ Eski bir paylaşım hortladı',text:'Yıllar önce attığın bir fotoğraf yeniden dolaşıma girdi. Arka planda, o gün orada olmaması gereken biri var. Bir gazeteci tarihi ve yeri işaretlemiş.',choices:[
+   {t:'Hemen sil',fn:()=>{smIz(6);log('Sildin ama ekran görüntüleri çoktan alınmıştı.','dim')}},
+   {t:'"Montaj" de',fn:()=>{if(ch(.4)){log('Bir kısmı inandı, konu soğudu.','dim')}else{smIz(12);add('heat',5);log('Fotoğrafın orijinali ortaya çıktı. Savcılık dosyaya ekledi.','bad')}}},
+   {t:'Avukatına bırak',sub:fmt(kBig(20000,.001)),dis:!canPay(kBig(20000,.001)),fn:()=>{pay(kBig(20000,.001));smIz(-5);log('Avukatın erişim engeli kararı çıkarttı.','good')}}]})},
+ {c:()=>S.sm.p.kare.f>=100000&&S.sm.iz>=30,e:()=>{const m=Math.round(S.sm.p.kare.f*R(150,300)/100);return{title:'🤝 Marka şart koşuyor',text:`Büyük bir marka yıllık anlaşma teklif ediyor: ${fmt(m)}. Tek şartları var: "Gösterişli ve riskli paylaşımlarınızı kaldırın, sözleşme boyunca da yapmayın."`,choices:[
+   {t:'Kabul et, hesabı temizle',sub:fmt(m),fn:()=>{S.money+=m;S.taxInc=(S.taxInc||0)+m;S.sm.iz=clamp(S.sm.iz-30);S.sm.aq=QS();log(`Hesabını temizledin, sözleşmeyi imzaladın: ${fmt(m)}.`,'gold')}},
+   {t:'"Ben neysem oyum"',fn:()=>{yon('z',3);gainResp(1);log('Markayı geri çevirdin. Takipçilerin bunu sevdi.','dim')}}]}}},
+ {c:()=>S.sm.f>=250000,e:()=>({title:'📸 Hayran buluşması',text:'Bir AVM seni hayran buluşmasına çağırıyor. Binlerce kişi gelecek, her yer kamera olacak.',choices:[
+   {t:'Git',fn:()=>{const g=Math.round(S.sm.f*.04);S.sm.p.kare.f+=g;smSum();add('happy',6);S.fame=clamp((S.fame||0)+2);if(inUW()&&S.age>=16){smIz(5);add('heat',2)}log(`Üç saat fotoğraf çektirdin. +${fmtF(g)} takipçi.${inUW()&&S.age>=16?' Kalabalığın içinde iki sivil de seni çekiyordu.':''}`,'good')}},
+   {t:'Kibarca reddet',fn:()=>{log('Kalabalıktan uzak durdun.','dim')}}]})}];
+function smQuarter(){const sm=smEns();if(S.jail){sm.act=Math.max(0,sm.act-4);return}
+  const t0=smTier();
+  if(sm.f>0){const k=sm.act>=6?1.004:.985;PLAT.forEach(P=>{sm.p[P.k].f=Math.round(sm.p[P.k].f*k)});smSum();S.fame=clamp(Math.max(S.fame||0,Math.log10(Math.max(1,sm.f))*6-12))}
+  sm.act=Math.max(0,sm.act-3);
+  /* Ekran: izlenme geliri */
+  const E=sm.p.ekran;let nv=0;E.vids.forEach(v=>{const age=QS()-v.q;const add_=Math.round((E.f*R(3,9)/100+v.v*.04)*(v.k||1)*Math.pow(.8,age));v.nv=add_;v.v+=add_;nv+=add_});
+  E.lastV=nv;E.lastM=0;if(nv>0&&E.f>=10000){const m=Math.round(nv/1000*smCPM());if(m>0){S.money+=m;S.taxInc=(S.taxInc||0)+m;E.lastM=m;E.tot=(E.tot||0)+m;log(`▶ Ekran: bu çeyrek ${fmtF(nv)} izlenme, reklam geliri ${fmt(m)}.`,'good')}}
+  /* ajans ücreti */
+  if(sm.ajans){const c=smAjC();if(canPay(c))pay(c);else{sm.ajans=0;log('Sosyal medya ajansının faturasını ödeyemedin, anlaşma bitti.','bad')}}
+  /* dijital iz */
+  const uwq=inUW()&&S.age>=16;
+  if(uwq&&smTier()>=3&&sm.act>0)smIz(2);
+  if(uwq&&sm.iz>=30){const h=Math.round(sm.iz/14);add('heat',h);if(sm.iz>=80){log(`📱 Savcılık paylaşımlarını dosyana delil olarak ekledi. Polis dikkati +${h}.`,'bad');try{dosNote('Sosyal medya paylaşımlarıyla suç gelirini ve örgüt bağını ifşa etmek',4)}catch(e){}}else if(sm.iz>=60)log(`📱 Siber Suçlar paylaşımlarını tek tek arşivliyor. Polis dikkati +${h}.`,'bad');else if(ch(.5))log('📱 Paylaşımların karakolda da izleniyor.','dim')}
+  sm.iz=clamp(sm.iz-(sm.ajans?7:3));
+  smTierCheck(t0);
+  if(sm.f>=10000&&okE()&&(sm.evQ||0)<=QS()&&ch(.16)){sm.evQ=QS()+3;const pool=SMEV.filter(x=>x.c());if(pool.length){const ev=pick(pool).e();setTimeout(()=>queue(ev),110)}}}
+const smBar=()=>{const z=Math.round(S.sm.iz);return `<div class="sec">👁️ Dijital iz · %${z}</div><div class="bar" style="margin:0 0 6px"><i style="width:${z}%;background:${z>=60?'var(--blood)':z>=30?'var(--gold)':'var(--good)'}"></i></div><p class="note" style="margin-top:0">${smIzT()}.${inUW()&&S.age>=16?' Gösterişli paylaşımlar takipçi getirir ama polisin elindeki dosyayı da kalınlaştırır.':''}</p>`};
+EXTRA.sosyal=()=>{const sm=smEns();
+  let h=`<div class="sum"><div><span>${smHandle()}${sm.ver?' ✔️':''}</span><b style="color:var(--gold)">${smTierN()}</b></div><div><span>Toplam takipçi</span><b>${fmtF(sm.f)}</b></div><div><span>Ün</span><b>%${Math.round(S.fame||0)}</b></div><div><span>Bu çeyrek paylaşım</span><b>${sm.pq===QS()?sm.pc:0}</b></div></div>`;
+  h+='<div class="sec">📱 Uygulamalar</div>';
+  PLAT.forEach(P=>{const p=sm.p[P.k];h+=`<button class="row" data-go="sm_${P.k}"><span class="ic" style="padding:0;background:none;border:0">${plLogo(P,44)}</span><span class="tx"><b>${P.n}</b><span>${P.d}${P.k==='ekran'&&p.lastM?` · Son çeyrek ${fmtS(p.lastM)}`:''}</span></span><span class="rt">${fmtF(p.f)}</span></button>`});
+  const nx=SMT.slice().reverse().find(x=>sm.f<x[0]);h+=`<p class="note">Düzenli paylaşım yaptıkça algoritma seni öne çıkarır; aynı çeyrekte peş peşe paylaşımın etkisi azalır. ${nx?`Sıradaki basamak: <b>${nx[1]}</b> (${fmtF(nx[0])} takipçi).`:'En üst basamaktasın.'}</p>`;
+  h+=smBar();
+  h+='<div class="sec">⚙️ Hesap yönetimi</div>';
+  h+=row('data-x="tik:"','✔️','Mavi tik al',sm.ver?'Hesapların onaylı':'100 B takipçiden itibaren · Onaylı hesaplar daha çok öne çıkar',sm.ver?'✓':fmtS(M(20000)),sm.ver||sm.f<100000||!canPay(M(20000)));
+  h+=row('data-x="smx:gizli"',sm.gizli?'🔒':'🔓',sm.gizli?'Kare hesabın gizli':'Kare hesabını gizliye al',sm.gizli?'Dokun: herkese aç':'Daha yavaş büyürsün, daha az iz bırakırsın','',false);
+  h+=row('data-x="smx:ajans"','🧑‍💻',sm.ajans?'Ajansla çalışıyorsun':'Sosyal medya ajansı tut',sm.ajans?`Çeyrekte ${fmtS(smAjC())} · Dokun: anlaşmayı bitir`:'Paylaşımlarını yayından önce kontrol eder, riskli olanı ayıklar',sm.ajans?'':fmtS(smAjC()),!sm.ajans&&!canPay(smAjC()));
+  h+=row('data-x="smx:sil"','🧹','Riskli paylaşımları sil',sm.silQ===QS()?'Bu çeyrek temizlik yaptın':'Dijital izin azalır, biraz takipçi kaybedersin','',sm.silQ===QS()||sm.iz<5);
   return['Sosyal medya',h]};
+function smPage(k){const sm=smEns(),P=plT(k),p=sm.p[k],F=sm.feed[k];
+  let h=`<div style="border-radius:16px;overflow:hidden;border:1px solid var(--line);margin-bottom:12px"><div style="background:${P.g};padding:14px;display:flex;align-items:center;gap:12px;color:#fff">${plLogo(P,40)}<div style="flex:1"><b style="font-size:17px">${smHandle()}${sm.ver?' ✔️':''}</b><div style="font-size:12px;opacity:.9">${fmtF(p.f)} ${P.w}${k==='kare'&&sm.gizli?' · 🔒 Gizli hesap':''}</div></div></div>`;
+  if(k==='ekran'){h+=`<div style="padding:10px 14px;background:#0006;font-size:13px;color:var(--muted)">${p.f<10000?`Para kazanma <b>10 B abonede</b> açılır (şu an ${fmtF(p.f)}).`:`Para kazanma açık · Bin izlenme başına ${fmt(smCPM())} · Son çeyrek ${fmtF(p.lastV||0)} izlenme, <b style="color:var(--gold)">${fmt(p.lastM||0)}</b> · Toplam ${fmt(p.tot||0)}`}${p.pl_elmas?' · 💎 Elmas Plaket':p.pl_altin?' · 🥇 Altın Plaket':p.pl_gumus?' · 🥈 Gümüş Plaket':''}</div>`}
+  h+='</div>';
+  h+=`<div class="sec">${k==='ekran'?'🎬 Yeni video':'➕ Yeni paylaşım'}</div>`;
+  SMP[k].forEach(T=>{const lock=T.uw&&!(inUW()&&S.age>=16),yr=(T.yr&&sm['y_'+T.id]===S.age)||(T.sp&&sm.spq===QS()),pc=T.pc?Math.round(T.pc*S.cpi):0;if(lock)return;h+=row(`data-x="smp:${k}:${T.id}"`,T.ic,T.n,yr?(T.sp?'Bu çeyrek çektin':'Bu yıl çektin'):T.d+(T.gift&&sm.gq===QS()?' · Bu çeyrek hediyeler toplandı':'')+(T.pc?' · Çekim masrafı':''),pc?fmtS(pc):'',yr||(pc&&!canPay(pc))||!!S.jail)});
+  if(k==='kare')h+=row('data-x="reklam:"','🤝','Reklam anlaşması',!smAdOK()?'20 B takipçiden itibaren':sm.aq===QS()?'Bu çeyrek anlaşma yaptın':sm.iz>=70?'Markalar şu an senden uzak duruyor':'Takipçine ve basamağına göre ödeme','',!smAdOK()||sm.aq===QS()||sm.iz>=70);
+  if(k==='gundem')h+=row('data-x="smx:kamu"','📣','Kamuoyu kampanyası başlat',p.f<100000?'100 B takipçiden itibaren':sm.kamuY===S.age?'Bu yıl yaptın':'"Bana kumpas kuruluyor" · Tutarsa dosyan yavaşlar, tutmazsa ters teper','',p.f<100000||sm.kamuY===S.age);
+  if(k==='ekran'){h+='<div class="sec">📺 Videoların</div>';if(!p.vids.length)h+='<p class="note">Henüz videon yok. Her video yayında kaldıkça izlenir; eski videolar yavaş yavaş söner.</p>';
+    p.vids.forEach(v=>{h+=`<div class="row" style="cursor:default"><span class="ic" style="padding:0;overflow:hidden;background:${P.g};color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center">▶</span><span class="tx"><b>${v.t}</b><span>${fmtF(v.v)} izlenme · ${QS()-v.q<1?'Yeni':Math.floor((QS()-v.q)/4)?Math.floor((QS()-v.q)/4)+' yıl önce':(QS()-v.q)*3+' ay önce'}</span></span><span class="rt" style="font-size:12px">+${fmtF(v.nv||0)}</span></div>`})}
+  else{h+='<div class="sec">🗂️ Son paylaşımların</div>';if(!F.length)h+='<p class="note">Henüz paylaşımın yok.</p>';
+    F.forEach(o=>{h+=`<div class="row" style="cursor:default"><span class="ic" style="font-size:22px">${o.e}</span><span class="tx"><b style="font-weight:500">${o.t}</b><span>${k==='gundem'?'🔁':'❤️'} ${fmtF(o.l)}${o.v?' · 🚀 Viral':''}</span></span></div>`})}
+  return[P.n,h]}
+PLAT.forEach(P=>{EXTRA['sm_'+P.k]=()=>smPage(P.k)});
+
 
 /* ============ Ek olaylar ============ */
 function EV(w,c,f){EVENTS.push({w,c,e:f})}
@@ -6826,7 +6959,7 @@ function hubTiles(){return [
       ['insaat','🏗','İnşaat şirketi',S.co?`${S.co.projects.length} aktif proje`:'Müteahhit ol',S.age>=18],
       ['yurtdisi','✈️','Yurt dışı',S.abroad?`${DEST.find(d=>d.id===S.abroad).n}'de yaşıyorsun`:'Dubai, Kıbrıs, Marsilya…',S.age>=18&&!S.jail],
       ['sahne','🎤','Gece kulübü',S.artists.length?`${S.artists.length} sanatçı`:'Sanatçı yönet, konser ver',S.age>=18&&!S.jail],
-      ['sosyal','📱','Sosyal medya',`${fmtF(S.sm.f)} takipçi`,S.age>=13&&!S.jail],
+      ['sosyal','📱','Sosyal medya',`${fmtF(S.sm.f)} takipçi · Kare, Döngü, Ekran, Gündem`,S.age>=13&&!S.jail],
       ['harita','🗺','Mafya savaşı haritası',S.org?`${S.org.turf.length} mekân senin`:'Kim nereyi tutuyor',true],
       ['gazete','📰','Gazete',`Ün %${Math.round(S.fame||0)}`,true],
       ...(GAMBLE?[['kumar','🎰','Kaçak kumarhane','Yeraltında rulet, blackjack, barbut',S.age>=18&&!S.jail]]:[]),
@@ -6913,7 +7046,7 @@ function closeSheet(){if(curSheet){LASTSH=curSheet;LASTT=(($('shT')&&$('shT').te
 function qbar(){const l=$('qLeft'),b=$('qBack');if(!l||!S)return;l.innerHTML='';if(LASTSH&&S.alive){b.style.display='';b.textContent='↩ '+(LASTT||'Son menü')}else b.style.display='none'}
 document.addEventListener('click',e=>{if(e.target.closest('#qBack')&&LASTSH){openSheet(LASTSH)}});
 const PARENT={berber:'cat_kisisel',meslek:'is',egitim:'meslek',ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
-try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'sirket'});
+try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'sirket',sm_kare:'sosyal',sm_dongu:'sosyal',sm_ekran:'sosyal',sm_gundem:'sosyal'});
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
 $('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeSheet()});
