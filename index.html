@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.19-2345';
+const APPV='2026.11.20-0020';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2928,10 +2928,10 @@ const SMP={
   {id:'canli',n:'Canlı yayın aç',ic:'🔴',d:'Hayranlar hediye gönderir',m:1.2,iz:2,vr:.03,gift:1,hap:3,c:['Canlı yayındaydık.','Sorularınızı cevapladım.']},
   {id:'gosteri',n:'Gösteriş videosu',ic:'🔥',d:'Para destesi, silah, konvoy',uw:1,m:3.2,iz:15,vr:.2,heat:4,resp:1,c:['Konvoy yola çıktı.','Sayın bakalım.','Bize her yer mahalle.']}],
  ekran:[
-  {id:'vlog',n:'Vlog çek',ic:'🎥',d:'Bir günün, sokağın, sofran',vid:1,pc:8000,m:.8,q:1,iz:1,vr:.06,c:['Benimle bir gün','Mahallemi geziyoruz','Sokak lezzetleri turu','Soru cevap: her şeyi sordunuz']},
-  {id:'tur',n:'Lüks turu videosu',ic:'🏎️',d:'Garaj, ev, saat koleksiyonu',vid:1,pc:20000,m:1.2,q:1.6,iz:7,vr:.1,heat:2,c:['Garaj turu','Evimi geziyoruz','Saat koleksiyonum','Bir günde ne kadar harcıyorum?']},
-  {id:'hayat',n:'"Hayat hikâyem" belgeseli',ic:'🎬',d:'Çocukluğun, sokak, bugünlere nasıl geldin',vid:1,pc:120000,m:2.2,q:3,iz:10,vr:.18,uwiz:14,yr:1,c:['Hayat hikâyem: sıfırdan buraya','Kimsenin bilmediği yıllar','Sokaktan zirveye']},
-  {id:'sponsor',n:'Sponsorlu video',ic:'🤝',d:'Marka parayı peşin öder',vid:1,pc:15000,m:.6,q:.8,iz:0,vr:.03,sp:1,c:['Bu videonun sponsoru…','Denedim, anlatıyorum','İş birliği']}],
+  {id:'vlog',n:'Vlog çek',ic:'🎥',d:'Telefonla çek: bir günün, sokağın, sofran',vid:1,m:.8,q:1,iz:1,vr:.06,c:['Benimle bir gün','Mahallemi geziyoruz','Sokak lezzetleri turu','Soru cevap: her şeyi sordunuz']},
+  {id:'tur',n:'Lüks turu videosu',ic:'🏎️',d:'Garaj, ev, saat koleksiyonu',vid:1,m:1.2,q:1.6,iz:7,vr:.1,heat:2,c:['Garaj turu','Evimi geziyoruz','Saat koleksiyonum','Bir günde ne kadar harcıyorum?']},
+  {id:'hayat',n:'"Hayat hikâyem" belgeseli',ic:'🎬',d:'Profesyonel ekiple çekilir: çocukluğun, sokak, bugünlere nasıl geldin',vid:1,pc:120000,m:2.2,q:3,iz:10,vr:.18,uwiz:14,yr:1,c:['Hayat hikâyem: sıfırdan buraya','Kimsenin bilmediği yıllar','Sokaktan zirveye']},
+  {id:'sponsor',n:'Sponsorlu video',ic:'🤝',d:'Marka parayı peşin öder',vid:1,m:.6,q:.8,iz:0,vr:.03,sp:1,c:['Bu videonun sponsoru…','Denedim, anlatıyorum','İş birliği']}],
  gundem:[
   {id:'yorum',n:'Gündeme yorum yap',ic:'💬',d:'Maç, dizi, zam, trafik',m:.9,iz:0,vr:.08,c:['Bu maç böyle bitmezdi.','Simit yine zamlanmış.','Trafik değil, sınav.','Herkes haklı, kimse suçlu değil.']},
   {id:'sert',n:'Sert bir çıkış yap',ic:'⚡',d:'Çok konuşulur, linç de yiyebilirsin',m:2,iz:3,vr:.2,linc:.2,c:['Kimse kusura bakmasın ama…','Söylenmeyeni söylüyorum.','Bunu yazınca kızacaksınız.']},
@@ -3006,7 +3006,7 @@ function smQuarter(){const sm=smEns();if(S.jail){sm.act=Math.max(0,sm.act-4);ret
   if(sm.f>0){const k=sm.act>=6?1.004:.985;PLAT.forEach(P=>{sm.p[P.k].f=Math.round(sm.p[P.k].f*k)});smSum();S.fame=clamp(Math.max(S.fame||0,Math.log10(Math.max(1,sm.f))*6-12))}
   sm.act=Math.max(0,sm.act-3);
   /* Ekran: izlenme geliri */
-  const E=sm.p.ekran;let nv=0;E.vids.forEach(v=>{const age=QS()-v.q;const add_=Math.round((E.f*R(3,9)/100+v.v*.04)*(v.k||1)*Math.pow(.8,age));v.nv=add_;v.v+=add_;nv+=add_});
+  const E=sm.p.ekran;let nv=0;E.vids.forEach(v=>{const age=QS()-v.q;const add_=Math.round((E.f*R(3,9)/100+v.v*.04)*(v.k||1)*Math.pow(.8,age));v.nv=add_;v.v+=add_;nv+=add_;if(E.f>=10000)v.m=(v.m||0)+Math.round(add_/1000*smCPM())});
   E.lastV=nv;E.lastM=0;if(nv>0&&E.f>=10000){const m=Math.round(nv/1000*smCPM());if(m>0){S.money+=m;S.taxInc=(S.taxInc||0)+m;E.lastM=m;E.tot=(E.tot||0)+m;log(`▶ Ekran: bu çeyrek ${fmtF(nv)} izlenme, reklam geliri ${fmt(m)}.`,'good')}}
   /* ajans ücreti */
   if(sm.ajans){const c=smAjC();if(canPay(c))pay(c);else{sm.ajans=0;log('Sosyal medya ajansının faturasını ödeyemedin, anlaşma bitti.','bad')}}
@@ -3035,11 +3035,11 @@ function smPage(k){const sm=smEns(),P=plT(k),p=sm.p[k],F=sm.feed[k];
   if(k==='ekran'){h+=`<div style="padding:10px 14px;background:#0006;font-size:13px;color:var(--muted)">${p.f<10000?`Para kazanma <b>10 B abonede</b> açılır (şu an ${fmtF(p.f)}).`:`Para kazanma açık · Bin izlenme başına ${fmt(smCPM())} · Son çeyrek ${fmtF(p.lastV||0)} izlenme, <b style="color:var(--gold)">${fmt(p.lastM||0)}</b> · Toplam ${fmt(p.tot||0)}`}${p.pl_elmas?' · 💎 Elmas Plaket':p.pl_altin?' · 🥇 Altın Plaket':p.pl_gumus?' · 🥈 Gümüş Plaket':''}</div>`}
   h+='</div>';
   h+=`<div class="sec">${k==='ekran'?'🎬 Yeni video':'➕ Yeni paylaşım'}</div>`;
-  SMP[k].forEach(T=>{const lock=T.uw&&!(inUW()&&S.age>=16),yr=(T.yr&&sm['y_'+T.id]===S.age)||(T.sp&&sm.spq===QS()),pc=T.pc?Math.round(T.pc*S.cpi):0;if(lock)return;h+=row(`data-x="smp:${k}:${T.id}"`,T.ic,T.n,yr?(T.sp?'Bu çeyrek çektin':'Bu yıl çektin'):T.d+(T.gift&&sm.gq===QS()?' · Bu çeyrek hediyeler toplandı':'')+(T.pc?' · Çekim masrafı':''),pc?fmtS(pc):'',yr||(pc&&!canPay(pc))||!!S.jail)});
+  SMP[k].forEach(T=>{const lock=T.uw&&!(inUW()&&S.age>=16),yr=(T.yr&&sm['y_'+T.id]===S.age)||(T.sp&&sm.spq===QS()),pc=T.pc?Math.round(T.pc*S.cpi):0;if(lock)return;h+=row(`data-x="smp:${k}:${T.id}"`,T.ic,T.n,yr?(T.sp?'Bu çeyrek çektin':'Bu yıl çektin'):T.d+(T.gift&&sm.gq===QS()?' · Bu çeyrek hediyeler toplandı':''),pc?'Masraf '+fmtS(pc):'',yr||(pc&&!canPay(pc))||!!S.jail)});
   if(k==='kare')h+=row('data-x="reklam:"','🤝','Reklam anlaşması',!smAdOK()?'20 B takipçiden itibaren':sm.aq===QS()?'Bu çeyrek anlaşma yaptın':sm.iz>=70?'Markalar şu an senden uzak duruyor':'Takipçine ve basamağına göre ödeme','',!smAdOK()||sm.aq===QS()||sm.iz>=70);
   if(k==='gundem')h+=row('data-x="smx:kamu"','📣','Kamuoyu kampanyası başlat',p.f<100000?'100 B takipçiden itibaren':sm.kamuY===S.age?'Bu yıl yaptın':'"Bana kumpas kuruluyor" · Tutarsa dosyan yavaşlar, tutmazsa ters teper','',p.f<100000||sm.kamuY===S.age);
-  if(k==='ekran'){h+='<div class="sec">📺 Videoların</div>';if(!p.vids.length)h+='<p class="note">Henüz videon yok. Her video yayında kaldıkça izlenir; eski videolar yavaş yavaş söner.</p>';
-    p.vids.forEach(v=>{h+=`<div class="row" style="cursor:default"><span class="ic" style="padding:0;overflow:hidden;background:${P.g};color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center">▶</span><span class="tx"><b>${v.t}</b><span>${fmtF(v.v)} izlenme · ${QS()-v.q<1?'Yeni':Math.floor((QS()-v.q)/4)?Math.floor((QS()-v.q)/4)+' yıl önce':(QS()-v.q)*3+' ay önce'}</span></span><span class="rt" style="font-size:12px">+${fmtF(v.nv||0)}</span></div>`})}
+  if(k==='ekran'){h+='<div class="sec">📺 Videoların</div>';if(!p.vids.length)h+='<p class="note">Henüz videon yok. Video çekmek bedava; her video yayında kaldıkça izlenir; eski videolar yavaş yavaş söner.</p>';
+    p.vids.forEach(v=>{h+=`<div class="row" style="cursor:default"><span class="ic" style="padding:0;overflow:hidden;background:${P.g};color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center">▶</span><span class="tx"><b>${v.t}</b><span>${fmtF(v.v)} izlenme${v.m?` · ${fmtS(v.m)} kazandırdı`:''} · ${QS()-v.q<1?'Yeni':Math.floor((QS()-v.q)/4)?Math.floor((QS()-v.q)/4)+' yıl önce':(QS()-v.q)*3+' ay önce'}</span></span><span class="rt" style="font-size:12px">+${fmtF(v.nv||0)}</span></div>`})}
   else{h+='<div class="sec">🗂️ Son paylaşımların</div>';if(!F.length)h+='<p class="note">Henüz paylaşımın yok.</p>';
     F.forEach(o=>{h+=`<div class="row" style="cursor:default"><span class="ic" style="font-size:22px">${o.e}</span><span class="tx"><b style="font-weight:500">${o.t}</b><span>${k==='gundem'?'🔁':'❤️'} ${fmtF(o.l)}${o.v?' · 🚀 Viral':''}</span></span></div>`})}
   return[P.n,h]}
