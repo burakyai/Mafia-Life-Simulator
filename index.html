@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.20-1030';
+const APPV='2026.11.20-1130';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -732,7 +732,7 @@ function karizma(){if(S&&((S.look&&S.look.acc.includes('hac'))||(S.owned&&S.owne
   if(hasY('fotr'))k+=5;if(S.age<16)k=0;return k}
 function has(id){return S.staff.some(x=>x.id===id)}
 function friends(job,min=50){return S.friends.filter(f=>f.job===job&&f.rel>=min).length}
-const inUW=()=>S.yol==='polis'?false:!!(S.yol||S.family||S.org||S.uw||(S.stats&&S.stats.crimes>0)||(S.black||0)>0||(S.st&&S.st.shops&&S.st.shops.some(o=>o.st==='odeyor')));const rankN=i=>S.yol==='polis'&&S.pol?(S.pol.giz?'Gizli görevde':PRANK[S.pol.r].n):i===0&&!inUW()?'Sivil':S.yol==='kabadayi'?(S.kTitle&&i>=5?'Son Kabadayı':KRANK[i]):RANKS[i].n;
+const inUW=()=>S.yol==='polis'?false:!!(S.yol||S.family||S.org||S.uw||(S.stats&&S.stats.crimes>0)||(S.black||0)>0||(S.st&&S.st.shops&&S.st.shops.some(o=>o.st==='odeyor')));const rankN=i=>isAv()&&!S.yol&&!S.family&&!S.org?AVR[S.av.r].n:S.yol==='polis'&&S.pol?(S.pol.giz?'Gizli görevde':PRANK[S.pol.r].n):i===0&&!inUW()?'Sivil':S.yol==='kabadayi'?(S.kTitle&&i>=5?'Son Kabadayı':KRANK[i]):RANKS[i].n;
 function rank(){if(S.age<14||!inUW())return 0;let i=0;RANKS.forEach((r,k)=>{if(S.respect>=r.r)i=k});const cap=S.yol==='kabadayi'?(S.org?5:3):S.org?5:!S.family?1:(S.boss?5:4);return Math.min(i,cap)}
 function fam(){return FAMILIES.find(f=>f.n===S.family)}
 function boss(){return S.boss?'Sen':(fam()?'Baba '+fam().b:'Mahalle abisi')}
@@ -828,7 +828,7 @@ function ageUp(){
   quarterSystems(f);
   if(!kid){try{eduQuarter()}catch(e){console.error(e)}}
   payExpenses(f);
-  if(!kid){try{yolQ()}catch(e){console.error(e)}try{streetQ()}catch(e){console.error(e)}try{kgQ()}catch(e){console.error(e)}try{invQuarter()}catch(e){console.error(e)}try{uniQ()}catch(e){console.error(e)}try{polQ()}catch(e){console.error(e)}orgQuarter(f);try{fjQuarter()}catch(e){console.error(e)}try{friendQuarter()}catch(e){console.error(e)}fxQuarter();acctQuarter();bossQuarter();relQuarter();abroadQuarter();artistsQuarter();smQuarter();clubQuarter();coQuarter();labelQuarter();galQuarter();try{sagkolQ()}catch(e){console.error(e)}semtQuarter();routesQuarter();blackQuarter();goldQuarter();loansQuarter();cityQuarter();wmQuarter();firmQuarter();nightQuarter()}
+  if(!kid){try{yolQ()}catch(e){console.error(e)}try{streetQ()}catch(e){console.error(e)}try{kgQ()}catch(e){console.error(e)}try{invQuarter()}catch(e){console.error(e)}try{uniQ()}catch(e){console.error(e)}try{polQ()}catch(e){console.error(e)}try{avQ()}catch(e){console.error(e)}orgQuarter(f);try{fjQuarter()}catch(e){console.error(e)}try{friendQuarter()}catch(e){console.error(e)}fxQuarter();acctQuarter();bossQuarter();relQuarter();abroadQuarter();artistsQuarter();smQuarter();clubQuarter();coQuarter();labelQuarter();galQuarter();try{sagkolQ()}catch(e){console.error(e)}semtQuarter();routesQuarter();blackQuarter();goldQuarter();loansQuarter();cityQuarter();wmQuarter();firmQuarter();nightQuarter()}
   if(newYear){if(hasL('yat'))add('happy',3);if(hasL('kangal'))add('happy',1)}
   if(newYear&&!kid){econYear();councilYear()}
   if(newYear){try{boxYear()}catch(e){}carYear();yearSystems();if(!kid){taxTime();try{dosYear()}catch(e){console.error(e)}}}
@@ -920,7 +920,7 @@ function adultYear(ny){if(ny)try{parYear()}catch(e){}
   if(S.later&&S.later.length){const due=S.later.filter(x=>x.q<=QS());if(due.length){S.later=S.later.filter(x=>x.q>QS());const d=due[0];S.later.push(...due.slice(1).map(x=>({...x,q:QS()+1})));const ev=LATER[d.id]&&LATER[d.id](d);if(ev){queue(ev);return}}}
   if(okE()&&S.age>=16){const act=Object.values(CHS()).filter(x=>x.st!=='son').length;if(act<2&&ch(act===0?.55:.2)){const ids=Object.keys(CHAINS).filter(id=>!CHS()[id]&&S.age>=CHAINS[id].a[0]&&S.age<=CHAINS[id].a[1]&&(!CHAINS[id].req||CHAINS[id].req()));if(ids.length){const id=pick(ids);CHS()[id]={st:1};const ev=CHAINS[id].start();if(ev)return queue(ev)}}}
   if(ch(S.yearStep&&S.age>=14?.35:.72)){
-    const pool=EVENTS.filter(e=>(S.yol!=='polis'||e.civ)&&e.c()&&e!==S._lastEv);let tot=pool.reduce((s,e)=>s+e.w,0),r=Math.random()*tot;
+    const pool=EVENTS.filter(e=>(!temizMeslek()||e.civ)&&e.c()&&e!==S._lastEv);let tot=pool.reduce((s,e)=>s+e.w,0),r=Math.random()*tot;
     for(const e of pool){r-=e.w;if(r<=0){S._lastEv=null;const ev=e.e();if(ev)queue(ev);break}}
   }else if(false)log(pick(['Sakin bir yıl geçti.','Mahallede çay içip dedikodu dinledin.','Eski dostlarla rakı masasına oturdun.','Yeni bir araba kiraladın, bir ay sonra geri verdin.','Sokaklar bu yıl sessizdi.']),'dim');
 }
@@ -1270,7 +1270,7 @@ function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();r
 function ensure(){
   ['cars','jewels','staff','friends','houses'].forEach(k=>{if(!Array.isArray(S[k]))S[k]=[]});
   if(S.car===undefined)S.car=null;if(S.home===undefined)S.home=null;if(!S.hidx)S.hidx=1;
-  if(!S.bank)S.bank={dep:0,score:1200,loan:null,card:null};try{hatFix()}catch(e){}if(S.yol===undefined&&S.age>20&&inUW())S.yol='mafya';try{mbBkSync()}catch(e){}
+  if(!S.bank)S.bank={dep:0,score:1200,loan:null,card:null};try{hatFix()}catch(e){}if(S.yol===undefined&&S.age>20&&inUW()&&!(S.job&&S.job.id==='avukat'&&!(S.stats&&S.stats.crimes>0)&&!S.family&&!S.org))S.yol='mafya';try{mbBkSync()}catch(e){}
   if(!S.stocks)S.stocks={};
   try{if(typeof xstSync==='function')xstSync()}catch(e){}
   if(!S.px)S.px={};STOCKS.forEach(s=>{if(!S.px[s.id])S.px[s.id]={p:s.p,h:[s.p],n:gauss()}});
@@ -1285,7 +1285,7 @@ function ensure(){
   migrateCars();
   if(!S.lux)S.lux=[];if(!S.papers)S.papers=[];if(S.fame===undefined)S.fame=0;if(!S.ach)S.ach={};
   S.stats=Object.assign({crimes:0,jailed:0,venues:0,elections:0,wins:0,bigwin:0},S.stats||{});
-  delete S.pol;if(!S.grads)S.grads=[];if(S.edu===undefined)S.edu=null;if(S.job===undefined)S.job=null;
+  if(S.pol&&!S.pol.ekip)delete S.pol;if(S.yol==='polis'&&!S.pol){try{S.yol=undefined;polStart()}catch(e){console.error(e)}}if(S.job&&S.job.id==='avukat'&&!S.av)S.av={r:1,it:50,kir:0,mesai:{q:-1,n:0},dava:[],kaz:0,uz:0,kay:0,rq:S.age*4+(S.q||0),usta:'Kemal Aksoy',aile:null};if(!S.grads)S.grads=[];if(S.edu===undefined)S.edu=null;if(S.job===undefined)S.job=null;
   if(S.look&&!S.look.pic&&!S.look.av){let hh=0;for(const c of (S.first+S.last))hh=(hh*31+c.charCodeAt(0))>>>0;S.look.pic=hh%15+1}if(S.st)try{stEnsure()}catch(e){}if(!S.kids)S.kids=[];if(!S.lb)S.lb=(S.gen||1)>1?{...(S.stats||{}),co:S.co?S.co.done||0:0}:{};if(!S.yad)S.yad=[];if(!S.carMig2){try{carMigrate(S,0)}catch(e){}S.carMig2=1}if(!S.tree)S.tree=[];if(!S.gen)S.gen=1;if(!S.birthYear)S.birthYear=1996;if(!S.gender)S.gender='e';
   if(!S.tips)S.tips={};if(!S.tipStats)S.tipStats={ok:0,n:0};if(S.q===undefined)S.q=0;
 }
@@ -1965,7 +1965,7 @@ EXTRA.basarim=()=>{const got=ACH.filter(a=>S.ach[a[0]]).length;let h=`<p class="
 
 /* ============ Eğitim ve meslek ============ */
 const DEPTS=[
-  {id:'hukuk',n:'Hukuk fakültesi',q:16,fee:60000,job:'avukat',jn:'Avukat',sal:380000,d:'Mezun olursan mahkemede beraat şansın +%20'},
+  {id:'hukuk',n:'Hukuk fakültesi',q:16,fee:60000,job:'avukat',jn:'Avukat',sal:380000,d:'Avukat olursun; kendi davalarında beraat şansın +%20'},
   {id:'tip',n:'Tıp fakültesi',q:24,fee:90000,job:'doktor',jn:'Doktor',sal:480000,d:'Sağlığın her çeyrek iyileşir, muayene bedava'},
   {id:'isletme',n:'İşletme',q:16,fee:50000,job:'isinsani',jn:'İş insanı',sal:320000,d:'İşletme gelirlerin +%20'},
   {id:'polis',n:'Polis akademisi',q:8,fee:20000,job:'polis',jn:'Polis',sal:220000,d:'Mezun olunca teşkilata katılır, suçun karşı tarafında oynarsın'}];
@@ -1982,8 +1982,8 @@ ACT.uni=id=>{const d=DEPTS.find(x=>x.id===id);closeSheet();
     {t:'Sınava gir',sub:`Şans %${Math.round(uniP()*100)}`,fn:()=>{if(ch(uniP())){S.edu={d:id,left:d.q};log(`${d.n} sınavını kazandın! Öğrencisin.`,'good')}else log(`${d.n} sınavını kazanamadın. Seneye tekrar dene.`,'bad')}},
     {t:'Vazgeç',fn:()=>{}}]})};
 ACT.unidrop=()=>{log('Okulu bıraktın.','dim');S.edu=null;done()};
-ACT.job=id=>{const d=DEPTS.find(x=>x.id===id);if(d.job==='polis'){if(!polClean()){toast('Sabıka kaydın ya da yeraltı bağlantın varken teşkilat seni almaz.');return}polStart();return done()}S.job={id:d.job,n:d.jn,sal:d.sal,q:0};log(inUW()?`${d.jn} olarak işe başladın. Gündüz ${d.jn.toLowerCase()}, gece başka biri.`:`${d.jn} olarak işe başladın.`,'gold');done()};
-ACT.quit=()=>{if(!S.job)return;if(S.yol==='polis'){polEnd('👮 İstifa dilekçeni verdin, rozetini ve silahını teslim ettin.');closeSheet();return done()}log(`${S.job.n} işinden istifa ettin.`,'dim');S.job=null;done()};
+ACT.job=id=>{const d=DEPTS.find(x=>x.id===id);if(S.job&&S.job.id!==d.job&&(d.job!=='polis'||polClean())&&!(d.job==='avukat'&&S.av&&S.av.ihrac)){if(S.job.id==='avukat'&&S.av)avEnd();log(`${S.job.n} işinden ayrıldın.`,'dim');S.job=null}if(d.job==='avukat'){if(avStart())done();return}if(d.job==='polis'){if(!polClean()){toast('Sabıka kaydın ya da yeraltı bağlantın varken teşkilat seni almaz.');return}polStart();return done()}S.job={id:d.job,n:d.jn,sal:d.sal,q:0};log(inUW()?`${d.jn} olarak işe başladın. Gündüz ${d.jn.toLowerCase()}, gece başka biri.`:`${d.jn} olarak işe başladın.`,'gold');done()};
+ACT.quit=()=>{if(!S.job)return;if(S.job.id==='avukat'&&S.av){avEnd('⚖️ Cübbeni astın, büroya dilekçeni bıraktın. Ruhsatın duruyor; istersen dönersin.');closeSheet();return done()}if(S.yol==='polis'){polEnd('👮 İstifa dilekçeni verdin, rozetini ve silahını teslim ettin.');closeSheet();return done()}log(`${S.job.n} işinden istifa ettin.`,'dim');S.job=null;done()};
 /* ============ Hizmet sektörü ve iş ilanları ============ */
 const SVC=[
   ['garson','🍽','Restoran',['Garson','Şef garson','Restoran müdürü'],108e3,16,false],
@@ -2037,7 +2037,7 @@ EXTRA.egitim=()=>{let h='';
   if(S.edu){const d=DEPTS.find(x=>x.id===S.edu.d);h+=`<div class="sum"><div><span>Okuduğun bölüm</span><b>${d.n}</b></div><div><span>Mezuniyete kalan</span><b>${fmtJ(S.edu.left/4)}</b></div><div><span>Yıllık harç</span><b>${fmt(d.fee)}</b></div></div>`+row('data-x="unidrop:"','🚪','Okulu bırak','','',false)}
   if(S.job)h+=`<div class="sec">Mesleğin</div><div class="sum"><div><span>Meslek</span><b>${S.job.n}</b></div><div><span>Yıllık maaş</span><b>${fmt(Math.round(S.job.sal*(1+Math.min(.5,(S.job.q||0)*.01))))}</b></div></div>`+row('data-x="quit:"','📤','İstifa et','','',false);
   const g=S.grads||[];
-  if(g.length&&!S.job){h+='<div class="sec">Diplomaların</div>';g.forEach(id=>{const d=DEPTS.find(x=>x.id===id);h+=row(`data-x="job:${id}"`,'💼',`${d.jn} olarak çalış`,`Yıllık ${fmtS(d.sal)} maaş · ${d.d}`,'',!!S.jail)})}
+  if(g.length&&!S.job){h+='<div class="sec">Diplomaların</div>';g.forEach(id=>{const d=DEPTS.find(x=>x.id===id);h+=row(`data-x="job:${id}"`,'💼',`${d.jn} olarak çalış`,`Yıllık ${fmtS(d.job==='avukat'?Math.round(AVR[S.av&&!S.av.ihrac?S.av.r:0].sal*S.cpi):d.job==='polis'?Math.round(PRANK[0].sal*S.cpi):d.sal)} maaş · ${d.job==='avukat'?(S.av&&S.av.ihrac?'Ruhsatın iptal edildi':'Dosya al, duruşmaya çık, itibar kazan'):d.d}`,'',!!S.jail)})}
   if(!S.edu){h+='<div class="sec">Üniversite</div>';DEPTS.filter(d=>!g.includes(d.id)).forEach(d=>h+=row(`data-x="uni:${d.id}"`,'🎓',d.n,`${d.q/4} yıl · ${d.d}`,fmtS(d.fee)+'/yıl',S.age>40||!!S.jail))}
   return['Eğitim ve meslek',h]};
 
@@ -3795,7 +3795,7 @@ function kabadayi(o){
 function sqLoss(f,quiet){const st=S.st;let lost=0;const cut=x=>{const d=Math.round(x*f*R(60,140)/100);lost+=d;return Math.max(0,x-d)};st.my.sq=cut(st.my.sq);LTS().forEach(m=>{m.sq=cut(m.sq||0)});if(lost&&!quiet)log(`Sokak kadrondan ${lost} adam kaybettin.`,'bad');return lost}
 function armUse(d){const st=S.st;st.my.ar=Math.max(0,st.my.ar-d);LTS().forEach(m=>{m.ar=Math.max(0,(m.ar||0)-d)})}
 /* çeyrek */
-function streetQ(){if(S.age<16||S.jail||S.abroad||S.yol==='polis')return;const st=stEnsure();try{gNetQ(st)}catch(e){console.error(e)}
+function streetQ(){if(S.age<16||S.jail||S.abroad||S.yol==='polis'||temizMeslek())return;const st=stEnsure();try{gNetQ(st)}catch(e){console.error(e)}
   // kadro maaşı
   const n=totSq()-famSq();if(n){const c=Math.round(n*SQW*S.cpi*(1+Math.max(0,n-100)/150)*(st.gw?1.5:1));const fromB=Math.min(S.black||0,c);S.black=(S.black||0)-fromB;const cr=c-fromB;fund(cr);if(cashA()>=cr){spend(cr);S.sqMiss=0;log(`🔫 Sokak kadron (${n} adam) maaşı${st.gw?' ve savaş primi':''}: ${fmt(c)}.`,'dim')}else{S.sqMiss=(S.sqMiss||0)+1;const d=sqLoss(.15,1);log(S.sqMiss>1?`Kadro maaşı ${S.sqMiss}. çeyrektir ödenmiyor: ${d} adam daha gitti.`:`Kadrona maaş ödeyemedin, ${d} adam ekibi bıraktı.`,'bad')}}
   armUse(st.gw?12:4);
@@ -4065,7 +4065,7 @@ function addSq(n){try{const st=stEnsure();st.my.sq=Math.min(sqCap(null),st.my.sq
 function chGo(id,st,n,d){CHS()[id]={...(CHS()[id]||{}),...(d||{}),st};later('ch_'+id,n,{st})}
 function chEnd(id,d){CHS()[id]={...(CHS()[id]||{}),...(d||{}),st:'son'}}
 const CHAINS={
- borc:{a:[16,40],req:()=>!isPol(),start:()=>{const n=pick(NAMES),m=kBig(20000,.003);return{title:'Tefecinin kapısında bir çocuk',text:`Mahallenin çocuklarından ${n}, 15 yaşında. Babası hastanede yatıyor, tefecinin adamları her akşam kapıya dayanıyor. Bugün çocuğu duvara yaslamışlar: "Babanın borcunu sen ödeyeceksin."`,choices:[
+ borc:{a:[16,40],req:()=>!temizMeslek(),start:()=>{const n=pick(NAMES),m=kBig(20000,.003);return{title:'Tefecinin kapısında bir çocuk',text:`Mahallenin çocuklarından ${n}, 15 yaşında. Babası hastanede yatıyor, tefecinin adamları her akşam kapıya dayanıyor. Bugün çocuğu duvara yaslamışlar: "Babanın borcunu sen ödeyeceksin."`,choices:[
    {t:'Borcu sen öde',sub:fmt(m),dis:!canPay(m),fn:()=>{pay(m);yon('m',10);log(`${n}'in babasının borcunu kapattın. Çocuk elini öpmek istedi, izin vermedin.`,'good');chGo('borc',2,R(40,56),{n,f:'kurtar'})}},
    {t:'Tefecinin adamlarını kovala',fn:()=>kFight('Tefecinin adamları',1,kPw(1),ok=>{if(ok){yon('m',5);yon('s',5);gainResp(2);log(`Tefecinin adamlarını sokağın sonuna kadar kovaladın. ${n} o gece rahat uyudu.`,'good');chGo('borc',2,R(40,56),{n,f:'kovdu'})}else{hurt(R(5,12),'Tefeci kavgası');log('Adamlar kalabalıktı. Ama bir daha o kapıya gelmediler.','dim');chGo('borc',2,R(40,56),{n,f:'kovdu'})}done()})},
    {t:'Borcu tefeciden satın al, sen tahsil et',fn:()=>{yon('k',10);yon('s',5);dirty(Math.round(m*.4));log(`Senedi tefeciden yarı fiyatına aldın. Faizini artık sen topluyorsun: ${fmt(Math.round(m*.4))}.`,'dim');chGo('borc',2,R(40,56),{n,f:'satin'})}},
@@ -4118,7 +4118,7 @@ const CHAINS={
   3:d=>{const C=CHS().gazeteci,n=C.n;return{title:`${n} kitap yazıyor`,text:`${n} aradı: "Hayatını kitap yapmak istiyorum. Her şeyi, olduğu gibi. Son sözü senin olsun."`,choices:[
      {t:'Kabul et, her şeyi anlat',fn:()=>{const m=kBig(100000,.003);S.money+=m;gainResp(5);add('heat',10);yon('z',5);news(`"${S.first}" kitabı çok satanlarda`,2);log(`Kitap çok satanlar listesine girdi. Telif payın: ${fmt(m)}. Bazı bölümler savcılığın da ilgisini çekti.`,'gold');chEnd('gazeteci')}},
      {t:'"Bazı hikâyeler mezara gider"',fn:()=>{yon('k',5);log(`${n} anlayışla güldü: "O cümleyi kitabın sonuna yazacaktım."`,'dim');chEnd('gazeteci')}}]}}},
- yarali:{a:[18,55],req:()=>!isPol(),start:()=>{const f=pick(FAMILIES),n=chNm();return{title:'Gece yolda yaralı bir adam',text:`Gece yarısı ıssız bir yolda arabanın farları birini aydınlattı. Kanlar içinde, yolun kenarına yığılmış. Yakasındaki rozeti tanıdın: ${f.n}'in adamı. "Beni hastaneye götür" diye fısıldadı.`,choices:[
+ yarali:{a:[18,55],req:()=>!temizMeslek(),start:()=>{const f=pick(FAMILIES),n=chNm();return{title:'Gece yolda yaralı bir adam',text:`Gece yarısı ıssız bir yolda arabanın farları birini aydınlattı. Kanlar içinde, yolun kenarına yığılmış. Yakasındaki rozeti tanıdın: ${f.n}'in adamı. "Beni hastaneye götür" diye fısıldadı.`,choices:[
    {t:'Hastaneye götür',fn:()=>{yon('m',10);log(`${n}'i hastanenin kapısına bıraktın. Doktorlar "Beş dakika geç kalsaydınız" dedi.`,'good');chGo('yarali',2,R(4,10),{n,fam:f.n,f:'kurtar'})}},
    {t:'Ambulans çağır, oradan uzaklaş',fn:()=>{yon('k',6);log('Ambulansı aradın, adını vermeden kapattın.','dim');chGo('yarali',2,R(4,10),{n,fam:f.n,f:'ambulans'})}},
    {t:'Rakibin adamı, kendi başının çaresine baksın',fn:()=>{yon('s',8);yon('m',-6);log('Gaza bastın. Dikiz aynasında karanlık kaldı.','bad');chGo('yarali',2,R(4,10),{n,fam:f.n,f:'birak'})}}]}},
@@ -4133,7 +4133,7 @@ const CHAINS={
   3:d=>{const C=CHS().yarali;return{title:'Borcu hatırlatma vakti',text:`Başın dertte: bir rakip seni sıkıştırıyor. ${C.fam}'nin sana olan borcu hâlâ duruyor.`,choices:[
      {t:'Borcu iste',fn:()=>{addSq(8);add('heat',-8);gainResp(3);S.chFamBorc=0;log(`${C.fam} sekiz adam ve bir avukat yolladı. Borç ödendi.`,'gold');chEnd('yarali')}},
      {t:'Daha kötü günler için sakla',fn:()=>{log('Borcu kenara koydun.','dim');chGo('yarali',3,R(16,32))}}]}}},
- bavul:{a:[18,50],req:()=>!isPol(),start:()=>{const m=kBig(120000,.01);return{title:'Bagajdaki bavul',text:`Taksiden inerken arka koltukta unutulmuş bir bavul fark ettin. Taksi gitti, bavul elinde kaldı. Açtın: tomar tomar para. Aşağı yukarı ${fmt(m)}.`,choices:[
+ bavul:{a:[18,50],req:()=>!temizMeslek(),start:()=>{const m=kBig(120000,.01);return{title:'Bagajdaki bavul',text:`Taksiden inerken arka koltukta unutulmuş bir bavul fark ettin. Taksi gitti, bavul elinde kaldı. Açtın: tomar tomar para. Aşağı yukarı ${fmt(m)}.`,choices:[
    {t:'Parayı al',fn:()=>{dirty(m);yon('k',5);log(`Bavulu yatağın altına koydun. ${fmt(m)} artık senin. Sahibi kim, kim bilir.`,'dim');chGo('bavul',2,R(3,8),{m,f:'al'})}},
    {t:'Karakola teslim et',fn:()=>{yon('z',8);add('heat',-5);log('Bavulu karakola götürdün. Komiser seni süzdü: "Sen mi?"','good');chGo('bavul',2,R(3,8),{m,f:'polis'})}},
    {t:'Sahibini bul',fn:()=>{yon('z',5);yon('k',5);log('Bavulun içinde bir kartvizit vardı. Bir sayıyı çevirdin.','dim');chGo('bavul',2,R(1,2),{m,f:'sahip'})}}]}},
@@ -4169,7 +4169,7 @@ const CHAINS={
    return{title:`${n}'den haber`,text:`${n} borcunu ödeyemeyince alacaklılar evini elinden almış. Şimdi annesiyle bir gecekonduda yaşıyormuş.`,choices:[
      {t:'Anneye bir ev tut',sub:fmt(kBig(25000,.002)),dis:!canPay(kBig(25000,.002)),fn:()=>{pay(kBig(25000,.002));yon('m',8);log(`${n}'in annesine bir ev tuttun. ${n} bunu duyunca ağladı.`,'good');chEnd('kumar')}},
      {t:'Bir şey yapma',fn:()=>{add('happy',-3);log('Telefonu bıraktın.','dim');chEnd('kumar')}}]}}},
- intikam:{a:[22,60],req:()=>!isPol(),start:()=>{const n=`${pick(NICK)} ${pick(NAMES)}`;return{title:'Babanın eski düşmanı',text:`Yaşlı bir adam kahvede karşına oturdu. Adı ${n}. "Baban yıllar önce beni yarı yolda bıraktı. Ben yattım, o kazandı. Şimdi ondan alacağımı senden istiyorum."`,choices:[
+ intikam:{a:[22,60],req:()=>!temizMeslek(),start:()=>{const n=`${pick(NICK)} ${pick(NAMES)}`;return{title:'Babanın eski düşmanı',text:`Yaşlı bir adam kahvede karşına oturdu. Adı ${n}. "Baban yıllar önce beni yarı yolda bıraktı. Ben yattım, o kazandı. Şimdi ondan alacağımı senden istiyorum."`,choices:[
    {t:'Babanın borcunu öde',sub:fmt(kBig(60000,.004)),dis:!canPay(kBig(60000,.004)),fn:()=>{pay(kBig(60000,.004));yon('z',8);log(`${n} parayı aldı: "Baban yapmadı, sen yaptın."`,'good');chGo('intikam',2,R(8,16),{n,f:'ode'})}},
    {t:'"Babamın hesabı benim hesabım değil"',fn:()=>{log(`${n} kalktı: "Göreceğiz."`,'dim');chGo('intikam',2,R(4,8),{n,f:'red'})}},
    {t:'Kahveden kov',fn:()=>{yon('s',8);gainResp(1);log(`${n}'i yaşına bakmadan kahveden çıkardın.`,'bad');chGo('intikam',2,R(4,8),{n,f:'kov'})}}]}},
@@ -4379,7 +4379,7 @@ IE(3,()=>!uw()&&S.age>=22,()=>({title:'Apartman toplantısı',text:'Apartman top
 IE(3,()=>!uw()&&!isPol()&&!!S.job&&S.age>=20,()=>({title:'Patron seni çağırdı',text:'Patronun odasına çağırdı: "Seni terfi ettirmek istiyorum. Ama mesailer uzayacak, hafta sonları da çalışacaksın."',choices:[
  {t:'Kabul et',fn:()=>{try{S.job.sal=Math.round(S.job.sal*1.2)}catch(e){}add('happy',-3);log('Maaşın %20 arttı. Aileni daha az görüyorsun.','good')}},
  {t:'"Ailem daha önemli"',fn:()=>{add('happy',4);log('Patron anlayışla karşıladı. Terfiyi başkası aldı.','dim')}}]}));
-IE(2,()=>!uw()&&!isPol()&&S.age>=18,()=>({title:'Mahallenin abileri',text:'Mahallenin abilerinden biri yanına geldi: "Seni bir süredir izliyorum. Delikanlı adamsın. Bizimle iş yapmak ister misin?"',choices:[
+IE(2,()=>!uw()&&!temizMeslek()&&S.age>=18&&S.age<=30,()=>({title:'Mahallenin abileri',text:'Mahallenin abilerinden biri yanına geldi: "Seni bir süredir izliyorum. Delikanlı adamsın. Bizimle iş yapmak ister misin?"',choices:[
  {t:'Dinle',fn:()=>{S.uw=1;yon('k',3);log('Abiler bir iş anlattı. Bu kapı artık aralık.','dim')}},
  {t:'"Benim yolum başka"',fn:()=>{yon('z',3);log('Abi omzuna vurdu: "Peki. Ama kapımız açık."','dim')}}]}));
 IE(2,()=>!!S.kTitle,()=>({title:'Anadolu\'dan bir mektup',text:'Uzak bir şehirden, el yazısıyla bir mektup geldi: "Oğlum İstanbul\'a okumaya gidiyor. Kimseyi tanımıyor. Ona göz kulak olur musun? Adını burada herkes biliyor."',choices:[
@@ -4604,7 +4604,7 @@ EXTRA.egitim=()=>{let h='';
   if(S.age<16)return['Eğitim',h+'<p class="note">Üniversite hazırlığı 16 yaşında başlar.</p>'];
   if(S.job)h+=`<div class="sec">Mesleğin</div><div class="sum"><div><span>Meslek</span><b>${S.job.n}</b></div><div><span>Yıllık maaş</span><b>${fmt(Math.round(S.job.sal*(1+Math.min(.5,(S.job.q||0)*.01))))}</b></div></div>`+row('data-x="quit:"','📤','İstifa et','','',false);
   const g=S.grads||[];
-  if(g.length&&!S.job){h+='<div class="sec">Diplomaların</div>';g.forEach(id=>{const d=DEPTS.find(x=>x.id===id);h+=row(`data-x="job:${id}"`,'💼',`${d.jn} olarak çalış`,`Yıllık ${fmtS(d.sal)} maaş · ${d.d}`,'',!!S.jail)})}
+  if(g.length&&!isPol()&&!S.jail){h+='<div class="sec">Diplomaların</div>';g.filter(id=>!(S.job&&S.job.id===DEPTS.find(x=>x.id===id).job)).forEach(id=>{const d=DEPTS.find(x=>x.id===id);h+=row(`data-x="job:${id}"`,d.job==='polis'?'👮':d.job==='avukat'?'⚖️':'💼',`${d.jn} olarak çalış${S.job?' (şimdiki işinden ayrılırsın)':''}`,`Yıllık ${fmtS(d.job==='avukat'?Math.round(AVR[S.av&&!S.av.ihrac?S.av.r:0].sal*S.cpi):d.job==='polis'?Math.round(PRANK[0].sal*S.cpi):d.sal)} maaş · ${d.job==='avukat'?(S.av&&S.av.ihrac?'Ruhsatın iptal edildi':'Dosya al, duruşmaya çık, itibar kazan'):d.d}`,'',!!S.jail)})}
   if(S.edu){const d=DEPTS.find(x=>x.id===S.edu.d),e=S.edu;h+=`<div class="sec">Üniversite</div><div class="sum"><div><span>Okuduğun bölüm</span><b>${d.n}</b></div><div><span>Okul</span><b>${e.tip==='devlet'?'Devlet':e.tip==='ozel'?`Özel${e.burs?` · %${e.burs} burslu`:''}`:'Üniversite'}</b></div><div><span>Mezuniyete kalan</span><b>${fmtJ(e.left/4)}</b></div><div><span>Yıllık ödeme</span><b>${fmt(e.fee!==undefined?e.fee:d.fee)}</b></div>${e.kyk?'<div><span>Devlet bursu</span><b>Her çeyrek</b></div>':''}</div>`+row('data-x="unidrop:"','🚪','Üniversiteyi bırak','','',false);return['Eğitim ve meslek',h]}
   if(!hasDip()){
     if(S.age<18&&S.school===true)h+='<p class="note">Lisede okuyorsun. Diplomanı alınca sınava girebilirsin; hazırlığa şimdiden başlayabilirsin.</p>';
@@ -4619,8 +4619,172 @@ EXTRA.egitim=()=>{let h='';
   h+=row('data-x="uprep:ozel"','👨‍🏫','Özel ders al',pu?'Bu çeyrek çalıştın':'Birebir, en hızlısı',fmtS(uPrepC('ozel')),pu||!!S.jail||!canPay(uPrepC('ozel')));
   h+=row('data-x="usinav:"','📝','Sınava gir',!hasDip()?'Önce lise diploması':S.puanY===S.age?'Bu yıl girdin, seneye tekrar':'Yılda bir kez',fmtS(Math.round(1500*S.cpi/2.8)),!hasDip()||S.puanY===S.age||!!S.jail||S.age>40);
   h+='<div class="sec">🎓 Bölümler</div>';
-  DEPTS.filter(d=>!g.includes(d.id)).forEach(d=>{const T=uTier(d);h+=row(`data-x="uni:${d.id}"`,'🎓',d.n,`${d.q/4} yıl · Taban ${dBase(d)} · ${T?T.t:'Önce sınava gir'}`,T&&T.k?(T.fee?fmtS(T.fee)+'/yıl':'Ücretsiz'):'',S.age>40||!!S.jail||(!S.premium&&!(T&&T.k)))});
+  DEPTS.filter(d=>!g.includes(d.id)).sort((a,b)=>(b.id==='polis')-(a.id==='polis')).forEach(d=>{const T=uTier(d);h+=row(`data-x="uni:${d.id}"`,'🎓',d.n,`${d.q/4} yıl · Taban ${dBase(d)} · ${T?T.t:'Önce sınava gir'}`,T&&T.k?(T.fee?fmtS(T.fee)+'/yıl':'Ücretsiz'):'',S.age>40||!!S.jail||(!S.premium&&!(T&&T.k)))});
   return['Eğitim ve meslek',h]};
+
+/* ============ Avukatlık ============ */
+const isAv=()=>!!S&&!!S.job&&S.job.id==='avukat'&&!!S.av;
+const avSivil=()=>isAv()&&!S.yol&&!S.family&&!S.org&&!(S.stats&&S.stats.crimes>0);
+const temizMeslek=()=>isPol()||avSivil();
+const AVR=[{n:'Stajyer avukat',sal:190000},{n:'Avukat',sal:320000},{n:'Ceza avukatı',sal:460000,it:60,kz:4},{n:'Kıdemli ceza avukatı',sal:640000,it:75,kz:12},{n:'Usta ceza avukatı',sal:900000,it:88,kz:30}];
+const AVT=[
+ {k:'kira',n:'Kira ve tahliye',z:1,u:45000,r:0,t:m=>`${m} ev sahibi. Kiracısı sekiz aydır kira ödemiyor, evi de boşaltmıyor: "Emekli maaşımla geçiniyorum. O kira benim ilaç param."`,w:'Tahliye kararı çıktı; kiracı evi boşaltıyor',p:'Taraflar anlaştı: birikmiş kira taksitle ödenecek',l:'Dava usulden reddedildi'},
+ {k:'isci',n:'İşçi alacağı',z:1,u:35000,r:0,fakir:1,t:m=>`${m} on bir yıl çalıştığı atölyeden tazminatsız atılmış. Elinde buruşuk bir bordro var: "Param yok avukat bey, kazanırsak veririm."`,w:'Mahkeme kıdem ve ihbar tazminatına hükmetti',p:'Patron duruşma arasında uzlaştı; tazminatın yarısı ödenecek',l:'Tanıklar konuşmadı, dava reddedildi'},
+ {k:'bosanma',n:'Boşanma ve velayet',z:2,u:70000,r:0,t:m=>`${m} boşanmak istiyor ama asıl derdi velayet: "Evi, arabayı alsın. Çocuğumu bırakmam."`,w:'Velayet müvekkiline verildi',p:'Ortak velayet ve haftalık görüşme düzeni kararlaştırıldı',l:'Velayet karşı tarafa verildi'},
+ {k:'trafik',n:'Taksirle yaralama',z:2,u:80000,r:0,c:1,t:m=>`${m} yağmurlu bir gecede bir yayaya çarpmış. Alkolsüz, ehliyetli; ama yaya hâlâ hastanede: "Görmedim, yemin ederim görmedim."`,w:'Beraat: bilirkişi asli kusuru yayada buldu',p:'Ceza ertelendi, müvekkil tazminat ödeyecek',l:'Hapis cezası verildi'},
+ {k:'hirsiz',n:'Hırsızlık suçlaması',z:2,u:60000,r:1,c:1,t:m=>`${m} çalıştığı kuyumcudan bilezik çalmakla suçlanıyor. Kamera kaydı bulanık: "O gün izinliydim, kimse inanmıyor."`,w:'Beraat: kamera kaydındaki kişi müvekkil değil',p:'Ceza indirildi ve ertelendi',l:'Mahkûmiyet kararı çıktı'},
+ {k:'yarala',n:'Kasten yaralama',z:3,u:110000,r:1,c:1,t:m=>`${m} bir meyhane kavgasında adam bıçaklamaktan yargılanıyor: "Önce o şişeyi kırdı. Ben kendimi korudum."`,w:'Beraat: meşru müdafaa kabul edildi',p:'Haksız tahrik indirimi uygulandı',l:'Mahkûmiyet: üst sınırdan ceza'},
+ {k:'dolandir',n:'Dolandırıcılık',z:3,u:160000,r:1,c:1,t:m=>`${m} kırk kişiden "arsa payı" diye para toplamış. Tapular ortada yok: "Ben de kandırıldım, ortağım kaçtı."`,w:'Beraat: kast ispatlanamadı',p:'Zarar giderildi, ceza indirildi',l:'Mahkûmiyet ve tazminat'},
+ {k:'uyus',n:'Uyuşturucu bulundurma',z:3,u:140000,r:1,c:1,t:m=>`${m}'in arabasının bagajında paket bulunmuş. Yirmi iki yaşında: "Arabayı arkadaşıma vermiştim. Annem duyarsa ölür."`,w:'Beraat: arama kararı hukuka aykırı bulundu',p:'Kullanmak için bulundurmaya çevrildi; denetimli serbestlik',l:'Ticaretten mahkûmiyet'},
+ {k:'cinayet',n:'Kasten öldürme',z:4,u:520000,r:2,c:1,t:m=>`${m} ortağını öldürmekten tutuklu. Silah yok, tanık yok, ama kavga ettiklerini herkes biliyor: "Son gören benim diye katil ben mi oluyorum?"`,w:'Beraat: şüpheden sanık yararlanır',p:'Olası kasttan ceza indirildi',l:'Ağırlaştırılmış müebbet'},
+ {k:'zimmet',n:'Zimmet ve rüşvet',z:4,u:780000,r:2,c:1,t:m=>`${m} bir belediye şirketinin eski müdürü. İhalelerden pay almakla suçlanıyor: "Ben imza attım, parayı yukarıdakiler yedi. İsim verirsem beni bitirirler."`,w:'Beraat: bilirkişi raporu iddianameyi çökertti',p:'Etkin pişmanlıktan ceza indirildi',l:'Mahkûmiyet ve mal varlığına el koyma'},
+ {k:'orgut',n:'Suç örgütü üyeliği',z:5,u:1300000,r:2,c:1,aile:1,t:(m,d)=>`${d.tn}'nin adamı ${m} şafak operasyonunda alınmış. Dosyada dinleme kayıtları ve bir itirafçı var. ${d.boss} haber yollamış: "Çocuğu oradan çıkar."`,w:'Beraat: dinleme kayıtları hukuka aykırı sayıldı',p:'Örgüt üyeliğinden değil, yardım etmekten ceza aldı',l:'Örgüt üyeliğinden mahkûmiyet'}];
+const AVNOT=['Tutanaktaki saat ile kamera kaydının saati birbirini tutmuyor','Karşı tarafın tanığı olay günü şehir dışında görünüyor','İmzalardan biri diğerlerine hiç benzemiyor','Bilirkişi raporunda hesap hatası var','İfade avukatsız alınmış','Dosyadaki fotoğrafların tarihi sonradan eklenmiş','Şikâyetçi iki ifadesinde iki ayrı hikâye anlatmış','Arama kararı olaydan bir gün sonra imzalanmış'];
+const avIt=v=>{const A=S.av;A.it=clamp(A.it+v)};
+const avKir=v=>{const A=S.av;A.kir=clamp((A.kir||0)+v)};
+const avCap=()=>S.av.buro?4:3;
+const avMes=()=>{const A=S.av;if(A.mesai.q!==QS())A.mesai={q:QS(),n:0};return S.premium?99:avCap()-A.mesai.n};
+const avUse=()=>{if(avMes()<=0){toast('Bu çeyrek mesain doldu');return false}S.av.mesai.n++;return true};
+const avSal=()=>Math.round(AVR[S.av.r].sal*S.cpi*(S.av.buro?1.4:1));
+const avBack=()=>setTimeout(()=>{if(!Q.length&&isAv())openSheet('adliye')},70);
+function avStart(){if(S.av&&S.av.ihrac){toast('Baro ruhsatını iptal etti; avukatlık yapamazsın.');return false}
+  if(!S.av){S.av={r:0,it:45,kir:0,mesai:{q:-1,n:0},dava:[],kaz:0,uz:0,kay:0,rq:QS(),usta:`${pick(NAMES)} ${pick(SURN)}`,aile:null};
+    log(`⚖️ Baroya kaydını yaptırdın. Av. ${S.av.usta}'in bürosunda stajyer avukat olarak başladın. Cübbeni henüz giyemezsin; bir yıl staj var.`,'gold');
+    setTimeout(()=>queue({title:'⚖️ Mesleğin: Avukat',text:'Artık adliye koridorlarındasın.<br><br>İşin müvekkil kabul etmek, dosyaya hazırlanmak ve duruşmada doğru kararı vermek. Her çeyrek sınırlı mesain var; hangi dosyaya ne kadar emek vereceğini sen seçersin.<br><br>Kazandıkça <b>itibar</b>ın artar, ağır ceza dosyaları ve daha büyük ücretler gelir. Yolun bir yerinde kapını başka türlü müvekkiller de çalacak. Nasıl bir avukat olacağına sen karar vereceksin.',choices:[{t:'Hazırım',fn:()=>{}}]}),100)}
+  else log(`⚖️ Cübbeni yeniden giydin. ${AVR[S.av.r].n} olarak adliyeye döndün.`,'gold');
+  S.job={id:'avukat',n:AVR[S.av.r].n,sal:avSal(),q:0};return true}
+function avEnd(msg,cls){if(S.job&&S.job.id==='avukat')S.job=null;if(S.av){S.av.dava=[];if(S.av.aile)S.av.aile=null}if(msg)log(msg,cls||'dim')}
+/* --- müvekkil ve dosya --- */
+function avNew(k,fam){const A=S.av;const pool=AVT.filter(t=>!t.aile&&t.r<=A.r&&(A.r===0?t.z<=2:true)&&(A.r>=2?t.z>=2||ch(.3):true));const T=k?AVT.find(t=>t.k===k):pick(pool);const g=ch(.72)?'e':'k';
+  const d={id:'dv'+R(0,999999),k:T.k,mv:`${pick(g==='e'?NAMES:GIRLS)} ${pick(SURN)}`,z:T.z,haz:0,q0:QS(),dur:QS()+R(1,2),suclu:T.c?ch(.55):0,not:pick(AVNOT),el:{}};
+  d.u=Math.round(M(T.u)*R(80,130)/100*(1+A.it/200)*(A.buro?1.3:1)/1000)*1000;
+  if(fam){d.aile=fam.tid;d.tn=fam.tn;d.boss=fam.boss;d.mv=`${pick(NICK)} ${pick(NAMES)}`;d.suclu=1;d.k=k||pick(['orgut','yarala','uyus','cinayet']);const T2=AVT.find(t=>t.k===d.k);d.z=Math.max(3,T2.z);d.u=Math.round(M(T2.u)*1.6*R(90,130)/100/1000)*1000}
+  return d}
+const avT=d=>AVT.find(t=>t.k===d.k);
+const avTxt=d=>{const T=avT(d);return d.aile&&d.k!=='orgut'?`${d.tn}'nin adamı ${d.mv} "${T.n.toLocaleLowerCase('tr-TR')}" suçlamasıyla tutuklu. ${d.boss} dosyayı sana yolladı: "Bizim çocuk. Gereğini yap."`:T.t(d.mv,d)};
+function avMusteri(){const A=S.av;if(A.dava.length>=avCap()){toast('Dosya masan dolu');return}if(!avUse())return;closeSheet();const d=avNew(),T=avT(d);
+  const al=(bedava)=>()=>{if(bedava){d.u=0;d.pb=1;avIt(2);yon('m',3)}A.dava.push(d);log(`📂 ${d.mv} dosyasını aldın: ${T.n}. Duruşma ${d.dur-QS()<=1?'önümüzdeki çeyrek':'iki çeyrek sonra'}.`,'good');afterChange();avBack()};
+  queue({back:'adliye',title:`Yeni müvekkil: ${T.n}`,text:`${T.t(d.mv,d)}<br><br>Zorluk: ${'●'.repeat(d.z)}${'○'.repeat(5-d.z)} · Ücret: <b>${fmt(d.u)}</b> (kazanırsan başarı primi de var)`,choices:[
+    {t:'Dosyayı al',fn:al(false)},
+    ...(T.fakir?[{t:'Ücret almadan üstlen',sub:'Parası yok',fn:al(true)}]:[]),
+    {t:'"Bu dosya bana göre değil"',fn:()=>{log(`${d.mv}'i başka bir meslektaşına yönlendirdin.`,'dim');afterChange();avBack()}}]})}
+function avDosya(id){const A=S.av,d=A.dava.find(z=>z.id===id);if(!d)return;closeSheet();const T=avT(d);const durGun=QS()>=d.dur;
+  const U=fn=>()=>{if(!avUse())return avBack();fn();d.haz=Math.min(10,d.haz);afterChange();setTimeout(()=>{if(!Q.length&&isAv())avDosya(id)},70)};
+  let t=`<b>${d.mv}</b> · ${T.n}${d.aile?` · ${d.tn}`:''}<br>${avTxt(d)}<br><br>Zorluk ${'●'.repeat(d.z)}${'○'.repeat(5-d.z)} · Hazırlık <b>${d.haz}</b>/10 · Ücret ${d.pb?'almıyorsun':fmt(d.u)} · Kalan mesai ${S.premium?'∞':avMes()}<br>${durGun?'<b style="color:var(--gold)">Duruşma bu çeyrek. Gitmezsen dosya düşer.</b>':'Duruşma önümüzdeki çeyrek.'}${d.el.inc?`<br><br>📌 Notun: ${d.not}.`:''}${d.el.gor?`<br>🗣️ ${d.suclu?'Müvekkil sana gerçeği anlattı: yapmış.':'Müvekkilin gözünün içine baktın: bu iş onun işi değil.'}`:''}`;
+  const bc=Math.round(M(18000)*d.z/1000)*1000;
+  queue({back:'adliye',title:`📂 ${d.mv}`,text:t,choices:[
+    ...(durGun?[{t:'⚖️ Duruşmaya çık',fn:()=>avDurusma(id)}]:[]),
+    {t:'Dosyayı satır satır incele',sub:d.el.inc?'Bir daha oku':'Tutanaklar, ifadeler, raporlar',dis:d.haz>=10,fn:U(()=>{const v=d.el.inc?1:R(2,3);d.haz+=v;d.el.inc=1;log(`📖 Gece yarısına kadar dosyayı okudun. ${v>1?d.not+'.':'Yeni bir şey çıkmadı ama ezberledin.'}`,v>1?'good':'dim')})},
+    {t:'Müvekkille baş başa görüş',dis:!!d.el.gor,sub:d.el.gor?'Görüştün':'Asıl hikâyeyi dinle',fn:U(()=>{d.el.gor=1;d.haz+=1;log(d.suclu?`🗣️ ${d.mv} önce inkâr etti, sonra gözlerini kaçırdı: "Yaptım. Ama böyle olsun istemedim." Artık biliyorsun.`:`🗣️ ${d.mv} her soruna aynı cevabı verdi, bir kez bile takılmadı. Masum olduğuna ikna oldun.`,'dim')})},
+    {t:'Tanık ara',sub:'Kapı kapı dolaş',dis:d.haz>=10||(d.el.tn||0)>=2,fn:U(()=>{d.el.tn=(d.el.tn||0)+1;if(ch(.6)){d.haz+=2;log(`🚪 ${pick(['Karşı apartmandaki emekli öğretmen','Köşedeki büfeci','Bir taksi şoförü','Eski bir iş arkadaşı'])} konuşmayı kabul etti. İfadesi işine yarayacak.`,'good')}else log('🚪 Kimse bir şey görmemiş, gören de karışmak istemiyor.','dim')})},
+    {t:'Bilirkişi raporu al',sub:d.el.bil?'Aldın':'Özel uzman görüşü',dis:!!d.el.bil||!canPay(bc),fn:U(()=>{pay(bc);d.el.bil=1;d.haz+=3;log(`🔬 Uzman raporu geldi: ${fmt(bc)}. Dosyanın en sağlam sayfası oldu.`,'good')})},
+    {t:'Emsal karar tara',sub:d.el.ems?'Buldun':'Yargıtay kararları',dis:!!d.el.ems,fn:U(()=>{if(ch(.7)){d.el.ems=1;d.haz+=2;log('📚 Tam bu olaya uyan bir Yargıtay kararı buldun. Duruşmada cebinde.','good')}else log('📚 Saatlerce karar okudun; birebir uyan bir emsal çıkmadı.','dim')})},
+    ...((T.c&&A.r>=1)||d.aile?[{t:d.aile?'Aileye haber sal: "Tanık konuşmasın"':'Karşı tarafın tanığını "ikna" et',sub:d.aile?'':fmt(Math.round(bc*2)),dis:!!d.el.kirli||(!d.aile&&!canPay(Math.round(bc*2))),fn:U(()=>{d.el.kirli=1;if(!d.aile)dirtyPay(Math.round(bc*2));d.haz+=4;avKir(d.aile?10:14);yon('z',-4);log(d.aile?`🤫 ${d.boss}'a tek cümle yeterli oldu. Tanık ifadesini geri almaya hazırlanıyor.`:'🤫 Tanıkla bir kafede buluştun. Zarfı masada bıraktın. Hatırladıkları değişecek.','bad');if(ch(.18)){avKir(15);log('Birileri o buluşmayı görmüş olabilir.','bad')}})}]:[]),
+    {t:'Dosyadan çekil',fn:()=>{A.dava=A.dava.filter(z=>z!==d);avIt(-2);if(d.aile&&A.aile){A.aile.guv=clamp(A.aile.guv-25);log(`📂 ${d.mv} dosyasından çekildin. ${d.boss} bunu unutmayacak.`,'bad')}else log(`📂 ${d.mv} dosyasından çekildin.`,'dim');afterChange();avBack()}},
+    {t:'Geri dön',fn:avBack}]})}
+const dirtyPay=m=>{const b=Math.min(S.black||0,m);S.black=(S.black||0)-b;if(m-b>0)pay(m-b)};
+/* --- duruşma --- */
+function avDurusma(id){const A=S.av,d=A.dava.find(z=>z.id===id);if(!d)return;const T=avT(d);let bon=0;const kar=()=>karizma();
+  const son=(mod)=>{const p=clamp(.22+d.haz*.07-d.z*.055+A.it/500+kar()/600+bon+(A.buro?.03:0),.05,.95);let res;
+    if(mod==='tam')res=ch(p)?'w':ch(.3)?'p':'l';else res=ch(clamp(p+.32,.1,.97))?'p':'l';
+    A.dava=A.dava.filter(z=>z!==d);let m=0;
+    if(res==='w'){m=Math.round(d.u*1.5);A.kaz++;avIt(R(3,5)+d.z);add('happy',3+d.z);log(`⚖️ ${T.c?'BERAAT':'KAZANDIN'}. ${T.w}. ${d.mv} ${d.aile?'tahliye edildi':'elini bırakmadı'}.`,'gold');if(d.z>=4)news(`Av. ${S.first} ${S.last} ${T.n.toLocaleLowerCase('tr-TR')} davasında müvekkilini kurtardı`,2);if(T.c&&d.suclu&&d.el.gor&&!d.aile){add('happy',-4);log('Koridorda müvekkilin sana göz kırptı. Ne yaptığını ikiniz de biliyorsunuz.','dim')}}
+    else if(res==='p'){m=d.u;A.uz++;avIt(d.z>=3?3:2);log(`⚖️ ${T.c?'Ceza indirimi':'Uzlaşma'}. ${T.p}.`,'good')}
+    else{m=Math.round(d.u*.4);A.kay++;avIt(-R(2,4));add('happy',-3);log(`⚖️ ${T.c?'Mahkûmiyet':'Kaybettin'}. ${T.l}.`,'bad');if(T.c&&!d.suclu&&d.el.gor){add('happy',-5);log(`${d.mv} götürülürken dönüp sana baktı. Masumdu ve bunu biliyordun.`,'bad')}}
+    if(m){S.money+=m;S.taxInc=(S.taxInc||0)+m;log(`Vekâlet ücreti: ${fmt(m)}.`,'good')}else if(d.pb&&res!=='l'){gainResp(2);log(`${d.mv} ertesi gün büroya bir tepsi baklava getirdi. Para veremedi; ama adını her yerde anlatıyor.`,'dim')}
+    if(d.aile&&A.aile){const F=A.aile;if(res==='w'){F.guv=clamp(F.guv+12);const z=Math.round(d.u*.5);dirty(z);log(`${F.boss} bir zarf yolladı: ${fmt(z)}. "Eline sağlık avukat."`,'gold')}else if(res==='l'){F.guv=clamp(F.guv-18);log(`${F.boss} telefonda tek kelime etti: "Anladım." Sonra kapattı.`,'bad');if(F.guv<20)makeThreat(F.boss,'Adamını içeride bıraktığın')}}
+    afterChange();avBack()};
+  const adim2=()=>queue({title:'⚖️ Son söz',text:`Hâkim gözlüğünün üstünden baktı: "Savunma makamı, talebiniz?"${bon>0?' Salonun havası senden yana.':bon<0?' İlk raunt iyi gitmedi.':''}`,choices:[
+    {t:T.c?'Beraat iste':'Davanın tam kabulünü iste',sub:'Ya hep ya hiç',fn:()=>son('tam')},
+    {t:T.c?'İndirim ve erteleme iste':'Uzlaşma öner',sub:'Daha güvenli',fn:()=>son('uz')},
+    {t:'Ek süre iste',sub:d.ert?'Bir kez istedin':'Duruşma ertelenir, hazırlığın sürer',dis:!!d.ert,fn:()=>{d.ert=1;d.dur=QS()+1;bon=0;log('⚖️ Hâkim söylendi ama ek süre verdi. Duruşma gelecek çeyreğe kaldı.','dim');afterChange();avBack()}}]});
+  closeSheet();queue({title:`⚖️ Duruşma: ${d.mv}`,text:`${T.c?'Savcı iddianameyi okudu':'Karşı tarafın avukatı konuştu'}, ardından tanığını kürsüye çağırdı. Tanık anlatıyor; salon dinliyor. Söz sırası sende.`,choices:[
+    {t:'Tanığı çapraz sorguda sıkıştır',sub:'Riskli ama etkili',fn:()=>{if(ch(clamp(.35+kar()/250+d.haz/30,.2,.9))){bon=.16;log(`⚖️ "Az önce saat dokuz dediniz. İfadenizde on bir yazıyor." Tanık sustu. ${d.el.inc?'Dosyayı ezberlemiş olman işe yaradı.':''}`,'good')}else{bon=-.1;log('⚖️ Tanık sorularına sakin sakin cevap verdi. Üstüne gittikçe hâkimin kaşları çatıldı.','bad')}adim2()}},
+    {t:'Usulden itiraz et',sub:d.el.ems?'Emsal karar cebinde':'Emsalin yok, zor',fn:()=>{if(d.el.ems||ch(.35)){bon=.1;log(`⚖️ ${d.el.ems?'Emsal kararı kürsüye uzattın. Hâkim okudu, başını salladı':'Ezberden bir madde okudun; hâkim itirazı tutanağa geçirdi'}.`,'good')}else{bon=-.05;log('⚖️ "İtirazınız reddedildi avukat bey. Devam edin."','dim')}adim2()}},
+    {t:'Sessiz kal, not al',fn:()=>{log('⚖️ Tanığı dinledin, bir şey sormadın.','dim');adim2()}}]})}
+/* --- aile avukatlığı --- */
+function avAileTeklif(){const A=S.av,r=pick(S.rivals.filter(x=>!x.dead));if(!r)return null;const ret=Math.round(M(220000)/1000)*1000;
+  return{title:'Akşam yemeği daveti',text:`Boğaz'da bir lokantaya çağrıldın. Masada ${r.boss.name} oturuyor; ${r.n}'nin başı. Rakısından bir yudum aldı: "Seni izliyoruz avukat. Mahkemede iyi iş çıkarıyorsun. Bizim çocukların başı dertten kurtulmuyor. Ailenin avukatı ol. Her çeyrek ${fmt(ret)} maaşın, kazandığın dosyada zarfın ayrı."`,choices:[
+    {t:'Elini sık',fn:()=>{A.aile={tid:r.id,tn:r.n,boss:r.boss.name,guv:50,q0:QS(),ret};avKir(6);yon('z',-3);log(`🤝 ${r.n}'nin avukatı oldun. Cübben aynı, müvekkillerin artık başka.`,'gold')}},
+    {t:'"Ben herkesi savunurum, kimsenin adamı olmam"',fn:()=>{avIt(3);yon('m',4);A.aileRed=QS();A.aileRedN=(A.aileRedN||0)+1;log(`${r.boss.name} güldü: "Dik adamsın. Fikrin değişirse yerimizi biliyorsun."`,'dim');if(ch(.25))makeThreat(r.boss.name,'Teklifini geri çevirdiğin')}},
+    {t:'"Dosya dosya çalışırım, maaş istemem"',fn:()=>{A.aileSer=r.id;log(`${r.boss.name} omuz silkti: "Sen bilirsin. İşimiz düşerse ararız."`,'dim');const d=avNew(null,{tid:r.id,tn:r.n,boss:r.boss.name});if(A.dava.length<avCap()){A.dava.push(d);log(`📂 Ertesi sabah masanda bir dosya vardı: ${d.mv}.`,'dim')}}}]}}
+/* --- olaylar --- */
+const AVEV=[
+ {c:A=>A.r===0,e:A=>({title:'Stajyerin çilesi',text:`Av. ${A.usta} önüne üç klasör bıraktı: "Bunların fotokopisi çekilecek, icra dairesine gidilecek, bir de benim kuru temizlemeyi al gel." Saat akşamın altısı.`,choices:[
+   {t:'Hepsini yap',fn:()=>{avIt(2);add('happy',-3);log('Gece on birde bürodan çıktın. Ustan ertesi gün ilk kez adınla hitap etti.','dim')}},
+   {t:'"Kuru temizleme stajın parçası değil"',fn:()=>{if(ch(.5)){avIt(3);yon('m',2);log(`${A.usta} bir an baktı, sonra güldü: "Mahkemede de böyle konuş."`,'good')}else{avIt(-3);log(`${A.usta} bir hafta seninle konuşmadı.`,'bad')}}}]})},
+ {c:A=>A.r===0,e:A=>({title:'İlk duruşman',text:`Av. ${A.usta} hastalandı. Sabah dokuzdaki duruşmaya onun yerine sen gireceksin; dosyayı hiç görmedin, cübbe de üstüne büyük.`,choices:[
+   {t:'Gece boyunca dosyayı ezberle',fn:()=>{add('health',-3);avIt(4);log('Uykusuz girdin ama tek bir tarihi bile şaşırmadın. Hâkim adını sordu.','good')}},
+   {t:'"Mazeret dilekçesi verelim"',fn:()=>{log('Duruşma ertelendi. Ustan hiçbir şey demedi ama anladın.','dim')}}]})},
+ {c:A=>A.dava.length>0,e:A=>{const d=pick(A.dava),m=Math.round(d.u*.6/1000)*1000;return{title:'Karşı taraftan teklif',text:`Karşı tarafın avukatı adliye kantininde yanına oturdu: "${d.mv} dosyası. Duruşmaya girmeden kapatalım. Müvekkilim ${fmt(m)} veriyor; senin de emeğin boşa gitmez."`,choices:[
+   {t:'Müvekkile ilet, kabul etsin',fn:()=>{A.dava=A.dava.filter(z=>z!==d);A.uz++;avIt(1);S.money+=m;S.taxInc=(S.taxInc||0)+m;log(`🤝 ${d.mv} teklifi kabul etti. Dosya kapandı; payına ${fmt(m)} düştü.`,'good')}},
+   {t:'"Mahkemede görüşürüz"',fn:()=>{d.haz=Math.min(10,d.haz+1);log('Teklifi reddettin. Karşı taraf korktuğunu belli etti; bu da bir bilgi.','dim')}}]}}},
+ {c:A=>A.r>=1,e:A=>{const m=Math.round(M(60000)/1000)*1000;return{title:'Ücretini ödemeyen müvekkil',text:`Geçen yıl davasını kazandığın bir müvekkil hâlâ ${fmt(m)} borçlu. Telefonlarını açmıyor; dün onu yeni arabasıyla gördün.`,choices:[
+   {t:'İcra takibi başlat',fn:()=>{if(ch(.7)){S.money+=m;log(`İcra dairesi parayı tahsil etti: ${fmt(m)}.`,'good')}else log('Adamın üstüne kayıtlı tek bir mal çıkmadı.','dim')}},
+   {t:'Bürosuna git, yüz yüze konuş',fn:()=>{if(ch(.4+karizma()/200)){S.money+=m;log(`Sekreterin önünde mahcup oldu, çeki yazdı: ${fmt(m)}.`,'good')}else{add('happy',-2);log('"Hafta sonu" dedi. Hangi hafta olduğunu söylemedi.','dim')}}},
+   {t:'Sil gitsin',fn:()=>{log('Alacağı defterden sildin.','dim')}}]}}},
+ {c:A=>A.r>=1&&A.dava.some(d=>avT(d).c),e:A=>{const d=pick(A.dava.filter(d=>avT(d).c)),m=Math.round(M(140000)*d.z/1000)*1000;return{title:'Müvekkilin fikri',text:`${d.mv}'in ağabeyi büroya geldi, kapıyı kapattı: "Hâkimin kâtibini tanıyan biri var. ${fmt(m)} verirsek dosya bizim istediğimiz gibi çıkar. Sen sadece zarfı götüreceksin."`,choices:[
+   {t:'Kapıyı göster',fn:()=>{avIt(3);yon('m',3);log('"Bir daha bunu teklif ederseniz dosyadan çekilirim." Ağabey kızararak çıktı.','good')}},
+   {t:'Zarfı götür',fn:()=>{avKir(22);yon('z',-5);if(ch(.6)){d.haz=10;log('Zarf yerine ulaştı. Dosyanın seyri değişecek.','bad')}else{avKir(15);log('Kâtip zarfı almadı; üstüne bir de yüzüne uzun uzun baktı.','bad')}}},
+   {t:'Duymamış ol',fn:()=>{log('"Ben bunu duymadım" dedin. Kendi başlarına ne yaparlarsa yapsınlar.','dim')}}]}}},
+ {c:A=>A.r>=1,e:A=>({title:'Barodan görevlendirme',text:'Baro seni zorunlu müdafi olarak atadı: parası olmayan bir sanık, gece yarısı karakolda ifade verecek. Ücreti devletin tarifesi, yani neredeyse hiç.',choices:[
+   {t:'Kalk git',fn:()=>{const m=M(6000);S.money+=m;avIt(3);yon('m',3);add('happy',-1);log(`Sabaha kadar karakoldaydın. Çocuğun ifadesi sen varken alındı; bir satırı bile değiştirilemedi. Ücret: ${fmt(m)}.`,'good')}},
+   {t:'Mazeret bildir',fn:()=>{avIt(-2);log('Mazeret bildirdin. Baro levhasında bir not düşüldü.','dim')}}]})},
+ {c:A=>A.r>=2&&A.it>=65,e:A=>({title:'Mikrofonlar',text:'Adliye çıkışında kameralar etrafını sardı. Baktığın dava gündemde; muhabir mikrofonu uzattı: "Müvekkiliniz suçlu mu?"',choices:[
+   {t:'Kısa ve ölçülü konuş',fn:()=>{avIt(3);S.fame=clamp((S.fame||0)+3);news(`Av. ${S.first} ${S.last}: "Kararı mahkeme verir"`,1);log('Akşam haberlerinde on saniye göründün. Büronun telefonu susmuyor.','good')}},
+   {t:'Şov yap',fn:()=>{S.fame=clamp((S.fame||0)+8);if(ch(.5)){avIt(5);news(`Av. ${S.first} ${S.last} adliye önünde konuştu, sosyal medya yıkıldı`,2);log('Sözlerin gündem oldu. Yeni müvekkiller kapıda.','gold')}else{avIt(-4);log('Hâkim ertesi gün duruşmada "basın açıklamalarını" tutanağa geçirdi.','bad')}}},
+   {t:'"Yorum yok"',fn:()=>{log('Kalabalığı yarıp geçtin.','dim')}}]})},
+ {c:A=>A.r>=1&&!A.buro,e:A=>{const z=Math.round(avSal()*.3/1000)*1000;return{title:'Büyük bürodan teklif',text:`Levent'teki camlı bir plazadan aradılar: şirket birleşmeleri, sözleşmeler, takım elbise. Yıllık ${fmt(z)} fazla maaş. Ama duruşma salonu yok; masa başı.`,choices:[
+   {t:'Kabul et',fn:()=>{A.plaza=1;S.job.sal=avSal()+z;A.ekSal=z;avIt(-2);add('happy',-2);log('Plazaya geçtin. Maaşın arttı; koridorlar sessiz, kahve bedava.','good')}},
+   {t:'"Benim yerim duruşma salonu"',fn:()=>{avIt(2);add('happy',3);log('Teklifi geri çevirdin. Cübbeni askısından aldın.','dim')}}]}}},
+ {c:A=>!!A.aile,e:A=>{const F=A.aile;return{title:`${F.boss} bir şey rica ediyor`,text:`Gece yarısı kapın çalındı. ${F.tn}'nin adamlarından biri elinde bir spor çantayla duruyor: "Baba selam söyledi. Bu çanta birkaç gün senin kasada kalacak. Avukatın kasasını kimse arayamaz."`,choices:[
+   {t:'Çantayı al',fn:()=>{F.guv=clamp(F.guv+12);avKir(16);yon('z',-4);dirty(M(90000));log('Çantayı kasaya koydun, içine bakmadın. Sabah üstünde bir zarf buldun.','bad')}},
+   {t:'"Ben avukatım, emanetçi değil"',fn:()=>{F.guv=clamp(F.guv-14);avIt(1);log('Adam bir şey demeden gitti. Bunun bir bedeli olacak.','dim');if(F.guv<20)makeThreat(F.boss,'Sözünü dinlemediğin')}}]}}},
+ {c:A=>!!A.aile&&A.aile.guv>=60,e:A=>{const F=A.aile;return{title:'Savcılıktan gelen kulis',text:`Adliyedeki bir tanıdığın fısıldadı: ${F.tn} için büyük bir operasyon hazırlanıyor, cuma sabahı. Bu bilgiyi müvekkiline iletmek suç; iletmemek de senin için tehlikeli olabilir.`,choices:[
+   {t:`${F.boss}'a haber ver`,fn:()=>{F.guv=clamp(F.guv+20);avKir(25);yon('z',-6);const m=M(400000);dirty(m);log(`Cuma sabahı polis boş depolara girdi. ${F.boss} minnettar: ${fmt(m)}.`,'bad')}},
+   {t:'Sus, hiçbir şey bilmiyorsun',fn:()=>{avIt(2);yon('m',3);if(ch(.3)){F.guv=clamp(F.guv-20);log(`Operasyon yapıldı. ${F.boss} senin önceden bildiğini bir yerden duymuş.`,'bad')}else log('Operasyon yapıldı. Sabah dokuzda karakoldaydın; işini yaptın.','dim')}}]}}}];
+function avBaro(){const A=S.av;return{title:'📜 Baro disiplin kurulu',text:'Baro\'dan tebligat geldi: hakkında şikâyet var. Tanıklarla usulsüz temas, müvekkillerle "mesleğe yakışmayan" ilişkiler. Kurul önünde savunma yapacaksın.',choices:[
+   {t:'Savunmanı yap',fn:()=>{if(ch(clamp(.3+A.it/220-A.kir/260,.08,.85))){avKir(-12);log('📜 Kurul delilleri yetersiz buldu. Dosya kapandı, ama adın bir kez geçti.','good')}else avCeza()}},
+   {t:'Hatanı kabul et',sub:'Uyarı cezası',fn:()=>{avIt(-10);avKir(-18);log('📜 Uyarı cezası aldın. Sicilinde kalacak.','dim')}},
+   {t:'Suçu kâtibine yık',fn:()=>{yon('z',-5);if(ch(.5)){avKir(-8);add('happy',-4);log('📜 Kâtibin işinden oldu. Sen aklandın. Aynaya bakmak zorlaştı.','bad')}else{avKir(10);avCeza()}}}]}}
+function avCeza(){const A=S.av;if(A.kir>=70){A.ihrac=1;news(`Av. ${S.first} ${S.last} meslekten ihraç edildi`,3);avEnd('📜 Baro ruhsatını iptal etti. Cübbeni teslim ettin; bir daha duruşmaya giremezsin.','bad')}else{const c=Math.round(M(250000)/1000)*1000;spend(Math.min(cashA(),c));avIt(-15);avKir(-15);log(`📜 Kınama ve ${fmt(c)} para cezası aldın. Bir daha olursa ruhsatın gider.`,'bad')}}
+function avQ(){if(!S.av)return;const A=S.av;if(!isAv()){if(A.dava.length||A.aile){A.dava=[];A.aile=null}return}
+  if(S.jail){A.ihrac=1;avEnd('⚖️ Hüküm giydiğin için baro ruhsatını iptal etti.','bad');return}
+  S.job.n=A.buro?`${AVR[A.r].n} · Büro sahibi`:AVR[A.r].n;S.job.sal=avSal()+(A.plaza&&!A.buro?(A.ekSal||0):0);
+  A.dava.slice().forEach(d=>{if(QS()>d.dur){A.dava=A.dava.filter(z=>z!==d);A.kay++;avIt(-7);log(`⚖️ ${d.mv} dosyasının duruşmasına gitmedin. Dosya düştü; müvekkil baroya şikâyet etti.`,'bad');if(d.aile&&A.aile){A.aile.guv=clamp(A.aile.guv-25);if(A.aile.guv<20)makeThreat(A.aile.boss,'Duruşmasına gitmediğin')}}else if(QS()===d.dur)log(`📅 ${d.mv} dosyasının duruşması bu çeyrek. İşler → Adliye.`,'gold')});
+  if(A.aile){const F=A.aile,r=S.rivals.find(x=>x.id===F.tid);if(!r||r.dead){log(`${F.tn} dağıldı. Maaşın da onunla birlikte gitti.`,'dim');A.aile=null}else{F.boss=r.boss.name;F.tn=r.n;S.money+=F.ret;log(`${F.tn} avukatlık maaşı: ${fmt(F.ret)}.`,'good');if(A.dava.length<avCap()&&ch(.55)){const d=avNew(null,F);A.dava.push(d);log(`📂 ${F.boss} yeni bir dosya yolladı: ${d.mv}, ${avT(d).n.toLocaleLowerCase('tr-TR')}.`,'dim')}
+      if(F.guv<=0){log(`${F.tn} seninle yollarını ayırdı.`,'bad');makeThreat(F.boss,'Güvenini boşa çıkardığın');A.aile=null}}}
+  else if(A.aileSer&&A.dava.length<avCap()&&ch(.2)){const r=S.rivals.find(x=>x.id===A.aileSer&&!x.dead);if(r){const d=avNew(null,{tid:r.id,tn:r.n,boss:r.boss.name});A.dava.push(d);log(`📂 ${r.boss.name} bir dosya yolladı: ${d.mv}.`,'dim')}}
+  if(S.q===0){A.it=clamp(A.it-R(1,3));A.kir=clamp(A.kir-3);
+    if(A.r===0&&QS()-A.rq>=4){A.r=1;A.rq=QS();add('happy',6);log('🎓 Stajın bitti. Ruhsatını aldın, cübbeni ilk kez kendi adına giydin. Artık kendi dosyalarına bakabilirsin.','gold')}
+    else{const nx=AVR[A.r+1];if(nx&&nx.it&&A.it>=nx.it&&A.kaz>=nx.kz){A.r++;A.rq=QS();add('happy',6);gainResp(2);news(`Av. ${S.first} ${S.last} artık ${nx.n.toLocaleLowerCase('tr-TR')}`,1);log(`🎖️ Adın adliyede biliniyor. Yeni unvanın: ${nx.n}.${A.r===2?' Artık ağır ceza dosyaları da kapına gelecek.':''}`,'gold')}}
+    if(S.age>=70){avEnd(`⚖️ ${AVR[A.r].n} olarak emekli oldun. ${A.kaz} kazanılmış dava. Cübbeni torununa bıraktın.`,'gold');return}}
+  if(A.kir>=35&&(A.baroQ||0)<=QS()&&ch(A.kir/260)){A.baroQ=QS()+6;return void setTimeout(()=>queue(avBaro()),130)}
+  if(okE()&&(A.evQ||0)<=QS()){
+    if(A.r>=2&&A.it>=60&&!A.aile&&!A.aileSer&&(A.aileRedN||0)<2&&(A.aileRed===undefined||QS()-A.aileRed>=20)&&ch(.3)){A.evQ=QS()+2;const ev=avAileTeklif();if(ev)return void setTimeout(()=>queue(ev),130)}
+    if(ch(.32)){A.evQ=QS()+2;const pool=AVEV.filter(x=>x.c(A)&&x!==A._l);if(pool.length){const x=pick(pool);const ev=x.e(A);setTimeout(()=>{if(isAv())queue(ev)},130)}}}}
+function avJobsH(){const A=S.av;const dg=A.dava.filter(d=>QS()>=d.dur).length;return '<div class="sec">Adliye</div>'+row('data-go="adliye"','⚖️',`${AVR[A.r].n} · Adliye`,`İtibar %${A.it} · ${A.dava.length} dosya${dg?` · <b style="color:var(--gold)">${dg} duruşma bu çeyrek</b>`:''} · ${A.kaz} kazanılan dava`,'›',false)}
+EXTRA.adliye=()=>{if(!isAv())return['Adliye','<p class="note">Avukat değilsin.</p>'];const A=S.av,nx=AVR[A.r+1];
+  let h=`<div class="card" style="padding:14px;margin-bottom:10px"><b style="font-size:16px">⚖️ Av. ${S.first} ${S.last}</b><div class="note" style="margin:2px 0 0">${AVR[A.r].n}${A.buro?' · Kendi büron':A.plaza?' · Plaza bürosu':A.r===0?` · Av. ${A.usta}'in yanında`:''} · ${A.kaz} kazanılan · ${A.uz} uzlaşma · ${A.kay} kaybedilen · Bu çeyrek kalan mesai ${S.premium?'sınırsız':avMes()}</div>${okBar('İtibar',A.it,A.it>=70?'var(--good)':A.it>=45?'var(--gold)':'var(--blood)')}${A.kir>=25?okBar('Baro\'nun dikkati',A.kir,'var(--blood)'):''}<div class="note" style="margin:8px 0 0">${A.r===0?`Stajın bitmesine ${Math.max(1,4-(QS()-A.rq))} çeyrek var. O zamana kadar yalnızca küçük dosyalara bakarsın.`:nx?`Sıradaki unvan: <b>${nx.n}</b> · İtibar %${nx.it} ve ${nx.kz} kazanılmış dava gerekir (sende ${A.kaz}).`:'Mesleğin zirvesindesin.'}</div></div>`;
+  const m0=avMes()<=0;
+  h+='<div class="sec">📂 Dosyalar · '+A.dava.length+'/'+avCap()+'</div>';
+  if(!A.dava.length)h+='<p class="note">Masan boş. Yeni bir müvekkil kabul et.</p>';
+  A.dava.forEach(d=>{const T=avT(d),g=QS()>=d.dur;h+=row(`data-x="av:d:${d.id}"`,g?'⚖️':'📂',`${d.mv} · ${T.n}`,`${g?'<b style="color:var(--gold)">Duruşma bu çeyrek</b>':'Duruşma gelecek çeyrek'} · Hazırlık ${d.haz}/10${d.aile?' · '+d.tn:''}`,d.pb?'':fmtS(d.u),false)});
+  h+=row('data-x="av:musteri"','🚪','Yeni müvekkil kabul et',A.dava.length>=avCap()?'Dosya masan dolu':'Bekleme odasında kim varsa','',m0||A.dava.length>=avCap());
+  if(A.aile){const F=A.aile;h+=`<div class="sec">🕴️ ${F.tn}</div><div class="card" style="padding:12px 14px;margin-bottom:8px"><div class="note" style="margin:0">Ailenin avukatısın · Çeyreklik ${fmt(F.ret)} · ${Math.floor((QS()-F.q0)/4)} yıldır</div>${okBar(`${F.boss}'ın güveni`,F.guv,F.guv>=50?'var(--good)':'var(--blood)')}</div>`+row('data-x="av:ayril"','🚪','Aileyle yollarını ayır','Kolay bırakmazlar','',false)}
+  h+='<div class="sec">🏛️ Büro</div>';
+  if(A.buro)h+='<p class="note">Kendi büron var: bir dosya ve bir mesai fazlası, daha yüksek ücretler.</p>';
+  else{const c=avBuroC();h+=row('data-x="av:buro"','🏛️','Kendi büronu aç',A.r<2?'Ceza avukatı unvanı gerekir':'Tabelanda kendi adın · +1 dosya, +1 mesai, ücretler artar',fmtS(c),A.r<2||!canPay(c))}
+  return['Adliye',h]};
+const avBuroC=()=>Math.round(M(1800000)/1000)*1000;
+ACT.av=a=>{if(!isAv())return;const A=S.av,i=a.indexOf(':'),op=i<0?a:a.slice(0,i),x=i<0?'':a.slice(i+1);
+  if(op==='musteri')return avMusteri();
+  if(op==='d')return avDosya(x);
+  if(op==='buro'){const c=avBuroC();if(A.buro||A.r<2||!canPay(c))return;closeSheet();return queue({back:'adliye',title:'🏛️ Kendi büron',text:`Adliyenin karşısındaki handa bir kat boşalmış. Kapıya pirinç bir tabela: "Av. ${S.first} ${S.last} Hukuk Bürosu". Depozito, mobilya, bir kâtip, bir stajyer: ${fmt(c)}.`,choices:[{t:'Tabelayı astır',fn:()=>{pay(c);A.buro=1;A.plaza=0;avIt(4);add('happy',6);S.job.sal=avSal();news(`Av. ${S.first} ${S.last} kendi bürosunu açtı`,1);log('🏛️ Kendi büronu açtın. İlk sabah kapıyı kendi anahtarınla açtın.','gold');afterChange();avBack()}},{t:'Vazgeç',fn:avBack}]})}
+  if(op==='ayril'){const F=A.aile;if(!F)return;closeSheet();return queue({back:'adliye',title:`${F.tn} ile ayrılık`,text:`${F.boss}'a "artık dosyalarınıza bakmayacağım" demek üzeresin. Sen onların çok sırrını biliyorsun; onlar da senin.`,choices:[
+    {t:'Yüz yüze söyle',fn:()=>{A.dava=A.dava.filter(d=>!d.aile);A.aile=null;A.aileRed=QS();if(ch(clamp(.3+F.guv/200,.2,.8))){avIt(2);log(`${F.boss} uzun süre sustu: "Sen bize iyi baktın. Ama bildiklerin seninle mezara gider."`,'dim')}else{makeThreat(F.boss,'Yarı yolda bıraktığın');log(`${F.boss} masadan kalktı. Elini uzatmadı.`,'bad')}afterChange();avBack()}},
+    {t:'Vazgeç',fn:avBack}]})}
+  done()};
 
 /* ============ Polislik ============ */
 const isPol=()=>!!S&&S.yol==='polis';
@@ -7547,7 +7711,7 @@ function closeSheet(){if(curSheet){LASTSH=curSheet;LASTT=(($('shT')&&$('shT').te
 function qbar(){const l=$('qLeft'),b=$('qBack');if(!l||!S)return;l.innerHTML='';if(LASTSH&&S.alive){b.style.display='';b.textContent='↩ '+(LASTT||'Son menü')}else b.style.display='none'}
 document.addEventListener('click',e=>{if(e.target.closest('#qBack')&&LASTSH){openSheet(LASTSH)}});
 const PARENT={berber:'cat_kisisel',meslek:'is',egitim:'is',ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
-try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'sirket',okul:'is',emniyet:'is',polharita:'emniyet',sm_kare:'sosyal',sm_dongu:'sosyal',sm_ekran:'sosyal',sm_gundem:'sosyal'});
+try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'sirket',okul:'is',emniyet:'is',adliye:'is',polharita:'emniyet',sm_kare:'sosyal',sm_dongu:'sosyal',sm_ekran:'sosyal',sm_gundem:'sosyal'});
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
 $('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeSheet()});
@@ -7572,8 +7736,9 @@ function openSheet(k){if(k==='gard')k='insan';if(typeof k==='string'&&/^bk_my\d+
     else{
       if(inSchool()){const O=okulEns();h+='<div class="sec">Okul</div>'+row('data-go="okul"','🎒',O.n,`Not ${O.not} · ${okPopT(O.pop)}`,'›',false)}
       if(S.age>=16&&S.age<=40){const g=(S.grads||[]).length;h+=(inSchool()?'':'<div class="sec">Eğitim</div>')+row('data-go="egitim"','🎓',S.edu?'Üniversite: '+DEPTS.find(x=>x.id===S.edu.d).n:'Üniversite ve sınav',S.edu?`Mezuniyete ${fmtJ(S.edu.left/4)} kaldı`:!hasDip()?(S.age<18&&S.school===true?'Sınava şimdiden hazırlan':'Önce lise diploması: okula dön ya da açık lise'):S.puanY===S.age?`Bu yılki puanın ${S.puan} · Bölüm seç`:`Hazırlık %${Math.round(S.prep||0)} · Sınava gir, bölüm seç${g?' · '+g+' diploman var':''}`,'›',false)}
+      if(S.age>=16&&!isPol()&&!isAv()&&!S.jail){const gg=(S.grads||[]).filter(id=>id==='polis'||id==='hukuk');if(gg.length){h+='<div class="sec">Diploman hazır</div>';gg.forEach(id=>{const d=DEPTS.find(x=>x.id===id);h+=row(`data-x="job:${id}"`,id==='polis'?'👮':'⚖️',`${d.jn} olarak göreve başla`,id==='polis'?'Yemin et, rozetini tak':'Baroya kaydol, staja başla','›',false)})}}
       if(S.age>=16)h+='<div class="sec">İş hayatı</div>'+row('data-go="meslek"','💼',S.job?S.job.n:'İş ilanları',S.job?`Çeyreklik maaş ${fmtS(Math.round(S.job.sal*.25*(1+Math.min(.5,(S.job.q||0)*.01))))}${S.job.svc?' · Performans %'+S.job.perf:''}`:'Garson, tamirci, kurye, kasiyer… Maaşlı bir işe gir','›',false);
-      if(S.age>=14){        if(S.yol!=='kabadayi'&&S.yol!=='polis')h+='<div class="sec">Suç dünyası</div>';
+      if(S.age>=14){        if(isAv())h+=avJobsH();if(S.yol!=='kabadayi'&&S.yol!=='polis')h+='<div class="sec">Suç dünyası</div>';
         if(S.yol==='polis')h+=polJobsH();else if(S.yol==='kabadayi')h+=kJobsH();else CRIMES.forEach(c=>{const lockA=S.age<c.age,lockR=rank()<c.rank;
           const d=lockA?`${c.age} yaşında açılır`:lockR?`${RANKS[c.rank].n} rütbesi gerekir`:c.d;
           h+=row(`data-c="${c.id}"`,lockA||lockR?'🔒':c.ic,c.n,d+(lockA||lockR?'':'<br>'+riskTag(failP(c))),lockA||lockR?'🔒':actDone(c.id)?'Bitti':fmtS(c.m[1]),lockA||lockR||actDone(c.id))});
