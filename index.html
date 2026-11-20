@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.20-0800';
+const APPV='2026.11.20-0930';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -732,7 +732,7 @@ function karizma(){if(S&&((S.look&&S.look.acc.includes('hac'))||(S.owned&&S.owne
   if(hasY('fotr'))k+=5;if(S.age<16)k=0;return k}
 function has(id){return S.staff.some(x=>x.id===id)}
 function friends(job,min=50){return S.friends.filter(f=>f.job===job&&f.rel>=min).length}
-const inUW=()=>S.yol==='polis'?false:!!(S.yol||S.family||S.org||S.uw||(S.stats&&S.stats.crimes>0)||(S.black||0)>0||(S.st&&S.st.shops&&S.st.shops.some(o=>o.st==='odeyor')));const rankN=i=>S.yol==='polis'&&S.pol?PRANK[S.pol.r].n:i===0&&!inUW()?'Sivil':S.yol==='kabadayi'?(S.kTitle&&i>=5?'Son Kabadayı':KRANK[i]):RANKS[i].n;
+const inUW=()=>S.yol==='polis'?false:!!(S.yol||S.family||S.org||S.uw||(S.stats&&S.stats.crimes>0)||(S.black||0)>0||(S.st&&S.st.shops&&S.st.shops.some(o=>o.st==='odeyor')));const rankN=i=>S.yol==='polis'&&S.pol?(S.pol.giz?'Gizli görevde':PRANK[S.pol.r].n):i===0&&!inUW()?'Sivil':S.yol==='kabadayi'?(S.kTitle&&i>=5?'Son Kabadayı':KRANK[i]):RANKS[i].n;
 function rank(){if(S.age<14||!inUW())return 0;let i=0;RANKS.forEach((r,k)=>{if(S.respect>=r.r)i=k});const cap=S.yol==='kabadayi'?(S.org?5:3):S.org?5:!S.family?1:(S.boss?5:4);return Math.min(i,cap)}
 function fam(){return FAMILIES.find(f=>f.n===S.family)}
 function boss(){return S.boss?'Sen':(fam()?'Baba '+fam().b:'Mahalle abisi')}
@@ -4680,9 +4680,10 @@ function polOrtakEv(P){const o=P.ekip.find(x=>x.ortak)||P.ekip[1];if(!o)return n
     {t:'Konuşarak ikna et',fn:()=>{if(ch(.45+karizma()/200)){polSic(6);o.rel=clamp(o.rel+15);P.tut++;log('On dakika konuştun. Şüpheli silahı yere bıraktı. Kimsenin burnu kanamadı.','gold')}else{hurt(R(5,12),'Görevde yaralanma');log('Şüpheli panikledi, boğuşma çıktı.','bad')}}}]}}
 ACT.pol=a=>{const P=S.pol;if(!isPol()||!P)return;const i=a.indexOf(':'),op=i<0?a:a.slice(0,i),x=i<0?'':a.slice(i+1);
   if(S.jail){toast('Şu an görevde değilsin.');return}
+  if(P.giz&&(op==='devriye'||op==='muhbir'||op==='ac'))return;
   if(op==='devriye'){if(!polUse())return;closeSheet();let ev=pick(PDEV)(P);if(ev.dyn)ev=polOrtakEv(P)||PDEV[9](P);queue({back:'emniyet',...ev});return}
   if(op==='muhbir'){if(P.muhbir.length>=4||!polUse())return;const c=Math.round(8000*S.cpi/2.8);if(!pay(c)){P.mesai.n--;return}if(ch(.6+karizma()/300)){const m={id:'mh'+R(0,99999),name:`${pick(NICK)} ${pick(NAMES)}`,guv:R(35,65)};P.muhbir.push(m);log(`🕵️ Kahvede birkaç çay ısmarladın. ${m.name} artık kulağına fısıldıyor.`,'good')}else log('🕵️ Kimse konuşmak istemedi. Çay parası boşa gitti.','dim')}
-  else if(op==='ac'){if(P.dosya.some(d=>d.tid===x)||P.dosya.length>=3)return;const r=S.rivals.find(z=>z.id===x);if(!r)return;P.dosya.push({id:'ds'+R(0,99999),tid:r.id,tn:r.n,boss:(r.boss&&r.boss.name)||r.b||'Baba',suc:PSUC.map(s=>({k:s.k,dl:0})),q0:QS()});log(`📁 ${r.n} hakkında dosya açtın. Kapağına adını yazdın, içi şimdilik boş.`,'gold')}
+  else if(op==='ac'){if(P.dosya.some(d=>d.tid===x)||P.dosya.length>=polDosMax()||P.giz||polTemiz(x))return;const r=S.rivals.find(z=>z.id===x);if(!r)return;P.dosya.push({id:'ds'+R(0,99999),tid:r.id,tn:r.n,boss:(r.boss&&r.boss.name)||r.b||'Baba',suc:PSUC.map(s=>({k:s.k,dl:0})),q0:QS()});log(`📁 ${r.n} hakkında dosya açtın. Kapağına adını yazdın, içi şimdilik boş.`,'gold')}
   else if(op==='d'){return polDosya(x)}
   else if(op==='m'){return polMateDlg(x)}
   done()};
@@ -4693,19 +4694,21 @@ function polDosya(id){const P=S.pol,d=P.dosya.find(z=>z.id===id);if(!d)return;cl
   const A=(fn)=>()=>{if(!polUse())return back();fn();afterChange();setTimeout(()=>{if(!Q.length&&isPol())polDosya(id)},70)};
   let t=`<b>${d.tn}</b> · Hedef: ${d.boss}<br>Dosya ${Math.floor((QS()-d.q0)/4)} yıldır açık · Delil gücü <b>${tot}</b>/24 · Kalan mesai ${S.premium?'∞':polMes()}<br><br>`+d.suc.map(c=>`${c.dl>=3?'🟢':c.dl>=1?'🟡':'⚪'} ${sn(c.k)}: <b>${PDL[c.dl]}</b>`).join('<br>');
   const mh=P.muhbir.length,has2=d.suc.some(c=>c.dl>=2);
+  if(P.giz)return queue({back:'emniyet',title:`📁 Dosya: ${d.tn}`,text:t+'<br><br>Gizli görevdeyken dosyaya yalnızca içeriden topladıkların girer.',choices:[{t:'Geri dön',fn:back}]});
   queue({back:'emniyet',title:`📁 Dosya: ${d.tn}`,text:t,choices:[
-   {t:'Muhbirle buluş',sub:mh?`${mh} muhbirin var`:'Önce muhbir bul',dis:!mh,fn:A(()=>{const m=pick(P.muhbir);if(ch(m.guv/100)){const c=polUp(d,null,1,2);log(c?`🕵️ ${m.name} konuştu: ${sn(c.k).toLocaleLowerCase('tr-TR')} işi hakkında isim ve adres verdi. (${PDL[c.dl]})`:`🕵️ ${m.name} yeni bir şey bilmiyor.`,c?'good':'dim');m.guv=clamp(m.guv+3)}else{m.guv=clamp(m.guv-8);log(`🕵️ ${m.name}'in verdiği adres boş çıktı. Ya yanılıyor ya seni oyalıyor.`,'dim')}})},
-   {t:'Takip ve gözetleme',sub:'Günlerce arabada bekle',fn:A(()=>{if(ch(.55)){const c=polUp(d,null,1,3);log(c?`🚗 Üç gece arabada bekledin. ${sn(c.k)} için ${PDL[c.dl].toLocaleLowerCase('tr-TR')} elde ettin: fotoğraflar, plakalar, saatler.`:'🚗 Takipten yeni bir şey çıkmadı.',c?'good':'dim')}else{log('🚗 Takip edildiğini fark ettiler, güzergâhı değiştirdiler.','dim');if(ch(.2))makeThreat(d.boss,'Peşine düştüğün')}})},
-   {t:'Dinleme kararı çıkart',sub:'Savcıyı ikna etmen lazım',fn:A(()=>{if(ch(clamp(.25+P.sicil/160+tot/40,.15,.9))){const c=polUp(d,null,2,2)||polUp(d,null,2,3);log(c?`🎧 Savcı kararı imzaladı. Kayıtlarda ${sn(c.k).toLocaleLowerCase('tr-TR')} açıkça konuşuluyor.`:'🎧 Dinlemede işe yarar bir şey çıkmadı; şifreli konuşuyorlar.',c?'good':'dim')}else log('🎧 Savcı "elinde yeterli şüphe yok" dedi, talebi reddetti.','dim')})},
+   {t:'Muhbirle buluş',sub:mh?`${mh} muhbirin var`:'Önce muhbir bul',dis:!mh,fn:A(()=>{const m=pick(P.muhbir);if(ch(m.guv/100)){const c=(P.birim&&PBIR[P.birim].k&&ch(.6)?polUp(d,PBIR[P.birim].k,1,3):null)||polUp(d,null,1,2);log(c?`🕵️ ${m.name} konuştu: ${sn(c.k).toLocaleLowerCase('tr-TR')} işi hakkında isim ve adres verdi. (${PDL[c.dl]})`:`🕵️ ${m.name} yeni bir şey bilmiyor.`,c?'good':'dim');m.guv=clamp(m.guv+3)}else{m.guv=clamp(m.guv-8);log(`🕵️ ${m.name}'in verdiği adres boş çıktı. Ya yanılıyor ya seni oyalıyor.`,'dim')}})},
+   {t:'Takip ve gözetleme',sub:'Günlerce arabada bekle',fn:A(()=>{if(ch(.55)){const c=(P.birim&&PBIR[P.birim].k&&ch(.6)?polUp(d,PBIR[P.birim].k,2,3):null)||polUp(d,null,1,3);log(c?`🚗 Üç gece arabada bekledin. ${sn(c.k)} için ${PDL[c.dl].toLocaleLowerCase('tr-TR')} elde ettin: fotoğraflar, plakalar, saatler.`:'🚗 Takipten yeni bir şey çıkmadı.',c?'good':'dim')}else{log('🚗 Takip edildiğini fark ettiler, güzergâhı değiştirdiler.','dim');if(ch(.2))makeThreat(d.boss,'Peşine düştüğün')}})},
+   {t:'Dinleme kararı çıkart',sub:'Savcıyı ikna etmen lazım',fn:A(()=>{if(ch(clamp(.25+P.sicil/160+tot/40+(P.birim==='siber'?.35:P.birim==='organize'?.15:0),.15,.95))){const c=polUp(d,null,2,2)||polUp(d,null,2,3);log(c?`🎧 Savcı kararı imzaladı. Kayıtlarda ${sn(c.k).toLocaleLowerCase('tr-TR')} açıkça konuşuluyor.`:'🎧 Dinlemede işe yarar bir şey çıkmadı; şifreli konuşuyorlar.',c?'good':'dim')}else log('🎧 Savcı "elinde yeterli şüphe yok" dedi, talebi reddetti.','dim')})},
    {t:'Mali inceleme iste',sub:'Hesaplar, tapular, paravan şirketler',fn:A(()=>{if(ch(.5)){const c=polUp(d,'kara',3,3)||polUp(d,'kacak',1,3);log(c?`📊 Maliye raporu geldi: paravan şirketler, açıklanamayan milyonlar. ${sn(c.k)}: ${PDL[c.dl]}.`:'📊 Hesaplar temiz görünüyor; iyi bir muhasebecileri var.',c?'good':'dim')}else log('📊 Rapor aylarca sürecek. Bu çeyrek sonuç yok.','dim')})},
-   {t:'Baskın yap',sub:has2?'Suçüstü yakalamayı dene':'Önce en az bir dinleme kaydı gerek',dis:!has2,fn:()=>{if(!polUse())return back();const c=pick(d.suc.filter(z=>z.dl>=2&&z.dl<4))||d.suc.find(z=>z.dl>=2);kFight(`${d.tn} baskını`,3,clamp(.4+P.sicil/250+tot/60,.25,.9),ok=>{if(ok){c.dl=4;polSic(6);P.tut+=R(2,5);gainResp(2);news(`Emniyetten ${d.tn} operasyonu: çok sayıda gözaltı`,2);log(`🚨 Şafak baskını başarılı. ${sn(c.k)}: suçüstü. Depoda ne varsa tutanağa geçti.`,'gold')}else{hurt(R(8,20),'Baskında yaralanma');polSic(-3);log('🚨 Baskın sızdırılmış. Depo boştu, çıkışta pusuya düştünüz.','bad');if(ch(.4))makeThreat(d.boss,'Mekânını bastığın')}afterChange();setTimeout(()=>{if(!Q.length&&isPol())polDosya(id)},70)})}},
+   ...(P.birim==='siber'?[{t:'Sosyal medya ve telefon taraması',sub:'Paylaşımlar, konumlar, yazışmalar',fn:A(()=>{if(ch(.6)){const c=polUp(d,null,3,3)||polUp(d,null,2,3);log(c?`💻 Bir kaptanın lüks paylaşımlarından ve konum geçmişinden belge çıkardın: ${sn(c.k)} (${PDL[c.dl]}).`:'💻 Hesaplar kapalı, yeni bir şey çıkmadı.',c?'good':'dim')}else log('💻 Telefonlar şifreli çıktı.','dim')})}]:[]),
+   {t:'Baskın yap',sub:has2?'Suçüstü yakalamayı dene':'Önce en az bir dinleme kaydı gerek',dis:!has2,fn:()=>{if(!polUse())return back();const c=pick(d.suc.filter(z=>z.dl>=2&&z.dl<4))||d.suc.find(z=>z.dl>=2);kFight(`${d.tn} baskını`,3,clamp(.4+P.sicil/250+tot/60+(P.birim==='ozel'?.2:0),.25,.95),ok=>{if(ok){c.dl=4;polSic(6);P.tut+=R(2,5);gainResp(2);news(`Emniyetten ${d.tn} operasyonu: çok sayıda gözaltı`,2);log(`🚨 Şafak baskını başarılı. ${sn(c.k)}: suçüstü. Depoda ne varsa tutanağa geçti.`,'gold')}else{hurt(R(8,20),'Baskında yaralanma');polSic(-3);log('🚨 Baskın sızdırılmış. Depo boştu, çıkışta pusuya düştünüz.','bad');if(ch(.4))makeThreat(d.boss,'Mekânını bastığın')}afterChange();setTimeout(()=>{if(!Q.length&&isPol())polDosya(id)},70)})}},
    {t:'Dosyayı savcıya götür',sub:tot<4?'Henüz çok zayıf':'Kimi alacağını seç',dis:tot<4,fn:()=>setTimeout(()=>polSavci(id),60)},
    {t:'Dosyayı kapat',fn:()=>{P.dosya=P.dosya.filter(z=>z!==d);polSic(-2);log(`📁 ${d.tn} dosyasını rafa kaldırdın.`,'dim');back()}},
    {t:'Geri dön',fn:back}]})}
 function polSavci(id){const P=S.pol,d=P.dosya.find(z=>z.id===id);if(!d)return;const tot=polDL(d),top=Math.max(...d.suc.map(c=>c.dl)),n3=d.suc.filter(c=>c.dl>=3).length;
-  const go=(lvl,need,nm)=>()=>{const p=clamp(.3+(tot-need)/14+P.sicil/400,.1,.95);
+  const go=(lvl,need,nm)=>()=>{const p=clamp(.3+(tot-need)/14+P.sicil/400+(P.birim==='organize'?.1:0),.1,.95);
     if(ch(p)){P.kap+=lvl;polSic(lvl===3?18:lvl===2?10:5);gainResp(lvl*2);add('happy',lvl*3);P.cok=P.cok||{};P.cok[d.tid]=Math.max(P.cok[d.tid]||0,lvl);
-      if(lvl===3){P.dosya=P.dosya.filter(z=>z!==d);news(`${d.tn} çökertildi: ${d.boss} tutuklandı`,3);log(`⚖️ Mahkeme kararını verdi: ${d.boss} ve ekibi ağırlaştırılmış cezalar aldı. ${d.tn} çökertildi. Dosyanın kapağını kendi elinle kapattın.`,'gold')}
+      if(lvl===3){P.cokQ=P.cokQ||{};P.cokQ[d.tid]=QS();P.dosya=P.dosya.filter(z=>z!==d);news(`${d.tn} çökertildi: ${d.boss} tutuklandı`,3);log(`⚖️ Mahkeme kararını verdi: ${d.boss} ve ekibi ağırlaştırılmış cezalar aldı. ${d.tn} çökertildi. Dosyanın kapağını kendi elinle kapattın.`,'gold')}
       else{d.suc.forEach(c=>{c.dl=Math.max(0,c.dl-(lvl===2?2:1))});log(`⚖️ Dava kazanıldı: ${d.tn}'nin ${nm} içeride. Ama ${d.boss} hâlâ dışarıda; dosya açık kalıyor.`,'good')}}
     else{polSic(-5);d.suc.forEach(c=>{c.dl=Math.max(0,c.dl-1)});log(`⚖️ Dava düştü. Avukatları delilleri tek tek çürüttü; ${nm} adliyeden gülerek çıktı.`,'bad');if(ch(.5))makeThreat(d.boss,'Mahkemeye verdiğin')}
     afterChange();setTimeout(()=>{if(!Q.length&&isPol())openSheet('emniyet')},70)};
@@ -4747,20 +4750,129 @@ const POLEV=[
    {t:'Faillerin peşine düş',fn:()=>{polSic(3);yon('s',3);log('İzne çıkmadın. Üç hafta sonra failler yakalandı.','good')}}]}}}];
 function polQ(){if(!isPol())return;const P=S.pol;if(S.jail){polEnd('👮 Hapse girdiğin için meslekten ihraç edildin.','bad');return}
   if(S.job&&S.job.id==='polis'){S.job.n=PRANK[P.r].n;S.job.sal=Math.round(PRANK[P.r].sal*S.cpi)}else if(!S.job){polEnd('👮 Üniformayı çıkardın. Artık sivilsin.');return}
+  try{gizQ(P)}catch(e){console.error(e)}
+  Object.keys(P.cokQ||{}).forEach(k=>{if(P.cok[k]===3&&QS()-P.cokQ[k]>=16){P.cok[k]=2;log(`🗺️ ${(S.rivals.find(r=>r.id===k)||{}).n||'Aile'} dağılan kadrosunu toparladı; ilçelerine yeniden yerleşiyorlar.`,'bad')}});
   P.sup=clamp((P.sup||0)-2);if(P.maas){const d=P.dosya.find(z=>z.tid===P.maas);if(d){const m=Math.round(PRANK[P.r].sal*S.cpi*.5);dirty(m);polKir(3);d.suc.forEach(c=>{if(c.dl>0&&ch(.3))c.dl--})}else P.maas=null}
   P.muhbir.forEach(m=>{m.guv=clamp(m.guv-1)});P.ekip.forEach(c=>{c.rel=clamp(c.rel-1)});
   if(S.q===0){const nx=PRANK[P.r+1];P.sicil=clamp(P.sicil-R(3,6));if(nx&&P.sicil>=nx.s&&QS()-P.rq>=8+P.r*6){P.r++;P.rq=QS();S.job.n=nx.n;S.job.sal=Math.round(nx.sal*S.cpi);add('happy',6);gainResp(3);news(`${S.first} ${S.last} ${nx.n} oldu`,1);log(`🎖️ Terfi! Yeni rütben: ${nx.n}. Omzuna yeni yıldız takıldı.`,'gold')}
     if(S.age>=60){polEnd(`🎖️ ${PRANK[P.r].n} olarak emekli oldun. ${P.tut} tutuklama, ${P.kap} başarılı dava. Rozetini çerçeveletip duvara astın.`,'gold');return}}
-  if(okE()&&(P.evQ||0)<=QS()&&ch(.3)){P.evQ=QS()+2;const pool=POLEV.filter(x=>x.c(P));if(pool.length){const ev=pick(pool).e(P);setTimeout(()=>queue(ev),120)}}}
+  if(!P.giz&&okE()&&(P.evQ||0)<=QS()&&ch(.3)){P.evQ=QS()+2;const pool=POLEV.filter(x=>x.c(P));if(pool.length){const ev=pick(pool).e(P);setTimeout(()=>queue(ev),120)}}}
+/* --- polis: özel birimler --- */
+const PBIR={narko:{n:'Narkotik',ic:'💊',d:'Uyuşturucu dosyalarında delil daha kolay toplanır',k:'mal'},organize:{n:'Organize Suçlar',ic:'🕴️',d:'Aynı anda 4 dosya; savcı ve hâkim seni daha ciddiye alır'},kacak:{n:'Kaçakçılık',ic:'🚢',d:'Kaçakçılık ve silah dosyalarında delil daha kolay toplanır',k:'kacak'},siber:{n:'Siber Suçlar',ic:'💻',d:'Paylaşımlardan ve telefonlardan belge çıkarırsın; dinleme kararı kolay çıkar'},ozel:{n:'Özel Harekât',ic:'🪖',d:'Baskınlarda başarı artar, daha az yaralanırsın'}};
+const polDosMax=()=>S.pol.birim==='organize'?4:3;
+const PBG={
+ narko:P=>({title:'💊 Narkotik: sokak zinciri',text:'Bir satıcıyı izliyorsun. Günde üç kez aynı apartmana girip çıkıyor. Ya şimdi alırsın ya da zinciri yukarı takip edersin.',choices:[
+   {t:'Satıcıyı şimdi al',fn:()=>{polSic(3);P.tut++;log('Satıcıyı üstünde paketlerle yakaladın. Küçük balık, ama sokak bir süre temiz.','good')}},
+   {t:'Zinciri yukarı takip et',fn:()=>{if(ch(.5)){polSic(7);P.tut+=3;const d=P.dosya[0];if(d){const c=d.suc.find(x=>x.k==='mal');c.dl=Math.max(c.dl,3)}log(`İki hafta sabrettin. Apartmandaki depo, depodan dağıtıcı, dağıtıcıdan toptancı çıktı.${d?` ${d.tn} dosyasına belge olarak girdi.`:''}`,'gold')}else log('Satıcı takip edildiğini anladı, ortadan kayboldu.','dim')}}]}),
+ organize:P=>({title:'🕴️ Organize: itirafçı',text:'Cezaevindeki eski bir tetikçi görüşme istedi: "Ailemi korursanız konuşurum. Ama kimse bilmeyecek."',choices:[
+   {t:'Tanık koruma programına al',fn:()=>{const d=P.dosya[0];if(d&&ch(.7)){const c=polUp(d,'yarala',3,3)||polUp(d,null,2,3);polSic(5);log(`İtirafçı üç gün konuştu. ${d.tn} dosyası kalınlaştı.`,'gold')}else{polSic(2);log(d?'İtirafçı son anda vazgeçti.':'İtirafçının anlattıkları açık bir dosyana uymuyor; ifadesi arşive girdi.','dim')}}},
+   {t:'"Önce konuş, sonra bakarız"',fn:()=>{if(ch(.3)){const d=P.dosya[0];if(d)polUp(d,null,1,2);log('Biraz konuştu, sonra sustu.','dim')}else log('Görüşmeyi bitirdi: "Siz de onlar gibisiniz."','dim')}}]}),
+ kacak:P=>({title:'🚢 Kaçakçılık: liman',text:'Limana gece yanaşan bir gemide beyan dışı konteyner olduğu ihbar edildi. Gümrük memuru seni kenara çekti: "Bu gemiye bakmasak iyi olur komiserim."',choices:[
+   {t:'Konteyneri açtır',fn:()=>{if(ch(.65)){polSic(7);P.tut+=2;const d=P.dosya[0];if(d){const c=d.suc.find(x=>x.k==='kacak');c.dl=Math.max(c.dl,4)}news('Limanda dev kaçakçılık operasyonu',2);log(`Konteynerden kaçak sigara ve silah çıktı.${d?` ${d.tn} dosyasına suçüstü olarak girdi.`:''}`,'gold')}else{polSic(-2);log('Konteyner boş çıktı. Biri önceden haber vermiş.','dim')}}},
+   {t:'Gümrük memurunu sorguya al',fn:()=>{polSic(4);P.tut++;log('Memur yarım saatte çözüldü. Kimden zarf aldığını söyledi.','good')}},
+   {t:'Gemiyi görmezden gel',fn:()=>{const m=M(120000);dirty(m);polKir(12);log(`Sabah torpidonda bir zarf vardı: ${fmt(m)}.`,'bad')}}]}),
+ siber:P=>({title:'💻 Siber: açık hesap',text:'Bir aile mensubunun yeğeni, amcasının yalısındaki partiden canlı yayın açmış. Arka planda masada kimlerin oturduğu görünüyor.',choices:[
+   {t:'Yayını kaydet, kişileri eşleştir',fn:()=>{const d=P.dosya[0];polSic(4);if(d){const c=polUp(d,null,3,3);log(c?`Yayındaki yüzleri tek tek eşleştirdin. ${d.tn} dosyasına belge olarak girdi.`:'Kayıt arşive girdi.','good')}else log('Kayıt arşive girdi. Açık bir dosyan olsa işe yarardı.','dim')}},
+   {t:'Sahte hesapla yeğene yaklaş',fn:()=>{if(ch(.5)){const d=P.dosya[0];if(d)polUp(d,null,2,3);polSic(3);yon('k',3);log('Yeğen sahte hesaba bayıldı; amcasının nerede, kiminle olduğunu her gün yazıyor.','good')}else log('Yeğen hesabı engelledi.','dim')}}]}),
+ ozel:P=>({title:'🪖 Özel Harekât: rehine',text:'Bir kuyumcu soygunu rehine krizine döndü. İçeride iki silahlı adam, dört rehine var. Müzakereci tıkanmış, karar senin.',choices:[
+   {t:'Operasyon emri ver',fn:()=>kFight('Rehine operasyonu',3,clamp(.55+P.sicil/300,.4,.9),ok=>{if(ok){polSic(8);P.tut+=2;gainResp(3);news('Kuyumcudaki rehineler kurtarıldı',2);log('Kırk saniyede bitti. Dört rehine de sağ.','gold')}else{hurt(R(8,18),'Operasyonda yaralanma');polSic(-4);log('Operasyon karıştı. Rehineler kurtuldu ama iki polis yaralandı, biri sensin.','bad')}done()})},
+   {t:'Müzakereye sen gir',fn:()=>{if(ch(.4+karizma()/200)){polSic(9);P.tut+=2;yon('m',3);log('Bir saat konuştun. Adamlar silahları kapıdan dışarı attı.','gold')}else{polSic(-1);log('Müzakere uzadı, sonunda operasyon başkası tarafından yapıldı.','dim')}}}]})};
+/* --- polis: gizli görev --- */
+const GIZT={konuskan:'Konuşkan',supheci:'Şüpheci',dost:'Sana kanı ısınan'};
+const gizSup=v=>{const G=S.pol.giz;if(!G)return;if(v>0)v=Math.round(v*(1.2-G.guv/170));G.sup=clamp(G.sup+v);if(G.sup>=100)setTimeout(gizAcik,150)};
+const gizGuv=v=>{const G=S.pol.giz;if(G)G.guv=clamp(G.guv+v)};
+const gizDos=()=>{const P=S.pol,G=P.giz;let d=P.dosya.find(z=>z.tid===G.tid);if(!d){d={id:'ds'+R(0,99999),tid:G.tid,tn:G.tn,boss:G.boss,suc:PSUC.map(s=>({k:s.k,dl:0})),q0:QS()};P.dosya.push(d)}return d};
+function gizStart(rid){const P=S.pol,r=S.rivals.find(z=>z.id===rid);if(!r||P.giz)return;const boss=(r.boss&&r.boss.name)||'Baba';const tips=['konuskan','supheci','dost'];
+  P.giz={tid:r.id,tn:r.n,boss,kod:`${pick(NICK)} ${S.first}`,guv:20,sup:5,rut:0,q0:QS(),suc:0,adam:tips.map(t=>({id:'ga'+R(0,99999),name:`${pick(NICK)} ${pick(NAMES)}`,tip:t,rel:R(25,45)}))};gizDos();
+  log(`🎭 Rozetini kasaya kilitledin. Artık "${P.giz.kod}" adında, ${r.n}'in kapısında iş arayan biri olarak yaşıyorsun.`,'gold');
+  setTimeout(()=>queue({title:'🎭 Gizli görev',text:`Kimliğin, telefonun, evin değişti. ${r.n}'in adamları seni tanımıyor; tanımamaları gerek.<br><br><b>Güven:</b> çete sana ne kadar inanıyor. İşlerine katıldıkça artar.<br><b>Şüphe:</b> açığa çıkma riskin. Bilgi topladıkça artar; %100 olursa kimliğin ortaya çıkar.<br><br>Güven kazanmak için suça bulaşman gerekecek. Ne kadar ileri gideceğine sen karar vereceksin.`,choices:[{t:'Başlıyorum',fn:()=>{}}]}),100)}
+function gizAcik(){const P=S.pol,G=P.giz;if(!G||!isPol())return;const d=gizDos(),tot=polDL(d);
+  queue({title:'🎭 Kimliğin açığa çıktı',text:`${G.boss} seni depoya çağırttı. Masada senin akademi mezuniyet fotoğrafın duruyor. Kapı arkandan kilitlendi.`,choices:[
+   {t:'Arka pencereden kaç',fn:()=>{if(ch(.5)){hurt(R(5,15),'Kaçış');log('Camdan atlayıp iki sokak koştun. Ekip seni köşede aldı.','good')}else{hurt(R(25,45),'Gizli görevde yakalanma');log('Yakaladılar. Ekip kapıyı kırdığında yerdeydin; hastanede uyandın.','bad')}gizBit(false)}},
+   {t:'Acil kodu gönder, ekibi çağır',fn:()=>kFight(`${G.tn} deposu`,3,clamp(.35+tot/40+(P.birim==='ozel'?.2:0),.25,.9),ok=>{if(ok){hurt(R(3,10),'Depo çatışması');P.tut+=R(3,6);d.suc.forEach(c=>{if(c.dl>=2)c.dl=Math.min(4,c.dl+1)});polSic(8);log('Ekip otuz saniyede içerideydi. Depodakiler suçüstü yakalandı.','gold')}else{hurt(R(20,40),'Depo çatışması');polSic(-3);log('Ekip gecikti. Ağır yaralandın, çoğu kaçtı.','bad')}gizBit(false);done()})},
+   {t:'"Fotoşop bu" de, blöf yap',fn:()=>{if(ch(.15+G.guv/250)){G.sup=70;log(`${G.boss} uzun uzun yüzüne baktı, sonra güldü: "Bir daha böyle şaka olursa kafanı koparırım." İnandı.`,'gold')}else{hurt(R(25,45),'Gizli görevde yakalanma');log('İnanmadı. Ekip yetiştiğinde bilincin kapalıydı.','bad');gizBit(false)}}}]})}
+function gizBit(basari){const P=S.pol,G=P.giz;if(!G)return;P.giz=null;P.gizSon=QS();if(G.suc>=4){polKir(G.suc*2);log('📋 Görev raporunda çetenin içindeyken karıştığın işler de yazıyor. İçişleri bunları soracak.','dim')}
+  if(!basari){makeThreat(G.boss,'Arasına sızdığın');log(`🎭 Gizli görev sona erdi. ${Math.round((QS()-G.q0)/4*10)/10} yıl başka biri olarak yaşadın.`,'dim')}}
+const GIZEV=[
+ G=>({title:'🎭 Sadakat testi',text:`${G.boss} seni yanına çağırdı: "Borcunu ödemeyen bir galerici var. Git, dükkânını dağıt. Bakalım elin ne kadar ağır."`,choices:[
+   {t:'Dükkânı dağıt',fn:()=>{gizGuv(18);G.suc++;yon('s',4);log('Galeriyi tek başına dağıttın. Çetede artık adın geçiyor. Gece uyuyamadın.','dim')}},
+   {t:'Galericiyle gizlice anlaş, dağıtılmış gibi göster',fn:()=>{if(ch(.55)){gizGuv(12);yon('k',4);log('Galerici camlarını kendi kırdı, sigortadan parasını alacak. Çete fotoğraflara inandı.','good')}else{gizSup(25);log('Biri galericinin dükkânını sağlam gördü. Sorular başladı.','bad')}}},
+   {t:'"Bu benim işim değil"',fn:()=>{gizGuv(-15);gizSup(10);log(`${G.boss} bir şey demedi. Ama seni işlerden uzak tutmaya başladılar.`,'dim')}}]}),
+ G=>({title:'🎭 Tanıdık bir yüz',text:'Çetenin adamlarıyla bir lokantadasın. Kapıdan eski bir mahalle arkadaşın girdi, seni gördü, gülümseyerek masaya yürüyor: "Komi..."',choices:[
+   {t:'Sözünü kes: "Borcunu getirdin mi lan?"',fn:()=>{if(ch(.6+karizma()/300)){gizGuv(5);log('Arkadaşın durumu çaktı, mırıldanıp çıktı. Masadakiler güldü.','good')}else{gizSup(30);log('Arkadaşın şaşkın şaşkın baktı. Masadan biri "Kimdi o?" diye sordu.','bad')}}},
+   {t:'Tuvalete kalk, göz göze gelme',fn:()=>{gizSup(15);log('Arkadaşın arkandan seslendi ama duymamış gibi yaptın.','dim')}}]}),
+ G=>{const a=G.adam.find(x=>x.tip==='supheci');return{title:`🎭 ${a.name} telefonunu istiyor`,text:`${a.name} elini uzattı: "Telefonunu ver. Yeni gelenlere bakarım ben." Telefonda amirinle yazışmaların silinmiş mi, emin değilsin.`,choices:[
+   {t:'Telefonu uzat',fn:()=>{if(ch(.6-G.sup/300)){gizGuv(8);a.rel=clamp(a.rel+10);log(`${a.name} telefonu karıştırdı, geri verdi: "Temizsin."`,'good')}else{gizSup(35);log(`${a.name} bir numarada durdu, uzun uzun baktı.`,'bad')}}},
+   {t:'"Karımın fotoğrafları var, kimseye vermem"',fn:()=>{if(ch(.5)){a.rel=clamp(a.rel+5);log(`${a.name} güldü: "Kıskanç adammışsın."`,'dim')}else{gizSup(18);log(`${a.name} gözlerini kıstı.`,'dim')}}},
+   {t:'Telefonu "yanlışlıkla" yere düşür, kır',fn:()=>{gizSup(8);log('Ekran tuz buz oldu. Yeni telefon alana kadar amirinle haberleşemeyeceksin.','dim')}}]}},
+ G=>({title:'🎭 Terfi',text:`${G.boss} omzuna elini koydu: "İyi çalışıyorsun. Bundan sonra sevkiyatlara sen bakacaksın." Çetenin içinde bir basamak yükseldin.`,choices:[
+   {t:'Teşekkür et',fn:()=>{G.rut++;gizGuv(10);log('Artık toplantılara giriyorsun. Duydukların dosyayı dolduracak.','gold');const c=polUp(gizDos(),null,2,3)}}]}),
+ G=>{const a=G.adam.find(x=>x.tip==='dost');return{title:`🎭 ${a.name} içini döktü`,text:`Gece yarısı ${a.name} ile sahilde oturuyorsunuz. İkinci çayda açıldı: "Kızım okula başladı. Ben bu işten çıkmak istiyorum ama çıkanı yaşatmıyorlar. Sen olsan ne yapardın?"`,choices:[
+   {t:'Kim olduğunu söyle, itirafçı yap',fn:()=>{if(a.rel>=50&&ch(.65)){a.itiraf=1;const d=gizDos();polUp(d,null,3,3);polUp(d,null,2,3);yon('m',4);log(`${a.name} uzun süre denize baktı. Sonra "Ne lazımsa söylerim" dedi. Dosyaya en sağlam tanığın girdi.`,'gold')}else{gizSup(45);log(`${a.name} ayağa fırladı. Bir şey demeden gitti. Kime ne anlatacağını bilmiyorsun.`,'bad')}}},
+   {t:'"Zamanı gelince çıkarsın" de',fn:()=>{a.rel=clamp(a.rel+15);log(`${a.name} başını salladı. Sana güveniyor.`,'dim')}},
+   {t:'Konuyu değiştir',fn:()=>{a.rel=clamp(a.rel-5)}}]}},
+ G=>({title:'🎭 Kendi meslektaşların',text:'Mekâna polis baskını oldu. Seni tanımayan iki genç memur herkesi duvara diziyor. Biri sana sertçe yüklendi.',choices:[
+   {t:'Rolünü bozma, dayağı ye',fn:()=>{hurt(R(4,10),'Baskında dayak');gizGuv(14);log('Gözaltında bir gece kaldın, ağzını açmadın. Çıktığında çete seni alkışladı.','good')}},
+   {t:'Memura göz kırp, kodu fısılda',fn:()=>{if(ch(.5)){log('Memur anladı, seni kenara ayırıp bıraktı. Kimse fark etmedi.','dim')}else{gizSup(30);log('Memur "Ne diyorsun sen?" diye bağırdı. Herkes duydu.','bad')}}}]})];
+ACT.giz=a=>{const P=S.pol;if(!isPol()||!P)return;const i=a.indexOf(':'),op=i<0?a:a.slice(0,i),x=i<0?'':a.slice(i+1);const G=P.giz;
+  if(op==='basla'){if(G||P.r<1)return;closeSheet();const L=S.rivals.filter(r=>!(P.cok&&P.cok[r.id]===3&&QS()-((P.cokQ||{})[r.id]||0)<16));return queue({back:'emniyet',title:'🎭 Gizli görev',text:'Hangi ailenin içine gireceksin? Görev aylar, belki yıllar sürer. O sürede devriyeye çıkamaz, başka dosyaya bakamazsın.',choices:[...L.map(r=>({t:r.n,sub:P.dosya.some(d=>d.tid===r.id)?'Dosyası açık':'Dosya görevle birlikte açılır',fn:()=>gizStart(r.id)})),{t:'Vazgeç',fn:()=>{}}]})}
+  if(!G)return;const d=gizDos(),sn=k=>PSUC.find(s=>s.k===k).n;
+  if(op==='is'){if(!polUse())return;const t=pick([['haraç turuna çıktın','harac'],['gece sevkiyatına eşlik ettin','kacak'],['depodaki malı saydın','mal'],['kasadaki parayı bankaya taşıdın','kara']]);gizGuv(R(7,13));G.suc++;if(ch(.45)){const c=polUp(d,t[1],1,2);if(c)log(`🎭 Çeteyle ${t[0]}. Gördüklerini aklına yazdın: ${sn(c.k)} (${PDL[c.dl]}).`,'good');else log(`🎭 Çeteyle ${t[0]}. Güvenleri artıyor.`,'dim')}else log(`🎭 Çeteyle ${t[0]}. Güvenleri artıyor.`,'dim')}
+  else if(op==='bilgi'){if(!polUse())return;const hi=G.rut>=1?4:3;if(ch(.45+G.guv/200)){const c=polUp(d,null,2,hi)||polUp(d,null,1,hi);gizSup(R(8,15));log(c?`🎭 ${pick(['Kasadaki defterin fotoğrafını çektin','Toplantıyı cebindeki cihazla kaydettin','Sevkiyat listesini kopyaladın'])}: ${sn(c.k)} (${PDL[c.dl]}).`:'🎭 İşe yarar bir şey bulamadın.',c?'good':'dim')}else{gizSup(R(15,25));log('🎭 Ofiste yakalanmak üzereydin; "tuvaleti arıyordum" dedin.','bad')}}
+  else if(op==='amir'){if(!polUse())return;gizSup(ch(.2)?10:-12);polSic(2);add('happy',3);log('🎭 Gece yarısı bir otoparkta amirinle buluştun. Topladıklarını teslim ettin, bir süre kendi adınla çağrıldın.','dim')}
+  else if(op==='adam'){const m=G.adam.find(z=>z.id===x);if(!m||!polUse())return;m.rel=clamp(m.rel+R(8,14));gizGuv(3);
+    if(m.tip==='konuskan'&&ch(.5)){const c=polUp(d,null,1,2);log(c?`🎭 ${m.name} iki kadehten sonra anlattı da anlattı: ${sn(c.k)} (${PDL[c.dl]}).`:`🎭 ${m.name} ile içtiniz, bildiğin şeyleri tekrar etti.`,c?'good':'dim')}
+    else if(m.tip==='supheci'){gizSup(m.rel>=60?-10:4);log(`🎭 ${m.name} ile tavla oynadın. ${m.rel>=60?'Sana ısınmaya başladı.':'Her hamleni izliyor.'}`,'dim')}
+    else log(`🎭 ${m.name} ile ${pick(['maça gittiniz','balığa çıktınız','çocuğunun doğum gününe gittin'])}. Bu adamı seviyorsun; işin zor tarafı bu.`,'dim')}
+  else if(op==='bitir'){closeSheet();const tot=polDL(d),dost=G.adam.find(z=>z.tip==='dost');
+    return queue({back:'emniyet',title:'🎭 Operasyon günü',text:`Topladığın delillerle (${tot}/24) büyük baskının düğmesine basabilirsin. İçeride ${dost.name} de olacak${dost.itiraf?'; itirafçın olarak korunacak':''}.`,choices:[
+      {t:'Baskını başlat',dis:tot<6,sub:tot<6?'Delil çok zayıf':'',fn:()=>kFight(`${G.tn} operasyonu`,3,clamp(.45+tot/40+G.guv/400+(P.birim==='ozel'?.15:0),.3,.95),ok=>{if(ok){d.suc.forEach(c=>{if(c.dl>=2)c.dl=Math.min(4,c.dl+1)});polSic(12);P.tut+=R(5,10);gainResp(4);news(`${G.tn}'e içeriden darbe: gizli polis operasyonu`,3);log(`🚨 Şafakta kapılar kırıldı. ${G.boss} seni üniformayla görünce bir şey demedi, sadece baktı. Dosya artık savcıya hazır.`,'gold')}else{hurt(R(10,25),'Operasyonda yaralanma');polSic(2);log('🚨 Operasyon sızdı; yarısı kaçtı. Yine de elindeki deliller duruyor.','dim')}
+        const fin=()=>{gizBit(ok);afterChange();setTimeout(()=>{if(!Q.length&&isPol())openSheet('emniyet')},80)};
+        if(!dost.itiraf)setTimeout(()=>queue({title:`${dost.name} kelepçeli`,text:`${dost.name} kelepçeli halde önünden geçiriliyor. Durdu, sana baktı: "Kızımın doğum gününe gelmiştin."`,choices:[{t:'Tutanağa "yardımcı oldu" yaz',fn:()=>{yon('m',5);log(`${dost.name} için savcıya iyi hal mektubu yazdın. Cezası indi.`,'dim');fin()}},{t:'Kaçmasına göz yum',fn:()=>{yon('m',3);polKir(8);log(`Arka kapıyı gösterdin. ${dost.name} karanlığa karıştı. Bunu kimse bilmeyecek, sen bileceksin.`,'dim');fin()}},{t:'Başını çevir',fn:()=>{yon('z',3);add('happy',-5);log(`${dost.name} araca bindirildi. O bakışı unutmayacaksın.`,'dim');fin()}}]}),120);else fin();done()})},
+      {t:'Görevi operasyonsuz bitir, geri çekil',fn:()=>{polSic(tot>=6?3:-2);log('🎭 Amirine "çıkarın beni" dedin. Bir gece içinde eski hayatına döndün.','dim');gizBit(true)}},
+      {t:'Biraz daha kal',fn:()=>setTimeout(()=>{if(!Q.length)openSheet('emniyet')},60)}]})}
+  done()};
+function gizQ(P){const G=P.giz;if(!G)return;G.sup=clamp(G.sup-3);add('happy',-1);if(G.guv>=60&&G.rut<2&&ch(.15)){/* terfi olayı havuzdan gelir */}
+  if(okE()&&(G.evQ||0)<=QS()&&ch(.5)){G.evQ=QS()+1;const L=G.evL||[];let i=R(0,GIZEV.length-1),g=0;while(L.includes(i)&&g++<10)i=R(0,GIZEV.length-1);G.evL=[...L,i].slice(-3);const ev=GIZEV[i](G);setTimeout(()=>{if(S.pol&&S.pol.giz===G)queue(ev)},130)}}
+function gizH(P){const G=P.giz,d=gizDos();let h=`<div class="card" style="padding:14px;margin-bottom:10px"><b style="font-size:16px">🎭 Gizli görev: ${G.tn}</b><div class="note" style="margin:2px 0 0">Kod adın "${G.kod}" · ${G.rut>=1?'Sevkiyat sorumlusu':'Ayakçı'} · ${Math.floor((QS()-G.q0)/4)} yıl ${((QS()-G.q0)%4)*3} aydır içeridesin · Delil gücü ${polDL(d)}/24 · Kalan mesai ${S.premium?'sınırsız':polMes()}</div>${okBar('Güven',G.guv,'var(--good)')}${okBar('Şüphe',G.sup,G.sup>=60?'var(--blood)':'var(--gold)')}</div>`;
+  const m0=polMes()<=0;
+  h+='<div class="sec">🎭 İçeride</div>';
+  h+=row('data-x="giz:is"','💼','Çetenin işine katıl','Güven kazanırsın ama suça bulaşırsın','',m0);
+  h+=row('data-x="giz:bilgi"','📸','Bilgi topla','Defterler, toplantılar, sevkiyat listeleri','',m0);
+  h+=row('data-x="giz:amir"','🅿️','Amirinle gizlice buluş','Topladıklarını teslim et, nefes al','',m0);
+  h+='<div class="sec">👥 Çetedeki adamlar</div>';
+  G.adam.forEach(a=>{h+=row(`data-x="giz:adam:${a.id}"`,'🧔',a.name,`${GIZT[a.tip]}${a.itiraf?' · İtirafçın':''} · Aranız %${a.rel}`,'',m0)});
+  h+='<div class="sec">🚨 Çıkış</div>'+row('data-x="giz:bitir"','🚨','Operasyon günü','Baskını başlat ya da geri çekil','›',false)+row(`data-x="pol:d:${d.id}"`,'📁','Dosyaya bak','Topladığın deliller','›',false);
+  return h}
+/* --- polis: suç haritası --- */
+function polTemiz(rid){const P=S.pol;return P.cok&&P.cok[rid]===3&&QS()-((P.cokQ||{})[rid]||0)<16}
+EXTRA.polharita=()=>{if(!isPol())return['Harita',''];const P=S.pol;const own={};S.rivals.forEach(r=>(DIST[r.id]||[]).forEach(d=>own[d]=r));
+  let svg=`<div class="nosel" onscroll="window._mapSL=this.scrollLeft" style="overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;border-radius:14px;border:1px solid var(--line);background:#0c0608"><svg viewBox="0 0 ${MAPD.w} 750" style="width:230%;max-width:none;display:block"><image href="img/map_base.webp" width="${MAPD.w}" height="${MAPD.h}"/>`;let wr='';
+  MAPD.d.forEach(([d,pth])=>{const r=own[d];const tem=r&&polTemiz(r.id),dos=r&&P.dosya.some(z=>z.tid===r.id),giz=r&&P.giz&&P.giz.tid===r.id;const fill=!r?'#6f666a':tem?'#3f8f8a':MCOL[r.id];
+    svg+=`<g ${r&&!tem?`data-x="polmap:${r.id}" style="cursor:pointer"`:''}><path d="${pth}" fill="${fill}" style="mix-blend-mode:multiply"/>${r?`<path d="${pth}" fill="${fill}" fill-opacity=".22"/>`:''}</g>`;
+    if((dos||giz)&&!tem)wr+=`<path d="${pth}" fill="none" stroke="${giz?'#b197fc':'#74c0fc'}" stroke-width="5" stroke-dasharray="10 7" pointer-events="none"/>`});
+  svg+=`<image href="img/map_top.webp" width="${MAPD.w}" height="${MAPD.h}" pointer-events="none"/>${wr}</svg><img src="img/map_top.webp" alt="" style="display:none" onload="var p=this.parentNode;p.scrollLeft=window._mapSL!==undefined?window._mapSL:(p.scrollWidth-p.clientWidth)*.5"></div>`;
+  let h=`<p class="note">Renkli ilçeler ailelerin elinde. Mavi kesik çizgi: dosyası açık. Mor: gizli görevdesin. Turkuaz: çökerttiğin ailenin temizlenen ilçeleri. Bir ailenin ilçesine dokun, dosyasına git.</p>${svg}<div class="legend">${S.rivals.map(r=>`<span><i style="background:${polTemiz(r.id)?'#3f8f8a':MCOL[r.id]}"></i>${r.n}${polTemiz(r.id)?' (çökertildi)':''}</span>`).join('')}<span><i style="background:#6f666a"></i>Sakin</span></div>`;
+  return['İstanbul suç haritası',h]};
+ACT.polmap=rid=>{const P=S.pol;if(!isPol())return;const d=P.dosya.find(z=>z.tid===rid);if(d)return polDosya(d.id);if(P.giz){toast('Gizli görevdeyken yeni dosya açamazsın');return}if(P.dosya.length>=polDosMax()){toast('Dosya masan dolu');return}ACT.pol('ac:'+rid)};
+ACT.polbir=k=>{const P=S.pol;if(!isPol()||P.r<1)return;if(k==='gorev'){if(!P.birim||!polUse())return;closeSheet();return queue({back:'emniyet',...PBG[P.birim](P)})}
+  if(!PBIR[k]||P.birim===k)return;if(P.birQ&&QS()-P.birQ<8&&!S.premium){toast('Tayin için en az 2 yıl beklemelisin');return}P.birim=k;P.birQ=QS();if(P.dosya.length>polDosMax())P.dosya.length=polDosMax();log(`${PBIR[k].ic} ${PBIR[k].n} Şubesi'ne tayinin çıktı.`,'gold');done()};
+
 function polJobsH(){const P=S.pol;return '<div class="sec">Emniyet</div>'+row('data-go="emniyet"','👮',`${PRANK[P.r].n} · Emniyet`,`Sicil %${P.sicil} · ${P.dosya.length} açık dosya · ${P.tut} tutuklama`,'›',false)}
 EXTRA.emniyet=()=>{if(!isPol())return['Emniyet','<p class="note">Polis değilsin.</p>'];const P=S.pol,nx=PRANK[P.r+1];
   let h=`<div class="card" style="padding:14px;margin-bottom:10px"><b style="font-size:16px">👮 ${PRANK[P.r].n} ${S.first} ${S.last}</b><div class="note" style="margin:2px 0 0">${P.tut} tutuklama · ${P.kap} başarılı dava · Bu çeyrek kalan mesai ${S.premium?'sınırsız':polMes()}</div>${okBar('Sicil',P.sicil,P.sicil>=70?'var(--good)':P.sicil>=45?'var(--gold)':'var(--blood)')}${(P.sup||0)>=20?okBar('İçişlerinin şüphesi',P.sup,'var(--blood)'):''}<div class="note" style="margin:8px 0 0">${nx?`Sıradaki rütbe: <b>${nx.n}</b> · Sicil %${nx.s} ve bu rütbede ${(8+P.r*6)/4} yıl gerekir. Sicil her yıl biraz erir; çalışmazsan düşer.`:'En üst rütbedesin.'}</div></div>`;
+  if(P.giz){h+=gizH(P);h+='<div class="sec">Diğer</div>'+row('data-go="polharita"','🗺️','İstanbul suç haritası','','›',false);return['Emniyet',h]}
   h+='<div class="sec">🚓 Görev</div>';
   h+=row('data-x="pol:devriye"','🚓','Devriyeye çık','Sokakta ne çıkarsa','',polMes()<=0);
   h+=row('data-x="pol:muhbir"','🕵️','Muhbir bul',P.muhbir.length>=4?'Ağın dolu':`${P.muhbir.length}/4 muhbir · Kahvelerde çay ısmarla`,fmtS(Math.round(8000*S.cpi/2.8)),P.muhbir.length>=4||polMes()<=0);
-  h+=`<div class="sec">📁 Dosyalar · ${P.dosya.length}/3</div><p class="note">İstediğin aileye dosya aç, suçları tek tek delillendir, sonra savcıya götür. Zayıf dosyayla mahkemeye gidersen dava düşer ve seni tanırlar.</p>`;
+  if(P.birim)h+=row('data-x="polbir:gorev"',PBIR[P.birim].ic,`${PBIR[P.birim].n} görevi`,'Şubenin özel işi','',polMes()<=0);
+  h+=row('data-x="giz:basla"','🎭','Gizli göreve çık',P.r<1?'Komiser rütbesi gerekir':'Bir ailenin içine sız','›',P.r<1);
+  h+=row('data-go="polharita"','🗺️','İstanbul suç haritası','Kim nerede, hangi dosya açık','›',false);
+  h+=`<div class="sec">📁 Dosyalar · ${P.dosya.length}/${polDosMax()}</div><p class="note">İstediğin aileye dosya aç, suçları tek tek delillendir, sonra savcıya götür. Zayıf dosyayla mahkemeye gidersen dava düşer ve seni tanırlar.</p>`;
   P.dosya.forEach(d=>{h+=row(`data-x="pol:d:${d.id}"`,'📁',d.tn,`Hedef ${d.boss} · Delil gücü ${polDL(d)}/24${d.gizli?' · Gizli yürütülüyor':''}`,'›',false)});
-  S.rivals.filter(r=>!P.dosya.some(d=>d.tid===r.id)).forEach(r=>{const ck=(P.cok||{})[r.id];h+=row(`data-x="pol:ac:${r.id}"`,'➕',`${r.n} hakkında dosya aç`,ck===3?'Çökerttin; yeniden toparlanıyorlar':ck?'Daha önce adamlarını içeri attın':'Henüz dokunulmamış','',P.dosya.length>=3)});
+  S.rivals.filter(r=>!P.dosya.some(d=>d.tid===r.id)).forEach(r=>{const ck=(P.cok||{})[r.id],tem=polTemiz(r.id);h+=row(`data-x="pol:ac:${r.id}"`,tem?'✅':'➕',tem?`${r.n} çökertildi`:`${r.n} hakkında dosya aç`,tem?'İlçeleri temiz; birkaç yıl toparlanamazlar':ck?'Daha önce adamlarını içeri attın':'Henüz dokunulmamış','',tem||P.dosya.length>=polDosMax())});
+  h+=`<div class="sec">🏛️ Şube${P.birim?' · '+PBIR[P.birim].n:''}</div>`;
+  if(P.r<1)h+='<p class="note">Özel şubelere tayin Komiser rütbesinde açılır.</p>';else Object.entries(PBIR).forEach(([k,B])=>{h+=row(`data-x="polbir:${k}"`,B.ic,B.n,P.birim===k?'Şu anki şuben · '+B.d:B.d,P.birim===k?'✓':'',P.birim===k)});
   h+='<div class="sec">👥 Ekip</div>';
   P.ekip.forEach(c=>{const im=polPic(c);h+=`<button class="row" data-x="pol:m:${c.id}"><span class="ic"${im?' style="padding:0;overflow:hidden"':''}>${im||rIco('👮')}</span><span class="tx"><b>${c.name}</b><span>${c.amir?'Amirin':c.ortak?'Devriye ortağın':'Meslektaş'} · ${PRANK[Math.min(5,c.rutbe)].n} · Aranız %${c.rel}</span></span><span class="rt">›</span></button>`});
   if(P.muhbir.length){h+='<div class="sec">🕵️ Muhbirlerin</div>';P.muhbir.forEach(m=>{h+=`<div class="row" style="cursor:default"><span class="ic">${rIco('🕵️')}</span><span class="tx"><b>${m.name}</b><span>Güvenilirlik %${m.guv}</span></span></div>`})}
@@ -7430,7 +7542,7 @@ function closeSheet(){if(curSheet){LASTSH=curSheet;LASTT=(($('shT')&&$('shT').te
 function qbar(){const l=$('qLeft'),b=$('qBack');if(!l||!S)return;l.innerHTML='';if(LASTSH&&S.alive){b.style.display='';b.textContent='↩ '+(LASTT||'Son menü')}else b.style.display='none'}
 document.addEventListener('click',e=>{if(e.target.closest('#qBack')&&LASTSH){openSheet(LASTSH)}});
 const PARENT={berber:'cat_kisisel',meslek:'is',egitim:'is',ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
-try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'sirket',okul:'is',emniyet:'is',sm_kare:'sosyal',sm_dongu:'sosyal',sm_ekran:'sosyal',sm_gundem:'sosyal'});
+try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'sirket',okul:'is',emniyet:'is',polharita:'emniyet',sm_kare:'sosyal',sm_dongu:'sosyal',sm_ekran:'sosyal',sm_gundem:'sosyal'});
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
 $('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeSheet()});
