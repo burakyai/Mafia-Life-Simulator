@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.20-1215';
+const APPV='2026.11.20-2130';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1974,7 +1974,7 @@ function eduQuarter(){
     if(S.edu.left<=0){S.grads=[...(S.grads||[]),d.id];log(`${d.n} bitti! Artık diplomalı bir ${d.jn.toLowerCase()}sın... en azından kâğıt üstünde.`,'gold');if(uw())news(`Yeraltının adamı ${d.n} mezunu oldu`,1);S.edu=null}}
   if(S.lise&&!S.jail){S.lise--;if(S.lise<=0){S.lise=0;S.school=true;S.liseDone=1;if(S.lisNot===undefined)S.lisNot=R(48,66);if(S.okul)S.okul.done=1;log(`Açık liseyi bitirdin. Diploman elinde, diploma notun ${S.lisNot}.`,'good')}}
   if(S.job){if(S.jail){log(`Hapse girdiğin için ${S.job.n} işinden atıldın.`,'bad');S.job=null}
-    else{try{svcQuarter()}catch(e){console.error(e)}if(!S.job)return;const sal=Math.round(S.job.sal*.25*(1+Math.min(.5,(S.job.q||0)*.01)));S.job.q=(S.job.q||0)+1;S.money+=sal;S.taxInc=(S.taxInc||0)+sal;log(`${S.job.n} maaşı: ${fmt(sal)}.`,'good');if(S.job.id==='doktor')add('health',1)}}
+    else{try{svcQuarter()}catch(e){console.error(e)}if(!S.job)return;const sal=Math.round(S.job.sal*.25*(1+Math.min(.5,(S.job.q||0)*.01)));S.job.q=(S.job.q||0)+1;if(sal>0){S.money+=sal;S.taxInc=(S.taxInc||0)+sal;log(`${S.job.n} maaşı: ${fmt(sal)}.`,'good')}if(S.job.id==='doktor')add('health',1)}}
 }
 ACT.lise=()=>{if(S.lise||S.school)return;S.lise=4;log('Açık liseye kaydoldun. Bir yıl sürecek.','dim');done()};
 ACT.uni=id=>{const d=DEPTS.find(x=>x.id===id);closeSheet();
@@ -4642,10 +4642,10 @@ const AVT=[
 const AVNOT=['Tutanaktaki saat ile kamera kaydının saati birbirini tutmuyor','Karşı tarafın tanığı olay günü şehir dışında görünüyor','İmzalardan biri diğerlerine hiç benzemiyor','Bilirkişi raporunda hesap hatası var','İfade avukatsız alınmış','Dosyadaki fotoğrafların tarihi sonradan eklenmiş','Şikâyetçi iki ifadesinde iki ayrı hikâye anlatmış','Arama kararı olaydan bir gün sonra imzalanmış'];
 const avIt=v=>{const A=S.av;A.it=clamp(A.it+v)};
 const avKir=v=>{const A=S.av;A.kir=clamp((A.kir||0)+v)};
-const avCap=()=>S.av.buro?4:3;
-const avMes=()=>{const A=S.av;if(A.mesai.q!==QS())A.mesai={q:QS(),n:0};return S.premium?99:avCap()-A.mesai.n};
+const avCap=()=>(S.av.buro?4:3)+(S.premium?4:0);const avMesCap=()=>S.av.buro?4:3;
+const avMes=()=>{const A=S.av;if(A.mesai.q!==QS())A.mesai={q:QS(),n:0};return S.premium?99:avMesCap()-A.mesai.n};
 const avUse=()=>{if(avMes()<=0){toast('Bu çeyrek mesain doldu');return false}S.av.mesai.n++;return true};
-const avSal=()=>Math.round(AVR[S.av.r].sal*S.cpi*(S.av.buro?1.4:1));
+const avSal=()=>S.av.buro?0:Math.round(AVR[S.av.r].sal*S.cpi);
 const avBack=()=>setTimeout(()=>{if(!Q.length&&isAv())openSheet('adliye')},70);
 function avStart(){if(S.av&&S.av.ihrac){toast('Baro ruhsatını iptal etti; avukatlık yapamazsın.');return false}
   if(!S.av){S.av={r:0,it:45,kir:0,mesai:{q:-1,n:0},dava:[],kaz:0,uz:0,kay:0,rq:QS(),usta:`${pick(NAMES)} ${pick(SURN)}`,aile:null};
@@ -4653,12 +4653,12 @@ function avStart(){if(S.av&&S.av.ihrac){toast('Baro ruhsatını iptal etti; avuk
     setTimeout(()=>queue({title:'⚖️ Mesleğin: Avukat',text:'Artık adliye koridorlarındasın.<br><br>İşin müvekkil kabul etmek, dosyaya hazırlanmak ve duruşmada doğru kararı vermek. Her çeyrek sınırlı mesain var; hangi dosyaya ne kadar emek vereceğini sen seçersin.<br><br>Kazandıkça <b>itibar</b>ın artar, ağır ceza dosyaları ve daha büyük ücretler gelir. Yolun bir yerinde kapını başka türlü müvekkiller de çalacak. Nasıl bir avukat olacağına sen karar vereceksin.',choices:[{t:'Hazırım',fn:()=>{}}]}),100)}
   else log(`⚖️ Cübbeni yeniden giydin. ${AVR[S.av.r].n} olarak adliyeye döndün.`,'gold');
   S.job={id:'avukat',n:AVR[S.av.r].n,sal:avSal(),q:0};return true}
-function avEnd(msg,cls){if(S.job&&S.job.id==='avukat')S.job=null;if(S.av){S.av.dava=[];if(S.av.aile)S.av.aile=null}if(msg)log(msg,cls||'dim')}
+function avEnd(msg,cls){if(S.job&&S.job.id==='avukat')S.job=null;if(S.av){S.av.dava=[];(S.av.ekip||[]).forEach(e=>{e.d=null});if(S.av.aile)S.av.aile=null}if(msg)log(msg,cls||'dim')}
 /* --- müvekkil ve dosya --- */
 function avNew(k,fam){const A=S.av;const pool=AVT.filter(t=>!t.aile&&t.r<=A.r&&(A.r===0?t.z<=2:true)&&(A.r>=2?t.z>=2||ch(.3):true));const T=k?AVT.find(t=>t.k===k):pick(pool);const g=ch(.72)?'e':'k';
   const d={id:'dv'+R(0,999999),k:T.k,mv:`${pick(g==='e'?NAMES:GIRLS)} ${pick(SURN)}`,z:T.z,haz:0,q0:QS(),dur:QS()+R(1,2),suclu:T.c?ch(.55):0,not:pick(AVNOT),el:{}};
-  d.u=Math.round(M(T.u)*R(80,130)/100*(1+A.it/200)*(A.buro?1.3:1)/1000)*1000;
-  if(fam){d.aile=fam.tid;d.tn=fam.tn;d.boss=fam.boss;d.mv=`${pick(NICK)} ${pick(NAMES)}`;d.suclu=1;d.k=k||pick(['orgut','yarala','uyus','cinayet']);const T2=AVT.find(t=>t.k===d.k);d.z=Math.max(3,T2.z);d.u=Math.round(M(T2.u)*1.6*R(90,130)/100/1000)*1000}
+  d.u=Math.round(M(T.u)*R(80,130)/100*(1+A.it/200)*(A.buro?1+avBL().u:1)/1000)*1000;
+  if(fam){d.aile=fam.tid;d.tn=fam.tn;d.boss=fam.boss;d.mv=`${pick(NICK)} ${pick(NAMES)}`;d.suclu=1;d.k=k||pick(['orgut','yarala','uyus','cinayet']);const T2=AVT.find(t=>t.k===d.k);d.z=Math.max(3,T2.z);d.u=Math.round(M(T2.u)*1.6*R(90,130)/100*(A.buro?1+avBL().u*.5:1)/1000)*1000}
   return d}
 const avT=d=>AVT.find(t=>t.k===d.k);
 const avTxt=d=>{const T=avT(d);return d.aile&&d.k!=='orgut'?`${d.tn}'nin adamı ${d.mv} "${T.n.toLocaleLowerCase('tr-TR')}" suçlamasıyla tutuklu. ${d.boss} dosyayı sana yolladı: "Bizim çocuk. Gereğini yap."`:T.t(d.mv,d)};
@@ -4680,6 +4680,7 @@ function avDosya(id){const A=S.av,d=A.dava.find(z=>z.id===id);if(!d)return;close
     {t:'Bilirkişi raporu al',sub:d.el.bil?'Aldın':'Özel uzman görüşü',dis:!!d.el.bil||!canPay(bc),fn:U(()=>{pay(bc);d.el.bil=1;d.haz+=3;log(`🔬 Uzman raporu geldi: ${fmt(bc)}. Dosyanın en sağlam sayfası oldu.`,'good')})},
     {t:'Emsal karar tara',sub:d.el.ems?'Buldun':'Yargıtay kararları',dis:!!d.el.ems,fn:U(()=>{if(ch(.7)){d.el.ems=1;d.haz+=2;log('📚 Tam bu olaya uyan bir Yargıtay kararı buldun. Duruşmada cebinde.','good')}else log('📚 Saatlerce karar okudun; birebir uyan bir emsal çıkmadı.','dim')})},
     ...((T.c&&A.r>=1)||d.aile?[{t:d.aile?'Aileye haber sal: "Tanık konuşmasın"':'Karşı tarafın tanığını "ikna" et',sub:d.aile?'':fmt(Math.round(bc*2)),dis:!!d.el.kirli||(!d.aile&&!canPay(Math.round(bc*2))),fn:U(()=>{d.el.kirli=1;if(!d.aile)dirtyPay(Math.round(bc*2));d.haz+=4;avKir(d.aile?10:14);yon('z',-4);log(d.aile?`🤫 ${d.boss}'a tek cümle yeterli oldu. Tanık ifadesini geri almaya hazırlanıyor.`:'🤫 Tanıkla bir kafede buluştun. Zarfı masada bıraktın. Hatırladıkları değişecek.','bad');if(ch(.18)){avKir(15);log('Birileri o buluşmayı görmüş olabilir.','bad')}})}]:[]),
+    ...(A.buro&&avEk().some(e=>!e.d)?[{t:'Büro avukatına devret',sub:'Duruşmaya o girer',fn:()=>setTimeout(()=>queue({back:'adliye',title:'Kime devredeceksin?',text:`${d.mv} · ${T.n} · Zorluk ${'●'.repeat(d.z)}${'○'.repeat(5-d.z)}. Devrettiğin dosyaya avukatın kendi yeteneğiyle bakar; senin hazırlığın ona kalır.`,choices:[...avEk().filter(e=>!e.d).map(e=>({t:`Av. ${e.name}`,sub:`Yetenek %${e.yet}`,fn:()=>{A.dava=A.dava.filter(z=>z!==d);e.d=d;e.yb=Math.min(8,d.haz);log(`📂 ${d.mv} dosyasını Av. ${e.name}'e devrettin.`,'dim');afterChange();avBack()}})),{t:'Vazgeç',fn:()=>setTimeout(()=>avDosya(id),50)}]}),50)}]:[]),
     {t:'Dosyadan çekil',fn:()=>{A.dava=A.dava.filter(z=>z!==d);avIt(-2);if(d.aile&&A.aile){A.aile.guv=clamp(A.aile.guv-25);log(`📂 ${d.mv} dosyasından çekildin. ${d.boss} bunu unutmayacak.`,'bad')}else log(`📂 ${d.mv} dosyasından çekildin.`,'dim');afterChange();avBack()}},
     {t:'Geri dön',fn:avBack}]})}
 const dirtyPay=m=>{const b=Math.min(S.black||0,m);S.black=(S.black||0)-b;if(m-b>0)pay(m-b)};
@@ -4750,6 +4751,7 @@ function avBaro(){const A=S.av;return{title:'📜 Baro disiplin kurulu',text:'Ba
 function avCeza(){const A=S.av;if(A.kir>=70){A.ihrac=1;news(`Av. ${S.first} ${S.last} meslekten ihraç edildi`,3);avEnd('📜 Baro ruhsatını iptal etti. Cübbeni teslim ettin; bir daha duruşmaya giremezsin.','bad')}else{const c=Math.round(M(250000)/1000)*1000;spend(Math.min(cashA(),c));avIt(-15);avKir(-15);log(`📜 Kınama ve ${fmt(c)} para cezası aldın. Bir daha olursa ruhsatın gider.`,'bad')}}
 function avQ(){if(!S.av)return;const A=S.av;if(!isAv()){if(A.dava.length||A.aile){A.dava=[];A.aile=null}return}
   if(S.jail){A.ihrac=1;avEnd('⚖️ Hüküm giydiğin için baro ruhsatını iptal etti.','bad');return}
+  try{avBuroQ()}catch(e){console.error(e)}
   S.job.n=A.buro?`${AVR[A.r].n} · Büro sahibi`:AVR[A.r].n;S.job.sal=avSal()+(A.plaza&&!A.buro?(A.ekSal||0):0);
   A.dava.slice().forEach(d=>{if(QS()>d.dur){A.dava=A.dava.filter(z=>z!==d);A.kay++;avIt(-7);log(`⚖️ ${d.mv} dosyasının duruşmasına gitmedin. Dosya düştü; müvekkil baroya şikâyet etti.`,'bad');if(d.aile&&A.aile){A.aile.guv=clamp(A.aile.guv-25);if(A.aile.guv<20)makeThreat(A.aile.boss,'Duruşmasına gitmediğin')}}else if(QS()===d.dur)log(`📅 ${d.mv} dosyasının duruşması bu çeyrek. İşler → Adliye.`,'gold')});
   if(A.aile){const F=A.aile,r=S.rivals.find(x=>x.id===F.tid);if(!r||r.dead){log(`${F.tn} dağıldı. Maaşın da onunla birlikte gitti.`,'dim');A.aile=null}else{F.boss=r.boss.name;F.tn=r.n;S.money+=F.ret;log(`${F.tn} avukatlık maaşı: ${fmt(F.ret)}.`,'good');if(A.dava.length<avCap()&&ch(.55)){const d=avNew(null,F);A.dava.push(d);log(`📂 ${F.boss} yeni bir dosya yolladı: ${d.mv}, ${avT(d).n.toLocaleLowerCase('tr-TR')}.`,'dim')}
@@ -4765,7 +4767,7 @@ function avQ(){if(!S.av)return;const A=S.av;if(!isAv()){if(A.dava.length||A.aile
     if(ch(.32)){A.evQ=QS()+2;const pool=AVEV.filter(x=>x.c(A)&&x!==A._l);if(pool.length){const x=pick(pool);const ev=x.e(A);setTimeout(()=>{if(isAv())queue(ev)},130)}}}}
 function avJobsH(){const A=S.av;const dg=A.dava.filter(d=>QS()>=d.dur).length;return '<div class="sec">Adliye</div>'+row('data-go="adliye"','⚖️',`${AVR[A.r].n} · Adliye`,`İtibar %${A.it} · ${A.dava.length} dosya${dg?` · <b style="color:var(--gold)">${dg} duruşma bu çeyrek</b>`:''} · ${A.kaz} kazanılan dava`,'›',false)}
 EXTRA.adliye=()=>{if(!isAv())return['Adliye','<p class="note">Avukat değilsin.</p>'];const A=S.av,nx=AVR[A.r+1];
-  let h=`<div class="card" style="padding:14px;margin-bottom:10px"><b style="font-size:16px">⚖️ Av. ${S.first} ${S.last}</b><div class="note" style="margin:2px 0 0">${AVR[A.r].n}${A.buro?' · Kendi büron':A.plaza?' · Plaza bürosu':A.r===0?` · Av. ${A.usta}'in yanında`:''} · ${A.kaz} kazanılan · ${A.uz} uzlaşma · ${A.kay} kaybedilen · Bu çeyrek kalan mesai ${S.premium?'sınırsız':avMes()}</div>${okBar('İtibar',A.it,A.it>=70?'var(--good)':A.it>=45?'var(--gold)':'var(--blood)')}${A.kir>=25?okBar('Baro\'nun dikkati',A.kir,'var(--blood)'):''}<div class="note" style="margin:8px 0 0">${A.r===0?`Stajın bitmesine ${Math.max(1,4-(QS()-A.rq))} çeyrek var. O zamana kadar yalnızca küçük dosyalara bakarsın.`:nx?`Sıradaki unvan: <b>${nx.n}</b> · İtibar %${nx.it} ve ${nx.kz} kazanılmış dava gerekir (sende ${A.kaz}).`:'Mesleğin zirvesindesin.'}</div></div>`;
+  let h=`<div class="card" style="padding:14px;margin-bottom:10px"><b style="font-size:16px">⚖️ Av. ${S.first} ${S.last}</b><div class="note" style="margin:2px 0 0">${AVR[A.r].n}${A.buro?' · '+avBL().n:A.plaza?' · Plaza bürosu':A.r===0?` · Av. ${A.usta}'in yanında`:''} · ${A.kaz} kazanılan · ${A.uz} uzlaşma · ${A.kay} kaybedilen · Bu çeyrek kalan mesai ${S.premium?'sınırsız':avMes()}</div>${okBar('İtibar',A.it,A.it>=70?'var(--good)':A.it>=45?'var(--gold)':'var(--blood)')}${A.kir>=25?okBar('Baro\'nun dikkati',A.kir,'var(--blood)'):''}<div class="note" style="margin:8px 0 0">${A.r===0?`Stajın bitmesine ${Math.max(1,4-(QS()-A.rq))} çeyrek var. O zamana kadar yalnızca küçük dosyalara bakarsın.`:nx?`Sıradaki unvan: <b>${nx.n}</b> · İtibar %${nx.it} ve ${nx.kz} kazanılmış dava gerekir (sende ${A.kaz}).`:'Mesleğin zirvesindesin.'}</div></div>`;
   const m0=avMes()<=0;
   h+='<div class="sec">📂 Dosyalar · '+A.dava.length+'/'+avCap()+'</div>';
   if(!A.dava.length)h+='<p class="note">Masan boş. Yeni bir müvekkil kabul et.</p>';
@@ -4773,14 +4775,52 @@ EXTRA.adliye=()=>{if(!isAv())return['Adliye','<p class="note">Avukat değilsin.<
   h+=row('data-x="av:musteri"','🚪','Yeni müvekkil kabul et',A.dava.length>=avCap()?'Dosya masan dolu':'Bekleme odasında kim varsa','',m0||A.dava.length>=avCap());
   if(A.aile){const F=A.aile;h+=`<div class="sec">🕴️ ${F.tn}</div><div class="card" style="padding:12px 14px;margin-bottom:8px"><div class="note" style="margin:0">Ailenin avukatısın · Çeyreklik ${fmt(F.ret)} · ${Math.floor((QS()-F.q0)/4)} yıldır</div>${okBar(`${F.boss}'ın güveni`,F.guv,F.guv>=50?'var(--good)':'var(--blood)')}</div>`+row('data-x="av:ayril"','🚪','Aileyle yollarını ayır','Kolay bırakmazlar','',false)}
   h+='<div class="sec">🏛️ Büro</div>';
-  if(A.buro)h+='<p class="note">Kendi büron var: bir dosya ve bir mesai fazlası, daha yüksek ücretler.</p>';
-  else{const c=avBuroC();h+=row('data-x="av:buro"','🏛️','Kendi büronu aç',A.r<2?'Ceza avukatı unvanı gerekir':'Tabelanda kendi adın · +1 dosya, +1 mesai, ücretler artar',fmtS(c),A.r<2||!canPay(c))}
+  if(A.buro)h+=avBuroH();
+  else{const c=avBuroC();h+=row('data-x="av:buro"','🏛️','Kendi büronu aç',A.r<2?'Ceza avukatı unvanı gerekir':'Maaş biter, kazancın dosyalardan gelir · +1 dosya, +1 mesai, avukat işe alırsın',fmtS(c),A.r<2||!canPay(c))}
   return['Adliye',h]};
+/* --- büro: lüks ve ekip --- */
+const AVBL=[{n:'Han katı',d:'Adliyenin karşısında iki oda',c:0,g:70000,u:.3,ek:1},{n:'Şık ofis',d:'Resepsiyon, toplantı odası, deri koltuklar',c:2400000,g:190000,u:.55,ek:2},{n:'Boğaz manzaralı kat',d:'Müvekkil kapıdan girince ücreti sormaz',c:8500000,g:480000,u:.9,ek:4},{n:'Plaza katı',d:'Kendi katın, kendi asansörün, şoförlü araç',c:26000000,g:1200000,u:1.4,ek:6}];
+const avBL=()=>AVBL[S.av.bl||0];
+const avEk=()=>S.av.ekip=S.av.ekip||[];
+const avEkSal=y=>Math.round(M(22000+y*1100)/1000)*1000;
+const avAday=()=>{const g=ch(.6)?'e':'k',y=R(35,88);return{id:'ea'+R(0,999999),name:`${pick(g==='e'?NAMES:GIRLS)} ${pick(SURN)}`,g,yet:y,sad:R(45,75),sal:avEkSal(y),d:null,kaz:0,kay:0}};
+function avEkCoz(e){const A=S.av,d=e.d;if(!d)return;const T=avT(d);e.d=null;const p=clamp(.14+e.yet/125-d.z*.07+A.it/600+(e.yb||0)*.02,.05,.93);e.yb=0;const res=ch(p)?'w':ch(.4)?'p':'l';let m=0;
+  if(res==='w'){m=Math.round(d.u*1.3);A.kaz++;e.kaz++;e.yet=Math.min(100,e.yet+1);avIt(1+Math.floor(d.z/2));log(`🧑‍⚖️ Av. ${e.name} ${d.mv} dosyasını kazandı: ${T.w.toLocaleLowerCase('tr-TR')}.`,'good')}
+  else if(res==='p'){m=d.u;A.uz++;log(`🧑‍⚖️ Av. ${e.name} ${d.mv} dosyasında ${T.c?'ceza indirimi aldı':'uzlaşma sağladı'}.`,'dim')}
+  else{m=Math.round(d.u*.4);A.kay++;e.kay++;avIt(-2);log(`🧑‍⚖️ Av. ${e.name} ${d.mv} dosyasını kaybetti. Tabelada senin adın yazıyor; laf sana geliyor.`,'bad')}
+  if(m&&!d.pb){S.money+=m;S.taxInc=(S.taxInc||0)+m;log(`Büroya giren vekâlet ücreti: ${fmt(m)}.`,'good')}
+  if(d.aile&&A.aile){const F=A.aile;if(res==='w'){F.guv=clamp(F.guv+6);const z=Math.round(d.u*.4);dirty(z);log(`${F.boss} zarf yolladı: ${fmt(z)}.`,'gold')}else if(res==='l'){F.guv=clamp(F.guv-22);log(`${F.boss}: "Bizim dosyaya çırağını mı yolladın avukat?"`,'bad');if(F.guv<20)makeThreat(F.boss,'Dosyasını başkasına bıraktığın')}}}
+function avBuroQ(){const A=S.av;if(!A.buro)return;const L=avEk();
+  L.slice().forEach(e=>{if(e.d&&QS()>=e.d.dur)avEkCoz(e)});
+  const kira=Math.round(M(avBL().g)/1000)*1000,maas=L.reduce((a,e)=>a+e.sal,0),top=kira+maas;
+  if(canPay(top)){pay(top);L.forEach(e=>{e.sad=clamp(e.sad+(e.d?0:-1))})}else{const kalan=Math.max(0,cashA());spend(Math.min(cashA(),top));L.forEach(e=>{e.sad=clamp(e.sad-18)});avIt(-3);log('🏛️ Büronun giderlerini çıkaramadın. Maaşlar gecikti; koridorda fısıltılar başladı.','bad')}
+  log(`🏛️ Büro giderleri: ${fmt(top)}${maas?` (kira ve masraf ${fmt(kira)}, ${L.length} avukat maaşı ${fmt(maas)})`:''}.`,'dim');
+  L.slice().forEach(e=>{if(e.sad<25&&ch(.35)){A.ekip=A.ekip.filter(z=>z!==e);if(e.d){avIt(-2);log(`🚪 Av. ${e.name} istifa etti; ${e.d.mv} dosyasını ve müvekkilini de götürdü.`,'bad')}else log(`🚪 Av. ${e.name} istifa etti.`,'bad')}});
+  if(S.q===0&&(A.bl||0)>=2)add('happy',1)}
+function avEkDlg(id){const A=S.av,e=avEk().find(z=>z.id===id);if(!e)return;closeSheet();const re=()=>setTimeout(()=>{if(!Q.length&&isAv())avEkDlg(id)},50);
+  queue({back:'adliye',title:`🧑‍⚖️ Av. ${e.name}`,text:`Yetenek <b>%${e.yet}</b> · Sadakat <b>%${e.sad}</b> · Çeyreklik maaş ${fmt(e.sal)}<br>${e.kaz} kazanılan, ${e.kay} kaybedilen dosya<br><br>${e.d?`Şu an <b>${e.d.mv}</b> (${avT(e.d).n}) dosyasına bakıyor; duruşma ${QS()>=e.d.dur?'bu çeyrek':'gelecek çeyrek'}.`:'Masası boş. Dosyalarından birini açıp ona devredebilirsin.'}`,choices:[
+    {t:'Zam yap',sub:`Maaş ${fmt(Math.round(e.sal*1.15/1000)*1000)} olur`,fn:()=>{e.sal=Math.round(e.sal*1.15/1000)*1000;e.sad=clamp(e.sad+R(12,18));log(`Av. ${e.name}'e zam yaptın.`,'good');afterChange();re()}},
+    ...(e.d?[{t:'Dosyayı geri al',dis:A.dava.length>=avCap(),sub:A.dava.length>=avCap()?'Masan dolu':'',fn:()=>{A.dava.push(e.d);e.d=null;afterChange();re()}}]:[]),
+    {t:'👑 Yeteneğini ayarla',sub:S.premium?`Şu an %${e.yet}`:'Dayı Paketi gerekir',dis:!S.premium,pr:true,fn:()=>setTimeout(()=>queue({back:'adliye',title:'👑 Yetenek',text:'Yetenek, avukatın kendisine devrettiğin dosyaları kazanma şansını belirler.',choices:[50,70,85,100].map(v=>({t:`%${v}${e.yet===v?' ✓':''}`,fn:()=>{e.yet=v;log(`👑 Av. ${e.name}'in yeteneği %${v} oldu.`,'dim');re()}}))}),40)},
+    {t:'👑 Sadakatini ayarla',sub:S.premium?`Şu an %${e.sad}`:'Dayı Paketi gerekir',dis:!S.premium,pr:true,fn:()=>setTimeout(()=>queue({back:'adliye',title:'👑 Sadakat',text:'Sadakati düşen avukat müvekkiliyle birlikte ayrılır.',choices:[50,75,100].map(v=>({t:`%${v}${e.sad===v?' ✓':''}`,fn:()=>{e.sad=v;log(`👑 Av. ${e.name}'in sadakati %${v} oldu.`,'dim');re()}}))}),40)},
+    {t:'İşten çıkar',fn:()=>{A.ekip=A.ekip.filter(z=>z!==e);if(e.d&&A.dava.length<avCap())A.dava.push(e.d);else if(e.d)avIt(-1);log(`Av. ${e.name} ile yollarını ayırdın.`,'dim');afterChange();avBack()}},
+    {t:'Geri dön',fn:avBack}]})}
+function avBuroH(){const A=S.av,B=avBL(),L=avEk(),nx=AVBL[(A.bl||0)+1];const kira=Math.round(M(B.g)/1000)*1000,maas=L.reduce((a,e)=>a+e.sal,0);
+  let h=`<div class="card" style="padding:12px 14px;margin-bottom:8px"><b>${B.n}</b><div class="note" style="margin:2px 0 0">${B.d} · Ücretlere +%${Math.round(B.u*100)} · Çeyreklik gider ${fmt(kira+maas)}${maas?` (kira ${fmtS(kira)}, maaşlar ${fmtS(maas)})`:''}<br>Kendi büronda maaş almazsın; gelirin vekâlet ücretleridir.</div></div>`;
+  if(nx){const c=Math.round(M(nx.c)/1000)*1000;h+=row('data-x="av:luks"','✨',`${nx.n}'na taşın`,`${nx.d} · Ücretlere +%${Math.round(nx.u*100)} · ${nx.ek} avukat · Çeyreklik kira ${fmtS(Math.round(M(nx.g)/1000)*1000)}`,fmtS(c),!canPay(c))}
+  h+=`<div class="sec">🧑‍⚖️ Büro avukatları · ${L.length}/${B.ek}</div>`;
+  L.forEach(e=>{h+=row(`data-x="av:ek:${e.id}"`,e.g==='k'?'👩‍⚖️':'👨‍⚖️',`Av. ${e.name}`,`Yetenek %${e.yet} · Sadakat %${e.sad}${e.sad<30?' · <b style="color:var(--blood)">Gitmek üzere</b>':''} · ${e.d?`${e.d.mv} dosyasında`:'Masası boş'}`,fmtS(e.sal),false)});
+  h+=row('data-x="av:ise"','➕','Avukat işe al',L.length>=B.ek?'Bu büroya daha fazla masa sığmaz':'Üç aday görüşmeye gelir','',L.length>=B.ek);
+  return h}
+
 const avBuroC=()=>Math.round(M(1800000)/1000)*1000;
 ACT.av=a=>{if(!isAv())return;const A=S.av,i=a.indexOf(':'),op=i<0?a:a.slice(0,i),x=i<0?'':a.slice(i+1);
   if(op==='musteri')return avMusteri();
+  if(op==='ek')return avEkDlg(x);
+  if(op==='ise'){if(!A.buro||avEk().length>=avBL().ek)return;closeSheet();const L=[avAday(),avAday(),avAday()];L[0].yet=R(35,55);L[0].sal=avEkSal(L[0].yet);L[2].yet=R(75,92);L[2].sal=avEkSal(L[2].yet);return queue({back:'adliye',title:'🧑‍⚖️ İş görüşmesi',text:'Bekleme odasında üç aday var. Yeteneklisi pahalı; ucuzu dosya kaybettirir.',choices:[...L.map(e=>({t:`Av. ${e.name}`,sub:`Yetenek %${e.yet} · Çeyreklik ${fmt(e.sal)}`,fn:()=>{avEk().push(e);log(`🧑‍⚖️ Av. ${e.name} büronda işe başladı.`,'good');afterChange();avBack()}})),{t:'Hiçbiri',fn:avBack}]})}
+  if(op==='luks'){const nx=AVBL[(A.bl||0)+1];if(!A.buro||!nx)return;const c=Math.round(M(nx.c)/1000)*1000;if(!canPay(c))return;closeSheet();return queue({back:'adliye',title:`✨ ${nx.n}`,text:`${nx.d}. Taşınma ve dekorasyon ${fmt(c)}; çeyreklik kira ${fmt(Math.round(M(nx.g)/1000)*1000)} olur. Karşılığında müvekkiller daha yüksek ücret öder ve ${nx.ek} avukat çalıştırabilirsin.`,choices:[{t:'Taşın',fn:()=>{pay(c);A.bl=(A.bl||0)+1;avIt(3);add('happy',5);log(`✨ Büronu taşıdın: ${nx.n}.`,'gold');if(A.bl>=2)news(`Av. ${S.first} ${S.last} bürosunu büyüttü`,1);afterChange();avBack()}},{t:'Vazgeç',fn:avBack}]})}
   if(op==='d')return avDosya(x);
-  if(op==='buro'){const c=avBuroC();if(A.buro||A.r<2||!canPay(c))return;closeSheet();return queue({back:'adliye',title:'🏛️ Kendi büron',text:`Adliyenin karşısındaki handa bir kat boşalmış. Kapıya pirinç bir tabela: "Av. ${S.first} ${S.last} Hukuk Bürosu". Depozito, mobilya, bir kâtip, bir stajyer: ${fmt(c)}.`,choices:[{t:'Tabelayı astır',fn:()=>{pay(c);A.buro=1;A.plaza=0;avIt(4);add('happy',6);S.job.sal=avSal();news(`Av. ${S.first} ${S.last} kendi bürosunu açtı`,1);log('🏛️ Kendi büronu açtın. İlk sabah kapıyı kendi anahtarınla açtın.','gold');afterChange();avBack()}},{t:'Vazgeç',fn:avBack}]})}
+  if(op==='buro'){const c=avBuroC();if(A.buro||A.r<2||!canPay(c))return;closeSheet();return queue({back:'adliye',title:'🏛️ Kendi büron',text:`Adliyenin karşısındaki handa bir kat boşalmış. Kapıya pirinç bir tabela: "Av. ${S.first} ${S.last} Hukuk Bürosu". Depozito, mobilya, bir kâtip: ${fmt(c)}.<br><br>Kendi büronda <b>maaş almazsın</b>; gelirin vekâlet ücretleri olur, her çeyrek kira ve maaş ödersin. Yanına avukat alıp dosya devredebilir, büroyu büyütebilirsin.`,choices:[{t:'Tabelayı astır',fn:()=>{pay(c);A.buro=1;A.bl=0;A.ekip=[];A.plaza=0;avIt(4);add('happy',6);S.job.sal=avSal();news(`Av. ${S.first} ${S.last} kendi bürosunu açtı`,1);log('🏛️ Kendi büronu açtın. İlk sabah kapıyı kendi anahtarınla açtın.','gold');afterChange();avBack()}},{t:'Vazgeç',fn:avBack}]})}
   if(op==='ayril'){const F=A.aile;if(!F)return;closeSheet();return queue({back:'adliye',title:`${F.tn} ile ayrılık`,text:`${F.boss}'a "artık dosyalarınıza bakmayacağım" demek üzeresin. Sen onların çok sırrını biliyorsun; onlar da senin.`,choices:[
     {t:'Yüz yüze söyle',fn:()=>{A.dava=A.dava.filter(d=>!d.aile);A.aile=null;A.aileRed=QS();if(ch(clamp(.3+F.guv/200,.2,.8))){avIt(2);log(`${F.boss} uzun süre sustu: "Sen bize iyi baktın. Ama bildiklerin seninle mezara gider."`,'dim')}else{makeThreat(F.boss,'Yarı yolda bıraktığın');log(`${F.boss} masadan kalktı. Elini uzatmadı.`,'bad')}afterChange();avBack()}},
     {t:'Vazgeç',fn:avBack}]})}
@@ -7742,7 +7782,7 @@ function openSheet(k){if(k==='gard')k='insan';if(typeof k==='string'&&/^bk_my\d+
       if(inSchool()){const O=okulEns();h+='<div class="sec">Okul</div>'+row('data-go="okul"','🎒',O.n,`Not ${O.not} · ${okPopT(O.pop)}`,'›',false)}
       if(S.age>=16&&S.age<=40){const g=(S.grads||[]).length;h+=(inSchool()?'':'<div class="sec">Eğitim</div>')+row('data-go="egitim"','🎓',S.edu?'Üniversite: '+DEPTS.find(x=>x.id===S.edu.d).n:'Üniversite ve sınav',S.edu?`Mezuniyete ${fmtJ(S.edu.left/4)} kaldı`:!hasDip()?(S.age<18&&S.school===true?'Sınava şimdiden hazırlan':'Önce lise diploması: okula dön ya da açık lise'):S.puanY===S.age?`Bu yılki puanın ${S.puan} · Bölüm seç`:`Hazırlık %${Math.round(S.prep||0)} · Sınava gir, bölüm seç${g?' · '+g+' diploman var':''}`,'›',false)}
       if(S.age>=16&&!isPol()&&!isAv()&&!S.jail){const gg=(S.grads||[]).filter(id=>id==='polis'||id==='hukuk');if(gg.length){h+='<div class="sec">Diploman hazır</div>';gg.forEach(id=>{const d=DEPTS.find(x=>x.id===id);h+=row(`data-x="job:${id}"`,id==='polis'?'👮':'⚖️',`${d.jn} olarak göreve başla`,id==='polis'?'Yemin et, rozetini tak':'Baroya kaydol, staja başla','›',false)})}}
-      if(S.age>=16)h+='<div class="sec">İş hayatı</div>'+row('data-go="meslek"','💼',S.job?S.job.n:'İş ilanları',S.job?`Çeyreklik maaş ${fmtS(Math.round(S.job.sal*.25*(1+Math.min(.5,(S.job.q||0)*.01))))}${S.job.svc?' · Performans %'+S.job.perf:''}`:'Garson, tamirci, kurye, kasiyer… Maaşlı bir işe gir','›',false);
+      if(S.age>=16)h+='<div class="sec">İş hayatı</div>'+row('data-go="meslek"','💼',S.job?S.job.n:'İş ilanları',S.job&&isAv()&&S.av.buro?'Kendi büron · Maaş yok, gelirin vekâlet ücretleri':S.job?`Çeyreklik maaş ${fmtS(Math.round(S.job.sal*.25*(1+Math.min(.5,(S.job.q||0)*.01))))}${S.job.svc?' · Performans %'+S.job.perf:''}`:'Garson, tamirci, kurye, kasiyer… Maaşlı bir işe gir','›',false);
       if(S.age>=14){        if(isAv())h+=avJobsH();if(S.yol!=='kabadayi'&&S.yol!=='polis')h+='<div class="sec">Suç dünyası</div>';
         if(S.yol==='polis')h+=polJobsH();else if(S.yol==='kabadayi')h+=kJobsH();else CRIMES.forEach(c=>{const lockA=S.age<c.age,lockR=rank()<c.rank;
           const d=lockA?`${c.age} yaşında açılır`:lockR?`${RANKS[c.rank].n} rütbesi gerekir`:c.d;
