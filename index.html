@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.20-0500';
+const APPV='2026.11.20-0625';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -913,7 +913,7 @@ function adultYear(ny){if(ny)try{parYear()}catch(e){}
     {t:'Liseyi terk et',sub:'Saygı +5 · Tam zamanlı sokak',fn:()=>{S.school=false;add('respect',5);log('🎒 Liseyi terk ettin. Artık tam zamanlı sokaktasın.','bad')}},
     {t:'Liseye devam et',sub:'İşlerde risk azalır',fn:()=>{S.school=true;add('happy',4);log('📚 Liseye devam ettin. Akıllı bir suçlu, yaşayan bir suçludur.','good')}}]});
   if(ny&&S.age===17&&S.school&&!S.jail&&ch(.5))return queue({title:'Lise son sınıf',text:'Son sene. Mahalledeki abiler "diplomayla mı karın doyacak?" diye gülüyor.',choices:[{t:'Liseyi terk et',sub:'Saygı +4',fn:()=>{S.school=false;add('respect',4);log('🎒 Lise son sınıfta okulu bıraktın.','bad')}},{t:'Bitir şunu',sub:'Diploma',fn:()=>{add('happy',2);log('Son seneyi dişini sıkıp okuyorsun.','dim')}}]});
-  if(ny&&S.age===18&&S.school&&!S.jail&&!S.liseDone){S.liseDone=1;log('🎓 Liseyi bitirdin. Diplomanı aldın; mahallede okumuş çocuk diye anılıyorsun.','gold')}
+  if(ny&&S.age===18&&S.school&&!S.jail&&!S.liseDone){S.liseDone=1;log('🎓 Liseyi bitirdin. Diplomanı aldın; mahallede okumuş çocuk diye anılıyorsun. Üniversite için: İşler → Üniversite ve sınav.','gold')}
   if(ny&&S.age===18&&!S.jail)log('Reşit oldun. Artık hapis cezaları gerçek.','dim');
   try{if(dosQ())return}catch(e){console.error(e)}
   if(!S.jail&&!S.abroad&&S.heat>=55&&(S.heat>=100||ch((S.heat-45)/180))){const r=raid();if(r)return queue(r);return}
@@ -7278,7 +7278,7 @@ let LASTSH=null,LASTT='';
 function closeSheet(){if(curSheet){LASTSH=curSheet;LASTT=(($('shT')&&$('shT').textContent)||'').replace(/^[^\wÇĞİÖŞÜçğıöşü]+/,'').trim()}$('ov').classList.remove('on');curSheet=null;try{qbar()}catch(e){}}
 function qbar(){const l=$('qLeft'),b=$('qBack');if(!l||!S)return;l.innerHTML='';if(LASTSH&&S.alive){b.style.display='';b.textContent='↩ '+(LASTT||'Son menü')}else b.style.display='none'}
 document.addEventListener('click',e=>{if(e.target.closest('#qBack')&&LASTSH){openSheet(LASTSH)}});
-const PARENT={berber:'cat_kisisel',meslek:'is',egitim:'meslek',ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
+const PARENT={berber:'cat_kisisel',meslek:'is',egitim:'is',ayar:'ben',lig:'kulup',transfer:'kulup',sokak:'is'};
 try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'sirket',okul:'is',sm_kare:'sosyal',sm_dongu:'sosyal',sm_ekran:'sosyal',sm_gundem:'sosyal'});
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
@@ -7303,6 +7303,7 @@ function openSheet(k){if(k==='gard')k='insan';if(typeof k==='string'&&/^bk_my\d+
     if(S.jail){h+='<div class="sec">Koğuş</div>';JAIL.filter(a=>!a.prem||S.premium).forEach(a=>{const c=a.dyn?Math.round(a.dyn()):0;h+=row(`data-j="${a.id}"`,a.ic,a.n,a.d,c?fmtS(c):'',(c&&cashA()<c)||(!S.premium&&HEALIDS.includes(a.id)&&healLeft()<=0))})}
     else{
       if(inSchool()){const O=okulEns();h+='<div class="sec">Okul</div>'+row('data-go="okul"','🎒',O.n,`Not ${O.not} · ${okPopT(O.pop)}`,'›',false)}
+      if(S.age>=16&&S.age<=40){const g=(S.grads||[]).length;h+=(inSchool()?'':'<div class="sec">Eğitim</div>')+row('data-go="egitim"','🎓',S.edu?'Üniversite: '+DEPTS.find(x=>x.id===S.edu.d).n:'Üniversite ve sınav',S.edu?`Mezuniyete ${fmtJ(S.edu.left/4)} kaldı`:!hasDip()?(S.age<18&&S.school===true?'Sınava şimdiden hazırlan':'Önce lise diploması: okula dön ya da açık lise'):S.puanY===S.age?`Bu yılki puanın ${S.puan} · Bölüm seç`:`Hazırlık %${Math.round(S.prep||0)} · Sınava gir, bölüm seç${g?' · '+g+' diploman var':''}`,'›',false)}
       if(S.age>=16)h+='<div class="sec">İş hayatı</div>'+row('data-go="meslek"','💼',S.job?S.job.n:'İş ilanları',S.job?`Çeyreklik maaş ${fmtS(Math.round(S.job.sal*.25*(1+Math.min(.5,(S.job.q||0)*.01))))}${S.job.svc?' · Performans %'+S.job.perf:''}`:'Garson, tamirci, kurye, kasiyer… Maaşlı bir işe gir','›',false);
       if(S.age>=14){        if(S.yol!=='kabadayi')h+='<div class="sec">Suç dünyası</div>';
         if(S.yol==='kabadayi')h+=kJobsH();else CRIMES.forEach(c=>{const lockA=S.age<c.age,lockR=rank()<c.rank;
