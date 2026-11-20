@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.20-0625';
+const APPV='2026.11.20-0645';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2957,7 +2957,7 @@ ACT.smp=a=>{const [k,id]=a.split(':');const sm=smEns(),T=(SMP[k]||[]).find(x=>x.
   smFeed(k,{t:cap,e:T.ic,l:T.vid?v:Math.round(sm.p[k].f*R(3,12)/100+g*R(2,6)),v:viral?1:0,q:QS()});
   log(`${T.ic} ${P.n}: ${T.vid?`"${cap}" yayında`:`"${cap}"`} · +${fmtF(g)} ${P.w}.${viral?' 🚀 Paylaşım patladı, her yerde dönüyor!':''}${extra}`,viral?'gold':'good');
   if(T.linc&&ch(T.linc)){const l=Math.round(sm.p.gundem.f*R(3,9)/100);sm.p.gundem.f=Math.max(0,sm.p.gundem.f-l);smSum();add('happy',-4);log(`💬 Gündem'de linç yedin: ${fmtF(l)} kişi takibi bıraktı. İki gün etiketten inmedin.`,'bad')}
-  if(T.thr&&ch(T.thr)&&typeof makeThreat==='function'){makeThreat();log('🎯 Laf yerine ulaştı. Biri bunu kişisel almış.','bad')}
+  if(T.thr&&ch(T.thr)&&typeof makeThreat==='function'){makeThreat(null,'Gündem\'de laf attığın');log('🎯 Laf yerine ulaştı. Biri bunu kişisel almış.','bad')}
   if(sm.f>=1e6&&!sm.m1){sm.m1=1;S.fame=clamp((S.fame||0)+10);news(`${S.first} ${S.last} 1 milyon takipçiye ulaştı`,1)}
   const E=sm.p.ekran;[[1e5,'gumus','Gümüş'],[1e6,'altin','Altın'],[1e7,'elmas','Elmas']].forEach(([n,key,nm])=>{if(E.f>=n&&!E['pl_'+key]){E['pl_'+key]=1;add('happy',6);log(`🏆 Ekran'dan kargo geldi: ${nm} Plaket. ${fmtF(n)} aboneyi geçtin, duvara astın.`,'gold')}});
   smTierCheck(t0);done()};
@@ -3427,8 +3427,8 @@ ACT.opget=uid=>{const op=(S.ops||[]).find(x=>x.uid===uid);if(!op)return;const o=
   afterChange();closeSheet();setTimeout(()=>openSheet('zaman'),40)};
 ACT.opnow=uid=>{if(!S.premium)return;const op=(S.ops||[]).find(x=>x.uid===uid);if(op){op.end=Date.now();ACT.opget(uid)}};
 /* tehdit */
-function makeThreat(){if(S.threat||S.age<16)return;const st=S.st;const who=st&&st.gw?`${st.gw.boss} (${st.gw.name})`:`${pick(NICK)} ${pick(NAMES)}`;const h=R(1,4);S.threat={who,due:Date.now()+h*HOUR,prep:0};
-  log(`⚠️ ${who} intikam yemini etti: "${h} saat içinde geleceğim." Sokak menüsünden hazırlık yapabilirsin.`,'bad')}
+function makeThreat(who0,why){if(S.threat||S.age<16)return;const st=S.st;const who=who0||(st&&st.gw?`${st.gw.boss} (${st.gw.name})`:`${pick(NICK)} ${pick(NAMES)}`);const h=R(1,4);S.threat={who,due:Date.now()+h*HOUR,prep:0};
+  log(`⚠️ ${why?why+' ':''}${who} intikam yemini etti: "${h} saat içinde geleceğim." İşler → Sokak menüsünden koruma tutup hazırlanabilirsin.`,'bad')}
 function threatCheck(){const T=S&&S.threat;if(!T||!S.alive||Date.now()<T.due||S.jail)return;S.threat=null;
   if(T.prep){gainResp(6);log(`🛡 ${T.who} adamlarıyla geldi ama hazırdın. Hepsini geri püskürttün.`,'gold');toast('🛡 Tehdit savuşturuldu');save();render();return}
   queue({title:`⚠️ ${T.who} geldi`,text:'Söz verdiği gibi geldi. Hazırlıksız yakalandın.',choices:[
@@ -4123,7 +4123,7 @@ const CHAINS={
      {t:'"Borcunuz yok, insanlık yaptım"',fn:()=>{yon('m',5);gainResp(6);log('Cevabın bütün ailelerde konuşuldu.','gold');chEnd('yarali')}}]};
    if(C.f==='ambulans')return{title:'Bir adam seni arıyor',text:`${C.n} iyileşmiş. Ambulansı kimin çağırdığını bulmuş. Kapına bir şişe pahalı içki ve bir not bırakmış: "Unutmam."`,choices:[{t:'Notu sakla',fn:()=>{gainResp(2);log('Bir rakip ailede bir dostun var artık.','good');chEnd('yarali')}}]};
    return{title:'Kimin bıraktığını öğrendiler',text:`${C.n} o gece yolda ölmüş. ${C.fam} o yoldan kimin geçtiğini, kamera kayıtlarından öğrenmiş. Bir haber yolladılar: "Görüp de durmayan, vuranla birdir."`,choices:[
-     {t:'Adamlarını topla, hazırlan',fn:()=>{add('heat',5);if(typeof makeThreat==='function')makeThreat();log(`${C.fam} seninle hesaplaşmaya hazırlanıyor.`,'bad');chEnd('yarali')}},
+     {t:'Adamlarını topla, hazırlan',fn:()=>{add('heat',5);makeThreat(`${C.fam}'nin adamları`,`Yolda ölüme terk ettiğin ${C.n} yüzünden`);log(`${C.fam} seninle hesaplaşmaya hazırlanıyor.`,'bad');chEnd('yarali')}},
      {t:'Aileye taziye parası gönder',sub:fmt(kBig(100000,.006)),dis:!canPay(kBig(100000,.006)),fn:()=>{pay(kBig(100000,.006));yon('m',5);log('Para kabul edildi. Konu kapandı ama unutulmadı.','dim');chEnd('yarali')}}]}},
   3:d=>{const C=CHS().yarali;return{title:'Borcu hatırlatma vakti',text:`Başın dertte: bir rakip seni sıkıştırıyor. ${C.fam}'nin sana olan borcu hâlâ duruyor.`,choices:[
      {t:'Borcu iste',fn:()=>{addSq(8);add('heat',-8);gainResp(3);S.chFamBorc=0;log(`${C.fam} sekiz adam ve bir avukat yolladı. Borç ödendi.`,'gold');chEnd('yarali')}},
@@ -4135,7 +4135,7 @@ const CHAINS={
   2:d=>{const C=CHS().bavul,m=C.m;
    if(C.f==='al')return{title:'Bavulun sahibi',text:'Kapın çalındı. İki adam: "Taksideki bavulu arıyoruz. Taksici seni tarif etti. Patron parasını istiyor, faiziyle."',choices:[
      {t:'Parayı geri ver',sub:fmt(m),dis:!canPay(m),fn:()=>{pay(m);log('Adamlar parayı saydı, gitti. Faizden söz etmediler.','dim');chEnd('bavul')}},
-     {t:'"Hangi bavul?"',fn:()=>kFight('Bavulun sahipleri',2,kPw(2),ok=>{if(ok){gainResp(4);log('Adamları kapından kovdun. Para senin, ama bir patronun kara listesindesin.','dim');if(ch(.4)&&typeof makeThreat==='function')makeThreat()}else{hurt(R(10,22),'Bavul kavgası');const t=Math.min(S.money,m);if(t>0)spend(t);log('Dövdüler, parayı aldılar.','bad')}chEnd('bavul');done()})}]};
+     {t:'"Hangi bavul?"',fn:()=>kFight('Bavulun sahipleri',2,kPw(2),ok=>{if(ok){gainResp(4);log('Adamları kapından kovdun. Para senin, ama bir patronun kara listesindesin.','dim');if(ch(.4))makeThreat(`${pick(NICK)} ${pick(NAMES)}`,'Bavulundaki parayı alıp adamlarını kovduğun patron,')}else{hurt(R(10,22),'Bavul kavgası');const t=Math.min(S.money,m);if(t>0)spend(t);log('Dövdüler, parayı aldılar.','bad')}chEnd('bavul');done()})}]};
    if(C.f==='polis')return{title:'Karakoldan teşekkür',text:'Bavulun bir kaçakçılık soruşturmasına ait olduğu ortaya çıktı. Emniyet müdürü seni plaketle ödüllendirdi.',choices:[{t:'Plaketi al',fn:()=>{add('heat',-15);addFr(`Komiser ${chNm()}`,'polis',70);log('Polis gözünde hesabın bir süre temiz.','gold');chEnd('bavul')}}]};
    return{title:'Bavulun sahibi',text:'Telefonu bir iş adamı açtı. Bavulu teslim alınca gözleri doldu: "Bu para hastanenin ameliyat parasıydı. Sana nasıl ödeyeceğim?"',choices:[
      {t:'"Hiçbir şey borçlu değilsin"',fn:()=>{yon('m',8);gainResp(3);addFr(chNm(),'isinsani',85);log('İş adamı dostun oldu. Yıllar sonra bunu unutmayacak.','gold');chEnd('bavul')}},
@@ -4335,7 +4335,7 @@ IE(2,()=>S.age>=24,()=>({title:'Aşure günü',text:'Annen mahalleye dağıtmak 
  {t:'Tencereyi kap, kapı kapı dağıt',fn:()=>{add('happy',5);yon('m',3);if(isKab())kHz(1);log('Kırk kapıya aşure taşıdın. Kırk kapıdan dua aldın.','good')}},
  {t:'Adamlarına dağıttır',fn:()=>{log('Aşureler dağıtıldı. Annen yine de "Sen götürseydin" dedi.','dim')}}]}));
 IE(2,()=>S.age>=25,()=>({title:'Mahkemede tanıklık',text:'Bir esnafın soyulduğuna tanık oldun. Savcılık tanıklık etmeni istiyor. Soyguncular tanıdık bir çetenin adamları.',choices:[
- {t:'Tanıklık et',fn:()=>{yon('z',5);add('heat',-5);add('respect',-2);if(ch(.3)&&typeof makeThreat==='function')makeThreat();log('Mahkemede gördüklerini anlattın. Çete bunu unutmayacak.','dim')}},
+ {t:'Tanıklık et',fn:()=>{yon('z',5);add('heat',-5);add('respect',-2);log('Mahkemede gördüklerini anlattın. Çete bunu unutmayacak.','dim');if(ch(.3))makeThreat(`${pick(NICK)} ${pick(NAMES)}`,'Mahkemede aleyhine tanıklık ettiğin çetenin reisi')}},
  {t:'"Bir şey görmedim"',fn:()=>{yon('k',2);log('Esnaf mahkemede yalnız kaldı.','dim')}}]}));
 IE(2,()=>S.age>=18,()=>({title:'Bir dilenci',text:'Camide namazdan çıkarken bir dilenci yolunu kesti. Yüzü tanıdık: eskiden mahallenin en zengin tüccarıydı.',choices:[
  {t:'Onu bir lokantaya götür, hikâyesini dinle',fn:()=>{yon('m',4);add('happy',2);log('Kumar, kefillik, iflas. Hikâyesi uzundu. Gitmeden "Sen dikkat et" dedi.','dim')}},
