@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.20-1130';
+const APPV='2026.11.20-1215';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -4854,6 +4854,11 @@ ACT.pol=a=>{const P=S.pol;if(!isPol()||!P)return;const i=a.indexOf(':'),op=i<0?a
   if(op==='muhbir'){if(P.muhbir.length>=4||!polUse())return;const c=Math.round(8000*S.cpi/2.8);if(!pay(c)){P.mesai.n--;return}if(ch(.6+karizma()/300)){const m={id:'mh'+R(0,99999),name:`${pick(NICK)} ${pick(NAMES)}`,guv:R(35,65)};P.muhbir.push(m);log(`🕵️ Kahvede birkaç çay ısmarladın. ${m.name} artık kulağına fısıldıyor.`,'good')}else log('🕵️ Kimse konuşmak istemedi. Çay parası boşa gitti.','dim')}
   else if(op==='ac'){if(P.dosya.some(d=>d.tid===x)||P.dosya.length>=polDosMax()||P.giz||polTemiz(x))return;const r=S.rivals.find(z=>z.id===x);if(!r)return;P.dosya.push({id:'ds'+R(0,99999),tid:r.id,tn:r.n,boss:(r.boss&&r.boss.name)||r.b||'Baba',suc:PSUC.map(s=>({k:s.k,dl:0})),q0:QS()});log(`📁 ${r.n} hakkında dosya açtın. Kapağına adını yazdın, içi şimdilik boş.`,'gold')}
   else if(op==='d'){return polDosya(x)}
+  else if(op==='mh'){const m=P.muhbir[+x];if(!m)return;closeSheet();const c=Math.round(6000*S.cpi/2.8/50)*50,bk=()=>setTimeout(()=>{if(!Q.length&&isPol())openSheet('emniyet')},60);
+    return queue({back:'emniyet',title:`🕵️ ${m.name}`,text:`Güvenilirliği <b>%${m.guv}</b>. ${m.guv<35?'Verdiği adreslerin çoğu boş çıkıyor; ya uyduruyor ya iki tarafa da çalışıyor.':m.guv>=70?'Söylediği çıkıyor. Böylesi zor bulunur.':'Bazen işe yarıyor, bazen oyalıyor.'} Muhbir ağında ${P.muhbir.length}/4 kişi var.`,choices:[
+      {t:'İlişkiyi kes',sub:'Ağdan çıkar, yerine yenisini bulabilirsin',fn:()=>{P.muhbir=P.muhbir.filter(z=>z!==m);log(`🕵️ ${m.name} ile bağını kopardın. Numarasını sildin.`,'dim');if(m.guv>=60&&ch(.3)){polSic(-2);log('Küstü; kahvede senin hakkında konuşuyormuş.','dim')}afterChange();bk()}},
+      {t:'Yemek ısmarla, arayı sıcak tut',sub:fmt(c),dis:!canPay(c)||polMes()<=0,fn:()=>{if(!polUse())return bk();pay(c);m.guv=clamp(m.guv+R(8,15));log(`🕵️ ${m.name} ile bir esnaf lokantasında oturdunuz. Sana biraz daha güveniyor.`,'good');afterChange();bk()}},
+      {t:'Geri dön',fn:bk}]})}
   else if(op==='m'){return polMateDlg(x)}
   done()};
 const polDL=d=>d.suc.reduce((a,c)=>a+c.dl,0);
@@ -5044,7 +5049,7 @@ EXTRA.emniyet=()=>{if(!isPol())return['Emniyet','<p class="note">Polis değilsin
   if(P.r<1)h+='<p class="note">Özel şubelere tayin Komiser rütbesinde açılır.</p>';else Object.entries(PBIR).forEach(([k,B])=>{h+=row(`data-x="polbir:${k}"`,B.ic,B.n,P.birim===k?'Şu anki şuben · '+B.d:B.d,P.birim===k?'✓':'',P.birim===k)});
   h+='<div class="sec">👥 Ekip</div>';
   P.ekip.forEach(c=>{const im=polPic(c);h+=`<button class="row" data-x="pol:m:${c.id}"><span class="ic"${im?' style="padding:0;overflow:hidden"':''}>${im||rIco('👮')}</span><span class="tx"><b>${c.name}</b><span>${c.amir?'Amirin':c.ortak?'Devriye ortağın':'Meslektaş'} · ${PRANK[Math.min(5,c.rutbe)].n} · Aranız %${c.rel}</span></span><span class="rt">›</span></button>`});
-  if(P.muhbir.length){h+='<div class="sec">🕵️ Muhbirlerin</div>';P.muhbir.forEach(m=>{h+=`<div class="row" style="cursor:default"><span class="ic">${rIco('🕵️')}</span><span class="tx"><b>${m.name}</b><span>Güvenilirlik %${m.guv}</span></span></div>`})}
+  if(P.muhbir.length){h+='<div class="sec">🕵️ Muhbirlerin</div>';P.muhbir.forEach((m,i)=>{h+=row(`data-x="pol:mh:${i}"`,'🕵️',m.name,`Güvenilirlik %${m.guv}${m.guv<35?' · <b style="color:var(--blood)">Sözüne güvenilmez</b>':m.guv>=70?' · Sağlam':''}`,'›',false)})}
   h+='<div class="sec">Diğer</div>'+row('data-x="quit:"','🚪','Meslekten istifa et','Rozetini bırakırsın','',false);
   return['Emniyet',h]};
 
