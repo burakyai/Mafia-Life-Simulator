@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.23-1300';
+const APPV='2026.11.23-1400';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -7753,11 +7753,11 @@ EV(1,()=>!S.jail&&S.sagkol&&(S.sagkol.skim||0)>0&&(!!S.hold||S.premium),()=>{con
   {t:'Kov',fn:()=>{S.sagkol=null;log(`${k.name} kapı dışarı edildi.`,'dim')}}]}});
 /* ============ Araç distribütörlüğü ============ */
 const DBR={
- mini:{n:'Velora',seg:'Ekonomik şehir arabası',ic:'🚗',usd:14000,mj:.045,dem:300,fee:9000000,kota:900,mods:['City','Urban','Mini','Neo','Go','Link']},
- suv:{n:'Nordvik',seg:'Aile SUV\'u',ic:'🚙',usd:28000,mj:.055,dem:180,fee:22000000,kota:540,mods:['Fjord','Cross','Terra','Summit','Trail','Peak']},
- prem:{n:'Brennhaus',seg:'Premium sedan',ic:'🚘',usd:55000,mj:.065,dem:90,fee:60000000,kota:270,mods:['B3','B5','B7','Tourer','Coupé','Gran']},
- luks:{n:'Aurelio',seg:'Lüks spor',ic:'🏎️',usd:160000,mj:.09,dem:18,fee:140000000,kota:54,mods:['Corsa','Vento','Stradale','Superba','GT','Aperta']},
- ev:{n:'Voltara',seg:'Elektrikli',ic:'⚡',usd:38000,mj:.06,dem:120,fee:40000000,kota:360,mods:['E1','E3','Air','Volt','Flow','Range']}};
+ mini:{n:'Velora',seg:'Ekonomik şehir arabası',ic:'🚗',usd:14000,mj:.122,dem:300,fee:9000000,kota:900,mods:['City','Urban','Mini','Neo','Go','Link']},
+ suv:{n:'Nordvik',seg:'Aile SUV\'u',ic:'🚙',usd:28000,mj:.125,dem:180,fee:22000000,kota:540,mods:['Fjord','Cross','Terra','Summit','Trail','Peak']},
+ prem:{n:'Brennhaus',seg:'Premium sedan',ic:'🚘',usd:55000,mj:.15,dem:90,fee:60000000,kota:270,mods:['B3','B5','B7','Tourer','Coupé','Gran']},
+ luks:{n:'Aurelio',seg:'Lüks spor',ic:'🏎️',usd:160000,mj:.19,dem:18,fee:140000000,kota:44,mods:['Corsa','Vento','Stradale','Superba','GT','Aperta']},
+ ev:{n:'Voltara',seg:'Elektrikli',ic:'⚡',usd:38000,mj:.13,dem:120,fee:40000000,kota:360,mods:['E1','E3','Air','Volt','Flow','Range']}};
 const DBAY=[['ist','İstanbul',1],['ank','Ankara',.5],['izm','İzmir',.45],['bur','Bursa',.3],['ant','Antalya',.3],['ada','Adana',.25],['kon','Konya',.2],['gaz','Gaziantep',.2],['tra','Trabzon',.12]];
 const DFY={dus:['Düşük fiyat','Çok satar, az kazandırır',1.25,.6],piy:['Piyasa fiyatı','Dengeli',1,1],yuk:['Yüksek fiyat','Az satar, çok kazandırır',.75,1.45]};
 const DROLE={gm:{n:'Genel müdür',ic:'👔',d:'Siparişi, fiyatı, lansmanı, filoyu ve olayları senin yerine yönetir'},satis:{n:'Satış müdürü',ic:'🤝',d:'Bayilerin satışını artırır'},paz:{n:'Pazarlama müdürü',ic:'📣',d:'Lansmanların etkisini büyütür'},servis:{n:'Servis müdürü',ic:'🔧',d:'Servis ve yedek parça gelirini artırır'},filo:{n:'Filo müdürü',ic:'🔑',d:'Kiralama filosunun doluluğunu artırır'}};
@@ -7766,7 +7766,7 @@ const dCar=D=>Math.round(DBR[D.br].usd*dFx());
 const dY=(D,r)=>D.st[r]?D.st[r].yet:0;
 const dCov=D=>D.bayi.reduce((a,k)=>a+(DBAY.find(b=>b[0]===k)||[0,0,0])[2],0);
 const dModF=D=>clamp(D.mod.reduce((a,m)=>a+m.dem*Math.max(.35,1-.13*(S.age-m.y)),0),.4,1.35);
-const dDem=D=>Math.round(DBR[D.br].dem*dCov(D)*dModF(D)*DFY[D.fy][2]*(1+dY(D,'satis')/400)*(D.lb&&D.lb.q>QS()?D.lb.f:1)*(D.otv&&D.otv>QS()?.8:1));
+const dDem=D=>Math.round(DBR[D.br].dem*dCov(D)*dModF(D)*DFY[D.fy][2]*(1+dY(D,'satis')/400)*(D.lb&&D.lb.q>QS()?D.lb.f:1)*(D.otv&&D.otv>QS()?.8:1)*(D.cyc?D.cyc.d:1));
 const dStokV=D=>Math.round(D.stok*(D.avg||dCar(D)));
 const dFiloV=D=>Math.round((D.filo||[]).reduce((a,f)=>a+f.v*f.n,0));
 const distVal=()=>{const D=S.dist;if(!D)return 0;return Math.round(Math.max(0,D.cash)+dStokV(D)+dFiloV(D)+M(DBR[D.br].fee)*.6+D.bayi.length*M(4000000)+(D.hist||[]).slice(-4).reduce((a,c)=>a+c,0)*3)};
@@ -7779,7 +7779,7 @@ function distBuy(D,n){n=Math.max(0,Math.floor(n));const c=dCar(D);n=Math.min(n,M
 function distLans(D,k){const m=D.newM;if(!m)return false;const B={kucuk:[.4,1.07],orta:[1,1.16],buyuk:[2.4,1.28]}[k]||[1,1.16];const c=Math.round(M(3000000)*B[0]*(1+DBR[D.br].usd/40000)/1000)*1000;if(D.cash<c)return false;D.cash-=c;D.mod.push({n:m.n,dem:m.dem,mj:m.mj,y:S.age});if(D.mod.length>4)D.mod.shift();D.lb={q:QS()+4,f:1+(B[1]-1)*(1+dY(D,'paz')/200)};D.newM=null;D.lanY=S.age;
   log(`🎉 ${DBR[D.br].n} ${m.n} lansmanı yapıldı (${fmt(c)}). Bayilerde bir yıl boyunca talep artacak.`,'gold');if(k==='buyuk')news(`${DBR[D.br].n} ${m.n} İstanbul'da görkemli lansmanla tanıtıldı`,2);return true}
 function distAuto(D){const g=D.st.gm;if(!g||D.auto===false)return;const R_=[];
-  if(D.newM&&distLans(D,D.cash>M(60000000)?'buyuk':'orta'))R_.push('yeni modelin lansmanını yaptı');
+  {const lc=k=>Math.round(M(3000000)*k*(1+DBR[D.br].usd/40000));}if(D.newM&&distLans(D,D.cash*.08>M(3000000)*2.4*(1+DBR[D.br].usd/40000)?'buyuk':D.cash*.15>M(3000000)*(1+DBR[D.br].usd/40000)?'orta':'kucuk'))R_.push('yeni modelin lansmanını yaptı');
   const fy=D.stok>dDem(D)*1.6?'dus':D.stok<dDem(D)*.5&&D.cash<dCar(D)*dDem(D)*.5?'yuk':'piy';if(fy!==D.fy){D.fy=fy;R_.push(`fiyatı "${DFY[fy][0].toLowerCase()}" yaptı`)}
   const hedef=Math.round(dDem(D)*(1.05+g.yet/600)),n=distBuy(D,hedef-D.stok);if(n>0)R_.push(`${n} araç ithal etti`);
   if(S.q===2){const nb=DBAY.filter(b=>!D.bayi.includes(b[0])).sort((a,b)=>b[2]-a[2])[0];if(nb&&D.cash>dBayC(nb)*5+dCar(D)*dDem(D)){D.cash-=dBayC(nb);D.bayi.push(nb[0]);R_.push(`${nb[1]} bayisini açtı`)}}
@@ -7792,18 +7792,18 @@ function distQ(){const D=S.dist;if(!D)return;const B=DBR[D.br];D.hist=D.hist||[]
     const k=D.kotaY||dKota(D);if(D.soldY>=k){const pr=Math.round(D.soldY*dCar(D)*.012/1000)*1000;D.cash+=pr;D.miss=0;log(`🏁 ${B.n} yıllık kotayı tutturdun (${D.soldY}/${k}). Marka ${fmt(pr)} prim ödedi.`,'gold')}
     else{D.miss=(D.miss||0)+1;if(D.miss>=2&&!S.premium){const v=Math.round(dStokV(D)*.8+dFiloV(D)*.8+Math.max(0,D.cash));S.money+=v;log(`📉 ${B.n} iki yıl üst üste kotanın altında kaldığın için distribütörlüğü feshetti (${D.soldY}/${k}). Stok ve filo tasfiye edildi: ${fmt(v)}.`,'bad');news(`${B.n} Türkiye distribütörünü değiştirdi`,2);S.dist=null;return}
       log(`⚠️ ${B.n} kotasının altında kaldın (${D.soldY}/${k}). ${S.premium?'Dayının hatırı için marka ses çıkarmadı.':'Bir yıl daha olursa sözleşme feshedilir.'}`,'bad')}
-    D.soldY=0;D.kotaY=dKota(D);const used=D.mod.map(m=>m.n);const nm=pick(B.mods.filter(x=>!used.includes(x)))||pick(B.mods);D.newM={n:nm,dem:R(45,75)/100,mj:R(-10,15)/1000};log(`🚘 ${B.n} bu yılın yeni modelini duyurdu: ${nm}. Lansman yaparsan satışa girer.`,'dim')}
+    D.soldY=0;{const z=Math.random();D.cyc=z<.2?{d:.82,m:-.035,t:'Pazar bu yıl durgun: rekabet sert, kampanyalar marjı eritiyor.'}:z>.82?{d:1.18,m:.04,t:'Pazar bu yıl çok canlı: araç bulunmuyor, liste fiyatının üstüne satılıyor.'}:{d:1,m:0,t:''};if(D.cyc.t)log(`🚘 ${D.cyc.t}`,'dim')}D.kotaY=Math.round(dKota(D)*(D.cyc.d<1?.8:1));const used=D.mod.map(m=>m.n);const nm=pick(B.mods.filter(x=>!used.includes(x)))||pick(B.mods);D.newM={n:nm,dem:R(45,75)/100,mj:R(-10,15)/1000};log(`🚘 ${B.n} bu yılın yeni modelini duyurdu: ${nm}. Lansman yaparsan satışa girer.`,'dim')}
   try{distAuto(D)}catch(e){console.error(e)}
   // satış
-  const dem=dDem(D),sat=Math.max(0,Math.min(D.stok,Math.round(dem*R(88,112)/100)));const car=dCar(D),mj=(B.mj+D.mod.reduce((a,m)=>a+m.mj,0)/Math.max(1,D.mod.length))*DFY[D.fy][3];
+  const dem=dDem(D),sat=Math.max(0,Math.min(D.stok,Math.round(dem*R(88,112)/100)));const car=dCar(D),mj=Math.max(.02,(B.mj+(D.cyc?D.cyc.m:0)+D.mod.reduce((a,m)=>a+m.mj,0)/Math.max(1,D.mod.length))*DFY[D.fy][3]);
   const ciro=Math.round(sat*car*(1+mj)),mal=Math.round(sat*(D.avg||car));D.stok-=sat;D.sold=(D.sold||0)+sat;D.soldY=(D.soldY||0)+sat;D.park=(D.park||0)+sat;D.cash+=ciro;
   const servis=Math.round((D.park||0)*car*.0006*(1+dY(D,'servis')/160));D.cash+=servis;D.park=Math.round((D.park||0)*.97);
   // kiralama
   let kira=0,ikinci=0;const fl=D.filo||[];if(fl.length){const adet=fl.reduce((a,f)=>a+f.n,0),dol=clamp(.55+D.bayi.length*.025+dY(D,'filo')/420-adet/Math.max(60,dFiloCap(D))*.12,.4,.95);D.dol=dol;
     fl.forEach(f=>{kira+=Math.round(f.n*f.v*.058*dol);f.v=Math.round(f.v*.955)});D.filo=fl.filter(f=>{if(QS()-f.q>=12){ikinci+=Math.round(f.n*f.v*1.02);return false}return true});D.cash+=kira+ikinci}
   // giderler
-  const gb=D.bayi.reduce((a,k)=>a+dBayG(DBAY.find(b=>b[0]===k)),0),gm=Object.values(D.st).reduce((a,x)=>a+(x?Math.round(x.sal/4):0),0),gs=Math.round(dStokV(D)*.012),gk=Math.round(dFiloV(D)*.012),gid=gb+gm+gs+gk;D.cash-=gid;
-  const kar=Math.round(ciro-mal+servis+kira-gid);D.hist.push(kar);if(D.hist.length>12)D.hist.shift();D.last={sat,dem,ciro,kar,servis,kira,gid,ikinci};
+  const gb=D.bayi.reduce((a,k)=>a+dBayG(DBAY.find(b=>b[0]===k)),0),gm=Object.values(D.st).reduce((a,x)=>a+(x?Math.round(x.sal/4):0),0),gs=Math.round(dStokV(D)*.012),gk=Math.round(dFiloV(D)*.012),gv=Math.round(ciro*.068),gid=gb+gm+gs+gk+gv;D.cash-=gid;
+  const kar=Math.round(ciro-mal+servis+kira-gid);D.hist.push(kar);if(D.hist.length>12)D.hist.shift();D.last={sat,dem,ciro,kar,servis,kira,gid,ikinci,mj};
   if(D.cash<0){const ac=-D.cash;if(cashA()>=ac){spend(ac);D.cash=0;try{skBase('dist',ac)}catch(e){}log(`🚘 ${D.n} kasası açık verdi; ${fmt(ac)} cebinden kapattın.`,'bad')}else{Object.values(D.st).forEach(x=>{if(x)x.sad=clamp(x.sad-15)})}}
   Object.keys(D.st).forEach(r=>{const x=D.st[r];if(!x)return;if(S.q===0)x.sad=clamp(x.sad-2);if(x.sad<25&&ch(.3)){D.st[r]=null;log(`🚪 ${D.n}: ${DROLE[r].n} ${x.name} istifa etti.`,'bad')}});
   log(`🚘 ${D.n}: ${sat} araç satıldı${sat<dem*.8&&D.stok===0?' (stok yetmedi)':''}, kâr ${kar>=0?'':'−'}${fmt(Math.abs(kar))}${servis?` · servis ${fmtS(servis)}`:''}${kira?` · kiralama ${fmtS(kira)}`:''} · stok ${D.stok} · bu yıl ${D.soldY}/${D.kotaY||dKota(D)}.${D.rep?' '+D.rep:''}`,kar>=0?'good':'bad');D.rep=''}
@@ -7825,10 +7825,10 @@ EV(2,()=>okE()&&S.dist&&S.dist.stok>=30,()=>{const D=S.dist,n=Math.min(D.stok,R(
   {t:'İndirim vermem',fn:()=>{log('Teklif vermedin.','dim')}}]}});
 EXTRA.dist=()=>{if(!packOK('is')&&!S.dist)return pkLock('is','Araç distribütörlüğü');const D=S.dist;let h='';
   if(!D){h+='<p class="note">Yabancı bir otomobil markasının Türkiye distribütörü ol: araçları dövizle ithal et, bayi ağı kur, fiyatı belirle, her yıl yeni modelin lansmanını yap, kiralama filosu işlet. Marka sana yıllık satış kotası verir.</p>';
-    Object.entries(DBR).forEach(([k,B])=>{const c=Math.round(M(B.fee)/1000)*1000;h+=row(`data-x="dist:kur:${k}"`,B.ic,`${B.n} · ${B.seg}`,`Araç başı ~${fmtS(Math.round(B.usd*dFx()))} · Çeyrekte ~${B.dem} satış · Marj %${Math.round(B.mj*1000)/10}`,fmtS(c),S.age<21||!canPay(c)||!!S.jail)});
+    Object.entries(DBR).forEach(([k,B])=>{const c=Math.round(M(B.fee)/1000)*1000;h+=row(`data-x="dist:kur:${k}"`,B.ic,`${B.n} · ${B.seg}`,`Araç başı ~${fmtS(Math.round(B.usd*dFx()))} · Çeyrekte ~${B.dem} satış · Brüt marj ~%${Math.round(B.mj/(1+B.mj)*100)}`,fmtS(c),S.age<21||!canPay(c)||!!S.jail)});
     if(S.age<21)h+='<p class="note">Distribütörlük için en az 21 yaşında olmalısın.</p>';return['🚘 Araç distribütörlüğü',h]}
   const B=DBR[D.br],L=D.last,k=D.kotaY||dKota(D),fl=(D.filo||[]).reduce((a,f)=>a+f.n,0);
-  h+=`<div class="card" style="padding:14px;margin-bottom:10px"><b style="font-size:17px">${B.ic} ${D.n}</b><div class="note" style="margin:3px 0 0">${B.n} Türkiye distribütörü · ${B.seg}<br>Kasa <b style="color:${D.cash>=0?'var(--good)':'var(--blood)'}">${fmt(D.cash)}</b> · Stok <b>${D.stok}</b> araç (${fmtS(dStokV(D))}) · Değer ${fmtS(distVal())}<br>Beklenen talep çeyrekte ~${dDem(D)} · Araç maliyeti ${fmtS(dCar(D))} ($${dFx().toLocaleString('tr-TR',{maximumFractionDigits:1})})${L?`<br>Son çeyrek: ${L.sat} satış, kâr ${L.kar>=0?'':'−'}${fmtS(Math.abs(L.kar))}`:''}</div>${okBar(`Yıllık kota · ${D.soldY||0}/${k}`,Math.min(100,Math.round((D.soldY||0)/k*100)),(D.soldY||0)>=k?'var(--good)':'var(--gold)')}${D.miss?'<div class="note" style="margin:6px 0 0;color:var(--blood)">Geçen yıl kotanın altında kaldın. Bu yıl da olursa sözleşme feshedilir.</div>':''}</div>`;
+  h+=`<div class="card" style="padding:14px;margin-bottom:10px"><b style="font-size:17px">${B.ic} ${D.n}</b><div class="note" style="margin:3px 0 0">${B.n} Türkiye distribütörü · ${B.seg}<br>Kasa <b style="color:${D.cash>=0?'var(--good)':'var(--blood)'}">${fmt(D.cash)}</b> · Stok <b>${D.stok}</b> araç (${fmtS(dStokV(D))}) · Değer ${fmtS(distVal())}<br>Beklenen talep çeyrekte ~${dDem(D)} · Araç maliyeti ${fmtS(dCar(D))} ($${dFx().toLocaleString('tr-TR',{maximumFractionDigits:1})})${L?`<br>Son çeyrek: ${L.sat} satış, ciro ${fmtS(L.ciro||0)}, kâr ${L.kar>=0?'':'−'}${fmtS(Math.abs(L.kar))}${L.ciro?` (brüt marj %${Math.round((L.mj||0)/(1+(L.mj||0))*1000)/10}, net marj %${Math.round(L.kar/L.ciro*1000)/10})`:''}`:''}</div>${okBar(`Yıllık kota · ${D.soldY||0}/${k}`,Math.min(100,Math.round((D.soldY||0)/k*100)),(D.soldY||0)>=k?'var(--good)':'var(--gold)')}${D.miss?'<div class="note" style="margin:6px 0 0;color:var(--blood)">Geçen yıl kotanın altında kaldın. Bu yıl da olursa sözleşme feshedilir.</div>':''}</div>`;
   const g=D.st.gm;h+='<div class="sec">👔 Yönetim</div>'+(g?row('data-x="dist:auto"','⚙️','Otomatik yönetim',D.auto===false?'Sadece danışıyor; siparişi, fiyatı ve lansmanı sen yapıyorsun':'Siparişi, fiyatı, lansmanı ve filoyu o yönetiyor',D.auto===false?'Kapalı':'Açık',false):'<p class="note">Bir genel müdür atarsan sipariş, fiyat, lansman ve filoyu senin yerine yönetir.</p>');
   Object.entries(DROLE).forEach(([r,R_])=>{const x=D.st[r];h+=row(`data-x="dist:k:${r}"`,R_.ic,x?`${R_.n} · ${x.name}`:`${R_.n} yok`,x?`Yetenek %${x.yet} · Sadakat %${x.sad}`:R_.d,x?fmtS(x.sal/4):'Ata ›',false)});
   h+='<div class="sec">📦 Stok ve ithalat</div>'+row('data-x="dist:ith"','🚢','Araç ithal et',`Araç başı ${fmtS(dCar(D))} · kasadan dövizle ödenir`,'›',D.cash<dCar(D))+`<div class="tabs">${Object.entries(DFY).map(([f,v])=>`<button class="tab ${D.fy===f?'on':''}" data-x="dist:fy:${f}">${v[0]}</button>`).join('')}</div><p class="note">${DFY[D.fy][1]}.</p>`;
