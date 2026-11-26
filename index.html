@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.26-1815';
+const APPV='2026.11.27-0130';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1348,7 +1348,7 @@ function quarterSystems(f){
   const b=S.bank;
   if(b.dep>0){const i=Math.round(b.dep*vzRate()*f);b.dep+=i;S.taxInc=(S.taxInc||0)+i;log(`Mevduat faizin: ${fmt(i)}.`,'good')}
   STOCKS.forEach(st=>{const x=S.px[st.id];x.p=Math.max(.5,+(x.p*Math.exp(stockR(st,x.n,f))*(1+(S.infl||0)*f*.8)).toFixed(2));x.h.push(x.p);if(x.h.length>16)x.h.shift();x.n=gauss()});
-  if(S.orders)Object.keys(S.orders).forEach(id=>{const o=S.stocks[id];if(!o){delete S.orders[id];return}if(S.px[id].p>=S.orders[id]){log(`Satış emrin gerçekleşti (hedef ₺${S.orders[id].toLocaleString('tr-TR')}).`,'gold');sellStock(id,o.sh);delete S.orders[id]}});
+  try{bxTick()}catch(e){console.error(e)}
 }
 function stockR(st,n,f){return st.d*f-st.v*st.v*f/2+st.v*Math.sqrt(f)*n}
 function yearSystems(){
@@ -5203,7 +5203,7 @@ const invFundC=()=>{const I=S.inv;return I?Object.values(I.h).reduce((a,o)=>a+o.
 const stCost=()=>Object.values(S.stocks||{}).reduce((s,x)=>s+x.cost,0);
 const wmP=()=>(S.wm&&S.wm.pool)||0;
 const goldV=()=>Math.round((S.goldKg||0)*GKG());
-const invAll=()=>portVal()+fxVal()+goldV()+invFund()+wmP();
+const invAll=()=>portVal()+fxVal()+goldV()+invFund()+wmP()+(typeof bxRes==='function'?bxRes():0);
 {const _nw=netWorth;netWorth=function(){return _nw.apply(this,arguments)+invFund()}}
 function invStart(){const I=invEns();if(I.a0===undefined){I.a0=S.age;I.y0=S.age}}
 function invBuy(k,a){const I=invEns(),x=invT(k);if(!x||a<=0||!pay(a))return;invStart();const o=I.h[k]=I.h[k]||{v:0,c:0};o.v+=a;o.c+=a;I.put=(I.put||0)+a;I.yIn=(I.yIn||0)+a;log(`${x.ic} ${x.n}: ${fmt(a)} yatırdın.`,'good')}
@@ -5242,7 +5242,7 @@ ACT.inv=k=>{const x=invT(k);if(!x)return;const I=invEns(),o=I.h[k];closeSheet();
     ...(o?[{t:'Yarısını sat',sub:fmt(Math.round(o.v/2)),fn:()=>{invSell(k,.5);back()}},{t:'Tümünü sat',sub:fmt(o.v),fn:()=>{invSell(k,1);back()}}]:[]),
     {t:'Geri dön',fn:back}]})};
 ACT.invnews=()=>{closeSheet();queue({back:'yatirim',title:'📰 Finans haberleri',text:`Ekonomi: <b>${PHASES[S.econ.ph].n}</b> · Yıllık enflasyon %${Math.round((S.infl||0)*100)}<br><br>${invNews()}<br><br><span class="note">Haberler her zaman tutmaz.</span>`,choices:[{t:'Tamam',fn:()=>setTimeout(()=>{if(!Q.length)openSheet('yatirim')},60)}]})};
-ACT.invall=()=>{closeSheet();const tot=invAll();queue({back:'yatirim',title:'🧯 Hepsini nakde çevir',text:`Bütün hisselerin, dövizin, altının, fonların ve yöneticideki portföy satılıp kasana geçer: yaklaşık <b>${fmt(tot)}</b>.`,choices:[{t:'Hepsini sat',fn:()=>{Object.keys(S.stocks||{}).forEach(id=>sellStock(id,S.stocks[id].sh));const f=fxVal();if(f){S.money+=f;S.fxw={usd:0,eur:0}}const g=goldV();if(g){S.money+=g;S.goldKg=0}Object.keys((S.inv&&S.inv.h)||{}).forEach(k=>invSell(k,1));if(wmP()){S.money+=S.wm.pool;S.wm.pool=0;S.wm.put=0}log(`🧯 Bütün yatırımlarını nakde çevirdin. Kasana yaklaşık ${fmt(tot)} geçti.`,'gold');afterChange();setTimeout(()=>{if(!Q.length)openSheet('yatirim')},60)}},{t:'Vazgeç',fn:()=>{}}]})};
+ACT.invall=()=>{closeSheet();const tot=invAll();queue({back:'yatirim',title:'🧯 Hepsini nakde çevir',text:`Bütün hisselerin, dövizin, altının, fonların ve yöneticideki portföy satılıp kasana geçer: yaklaşık <b>${fmt(tot)}</b>.`,choices:[{t:'Hepsini sat',fn:()=>{Object.keys(S.stocks||{}).forEach(id=>sellStock(id,S.stocks[id].sh));if(S.ord2){S.ord2.forEach(o=>{if(o.res)S.money+=o.res});S.ord2=[]}const f=fxVal();if(f){S.money+=f;S.fxw={usd:0,eur:0}}const g=goldV();if(g){S.money+=g;S.goldKg=0}Object.keys((S.inv&&S.inv.h)||{}).forEach(k=>invSell(k,1));if(wmP()){S.money+=S.wm.pool;S.wm.pool=0;S.wm.put=0}log(`🧯 Bütün yatırımlarını nakde çevirdin. Kasana yaklaşık ${fmt(tot)} geçti.`,'gold');afterChange();setTimeout(()=>{if(!Q.length)openSheet('yatirim')},60)}},{t:'Vazgeç',fn:()=>{}}]})};
 ACT.wmin=()=>{if(!has('portfoy'))return;closeSheet();S.wm=S.wm||{risk:'orta',keep:5e6,pool:0};setTimeout(()=>amountModal('💼 Yöneticiye bütçe ver','Bu para yöneticinin portföyüne geçer, seçtiğin risk seviyesinde yatırılır.',cashA(),a=>{if(!pay(a))return;S.wm.pool+=a;S.wm.put=(S.wm.put||0)+a;invStart();S.inv.yIn=(S.inv.yIn||0)+a;log(`💼 Varlık yöneticine ${fmt(a)} bütçe verdin.`,'good');afterChange();setTimeout(()=>{if(!Q.length)openSheet('varlikyon')},60)},'varlikyon'),40)};
 
 /* ============ Varlık yönetimi ============ */
@@ -8157,6 +8157,128 @@ const HCATS=[
   ['alisveris','🛍','Alışveriş','Emlak, araba, kuyumcu ve saat, AVM, lüks oyuncaklar',['emlak','galeri','kuyumcu','avm','luks']],
   ['sehir','🏙','Şehir ve dünya','Yaşadığın şehir, yurt dışı, karakol, gazete',['dunya','karakol','gazete']]];
 HCATS.forEach(([cid,ic,n,d,ids])=>{EXTRA['cat_'+cid]=()=>{const T=hubTiles();let h=`<p class="note">${d}.</p>`;h+='<div class="tiles">'+ids.map(id=>T.find(t=>t[0]===id)).filter(Boolean).map(tileHTML).join('')+'</div>';return[`${ic} ${n}`,h]}});
+/* ============ Borsa 2: endeks, mum grafik, derinlik, emirler ============ */
+let bTab='piyasa',bSort='kod',bSt=null;
+const BKOM=.002;
+const bP=v=>'₺'+(+v).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const bL=n=>Math.round(n).toLocaleString('tr-TR');
+const bH=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0};
+const bRng=seed=>()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};
+const bSk=id=>STOCKS.find(s=>s.id===id);
+const bChg=x=>{const pv=x.h.length>1?x.h[x.h.length-2]:x.p;return (x.p/pv-1)*100};
+const bPill=c=>`<small style="display:inline-block;min-width:58px;text-align:center;padding:2px 6px;border-radius:6px;font-family:var(--cond);font-size:13px;font-weight:700;color:#fff;background:${c>=0?'#1f8a4c':'#b3312c'}">${c>=0?'▲':'▼'} %${Math.abs(c).toFixed(2)}</small>`;
+function bxCandles(id){const x=S.px[id],s=bSk(id);if(!x)return[];if(!x.c||x.c.length!==x.h.length){const r=bRng(bH(id)),w=(s?s.v:.3)*.1;x.c=x.h.map((c,i)=>{const o=i?x.h[i-1]:c*(.96+r()*.08);return[+o.toFixed(2),+(Math.max(o,c)*(1+r()*w)).toFixed(2),+Math.max(.01,Math.min(o,c)*(1-r()*w)).toFixed(2),c]})}return x.c}
+function bxEns(){S.ord2=S.ord2||[];S.oHist=S.oHist||[];
+  if(S.orders){Object.keys(S.orders).forEach(id=>{const o=S.stocks[id];if(o&&S.px[id])S.ord2.push({id:'o'+bH(id+QS())+R(0,999),sid:id,side:'sat',type:'limit',px:+(+S.orders[id]).toFixed(2),sh:o.sh,q0:QS()})});delete S.orders}
+  S.ord2=S.ord2.filter(o=>{if(S.px[o.sid]&&bSk(o.sid))return true;if(o.res)S.money+=o.res;return false})}
+const bxRes=()=>((S&&S.ord2)||[]).reduce((a,o)=>a+(o.res||0),0);
+const bxFree=id=>{const o=S.stocks[id];return o?Math.max(0,o.sh-(S.ord2||[]).filter(z=>z.sid===id&&z.side==='sat').reduce((a,z)=>a+z.sh,0)):0};
+function bxHist(t,c){S.oHist=S.oHist||[];S.oHist.unshift({t,c:c||'',y:S.age});if(S.oHist.length>20)S.oHist.length=20}
+function bxBuy(id,sh,px,pre){const c=+(sh*px).toFixed(2),k=Math.round(c*BKOM);if(!pre)spend(c+k);const o=S.stocks[id]||(S.stocks[id]={sh:0,cost:0});o.sh+=sh;o.cost+=c+k;return c+k}
+function bxSell(id,sh,px){const o=S.stocks[id];if(!o||sh<1)return null;sh=Math.min(sh,o.sh);if(S.tips&&S.tips[id]&&S.tips[id].p0)S.tipG=(S.tipG||0)+Math.max(0,sh*(px-S.tips[id].p0));const g=sh*px,v=Math.round(g-g*BKOM),cst=o.cost*sh/o.sh;S.money+=v;o.cost-=cst;o.sh-=sh;if(o.sh<=0)delete S.stocks[id];return{v,pl:v-cst,sh}}
+const bxOrt=k=>{const O=S.ort&&S.ort[k];if(!O||!O.pub)return null;O.pub.lots=O.pub.lots||1e6;O.pub.price=Math.max(.01,+(ORTK[k].v()/O.pub.lots).toFixed(2));if(!O.pub.h||!O.pub.h.length)O.pub.h=[O.pub.price];return O.pub};
+function bxTick(){bxEns();
+  STOCKS.forEach(s=>{const x=S.px[s.id];if(!x)return;const n=x.h.length,o=n>1?x.h[n-2]:x.h[n-1],c=x.h[n-1],w=s.v*.12;
+    const cd=[o,+(Math.max(o,c)*(1+Math.min(.3,Math.abs(gauss())*w))).toFixed(2),+Math.max(.01,Math.min(o,c)*(1-Math.min(.3,Math.abs(gauss())*w))).toFixed(2),c];
+    if(x.c&&x.c.length===n-1)x.c.push(cd);else if(x.c&&x.c.length===n&&n>=16){x.c.shift();x.c.push(cd)}else{x.c=null;bxCandles(s.id);x.c[n-1]=cd}});
+  S.ord2.slice().forEach(o=>{const x=S.px[o.sid],s=bSk(o.sid),k=x.c[x.c.length-1],op=k[0],hi=k[1],lo=k[2];let fp=null;
+    if(o.side==='al'&&lo<=o.px)fp=Math.min(o.px,op);
+    if(o.side==='sat'&&o.type==='limit'&&hi>=o.px)fp=Math.max(o.px,op);
+    if(o.side==='sat'&&o.type==='stop'&&lo<=o.px)fp=Math.min(o.px,op);
+    const rm=()=>{S.ord2=S.ord2.filter(z=>z!==o)};
+    if(fp!==null){rm();fp=+fp.toFixed(2);
+      if(o.side==='al'){const c=bxBuy(o.sid,o.sh,fp,true);const back=Math.max(0,(o.res||0)-c);S.money+=back;const t=`Alış emrin gerçekleşti: ${s.n} ${bL(o.sh)} lot, ${bP(fp)}`;log(`📈 ${t}.${back>1?` Artan ${fmt(back)} kasana döndü.`:''}`,'gold');bxHist(t,'good')}
+      else{const r=bxSell(o.sid,o.sh,fp);if(r){const t=`${o.type==='stop'?'Zarar kes emrin çalıştı':'Satış emrin gerçekleşti'}: ${s.n} ${bL(r.sh)} lot, ${bP(fp)} · ${r.pl>=0?'kâr':'zarar'} ${fmt(Math.abs(r.pl))}`;log(`${o.type==='stop'?'🛑':'🎯'} ${t}.`,r.pl>=0?'gold':'bad');bxHist(t,r.pl>=0?'good':'bad')}}}
+    else if(QS()-o.q0>=8){rm();if(o.res)S.money+=o.res;const t=`${s.n} ${o.side==='al'?'alış':'satış'} emrinin süresi doldu (${bP(o.px)})`;log(`⌛ ${t}.${o.res?' Bloke para kasana döndü.':''}`,'dim');bxHist(t,'')}});
+  Object.keys(S.ort||{}).forEach(k=>{try{const O=S.ort[k];if(O&&O.pub&&ORTK[k]&&ortVar(k)){bxOrt(k);O.pub.h.push(O.pub.price);if(O.pub.h.length>16)O.pub.h.shift()}}catch(e){}})}
+function bxIdx(){const L=STOCKS.filter(s=>S.px[s.id]&&!/coin/i.test(s.n));if(!L.length)return[1000];const n=Math.min(16,...L.map(s=>S.px[s.id].h.length));const out=[];for(let k=n-1;k>=0;k--){let t=0;L.forEach(s=>{const h=S.px[s.id].h;t+=h[h.length-1-k]/s.p});out.push(Math.round(t/L.length*1000))}return out}
+const bxVol=id=>{const r=bRng(bH(id+'|v|'+QS()));const s=bSk(id);return Math.round(M(4e6)*(.4+r()*2.6)*(1+(s?s.v:.3)*2))};
+function bxLine(h,W,H,up){if(h.length<2)h=[h[0],h[0]];const mn=Math.min(...h),mx=Math.max(...h),X=i=>(i/(h.length-1)*W).toFixed(1),Y=v=>(H-4-((v-mn)/((mx-mn)||1))*(H-10)).toFixed(1);const pts=h.map((v,i)=>`${X(i)},${Y(v)}`).join(' ');const c=up?'#2fbf71':'#e0483e';
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:${H}px;display:block"><polygon points="0,${H} ${pts} ${W},${H}" fill="${c}" fill-opacity=".14"/><polyline points="${pts}" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>`}
+function bxChart(id){const cs=bxCandles(id).slice(-16),x=S.px[id];const W=340,H=170,pl=4,pr=50,pt=10,pb=10;let hi=Math.max(...cs.map(c=>c[1])),lo=Math.min(...cs.map(c=>c[2]));
+  const od=(S.ord2||[]).filter(o=>o.sid===id&&o.px<hi*1.35&&o.px>lo*.65);od.forEach(o=>{hi=Math.max(hi,o.px);lo=Math.min(lo,o.px)});const pad=(hi-lo)*.06||hi*.02;hi+=pad;lo=Math.max(0,lo-pad);
+  const Y=v=>pt+(1-(v-lo)/((hi-lo)||1))*(H-pt-pb),bw=(W-pl-pr)/Math.max(cs.length,8);let g='';
+  for(let i=0;i<4;i++){const v=lo+(hi-lo)*i/3,y=Y(v);g+=`<line x1="${pl}" x2="${W-pr}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#ffffff14" stroke-width="1"/><text x="${W-pr+4}" y="${(y+3.5).toFixed(1)}" font-size="9.5" fill="#9a8f84" font-family="monospace">${v>=1000?Math.round(v).toLocaleString('tr-TR'):v.toFixed(2)}</text>`}
+  cs.forEach((c,i)=>{const up=c[3]>=c[0],col=up?'#2fbf71':'#e0483e',cx=pl+bw*(i+.5),y1=Y(Math.max(c[0],c[3])),y2=Y(Math.min(c[0],c[3]));g+=`<line x1="${cx.toFixed(1)}" x2="${cx.toFixed(1)}" y1="${Y(c[1]).toFixed(1)}" y2="${Y(c[2]).toFixed(1)}" stroke="${col}" stroke-width="1.2"/><rect x="${(cx-bw*.32).toFixed(1)}" y="${y1.toFixed(1)}" width="${(bw*.64).toFixed(1)}" height="${Math.max(1.5,y2-y1).toFixed(1)}" fill="${col}" rx="1"/>`});
+  od.forEach(o=>{const y=Y(o.px),col=o.side==='al'?'#2fbf71':o.type==='stop'?'#e0483e':'#e6b54c';g+=`<line x1="${pl}" x2="${W-pr}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="${col}" stroke-width="1" stroke-dasharray="5 4"/><text x="${pl+2}" y="${(y-3).toFixed(1)}" font-size="9" fill="${col}" font-family="monospace">${o.side==='al'?'AL':o.type==='stop'?'STOP':'SAT'} ${bL(o.sh)}</text>`});
+  {const y=Y(x.p);g+=`<line x1="${pl}" x2="${W-pr}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#ffffff66" stroke-width="1" stroke-dasharray="2 3"/><rect x="${W-pr+1}" y="${(y-7).toFixed(1)}" width="${pr-2}" height="14" rx="3" fill="#e6b54c"/><text x="${W-pr+4}" y="${(y+3.5).toFixed(1)}" font-size="9.5" font-weight="700" fill="#1b1406" font-family="monospace">${x.p>=1000?Math.round(x.p).toLocaleString('tr-TR'):x.p.toFixed(2)}</text>`}
+  return `<div style="border:1px solid var(--line);border-radius:12px;background:#0b0708;padding:6px 4px 2px;margin:8px 0"><svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">${g}</svg><div style="display:flex;justify-content:space-between;padding:0 ${pr/W*100}% 4px 6px;font-family:var(--cond);font-size:11px;color:var(--muted)"><span>${cs.length} çeyrek önce</span><span>Her mum bir çeyrek</span><span>Şimdi</span></div></div>`}
+function bxBook(id){const x=S.px[id],p=x.p,st=Math.max(.01,+(p*.002).toFixed(2)),r=bRng(bH(id+'|d|'+QS())),base=Math.max(40,M(600000)/p);const A=[],B=[];for(let i=1;i<=5;i++){A.push([+(p+st*i).toFixed(2),Math.round(base*(.3+r()*1.6)*(1+i*.2))]);B.push([+(p-st*i).toFixed(2),Math.round(base*(.3+r()*1.6)*(1+i*.2))])}
+  const mx=Math.max(...A.map(a=>a[1]),...B.map(a=>a[1]));const cell=(px,lt,buy)=>`<div style="position:relative;display:flex;justify-content:space-between;gap:6px;padding:4px 7px;font-family:monospace;font-size:12.5px;overflow:hidden;border-radius:4px;margin-top:2px"><i style="position:absolute;top:0;bottom:0;${buy?'right':'left'}:0;width:${Math.round(lt/mx*100)}%;background:${buy?'#2fbf7126':'#e0483e26'}"></i>${buy?`<span style="position:relative;color:var(--muted)">${bL(lt)}</span><span style="position:relative;color:#2fbf71;font-weight:700">${px.toFixed(2)}</span>`:`<span style="position:relative;color:#e0483e;font-weight:700">${px.toFixed(2)}</span><span style="position:relative;color:var(--muted)">${bL(lt)}</span>`}</div>`;
+  const ta=A.reduce((a,z)=>a+z[1],0),tb=B.reduce((a,z)=>a+z[1],0),pb=Math.round(tb/(ta+tb)*100);
+  return `<div class="sec">Derinlik · 5 kademe</div><div style="display:flex;gap:8px"><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;font-family:var(--cond);font-size:11.5px;color:var(--muted);padding:0 7px"><span>LOT</span><span>ALIŞ</span></div>${B.map(z=>cell(z[0],z[1],true)).join('')}</div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;font-family:var(--cond);font-size:11.5px;color:var(--muted);padding:0 7px"><span>SATIŞ</span><span>LOT</span></div>${A.map(z=>cell(z[0],z[1],false)).join('')}</div></div><div style="display:flex;height:6px;border-radius:3px;overflow:hidden;margin-top:8px"><i style="width:${pb}%;background:#2fbf71"></i><i style="flex:1;background:#e0483e"></i></div><div style="display:flex;justify-content:space-between;font-family:var(--cond);font-size:12px;color:var(--muted);margin-top:3px"><span>Alıcılar %${pb}</span><span>Satıcılar %${100-pb}</span></div>`}
+const bxOrdRow=o=>{const s=bSk(o.sid),x=S.px[o.sid];const col=o.side==='al'?'#2fbf71':o.type==='stop'?'#e0483e':'#e6b54c';const tp=o.side==='al'?'Limit alış':o.type==='stop'?'Zarar kes':'Limit satış';const d=(o.px/x.p-1)*100;
+  return `<button class="row" data-x="bord:${o.id}"><span class="ic" style="font-family:var(--cond);font-size:11px;font-weight:700;color:${col}">${o.sid}</span><span class="tx"><b>${tp} · ${bL(o.sh)} lot</b><span>Emir ${bP(o.px)} · Son ${bP(x.p)} (${d>=0?'+':''}%${d.toFixed(1)})${o.res?` · Bloke ${fmtS(o.res)}`:''} · ${Math.max(0,8-(QS()-o.q0))} çeyrek geçerli</span></span><span class="rt" style="color:var(--blood)">İptal</span></button>`};
+function bxMine(){let h='';const pf=(S.firms||[]).filter(f=>f.pub);const ks=Object.keys(S.ort||{}).filter(k=>ORTK[k]&&S.ort[k].pub&&ortVar(k));
+  const rw=(attr,tk,nm,own,price,hh)=>{const c=hh.length>1?(hh[hh.length-1]/hh[hh.length-2]-1)*100:0;return `<button class="row" ${attr}><span class="ic" style="font-family:var(--cond);font-size:10px;font-weight:700;color:var(--gold)">${tk}</span><span class="tx"><b>${nm}</b><span>Payın %${Math.round(own*100)} · Piyasa değeri ${fmtS(price*1e6)} · Payının değeri ${fmtS(price*1e6*own)}</span></span>${spark(hh.length>1?hh:[price,price],c>=0)}<span class="rt" style="text-align:right">${bP(price)}<br>${bPill(c)}</span></button>`};
+  pf.forEach(f=>{h+=rw(`data-x="firm:${f.id}"`,f.pub.tk,f.name,f.own,f.pub.price*(f.pub.lots||1e6)/1e6,(f.pub.h||[f.pub.price]).map(v=>v*(f.pub.lots||1e6)/1e6))});
+  ks.forEach(k=>{const P=bxOrt(k);h+=rw(`data-x="ort:${k}"`,P.tk,ORTK[k].n(),S.ort[k].own,P.price,P.h)});return{h,n:pf.length+ks.length}}
+EXTRA.borsa=()=>{bxEns();const pv=portVal(),cost=Object.values(S.stocks).reduce((s,x)=>s+x.cost,0),res=bxRes(),ix=bxIdx(),ic=ix.length>1?(ix[ix.length-1]/ix[ix.length-2]-1)*100:0,mine=bxMine();
+  let h=`<div style="border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#141011,#0b0708);padding:12px 12px 4px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:flex-end"><div><small style="font-family:var(--cond);letter-spacing:.14em;color:var(--muted)">DERİN 30 ENDEKSİ</small><div style="font-size:26px;font-weight:800;font-family:var(--cond);letter-spacing:.02em">${ix[ix.length-1].toLocaleString('tr-TR')}</div></div><div style="text-align:right">${bPill(ic)}<div style="font-family:var(--cond);font-size:12px;color:var(--muted);margin-top:3px">Bu çeyrek</div></div></div>${bxLine(ix,340,64,ix[ix.length-1]>=ix[0])}</div>`;
+  h+=`<div class="sum"><div><span>Portföy</span><b style="color:var(--gold)">${fmtS(pv)}</b></div><div><span>Kâr / zarar</span><b style="color:${pv>=cost?'var(--good)':'var(--blood)'}">${cost?(pv>=cost?'+':'−')+fmtS(Math.abs(pv-cost))+` (%${(Math.abs(pv/cost-1)*100).toFixed(1)})`:'—'}</b></div><div><span>Kullanılabilir nakit</span><b>${fmtS(Math.max(0,S.money))}</b></div>${res?`<div><span>Emirlerde bloke</span><b>${fmtS(res)}</b></div>`:''}</div>`;
+  h+='<div class="tabs">'+[['piyasa','Piyasa'],['port',`Portföy${Object.keys(S.stocks).length?' · '+Object.keys(S.stocks).length:''}`],['emir',`Emirler${S.ord2.length?' · '+S.ord2.length:''}`],['benim',`Şirketlerim${mine.n?' · '+mine.n:''}`]].map(([id,n])=>`<button class="tab ${bTab===id?'on':''}" data-x="btab:${id}">${n}</button>`).join('')+'</div>';
+  if(bTab==='piyasa'){
+    if(mine.n)h+='<div class="sec">Senin şirketlerin · halka açık</div>'+mine.h;
+    h+=`<div style="display:flex;align-items:center;justify-content:space-between;margin:10px 0 2px"><div class="sec" style="margin:0;flex:1">Hisseler</div><div style="display:flex;gap:5px">${[['kod','A-Z'],['art','▲'],['dus','▼'],['hcm','Hacim']].map(([k,n])=>`<button class="tab ${bSort===k?'on':''}" data-x="bsort:${k}" style="padding:4px 10px;font-size:13px">${n}</button>`).join('')}</div></div>`;
+    const L=STOCKS.filter(s=>S.px[s.id]).slice();if(bSort==='art')L.sort((a,b)=>bChg(S.px[b.id])-bChg(S.px[a.id]));else if(bSort==='dus')L.sort((a,b)=>bChg(S.px[a.id])-bChg(S.px[b.id]));else if(bSort==='hcm')L.sort((a,b)=>bxVol(b.id)-bxVol(a.id));
+    L.forEach(s=>{const x=S.px[s.id],c=bChg(x),own=S.stocks[s.id],T=S.tips[s.id],no=S.ord2.filter(o=>o.sid===s.id).length;
+      h+=`<button class="row" data-x="stock:${s.id}" style="padding-top:9px;padding-bottom:9px"><span class="ic" style="font-family:var(--cond);font-size:11px;font-weight:700;color:var(--gold)">${s.id}</span><span class="tx"><b>${s.n}</b>${T?`<span class="risk ${T.up?'r1':'r3'}">Ferdi: ${T.up?'▲':'▼'} hedef ${bP(T.tg||0)}</span>`:''}${no?`<span class="risk r2">${no} açık emir</span>`:''}<span>${own?`${bL(own.sh)} lot · ${fmtS(own.sh*x.p)}`:`Hacim ${fmtS(bxVol(s.id))}`}</span></span>${spark(x.h,c>=0)}<span class="rt" style="text-align:right">${bP(x.p)}<br>${bPill(c)}</span></button>`});
+    const nt=Object.keys(S.tips||{}).length;
+    h+=`<div class="sec">Borsacı Fısıltı Ferdi</div><p class="note">Ferdi her çeyrek için tüyo satar. Tüyoları %80 oranında doğru çıkar ve bu çeyrek geçerlidir. Peşin ücretin üstüne, tüyo verdiği hisselerden bu çeyrek ettiğin kârın %20'sini çeyrek sonunda alır.${(S.tipBan||0)>qnow()?' <b>Payını ödemediğin için Ferdi şimdilik sana tüyo vermiyor.</b>':''}</p>`;
+    h+=row('data-x="tip:one"','🤫','Tek tüyo al','Bu çeyrek en çok hareket edecek hisse · Kârdan %20 Ferdi\'nin',fmtS(tipC('one')),!!S.tips.best||cashA()<tipC('one')||(S.tipBan||0)>qnow());
+    h+=row('data-x="tip:all"','📜','Bütün hisseler için tüyo','Her hissenin yönü · Kârdan %20 Ferdi\'nin',fmtS(tipC('all')),!!S.tips.all||cashA()<tipC('all')||(S.tipBan||0)>qnow());
+    if(S.tipStats&&S.tipStats.n)h+=`<p class="note">Ferdi'nin karnesi: ${S.tipStats.ok}/${S.tipStats.n} tüyo tuttu (%${Math.round(S.tipStats.ok/S.tipStats.n*100)}).</p>`;
+    if(friends('isinsani',60))h+='<p class="note" style="color:var(--gold)">İş insanı dostun hisseler hakkında fısıldıyor. Bir hisseye dokun.</p>'}
+  if(bTab==='port'){const ids=Object.keys(S.stocks).filter(id=>S.px[id]).sort((a,b)=>S.stocks[b].sh*S.px[b].p-S.stocks[a].sh*S.px[a].p);
+    if(!ids.length)h+='<p class="note">Portföyün boş. Piyasa sekmesinden bir hisseye dokunup alış emri ver.</p>';
+    ids.forEach(id=>{const o=S.stocks[id],x=S.px[id],s=bSk(id)||{n:id},v=o.sh*x.p,pl=v-o.cost,w=pv?v/pv*100:0;
+      h+=`<button class="row" data-x="stock:${id}"><span class="ic" style="font-family:var(--cond);font-size:11px;font-weight:700;color:var(--gold)">${id}</span><span class="tx"><b>${s.n}</b><span>${bL(o.sh)} lot · Ort. maliyet ${bP(o.cost/o.sh)} · Son ${bP(x.p)}</span><div class="bar" style="margin-top:5px"><i style="width:${Math.round(w)}%;background:var(--gold)"></i></div></span><span class="rt" style="text-align:right">${fmtS(v)}<br><small style="color:${pl>=0?'var(--good)':'var(--blood)'}">${pl>=0?'+':'−'}${fmtS(Math.abs(pl))} · %${(Math.abs(pl)/(o.cost||1)*100).toFixed(1)}</small></span></button>`});
+    if(ids.length)h+='<p class="note">Çubuk, hissenin portföydeki ağırlığını gösterir.</p>'}
+  if(bTab==='emir'){h+='<div class="sec">Açık emirler</div>';if(!S.ord2.length)h+='<p class="note">Bekleyen emrin yok. Bir hisseye dokunup limit ya da zarar kes emri verebilirsin. Emirler çeyrek içindeki en yüksek ve en düşük fiyata göre gerçekleşir.</p>';S.ord2.forEach(o=>{h+=bxOrdRow(o)});
+    if(S.oHist.length){h+='<div class="sec">Son işlemler</div>';S.oHist.forEach(z=>{h+=`<div style="display:flex;gap:8px;padding:7px 4px;border-bottom:1px solid var(--line);font-size:13.5px"><span style="flex:none;color:var(--muted);font-family:var(--cond)">${z.y} yaş</span><span style="color:${z.c==='good'?'var(--good)':z.c==='bad'?'var(--blood)':'var(--muted)'}">${z.t}</span></div>`})}}
+  if(bTab==='benim'){h+=mine.n?mine.h+'<p class="note">Fiyat, şirketin değerine göre her çeyrek yeniden oluşur. Dokununca ortaklık ve geri alım seçenekleri açılır.</p>':'<p class="note">Borsada işlem gören bir şirketin yok. Şirketlerin ekranındaki "Ortaklık ve halka arz" bölümünden holdingini, inşaat şirketini, distribütörlüğünü, kulübünü ve diğer şirketlerini halka açabilirsin; açılan şirket kendi koduyla burada görünür.</p>'+row('data-go="sirket"','🏭','Şirketlerine git','Ortaklık ve halka arz','›',false)}
+  return['Borsa',h]};
+ACT.btab=t=>{bTab=t;openSheet('borsa')};ACT.bsort=k=>{bSort=k;openSheet('borsa')};
+ACT.stock=id=>{if(!bSk(id)||!S.px[id])return;bSt=id;backTo=backTo||'hayat';goSheet('hisse')};
+EXTRA.hisse=()=>{bxEns();const id=bSt,s=bSk(id),x=id&&S.px[id];if(!s||!x)return['Hisse','<p class="note">Hisse bulunamadı.</p>'];const c=bChg(x),own=S.stocks[id],cs=bxCandles(id),k=cs[cs.length-1],T=S.tips[id],ords=S.ord2.filter(o=>o.sid===id),free=bxFree(id);
+  const yr=x.h.length>4?(x.p/x.h[x.h.length-5]-1)*100:null,hi=Math.max(...cs.map(z=>z[1])),lo=Math.min(...cs.map(z=>z[2]));
+  let h=`<div style="display:flex;justify-content:space-between;align-items:flex-end"><div><small style="font-family:var(--cond);letter-spacing:.12em;color:var(--muted)">${s.id} · ${s.v>.5?'ÇOK OYNAK':s.v>.25?'OYNAK':'DENGELİ'}</small><div style="font-size:30px;font-weight:800;font-family:var(--cond)">${bP(x.p)}</div></div><div style="text-align:right">${bPill(c)}<div style="font-family:var(--cond);font-size:12px;color:var(--muted);margin-top:3px">Çeyrek: ${k[2].toFixed(2)} – ${k[1].toFixed(2)}</div></div></div>`;
+  h+=bxChart(id);
+  h+=`<div style="display:flex;gap:8px;margin:4px 0 8px"><button data-x="bo:al" style="flex:1;padding:13px;border-radius:12px;border:0;background:#1f8a4c;color:#fff;font-family:var(--cond);font-size:18px;font-weight:800;letter-spacing:.06em" ${S.money<x.p*(1+BKOM)?'disabled':''}>AL</button><button data-x="bo:sat" style="flex:1;padding:13px;border-radius:12px;border:0;background:#b3312c;color:#fff;font-family:var(--cond);font-size:18px;font-weight:800;letter-spacing:.06em;${free<1?'opacity:.4':''}" ${free<1?'disabled':''}>SAT</button></div>`;
+  if(own){const v=own.sh*x.p,pl=v-own.cost;h+=`<div class="sum"><div><span>Elindeki</span><b>${bL(own.sh)} lot${free<own.sh?` · ${bL(own.sh-free)} emirde`:''}</b></div><div><span>Ort. maliyet</span><b>${bP(own.cost/own.sh)}</b></div><div><span>Değeri</span><b style="color:var(--gold)">${fmtS(v)}</b></div><div><span>Kâr / zarar</span><b style="color:${pl>=0?'var(--good)':'var(--blood)'}">${pl>=0?'+':'−'}${fmtS(Math.abs(pl))} (%${(Math.abs(pl)/(own.cost||1)*100).toFixed(1)})</b></div></div>`}
+  if(T)h+=`<p class="note" style="color:var(--gold)">🤫 Ferdi: ${T.up?'yükselecek':'düşecek'}, hedef ${bP(T.tg||0)} (%${(((T.tg||x.p)/x.p-1)*100).toFixed(1)}). ${T.up?'Hedefe gelince çıkmak lazım.':'Elinde varsa şimdi sat.'}</p>`;
+  if(friends('isinsani',60))h+=`<p class="note" style="color:var(--gold)">İş insanı dostun fısıldıyor: "${x.n>.3?'Bu hisse uçacak.':x.n<-.3?'Bundan uzak dur, düşecek.':'Pek bir şey olmaz.'}"</p>`;
+  if(ords.length){h+='<div class="sec">Bu hissedeki emirlerin</div>';ords.forEach(o=>{h+=bxOrdRow(o)})}
+  h+=bxBook(id);
+  h+=`<div class="sec">Künye</div><div class="sum"><div><span>Hacim (çeyrek)</span><b>${fmtS(bxVol(id))}</b></div><div><span>Son 1 yıl</span><b style="color:${yr===null?'var(--muted)':yr>=0?'var(--good)':'var(--blood)'}">${yr===null?'—':(yr>=0?'+':'−')+'%'+Math.abs(yr).toFixed(1)}</b></div><div><span>${cs.length} çeyreğin en yükseği</span><b>${bP(hi)}</b></div><div><span>${cs.length} çeyreğin en düşüğü</span><b>${bP(lo)}</b></div><div><span>Komisyon</span><b>Binde 2</b></div></div>`;
+  return[s.n,h]};
+const bxBack=()=>setTimeout(()=>{if(!Q.length)openSheet(bSt?'hisse':'borsa')},70);
+function bxPlace(id,side,type,px,sh){const s=bSk(id),x=S.px[id];if(!s||!x||sh<1)return bxBack();bxEns();
+  if(side==='al'){const need=Math.round(sh*px*(1+BKOM));if(need>S.money){toast('Nakit yetmiyor');return bxBack()}
+    if(type==='piyasa'){const c=bxBuy(id,sh,x.p);const t=`${s.n}: ${bL(sh)} lot aldın, ${bP(x.p)}`;log(`📈 ${t}. Toplam ${fmt(c)}.`,'dim');bxHist(t,'good')}
+    else{spend(need);S.ord2.push({id:'o'+Date.now()+R(0,999),sid:id,side,type:'limit',px,sh,res:need,q0:QS()});log(`🧾 ${s.n} için ${bP(px)} fiyattan ${bL(sh)} lot alış emri verdin. ${fmt(need)} emirde bloke.`,'dim')}}
+  else{sh=Math.min(sh,bxFree(id));if(sh<1){toast('Satılabilir lotun yok');return bxBack()}
+    if(type==='piyasa'){const r=bxSell(id,sh,x.p);const t=`${s.n}: ${bL(r.sh)} lot sattın, ${bP(x.p)} · ${r.pl>=0?'kâr':'zarar'} ${fmt(Math.abs(r.pl))}`;log(`📉 ${t}.`,r.pl>=0?'good':'bad');bxHist(t,r.pl>=0?'good':'bad')}
+    else{S.ord2.push({id:'o'+Date.now()+R(0,999),sid:id,side,type,px,sh,q0:QS()});log(`🧾 ${s.n} için ${bP(px)} seviyesine ${bL(sh)} lotluk ${type==='stop'?'zarar kes':'satış'} emri verdin.`,'dim')}}
+  afterChange();bxBack()}
+function bxAmt(id,side,type,px){const s=bSk(id),x=S.px[id];setTimeout(()=>{
+  if(side==='al'){const max=Math.floor(S.money/(1+BKOM)),lot=a=>Math.floor(a/px);const pre=[1e4,1e5,1e6,1e7,1e8,1e9].map(a=>Math.round(M(a))).filter(a=>a<=max&&lot(a)>=1).slice(-4);
+    queue({back:'hisse',title:`${s.id} · Ne kadarlık?`,text:`${type==='piyasa'?'Piyasa emri':'Limit emri'} · Lot fiyatı <b>${bP(px)}</b><br>Kullanılabilir nakit: <b>${fmt(Math.max(0,S.money))}</b>`,choices:[...pre.map(a=>({t:`${fmt(a)}'lik`,sub:`${bL(lot(a))} lot`,fn:()=>bxPlace(id,side,type,px,lot(a))})),
+      ...(lot(max)>=1?[{t:'Kasadaki tüm parayla',sub:`${bL(lot(max))} lot · ${fmt(Math.round(lot(max)*px))}`,fn:()=>bxPlace(id,side,type,px,lot(max))},{t:'✍️ Tutarı kendim yazayım',fn:()=>setTimeout(()=>amountModal(`${s.id} · Tutar`,`Lot fiyatı ${bP(px)}.`,max,a=>{if(lot(a)<1){toast('Bu tutar bir lot etmiyor');return bxBack()}bxPlace(id,side,type,px,lot(a))},'hisse'),40)}]:[]),{t:'Vazgeç',fn:bxBack}]})}
+  else{const fr=bxFree(id);const opts=[[.25,'Dörtte biri'],[.5,'Yarısı'],[1,'Tümü']].map(([f,n])=>[Math.max(1,Math.floor(fr*f)),n]).filter((o,i,a)=>a.findIndex(z=>z[0]===o[0])===i);
+    queue({back:'hisse',title:`${s.id} · Kaç lot?`,text:`${type==='piyasa'?'Piyasa emri':type==='stop'?'Zarar kes emri':'Limit satış emri'} · Fiyat <b>${bP(px)}</b><br>Satılabilir: <b>${bL(fr)} lot</b>`,choices:[...opts.map(([n,t])=>({t:`${t} · ${bL(n)} lot`,sub:fmt(Math.round(n*px)),fn:()=>bxPlace(id,side,type,px,n)})),{t:'Vazgeç',fn:bxBack}]})}},40)}
+ACT.bo=a=>{const id=bSt,s=bSk(id),x=id&&S.px[id];if(!s||!x)return;bxEns();closeSheet();const T=S.tips[id];const P=k=>+(x.p*(1+k/100)).toFixed(2);
+  if(a==='al')queue({back:'hisse',title:`${s.id} · Alış emri`,text:`Son fiyat <b>${bP(x.p)}</b>.<br><br><b>Piyasa emri</b> hemen gerçekleşir.<br><b>Limit emri</b>, fiyat çeyrek içinde yazdığın seviyeye inerse gerçekleşir; parası emirde bloke kalır, 8 çeyrek geçerlidir.<br>Komisyon binde 2.`,choices:[
+    {t:'⚡ Piyasa emri',sub:`Hemen · ${bP(x.p)}`,fn:()=>bxAmt(id,'al','piyasa',x.p)},
+    ...[-2,-5,-10,-20].map(k=>({t:`📉 Limit · ${bP(P(k))}`,sub:`Son fiyatın %${-k} altı`,fn:()=>bxAmt(id,'al','limit',P(k))})),{t:'Vazgeç',fn:bxBack}]});
+  else{if(bxFree(id)<1){toast('Satılabilir lotun yok');return bxBack()}
+    queue({back:'hisse',title:`${s.id} · Satış emri`,text:`Son fiyat <b>${bP(x.p)}</b> · Satılabilir <b>${bL(bxFree(id))} lot</b>.<br><br><b>Piyasa emri</b> hemen satar.<br><b>Limit emri</b> fiyat o seviyeye çıkınca kârı alır.<br><b>Zarar kes</b> fiyat o seviyeye düşerse satar, kaybı sınırlar.<br>Komisyon binde 2.`,choices:[
+    {t:'⚡ Piyasa emri',sub:`Hemen · ${bP(x.p)}`,fn:()=>bxAmt(id,'sat','piyasa',x.p)},
+    ...(T&&T.up&&T.tg>x.p?[{t:`🤫 Ferdi'nin hedefinde sat · ${bP(+(T.tg*.97).toFixed(2))}`,sub:'Hedefin %3 altı, kaçırmamak için',fn:()=>bxAmt(id,'sat','limit',+(T.tg*.97).toFixed(2))}]:[]),
+    ...[5,10,25,50].map(k=>({t:`🎯 Limit · ${bP(P(k))}`,sub:`Son fiyatın %${k} üstü`,fn:()=>bxAmt(id,'sat','limit',P(k))})),
+    ...[-5,-10,-20].map(k=>({t:`🛑 Zarar kes · ${bP(P(k))}`,sub:`Son fiyatın %${-k} altı`,fn:()=>bxAmt(id,'sat','stop',P(k))})),{t:'Vazgeç',fn:bxBack}]})}};
+ACT.bord=oid=>{bxEns();const o=S.ord2.find(z=>z.id===oid);if(!o)return;S.ord2=S.ord2.filter(z=>z!==o);if(o.res)S.money+=o.res;const s=bSk(o.sid);bxHist(`${s.n} ${o.side==='al'?'alış':o.type==='stop'?'zarar kes':'satış'} emri iptal edildi (${bP(o.px)})`,'');toast(o.res?`Emir iptal edildi, ${fmtS(o.res)} kasana döndü`:'Emir iptal edildi');afterChange();if(curSheet)openSheet(curSheet)};
+
 function myBizH(){if(S.age<18)return '';let own=[];try{const T=hubTiles();const O={holding:!!S.hold,dist:!!S.dist,sirket:(S.firms||[]).length>0,esnaf:(S.props||[]).length>0,kulup:!!S.club,muzik:!!S.label,yapim:!!S.yap,bankam:!!S.mybank,insaat:!!S.co,ogaleri:!!S.gal,sahne:(S.artists||[]).length>0};own=Object.keys(O).filter(k=>O[k]).map(k=>T.find(t=>t[0]===k)).filter(Boolean)}catch(e){}
   let h='<div class="sec">İşletmelerin</div>';own.forEach(([id,ic,n,d,ok])=>{h+=row(`data-go="${id}"`,icoSrc(id)?'@@'+id:ic,n,d,'›',!ok)});
   h+=row('data-go="cat_is"','➕',own.length?'Yeni iş kur':'Kendi işini kur',own.length?'İş dünyası: şirket, kulüp, banka, distribütörlük…':'Henüz bir işletmen yok. İş dünyasına göz at','›',false);return h}
@@ -8222,7 +8344,7 @@ let LASTSH=null,LASTT='';
 function closeSheet(){if(curSheet){LASTSH=curSheet;LASTT=(($('shT')&&$('shT').textContent)||'').replace(/^[^\wÇĞİÖŞÜçğıöşü]+/,'').trim()}$('ov').classList.remove('on');curSheet=null;try{qbar()}catch(e){}}
 function qbar(){const l=$('qLeft'),b=$('qBack');if(!l||!S)return;l.innerHTML='';if(LASTSH&&S.alive){b.style.display='';b.textContent='↩ '+(LASTT||'Son menü')}else b.style.display='none'}
 document.addEventListener('click',e=>{if(e.target.closest('#qBack')&&LASTSH){openSheet(LASTSH)}});
-const PARENT={insharita:'insaat',berber:'cat_kisisel',meslek:'is',egitim:'is',ayar:'ben',lig:'kulup',transfer:'kulup',dizilis:'kulup',sokak:'is'};
+const PARENT={insharita:'insaat',hisse:'borsa',berber:'cat_kisisel',meslek:'is',egitim:'is',ayar:'ben',lig:'kulup',transfer:'kulup',dizilis:'kulup',sokak:'is'};
 try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'sirket',okul:'is',emniyet:'is',adliye:'is',holding:'cat_is',dist:'cat_is',polharita:'emniyet',sm_kare:'sosyal',sm_dongu:'sosyal',sm_ekran:'sosyal',sm_gundem:'sosyal'});
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
