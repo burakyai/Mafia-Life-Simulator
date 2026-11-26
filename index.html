@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.26-1800';
+const APPV='2026.11.26-1815';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -1467,10 +1467,10 @@ const EXTRA={
       h+=`<button class="row" data-x="stock:${s.id}"><span class="ic" style="font-family:var(--cond);font-size:11px;font-weight:700;color:var(--gold)">${s.id}</span><span class="tx"><b>${s.n}</b>${S.tips[s.id]?`<span class="risk ${S.tips[s.id].up?'r1':'r3'}">Ferdi: ${S.tips[s.id].up?'▲':'▼'} hedef ₺${(S.tips[s.id].tg||0).toLocaleString('tr-TR')} (%${(((S.tips[s.id].tg||x.p)/x.p-1)*100).toFixed(0)})</span>`:''}${(S.orders||{})[s.id]?`<span class="risk r2">Satış emri ₺${S.orders[s.id].toLocaleString('tr-TR')}</span>`:''}<span>${own?`${own.sh.toLocaleString('tr-TR')} lot · ${fmtS(own.sh*x.p)}`:(s.v>.5?'Çok oynak':s.v>.25?'Oynak':'Dengeli')}</span></span>${spark(x.h,chg>=0)}<span class="rt">₺${x.p.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})}<br><small style="color:${chg>=0?'var(--good)':'var(--blood)'}">${chg>=0?'▲':'▼'} %${Math.abs(chg).toFixed(1)}</small></span></button>`});
     return['Borsa',h]},
   karakol:()=>{let h=`<p class="note">Polis dikkatin: <b style="color:${S.heat>=60?'var(--blood)':'var(--gold)'}">%${S.heat}</b>${S.heat>=70?'. Burada tanınma riskin var!':''}</p>`;
-    h+=row('data-x="pol:cay"','☕','Komiserle çay iç','Polis dostu edinme şansı','',false);
-    h+=row('data-x="pol:rusvet"','💵','Rüşvet ver',!S.premium&&brLeft()<=0?'Komiser bu yıl artık para almıyor':'Dikkati azalt',fmtS(Math.max(5000,S.heat*1500)),!canPayB(Math.max(5000,S.heat*1500)));
-    h+=row('data-x="pol:muhbir"','🗣','Muhbirlik yap','Rakipleri ihbar et · Dikkat −, para +, ifşa riski','',S.age<16);
-    h+=row('data-x="pol:teslim"','🙌','Kendini teslim et','Kısa ceza, dikkat sıfırlanır','',S.heat<40);
+    h+=row('data-x="krkl:cay"','☕','Komiserle çay iç','Polis dostu edinme şansı','',false);
+    h+=row('data-x="krkl:rusvet"','💵','Rüşvet ver',!S.premium&&brLeft()<=0?'Komiser bu yıl artık para almıyor':'Dikkati azalt',fmtS(Math.max(5000,S.heat*1500)),!canPayB(Math.max(5000,S.heat*1500)));
+    h+=row('data-x="krkl:muhbir"','🗣','Muhbirlik yap','Rakipleri ihbar et · Dikkat −, para +, ifşa riski','',S.age<16);
+    h+=row('data-x="krkl:teslim"','🙌','Kendini teslim et','Kısa ceza, dikkat sıfırlanır','',S.heat<40);
     return['Polis karakolu',h]},
 
 };
@@ -1512,7 +1512,7 @@ const ACT={
       ...(ord?[{t:'Satış emrini iptal et',sub:`₺${ord.toLocaleString('tr-TR')}`,fn:()=>{delete S.orders[id];log('Satış emri iptal edildi.','dim')}}]:[]),
       ...(own?[{t:'Yarısını sat',sub:fmt(Math.floor(own.sh/2)*x.p),fn:()=>sellStock(id,Math.floor(own.sh/2))},{t:'Tümünü sat',sub:fmt(own.sh*x.p),fn:()=>sellStock(id,own.sh)}]:[]),
       {t:'Vazgeç',fn:()=>{}}]})},
-  pol:k=>{
+  krkl:k=>{
     if(k==='rusvet'){const c=Math.max(5000,S.heat*1500);if(!canPayB(c))return;if(!brUse())return;payB(c);if(ch(.85)){add('heat',-R(18,30));log('Komiser artık seni görmüyor.','good')}else{add('heat',10);log('Rüşvet teklifin geri çevrildi. Dikkat arttı!','bad')}return done()}
     if(S.heat>=70&&k!=='teslim'&&ch(.35)){log('Karakolda biri seni tanıdı!','bad');closeSheet();return arrest('Karakolda tanınma',[1,3])}
     if(k==='cay'){if(S.friends.length<MAXF&&ch(.6)){const f={id:'p'+Date.now(),name:pick(NAMES)+' '+pick(SURN),job:'polis',rel:R(30,45)};S.friends.push(f);log(`Komiser ${f.name} ile çay içip sohbet ettin. Dost oldunuz.`,'good')}else log('Komiser seninle pek konuşmak istemedi.','dim')}
