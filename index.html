@@ -393,7 +393,7 @@ body.t-baba .yr p.news{font-family:"Cinzel",serif;font-style:normal;border-left-
 <script>
 /* ============ Sürüm ve otomatik güncelleme (GitHub) ============ */
 try{if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
-const APPV='2026.11.23-2000';
+const APPV='2026.11.26-1800';
 (function(){try{if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('upd'+m[1])){sessionStorage.setItem('upd'+m[1],'1');location.replace(location.pathname+'?v='+encodeURIComponent(m[1]))}}).catch(()=>{})}catch(e){}})();
 /* ============ Yardımcılar ============ */
 const $=id=>document.getElementById(id);
@@ -2338,7 +2338,7 @@ function ceoCo(c){const co=S.co;const out=[];const cl=coCls();const sk=c.sk||60;
     const full=t=>{CPD={id:t.id,reg,land:'al',mat,tas};const v=pwCost();CPD=null;return v};
     const opts=PROJ.filter(t=>!t.kamu&&t.cls<=cl).sort((a,b)=>(b.u*b.up-b.cost)-(a.u*a.up-a.cost));
     const t=opts.find(t=>{const fc=full(t);const need=blunder?fc*.2:fc*(kr?.55:1)*cover*(1+(S.infl||.05)*t.q/8);return need<=free&&fc*.2<=cC()});
-    if(t){CPD={id:t.id,reg,land:'al',mat,tas};let cost=pwCost();cost=Math.round(cost*(1-Math.max(0,sk-60)/800));const T=TAS.find(x=>x[0]===tas);const dur=pjDur(t,T[3]);pwGo(cost,dur,t.u,1,kr);out.push(`${RG(reg)[1]}'da ${t.n} projesi başlattı (kasada taksitler için ${fmtS(Math.max(0,cC()-coOwed()))} pay bıraktı)`)}
+    if(t){CPD={id:t.id,reg,land:'al',mat,tas};let cost=pwCost();cost=Math.round(cost*(1-Math.max(0,sk-60)/800));const T=TAS.find(x=>x[0]===tas);const dur=pjDur(t,T[3]);pwGo(cost,dur,t.u,1,kr);out.push(`${ilEk(RG(reg)[1])} ${t.n} projesi başlattı (kasada taksitler için ${fmtS(Math.max(0,cC()-coOwed()))} pay bıraktı)`)}
     else if(!builds.length&&opts.length)out.push(`yeni proje için kasa yetersiz: en küçük proje için ~${fmtS(full(opts[opts.length-1])*cover)} gerekiyor`)}
   if(S.q===1){const I=ihaleList().find(x=>!x.used&&PJ(x.id).cls<=cl);if(I&&cC()-coOwed()*buf>=PJ(I.id).cost*.9*cover){const t=PJ(I.id);I.used=1;const pw=clamp(.35+co.rep/400+cl*.04-I.rivals*.02+(c.sk-60)/300,.05,.9);
     if(ch(pw)){const pe=Math.round(t.cost*.1);cSpend(pe);const dur=pjDur(t);const contract=Math.round(t.cost*1.25);co.projects.push({uid:'pj'+Date.now()+R(0,999),t:t.id,cost:t.cost,paid:pe,prog:0,delay:0,qual:'std',pm:1,units:1,presold:0,sold:0,launder:0,hidx0:S.hidx,up0:0,state:'build',start:gYear(),dur,endT:Date.now()+dur,contract,tas:'std',risk:0,evs:[],prm:1,sh:1,lf:0,loan:0});out.push(`${t.n} ihalesini kazandı`)}else out.push(`${t.n} ihalesini kaybetti`)}}
@@ -3262,15 +3262,34 @@ const cSpend=x=>{S.co.cash=(S.co.cash||0)-Math.round(x)};
 const cFund=x=>0;
 const REG=[['esen','Esenyurt',.75,.72,1.3,'Ucuz arsa, alıcı bol, fiyat düşük'],['kartal','Kartal',1,1,1,'Dengeli'],['umr','Ümraniye',1.05,1.08,1,'Merkeze yakın, iyi talep'],['bey','Beykoz',1.2,1.3,.8,'Orman ve Boğaz, zengin alıcı'],['sar','Sarıyer',1.4,1.5,.7,'Lüks bölge, yavaş ama pahalı satış'],['bod','Bodrum',1.3,1.42,.75,'Yazlıkçı ve yabancı alıcı']];
 const TAS=[['ucuz','Ucuz taşeron',.92,.85,'Ucuz ve hızlı · kaza ve denetim riski yüksek'],['std','Standart taşeron',1,1,'Dengeli'],['kur','Kurumsal yüklenici',1.08,1,'Pahalı · kaza riski düşük · itibar +']];
-const RG=id=>REG.find(r=>r[0]===id)||REG[1];
+/* İstanbul ilçe m² fiyatları (bin ₺/m², 2026 satılık konut ortalamaları); Kartal = 1 kabul edilir */
+const IPX={'Beşiktaş':183,'Kadıköy':174,'Sarıyer':163,'Bakırköy':145,'Adalar':123,'Üsküdar':121,'Beykoz':110,'Zeytinburnu':104,'Beyoğlu':99,'Ataşehir':98,'Maltepe':95,'Şişli':91,'Kartal':87,'Ümraniye':83,'Eyüpsultan':79,'Başakşehir':79,'Şile':76,'Kağıthane':75,'Çekmeköy':73,'Pendik':72,'Tuzla':71,'Bahçelievler':69,'Bayrampaşa':68,'Küçükçekmece':65,'Bağcılar':62,'Esenler':61,'Sancaktepe':61,'Sultanbeyli':59,'Güngören':59,'Avcılar':58,'Gaziosmanpaşa':58,'Büyükçekmece':57,'Çatalca':57,'Fatih':56,'Beylikdüzü':51,'Arnavutköy':51,'Sultangazi':51,'Silivri':47,'Esenyurt':36};
+const IPT=[[140,'#c23c3c','Zirve','Boğaz ve sahil hattı: en pahalı metrekare, zengin alıcı, ağır satış'],[95,'#c8642a','Lüks','Gözde semt: yüksek fiyat, seçici alıcı'],[70,'#d2a94f','Orta üst','Dengeli: iyi talep, makul maliyet'],[56,'#8fae4a','Orta','Kalabalık semt: hızlı satış, dar kâr'],[0,'#3f9e5c','Uygun','Ucuz arsa, alıcı bol, fiyat düşük']];
+const ipT=n=>IPT.find(t=>(IPX[n]||0)>=t[0]);
+const ilM=n=>{const pm=Math.round(Math.pow(IPX[n]/87,.62)*100)/100;return [n,n,Math.round(Math.pow(pm,pm<1?.93:.85)*100)/100,pm,Math.max(.6,Math.min(1.4,Math.round(Math.pow(pm,-.8)*100)/100)),ipT(n)[3]]};
+const RG=id=>REG.find(r=>r[0]===id)||(IPX[id]?ilM(id):REG[1]);
 const COHK={apt:['Daire',9e6,120,4],lukapt:['Lüks daire',20e6,160,6],site:['Site dairesi',12e6,130,5],villa:['Villa',50e6,350,8],rezidans:['Rezidans dairesi',40e6,150,7],donusum:['Daire',7e6,110,4],sehir:['Daire',7e6,110,4]};
 const coHid=(reg,k)=>'co_'+reg+'_'+k;
-REG.forEach(r=>Object.entries(COHK).forEach(([k,[n,pr,m2,h]])=>{if(HOUSES.some(x=>x.id===coHid(r[0],k)))return;const bod=r[0]==='bod',cls=bod?'yazlik':k==='villa'?'villa':'daire';const P=Math.round(pr*r[3]/1e5)*1e5;
+[...REG,...Object.keys(IPX).map(ilM)].forEach(r=>Object.entries(COHK).forEach(([k,[n,pr,m2,h]])=>{if(HOUSES.some(x=>x.id===coHid(r[0],k)))return;const bod=r[0]==='bod',cls=bod?'yazlik':k==='villa'?'villa':'daire';const P=Math.round(pr*r[3]/1e5)*1e5;
   HOUSES.push({id:coHid(r[0],k),n:`${n}, ${r[1]}`,cls,p:P,rent:Math.round(P*.04/1e4)*1e4,h:h+(r[3]>=1.3?1:0),m2,co:1,ic:{daire:'🏢',villa:'🏡',yazlik:'🏖'}[cls]})}));
 let CPD=null;
 ACT.pstart=id=>{const t=PJ(id);closeSheet();CPD={id};pwReg()};
-function pwReg(){const t=PJ(CPD.id);queue({back:'insaat',title:`${t.n} · 1/5 Bölge`,text:`${t.d}. Projeyi nereye yapacaksın? Bölge arsa ve inşaat maliyetini, satış fiyatını ve satış hızını belirler.`,choices:[...REG.map(r=>({t:`📍 ${r[1]}`,sub:`Maliyet ×${r[2]} · Satış fiyatı ×${r[3]} · ${r[5]}`,fn:()=>{CPD.reg=r[0];setTimeout(pwLand,40)}})),{t:'Vazgeç',fn:()=>{CPD=null}}]})}
-function pwLand(){const t=PJ(CPD.id),r=RG(CPD.reg);const c=Math.round(t.cost*r[2]);queue({back:'insaat',title:`${t.n} · 2/5 Arsa`,text:`${r[1]}'da arsayı nasıl bulacaksın? Proje maliyetinin yaklaşık %25'i arsa bedelidir.`,choices:[
+function pwReg(){if(!CPD)return;setTimeout(()=>{if(CPD&&!Q.length)goSheet('insharita')},60)}
+const pwEst=(t,r)=>{const c=Math.round(t.cost*1.17*r[2]);return{c,up:Math.round(t.up*r[3]),k:Math.round(t.u*t.up*r[3]-c)}};
+EXTRA.insharita=()=>{if(!CPD||!S.co)return['İnşaat haritası','<p class="note">Önce İnşaat şirketinden bir proje seç.</p>'];const t=PJ(CPD.id);
+  let svg=`<div class="nosel" onscroll="window._mapSL=this.scrollLeft" style="overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;border-radius:14px;border:1px solid var(--line);background:#0c0608"><svg viewBox="0 0 ${MAPD.w} 750" style="width:230%;max-width:none;display:block"><image href="img/map_base.webp" width="${MAPD.w}" height="${MAPD.h}"/>`;
+  MAPD.d.forEach(([d,pth])=>{const c=ipT(d)[1];const n=(S.co.projects||[]).filter(p=>p.reg===d&&p.state!=='done').length;svg+=`<g data-x="pwil:${d}" style="cursor:pointer"><path d="${pth}" fill="${c}" style="mix-blend-mode:multiply"/><path d="${pth}" fill="${c}" fill-opacity=".3"/>${n?`<path d="${pth}" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="9 6" pointer-events="none"/>`:''}</g>`});
+  svg+=`<image href="img/map_top.webp" width="${MAPD.w}" height="${MAPD.h}" pointer-events="none"/>${(S.co.projects||[]).filter(p=>p.state!=='done'&&IPX[p.reg]).map(p=>{const x=MAPD.d.find(z=>z[0]===p.reg);return x?`<text x="${x[2]}" y="${x[3]-14}" text-anchor="middle" font-size="24" pointer-events="none">🏗</text>`:''}).join('')}</svg><img src="img/map_top.webp" alt="" style="display:none" onload="var p=this.parentNode;p.scrollLeft=window._mapSL!==undefined?window._mapSL:(p.scrollWidth-p.clientWidth)*.5"></div>`;
+  let h=`<p class="note"><b>${t.n}</b> projesini nereye yapacaksın? Haritayı sağa sola kaydır, bir ilçeye dokun. Pahalı semtte arsa ve inşaat pahalıdır ama daire çok daha yükseğe satılır; ucuz semtte az parayla girersin, kârın da küçük olur ama daireler çabuk gider.</p>${svg}<div class="legend">${IPT.map(x=>`<span><i style="background:${x[1]}"></i>${x[2]}</span>`).join('')}<span>🏗 Şantiyen</span></div>`;
+  IPT.forEach(T=>{const L=Object.keys(IPX).filter(n=>ipT(n)===T).sort((a,b)=>IPX[b]-IPX[a]);if(!L.length)return;h+=`<div class="sec"><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${T[1]};margin-right:6px"></i>${T[2]} semtler</div>`;
+    L.forEach(n=>{const r=RG(n),e=pwEst(t,r);h+=row(`data-x="pwil:${n}"`,'📍',n,`m² ~${fmtS(M(IPX[n]*1000))} · Maliyet ~${fmtS(e.c)} · Tahmini kâr ${fmtS(e.k)}`,'›',false)})});
+  {const r=RG('bod'),e=pwEst(t,r);h+='<div class="sec">İstanbul dışı</div>'+row('data-x="pwil:bod"','🏖','Bodrum',`Yazlıkçı ve yabancı alıcı · Maliyet ~${fmtS(e.c)} · Tahmini kâr ${fmtS(e.k)}`,'›',false)}
+  return['🗺 İnşaat haritası',h]};
+ACT.pwil=id=>{if(!CPD)return;const t=PJ(CPD.id),r=RG(id),e=pwEst(t,r),il=!!IPX[id];closeSheet();
+  queue({back:'insaat',title:`📍 ${r[1]} · ${il?ipT(id)[2]+' semt':'Yazlık bölge'}`,text:`${r[5]}.<br><br>${il?`Konut metrekaresi: <b>~${fmtS(M(IPX[id]*1000))}</b><br>`:''}${t.n} burada yaklaşık <b>${fmtS(e.c)}</b>'ye çıkar (malzeme ve taşerona göre değişir).<br>Birim satış fiyatı: <b>~${fmtS(e.up)}</b> · ${t.u} birim<br>Tahmini kâr: <b style="color:${e.k>=0?'var(--good)':'var(--blood)'}">${fmtS(e.k)}</b><br>Satış temposu: <b>${r[4]>=1.15?'Hızlı':r[4]<=.85?'Yavaş':'Normal'}</b>`,choices:[
+    {t:`🏗 ${ilEk(r[1])} yap`,sub:`Peşinat projenin %20'si`,fn:()=>{CPD.reg=id;setTimeout(pwLand,40)}},
+    {t:'🗺 Başka semt seç',fn:()=>setTimeout(pwReg,40)},{t:'Vazgeç',fn:()=>{CPD=null}}]})};
+function pwLand(){const t=PJ(CPD.id),r=RG(CPD.reg);const c=Math.round(t.cost*r[2]);queue({back:'insaat',title:`${t.n} · 2/5 Arsa`,text:`${ilEk(r[1])} arsayı nasıl bulacaksın? Proje maliyetinin yaklaşık %25'i arsa bedelidir.`,choices:[
   {t:'💰 Arsayı satın al',sub:`Bütün birimler senin · Maliyet ~${fmtS(c)}`,fn:()=>{CPD.land='al';setTimeout(pwMat,40)}},
   {t:'🤝 Kat karşılığı',sub:`Arsa parası yok (maliyet −%35) · Satış gelirinin %40'ı arsa sahibine`,fn:()=>{CPD.land='kat';setTimeout(pwMat,40)}},
   ...(t.u>1?[{t:'🏛 Satın al + imar artışı',sub:'Belediyede lobi: %30 fazla birim · Maliyet +%20 · Dikkat +8 · Soruşturma riski',fn:()=>{CPD.land='imar';setTimeout(pwMat,40)}}]:[]),
@@ -8203,7 +8222,7 @@ let LASTSH=null,LASTT='';
 function closeSheet(){if(curSheet){LASTSH=curSheet;LASTT=(($('shT')&&$('shT').textContent)||'').replace(/^[^\wÇĞİÖŞÜçğıöşü]+/,'').trim()}$('ov').classList.remove('on');curSheet=null;try{qbar()}catch(e){}}
 function qbar(){const l=$('qLeft'),b=$('qBack');if(!l||!S)return;l.innerHTML='';if(LASTSH&&S.alive){b.style.display='';b.textContent='↩ '+(LASTT||'Son menü')}else b.style.display='none'}
 document.addEventListener('click',e=>{if(e.target.closest('#qBack')&&LASTSH){openSheet(LASTSH)}});
-const PARENT={berber:'cat_kisisel',meslek:'is',egitim:'is',ayar:'ben',lig:'kulup',transfer:'kulup',dizilis:'kulup',sokak:'is'};
+const PARENT={insharita:'insaat',berber:'cat_kisisel',meslek:'is',egitim:'is',ayar:'ben',lig:'kulup',transfer:'kulup',dizilis:'kulup',sokak:'is'};
 try{BANKS.forEach(b=>{PARENT['bk_'+b.id]='banka'})}catch(e){}Object.assign(PARENT,{bokslook:'boks',boks:'is',kulupkit:'kulup',gozluk:'avm',sapka:'avm',dovme:'avm',filmo:'yapim',gmgl:'gm',gmhat:'gm',gsec:'sirket',okul:'is',emniyet:'is',adliye:'is',holding:'cat_is',dist:'cat_is',polharita:'emniyet',sm_kare:'sosyal',sm_dongu:'sosyal',sm_ekran:'sosyal',sm_gundem:'sosyal'});
 $('shBack').onclick=()=>openSheet(PARENT[curSheet]||DYNP[curSheet]||'hayat');
 $('shX').onclick=closeSheet;
